@@ -1430,13 +1430,17 @@ function openClueInspect(obj, npcId, fromBag = false) {
     }
 
     currentPendingObject = obj;
-    const npc = NPC_DATA[npcId] || NPC_DATA[1];
+    let actualNpcId = npcId;
+    if (!actualNpcId || (obj.id >= 1000 && actualNpcId < 100)) {
+        actualNpcId = obj.id >= 1000 ? Math.floor(obj.id / 10) : (Math.floor((obj.id - 1) / 3) + 1);
+    }
+    const npc = NPC_DATA[actualNpcId] || (obj.id >= 1000 ? (NPC_DATA[101] || NPC_DATA[1]) : NPC_DATA[1]);
 
     document.getElementById('clue-inspect-title').textContent = obj.name;
     document.getElementById('clue-inspect-desc').textContent = obj.desc;
     document.getElementById('clue-inspect-img').src = obj.img;
-    const bgImage = npc.talkBg || npc.bg;
-    document.getElementById('clue-inspect-bg').style.backgroundImage = `url('${bgImage}')`;
+    const bgImage = npc ? (npc.talkBg || npc.bg) : '';
+    document.getElementById('clue-inspect-bg').style.backgroundImage = bgImage ? `url('${bgImage}')` : 'none';
 
     // Okuma Modu Butonunu Göster/Gizle
     const readBtn = document.getElementById('clue-read-btn');
@@ -1673,14 +1677,14 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
             `;
             break;
         case 1012: // Gece Kesim Defteri
-            content.classList.add('black-book');
+            content.classList.add('golge-timber-book');
             content.innerHTML = `
                 <div class="letter-header">T.C. ORMAN İŞLETMELERİ MÜDÜRLÜĞÜ GECE KAYDI</div>
-                <div class="letter-body" style="font-family: var(--font-typewriter); padding: 10px;">
+                <div class="letter-body" style="font-family: var(--font-typewriter); padding: 15px;">
                     <p><strong>Tarih:</strong> 14 Kasım 1948 | <strong>Kayıt Sahibi:</strong> T. Tahsin</p>
-                    <hr>
+                    <hr style="border-color: #5c3a21; margin: 12px 0;">
                     <p>• Ekrem Bey için gece vakti 15 metreküp özel reçineli çam kereste kesimi yapıldı.</p>
-                    <p>• Not: Ekrem Bey ormandaki yasa dışı ağaç kesimlerimi ihbar etmekle tehdit ediyor. Eğer savcılığa giderse hayatımı karartacak. Bu gece çam ormanının girişinde buluşup bu işi sonsuza dek bitireceğiz.</p>
+                    <p style="color: #8b0000; font-weight: bold; margin-top: 10px;">• Not: Ekrem Bey ormandaki yasa dışı ağaç kesimlerimi ihbar etmekle tehdit ediyor. Eğer savcılığa giderse hayatımı karartacak. Bu gece çam ormanının girişinde buluşup bu işi sonsuza dek bitireceğiz.</p>
                 </div>
             `;
             break;
@@ -1773,7 +1777,7 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
                 <div class="letter-header">KİŞİSEL UYARI NOTU</div>
                 <div class="letter-body" style="font-family: var(--font-typewriter); padding: 10px;">
                     <p>Fehmi Muallim,</p>
-                    <p>Babanızdan kalan o antika altın köstekli saati bir daha asla göremeyeceksiniz. O saat artık borcunuza karşılık benim kasamda kilitli duruyor. Boşuna karakola gidip şikayet etmeyin, komiser Güneş benim tarafımda.</p>
+                    <p>Babanızdan kalan o antika altın köstekli saati bir daha asla göremeyeceksiniz. O saat artık borcunuza karşılık benim kasamda kilitli duruyor. Boşuna jandarmaya gidip şikayet etmeyin, bölge komutanı benim tarafımda.</p>
                     <div class="letter-signature">Ekrem</div>
                 </div>
             `;
@@ -1795,7 +1799,7 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
 });
 
 document.getElementById('document-reader-close')?.addEventListener('click', () => {
-    closeClueInspectAndReturn();
+    document.getElementById('document-reader-overlay')?.classList.add('hidden');
 });
 
 // =============================================================

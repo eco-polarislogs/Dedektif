@@ -13,6 +13,8 @@ namespace DedektiflikRPG.Controllers;
 
 public static class GameEndpoints
 {
+    private static readonly System.Threading.SemaphoreSlim _resetSemaphore = new System.Threading.SemaphoreSlim(1, 1);
+
     public static void MapGameEndpoints(this IEndpointRouteBuilder app)
     {
         // 1. Şüpheli Listesi
@@ -622,6 +624,7 @@ public static class GameEndpoints
         // 6. Gölge Şehir Sıfırla (Rastgele 101-108 Katil Belirle)
         app.MapPost("/api/golge-sehir/reset", async (IGameRepository repo, IForensicService forensicService) =>
         {
+            await _resetSemaphore.WaitAsync();
             try
             {
                 var rnd = new Random();
@@ -632,8 +635,11 @@ public static class GameEndpoints
             }
             catch (Exception ex)
             {
-                var fallback = new Random().Next(101, 109);
-                return Results.Ok(new { success = true, message = "Gölge Şehir sıfırlandı (offline mod).", guiltyNpcId = fallback });
+                return Results.Ok(new { success = false, message = "Gölge Şehir sıfırlanamadı: " + ex.Message });
+            }
+            finally
+            {
+                _resetSemaphore.Release();
             }
         });
 

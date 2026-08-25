@@ -951,11 +951,12 @@ canvas {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    background: radial-gradient(circle at center, rgba(30, 41, 59, 0.7) 0%, rgba(10, 15, 26, 0.98) 100%) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .clue-inspect-bg-blur {
-    display: none;
-    /* Buhulama kaldırıldı */
+    display: none !important;
 }
 
 .clue-inspect-item-img {
@@ -4630,6 +4631,7 @@ canvas {
     width: 100% !important;
 }
 
+.document-reader-content.title-deed,
 .document-reader-content.title-deeds {
     background: transparent url('../images/old_paper_bg.png') center/cover no-repeat !important;
     background-blend-mode: normal !important;
@@ -4649,6 +4651,7 @@ canvas {
     text-align: center !important;
 }
 
+.title-deed .deed-seal,
 .title-deeds .deed-seal {
     text-align: center !important;
     font-weight: 900;
@@ -4661,6 +4664,7 @@ canvas {
     width: 100% !important;
 }
 
+.title-deed .deed-title,
 .title-deeds .deed-title {
     text-align: center !important;
     font-weight: 900;
@@ -4671,6 +4675,7 @@ canvas {
     width: 100% !important;
 }
 
+.title-deed p,
 .title-deeds p {
     font-size: 1.25rem;
     line-height: 1.6;
@@ -4681,6 +4686,7 @@ canvas {
     width: 100% !important;
 }
 
+.title-deed .deed-warning,
 .title-deeds .deed-warning {
     margin-top: 20px;
     font-weight: 900;
@@ -4884,4 +4890,79 @@ canvas {
 .golge-clue-hotspot:hover .golge-clue-label {
     opacity: 1;
     transform: translateX(-50%) translateY(-3px);
+}
+
+/* ==============================================================
+   GÖLGE ŞEHİR ÖZEL KAĞIT/BELGE TEMALARI OVERRIDE KURALLARI
+============================================================== */
+.golge-sehir-theme .document-reader-content.threat-letter,
+.document-reader-content.threat-letter.golge-doc {
+    background: #fdfbf2 url('../images/towns/golge_sehir/deliller/golge_old_paper_bg.png') center/cover no-repeat !important;
+    color: #1a0f07 !important;
+    border: 3px solid #4a3319 !important;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), inset 0 0 40px rgba(80, 50, 20, 0.3) !important;
+}
+
+.golge-sehir-theme .document-reader-content.golge-timber-book {
+    background: #fdfbf2 url('../images/towns/golge_sehir/deliller/golge_old_paper_bg.png') center/cover no-repeat !important;
+    background-blend-mode: normal !important;
+    color: #1a0f07 !important;
+    border: 4px solid #3d2314 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), inset 0 0 50px rgba(60, 35, 15, 0.4) !important;
+    padding: 45px 40px !important;
+    max-width: 620px !important;
+    width: 90% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    text-align: left !important;
+}
+
+.golge-sehir-theme .document-reader-content.golge-timber-book .letter-header {
+    font-family: 'Cinzel', serif !important;
+    font-size: 1.35rem !important;
+    font-weight: 900 !important;
+    color: #2b180d !important;
+    border-bottom: 2px solid #5c3a21 !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 15px !important;
+    text-align: center !important;
+    letter-spacing: 1px !important;
+}
+
+.golge-sehir-theme .document-reader-content.golge-timber-book .letter-body {
+    color: #1a0f07 !important;
+    font-size: 1.15rem !important;
+    line-height: 1.6 !important;
+}
+
+.golge-sehir-theme .document-reader-content.prescription {
+    background: #fdfbf2 url('../images/towns/golge_sehir/deliller/golge_prescription_bg.png') center/cover no-repeat !important;
+    color: #1a0f07 !important;
+    border: 3px solid #4a3b2c !important;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95) !important;
+}
+
+.golge-sehir-theme .document-reader-content.confidential-file {
+    background: transparent url('../images/towns/golge_sehir/deliller/golge_old_paper_bg.png') center/cover no-repeat !important;
+    color: #1a0f07 !important;
+    border: 3px solid #3b2818 !important;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95) !important;
+}
+
+.golge-sehir-theme .document-reader-content.title-deed {
+    background: transparent url('../images/towns/golge_sehir/deliller/golge_old_paper_bg.png') center/cover no-repeat !important;
+    color: #1a0f07 !important;
+    border: 3px solid #3b2818 !important;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95) !important;
+}
+
+.golge-sehir-theme .document-reader-content.secret-note {
+    background: #fdfbf2 url('../images/towns/golge_sehir/deliller/golge_old_paper_bg.png') center/cover no-repeat !important;
+    color: #1a0f07 !important;
+    border: 3px solid #3b2818 !important;
+}
+
+.golge-sehir-theme .open-notebook-wrapper {
+    background: transparent url('../images/towns/golge_sehir/deliller/golge_book_bg.png') center/cover no-repeat !important;
 }

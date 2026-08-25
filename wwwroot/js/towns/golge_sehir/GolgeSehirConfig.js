@@ -94,6 +94,7 @@ window.GOLGE_SEHIR_CONFIG = {
                 },
                 {
                     id: 1013,
+                    isHidden: true,
                     name: 'Ağır İş Eldiveni',
                     desc: 'Soğuk havalarda ve ağır işlerde kullanılan, kalın deriden yapılmış eldiven.',
                     img: 'images/towns/golge_sehir/deliller/1013.jpg',
@@ -165,6 +166,7 @@ window.GOLGE_SEHIR_CONFIG = {
                 },
                 {
                     id: 1024,
+                    isHidden: true,
                     name: 'Kâğıt Parçası',
                     desc: 'Top haline getirilmiş, üzerinde anlaşılmayan yazılar olan bir kağıt parçası.',
                     img: 'images/towns/golge_sehir/deliller/1024.jpg',
@@ -209,6 +211,7 @@ window.GOLGE_SEHIR_CONFIG = {
                 },
                 {
                     id: 1032,
+                    isHidden: true,
                     name: 'Ağır Asma Kilit',
                     desc: 'Kapıları kilitlemek için kullanılan büyük ebatlı çelik kilit.',
                     img: 'images/towns/golge_sehir/deliller/1032.jpg',
@@ -289,6 +292,7 @@ window.GOLGE_SEHIR_CONFIG = {
                 },
                 {
                     id: 1044,
+                    isHidden: true,
                     name: 'Küçük Metal Anahtar',
                     desc: 'Küçük bir kilide veya sandığa ait olduğu düşünülen pirinç anahtar.',
                     img: 'images/towns/golge_sehir/deliller/1044.jpg',
@@ -342,6 +346,7 @@ window.GOLGE_SEHIR_CONFIG = {
                 },
                 {
                     id: 1053,
+                    isHidden: true,
                     name: 'Kurutulmuş Bitki Kökü',
                     desc: 'Tıbbi karışımlarda kullanıldığı düşünülen sert ve kokulu kök parçası.',
                     img: 'images/towns/golge_sehir/deliller/1053.jpg',
@@ -404,6 +409,7 @@ window.GOLGE_SEHIR_CONFIG = {
                 },
                 {
                     id: 1063,
+                    isHidden: true,
                     name: 'Uzun Kasa Anahtarı',
                     desc: 'Sağlam bir kilidi veya kasayı açmaya yarayan ağır anahtar.',
                     img: 'images/towns/golge_sehir/deliller/1063.jpg',
@@ -458,6 +464,7 @@ window.GOLGE_SEHIR_CONFIG = {
                 },
                 {
                     id: 1072,
+                    isHidden: true,
                     name: 'Not Kâğıdı',
                     desc: 'Üzerinde silik bir el yazısıyla notlar düşülmüş kağıt.',
                     img: 'images/towns/golge_sehir/deliller/1072.jpg',
@@ -538,6 +545,7 @@ window.GOLGE_SEHIR_CONFIG = {
                 },
                 {
                     id: 1084,
+                    isHidden: true,
                     name: 'Ayakkabı Kalıbı',
                     desc: 'Deri ayakkabıların formunu koruması için içine yerleştirilen tahta blok.',
                     img: 'images/towns/golge_sehir/deliller/1084.jpg',

@@ -185,6 +185,9 @@ window.GolgeSehirEngine = {
             .then(data => {
                 if (data && data.guiltyNpcId) {
                     window.guiltyNpcId = data.guiltyNpcId;
+                    if (typeof guiltyNpcId !== 'undefined') {
+                        guiltyNpcId = data.guiltyNpcId;
+                    }
                     console.log("🎲 Gölge Şehir Rastgele Yeni Katil Belirlendi:", data.guiltyNpcId);
                 }
             })
@@ -385,6 +388,11 @@ window.GolgeSehirEngine = {
             townMapStage.classList.add('golge-sehir-active');
         }
 
+        const bekciBtn = document.getElementById('bekci-quick-tip-btn');
+        if (bekciBtn) {
+            bekciBtn.style.display = 'block';
+        }
+
         const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"])');
         gizemliBuildings.forEach(el => el.style.display = 'none');
 
@@ -501,12 +509,6 @@ window.GolgeSehirEngine = {
         const isGolge = (window.currentActiveTown === 'golge_sehir');
         if (!isGolge) return;
 
-        let golgeVisitedCount = this.visitedGolgeBuildings ? this.visitedGolgeBuildings.size : 0;
-        if (window.visitedBuildings) {
-            window.visitedBuildings.forEach(id => {
-                if (id >= 100) golgeVisitedCount = Math.max(golgeVisitedCount, window.visitedBuildings.size); // Just an extra safeguard, but visitedGolgeBuildings should be accurate. Actually let's just use visitedGolgeBuildings.
-            });
-        }
         // Count unique visited buildings >= 101
         let uniqueGolgeVisited = new Set();
         if (this.visitedGolgeBuildings) {
@@ -517,7 +519,7 @@ window.GolgeSehirEngine = {
                 if (id >= 101) uniqueGolgeVisited.add(id);
             });
         }
-        golgeVisitedCount = uniqueGolgeVisited.size;
+        let golgeVisitedCount = uniqueGolgeVisited.size;
         const labCount = window.submittedForensicCountGolge || 0;
         const container = document.getElementById('autopsy-timer-container');
         const badgeText = document.getElementById('forensic-badge-text');
@@ -714,7 +716,7 @@ window.GolgeSehirEngine = {
     },
 
     toggleAdminMode: function() {
-        if (!this.adminMode) this.adminMode = false;
+        if (this.adminMode === undefined) this.adminMode = false;
         this.adminMode = !this.adminMode;
         console.log("Admin Mode: " + (this.adminMode ? "ON" : "OFF"));
         
@@ -834,9 +836,6 @@ window.GolgeSehirEngine = {
         console.log(`🚪 Gölge Şehir İç Mekânı Açılıyor: ${bld.title}`);
         this.registerGolgeSehirData();
         window.activeNpcId = bld.npcId;
-        if (typeof activeNpcId !== 'undefined') {
-            activeNpcId = bld.npcId;
-        }
 
         const townMapScreen = document.getElementById('town-map-screen');
         const intScreen = document.getElementById('interior-screen');
