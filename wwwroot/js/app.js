@@ -2539,7 +2539,13 @@ document.getElementById('talk-npc-btn').addEventListener('click', () => {
 });
 
 function openNpcTalk(npcId) {
-    const npc = NPC_DATA[npcId];
+    activeNpcId = npcId;
+    window.activeNpcId = npcId;
+    let npc = (window.NPC_DATA && window.NPC_DATA[npcId]) || NPC_DATA[npcId];
+    if (!npc && npcId >= 100 && window.GOLGE_SEHIR_CONFIG && window.GOLGE_SEHIR_CONFIG.buildings) {
+        const bld = window.GOLGE_SEHIR_CONFIG.buildings.find(b => b.npcId === npcId);
+        if (bld) npc = bld.npc;
+    }
     if (!npc) return;
 
     // Kural: Masum işaretlenen karakter sorgulanamaz/işlem yapılamaz
@@ -2738,20 +2744,21 @@ function loadContextualQuestions(npcId) {
                 return;
             }
 
-            container.innerHTML = '';
-
             let questionsToShow = [];
             if (data && data.success && Array.isArray(data.dialogues) && data.dialogues.length > 0) {
                 questionsToShow = data.dialogues;
             } else if (npcId >= 100) {
                 // Gölge Şehir Frontend Fallback (GOLGE_SEHIR_CONFIG içinden 4'lü hazır soru havuzu)
                 questionsToShow = getGolgeFallbackQuestions(npcId, askedCount);
+            } else if (NPC_QUESTIONS[npcId]) {
+                const pool = NPC_QUESTIONS[npcId];
+                questionsToShow = pool.slice(0, 4);
             }
 
             if (!questionsToShow || questionsToShow.length === 0) {
-                container.innerHTML = '<div class="npc-talk-end-msg"><i class="fa-solid fa-check-circle"></i> Sorgu tamamlandı. NPC artık konuşmak istemiyor. Geri dönebilirsiniz.</div>';
-                npcTalkCompleted[npcId] = true;
-                return;
+                if (npcId >= 100) {
+                    questionsToShow = getGolgeFallbackQuestions(npcId, askedCount);
+                }
             }
 
             questionsToShow.forEach((q, index) => {
@@ -2863,12 +2870,13 @@ function getGolgeFallbackQuestions(npcId, askedCount) {
             { q: 'Son sözünüz nedir Hocam?', a: 'Ömrüm talebe yetiştirmekle geçti. Kan dökmek benim kitabımda yazmaz evladım.', difficulty: 5, category: 'son', relatedClues: [] }
         ],
         108: [ // Kunduracı Rasim
-            { q: 'Çamurlu çizmelerin kime ait olduğunu biliyor musun?', a: '42 numara kaba manda derisi... Kasabada 3-4 kişiye dikmiştim o çizmelerden.', difficulty: 1, category: 'tanisma', relatedClues: [1081] },
-            { q: 'Mumlu iplik genelde ne için kullanılır?', a: 'Kalın tabanları dikmek için... Çok sağlamdır, elle koparamazsınız.', difficulty: 1, category: 'tanisma', relatedClues: [1082] },
-            { q: 'Deri kesme bıçağını en son ne zaman biledin?', a: 'Dün akşamüstü biledim. Atölyenin tezgahında durur hep.', difficulty: 1, category: 'tanisma', relatedClues: [1083] },
-            { q: 'Göl kenarında işin neydi?', a: 'Deri tabaklamak için göl suyundan alırım bazen. O gece fırtınadan önce gitmiştim.', difficulty: 1, category: 'tanisma', relatedClues: [] },
-            { q: 'Çizmedeki kan lekesini nasıl açıklıyorsun?', a: 'Deri işlerken parmağımı kestim, çizmeme damlamış! Hemen katil damgası vurmayın!', difficulty: 2, category: 'derinlesme', relatedClues: [1081] },
-            { q: 'Mumlu iplikle boğulma izleri uyuşuyor mu?', a: 'Ben ip satmam, ayakkabı dikerim! Biri benden ip çaldıysa benim suçum ne?!', difficulty: 3, category: 'yuzlestirme', relatedClues: [1082] },
+            { q: 'Göl kenarındaki çamurlu çizme izleri sana mı ait?', a: 'Ben o çizmeleri sipariş üzerine kasabadaki pek çok kişiye diktim amirim. Taban kalıbı benimdir ama izi bırakan ben değilim.', difficulty: 1, category: 'tanisma', relatedClues: [1081] },
+            { q: 'Ekrem Bey sana kaçak deri getirmiş miydi?', a: 'Ekrem Bey ucuza getirdiği manda derilerini bana satmaya çalıştı. Kabul etmeyince aramız açıldı.', difficulty: 1, category: 'tanisma', relatedClues: [1082] },
+            { q: 'Gece dükkânda ışık neden yanıktı?', a: 'Göl yoluna gidecek bir köylünün acil çizme siparişini yetiştiriyordum. Gece 02:00\'ye kadar mumlu iple diktim.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Tezgâhındaki mumlu ip cinayette kullanılabilir mi?', a: 'Bu ip kalın saraç ipidir, kopmaz. Ama ben kundura dikerim, cana kıymam.', difficulty: 1, category: 'tanisma', relatedClues: [1083] },
+            { q: 'Manda derisindeki gizli bölmede ne vardı?', a: 'Sahte senetler ve tapu evrakları saklamıştı Ekrem! Ben görünce öfkeyle üzerime yürüdü!', difficulty: 2, category: 'derinlesme', relatedClues: [1082] },
+            { q: 'Gece 02:00\'den sonra göl kenarına gittin mi?', a: 'Sadece kapımın önündeki çamurları süpürdüm amirim, göle falan gitmedim!', difficulty: 3, category: 'yuzlestirme', relatedClues: [1081] },
+            { q: 'Mumlu iplikle boğulma izleri uyuşuyor mu?', a: 'Ben ip satmam, ayakkabı dikerim! Biri benden ip çaldıysa benim suçum ne?!', difficulty: 4, category: 'baski', relatedClues: [1083] },
             { q: 'Son sözün nedir Rasim Usta?', a: 'Ekrem\'e 5 çift çizme borcum vardı, öldürsem borcum mu silinecekti? Ben yapmadım!', difficulty: 5, category: 'son', relatedClues: [] }
         ]
     };
@@ -3019,25 +3027,32 @@ function askQuestionBackend(npcId, question) {
 
 // YEREL YAPAY ZEKA SERBEST SORU SORMA SİSTEMİ
 function askFreeAiQuestion() {
-    if (!activeNpcId) return;
+    const currentNpcId = window.activeNpcId || activeNpcId || parseInt(document.getElementById('interior-screen')?.getAttribute('data-npc-id'), 10);
+    if (!currentNpcId) {
+        console.warn("Soru sorulacak aktif NPC belirlenemedi.");
+        return;
+    }
+    activeNpcId = currentNpcId;
+    window.activeNpcId = currentNpcId;
+
     const inputEl = document.getElementById('npc-ai-input');
     if (!inputEl) return;
     const questionText = inputEl.value.trim();
     if (!questionText) return;
 
-    const askedCount = askedQuestionCount[activeNpcId] || 0;
+    const askedCount = askedQuestionCount[currentNpcId] || 0;
     if (askedCount >= 5) {
         showGlobalNotification('Uyarı', 'Bu NPC ile konuşma hakkınız doldu (5/5). Artık soru soramazsınız!', true);
         return;
     }
 
     inputEl.value = ''; // Temizle
-    askedQuestionCount[activeNpcId] = askedCount + 1;
-    updateQuestionIndicator(activeNpcId); // Anında kalan soru sayısını güncelle
+    askedQuestionCount[currentNpcId] = askedCount + 1;
+    updateQuestionIndicator(currentNpcId); // Anında kalan soru sayısını güncelle
 
-    let npc = NPC_DATA[activeNpcId];
-    if (activeNpcId > 100 && window.GOLGE_SEHIR_CONFIG) {
-        const bld = window.GOLGE_SEHIR_CONFIG.buildings.find(b => b.npcId == activeNpcId);
+    let npc = (window.NPC_DATA && window.NPC_DATA[currentNpcId]) || (typeof NPC_DATA !== 'undefined' ? NPC_DATA[currentNpcId] : null);
+    if (!npc && currentNpcId >= 100 && window.GOLGE_SEHIR_CONFIG && window.GOLGE_SEHIR_CONFIG.buildings) {
+        const bld = window.GOLGE_SEHIR_CONFIG.buildings.find(b => b.npcId == currentNpcId);
         if (bld) npc = bld.npc;
     }
     const chatArea = document.getElementById('npc-talk-chat');

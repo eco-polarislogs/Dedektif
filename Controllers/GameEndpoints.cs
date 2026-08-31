@@ -610,7 +610,9 @@ public static class GameEndpoints
         {
             try
             {
-                var npc = await repo.GetGolgeSehirNPCByIdAsync(request.NpcId);
+                NPC? npc = null;
+                try { npc = await repo.GetGolgeSehirNPCByIdAsync(request.NpcId); } catch { }
+                npc ??= GetFallbackGolgeNPC(request.NpcId);
                 if (npc == null) return Results.NotFound("Gölge Şehir şüphelisi bulunamadı.");
 
                 var npcs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
@@ -620,18 +622,25 @@ public static class GameEndpoints
                     ? request.GuiltyNpcId.Value
                     : (guiltyNpc?.NPCId ?? 101);
 
-                var cluesInBag = await repo.GetCluesInBagAsync();
-                var recentDialogs = await repo.GetRecentDialogLogsAsync(npc.NPCId, 5);
+                IEnumerable<Clue> cluesInBag = new List<Clue>();
+                try { cluesInBag = await repo.GetCluesInBagAsync(); } catch { }
+
+                IEnumerable<DialogLog> recentDialogs = new List<DialogLog>();
+                try { recentDialogs = await repo.GetRecentDialogLogsAsync(npc.NPCId, 5); } catch { }
 
                 var response = await aiService.GenerateResponseAsync(npc, guiltyId, request.Question, cluesInBag, recentDialogs);
 
-                if (response.TrustChange != 0)
+                try
                 {
-                    await repo.UpdateNPCTrustAsync(npc.NPCId, response.TrustChange);
-                    npc = await repo.GetGolgeSehirNPCByIdAsync(request.NpcId) ?? npc;
-                }
+                    if (response.TrustChange != 0)
+                    {
+                        await repo.UpdateNPCTrustAsync(npc.NPCId, response.TrustChange);
+                        npc = await repo.GetGolgeSehirNPCByIdAsync(request.NpcId) ?? npc;
+                    }
 
-                await repo.LogDialogWithCategoryAsync(npc.NPCId, request.Question, response.Dialogue, 1, "golge_ai");
+                    await repo.LogDialogWithCategoryAsync(npc.NPCId, request.Question, response.Dialogue, 1, "golge_ai");
+                }
+                catch { }
 
                 return Results.Ok(new
                 {

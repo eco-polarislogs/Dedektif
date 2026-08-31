@@ -159,9 +159,9 @@ public class LocalAiEngine : IAIService
             "katil kim", "kim katil", "katil kimdir", "kimdir katil", "katil kim sence", "sence katil kim", "kim sence katil", "kim yapti", "fail kim",
             "supheli kim", "kimden suphe", "sence kim yapti", "sence kim", "fikrin ne", "ne dusunuyorsun", "biri var mi suphelendigin", "kimi sucluyorsun", "kim olabilir");
 
-        // ÇELİŞKİ / YALAN SUÇLAMASI
+        // ÇELİŞKİ / YALAN SUÇLAMASI (Sadece spesifik yalan/çelişki ithamları)
         bool isLieAccusation = TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii,
-            "yalan", "yalan soyluyorsun", "celiski", "demin oyle demedin", "az once", "baska sey soyledin", "farkli soyledin", "inkar etme", "dogruyu soyle", "gercegi anlat");
+            "yalan soyluyorsun", "yalan atiyorsun", "yalan konusuyorsun", "yalan bu", "celiski var", "celisiyorsun", "demin oyle demedin", "az once baska", "baska sey soyledin", "farkli soyledin", "inkar etme");
 
         // ALİBİ / MEKAN SORGUSU
         bool isAlibiQuery = !isDirectAccusation && !isOpinionQuery && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii,
