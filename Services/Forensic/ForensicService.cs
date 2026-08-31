@@ -246,9 +246,44 @@ public class ForensicService : IForensicService
 
             foreach (var finding in currentFindings)
             {
-                bool isMatch = finding.Contains("EŞLEŞTİ!");
-                string badgeClass = isMatch ? "badge-match" : "badge-nomatch";
-                string badgeIcon = isMatch ? "<i class='fa-solid fa-circle-check'></i>" : "<i class='fa-solid fa-circle-exclamation'></i>";
+                bool isNoMatch = finding.Contains("DEĞİLDİR", StringComparison.OrdinalIgnoreCase) ||
+                                 finding.Contains("saptanmamıştır", StringComparison.OrdinalIgnoreCase) ||
+                                 finding.Contains("ilişkisi saptanmamıştır", StringComparison.OrdinalIgnoreCase);
+
+                bool isMatch = !isNoMatch && (finding.Contains("EŞLEŞTİ", StringComparison.OrdinalIgnoreCase) || finding.Contains("DOĞRULANMIŞTIR", StringComparison.OrdinalIgnoreCase) || finding.Contains("KESİNLEŞMİŞTİR", StringComparison.OrdinalIgnoreCase));
+
+                string badgeClass;
+                string badgeIcon;
+
+                if (isNoMatch)
+                {
+                    badgeClass = "badge-nomatch";
+                    badgeIcon = "<i class='fa-solid fa-triangle-exclamation'></i>";
+                }
+                else if (isMatch)
+                {
+                    bool isBloodOrPoison = finding.Contains("SEROLOJİK", StringComparison.OrdinalIgnoreCase) ||
+                                           finding.Contains("DNA", StringComparison.OrdinalIgnoreCase) ||
+                                           finding.Contains("KAN", StringComparison.OrdinalIgnoreCase) ||
+                                           finding.Contains("ZEHİR", StringComparison.OrdinalIgnoreCase) ||
+                                           finding.Contains("TOKSİN", StringComparison.OrdinalIgnoreCase);
+
+                    if (isBloodOrPoison)
+                    {
+                        badgeClass = "badge-match-blood";
+                        badgeIcon = "<i class='fa-solid fa-droplet'></i>";
+                    }
+                    else
+                    {
+                        badgeClass = "badge-match-written";
+                        badgeIcon = "<i class='fa-solid fa-circle-check'></i>";
+                    }
+                }
+                else
+                {
+                    badgeClass = "badge-nomatch";
+                    badgeIcon = "<i class='fa-solid fa-triangle-exclamation'></i>";
+                }
 
                 reportHtml += $@"
                 <div class='autopsy-finding-card {badgeClass}'>

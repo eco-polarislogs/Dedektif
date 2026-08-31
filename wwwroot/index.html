@@ -12,9 +12,9 @@
         rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css?v=500">
+    <link rel="stylesheet" href="css/style.css?v=502">
     <!-- Gölge Şehir İzole Stil Dosyası -->
-    <link rel="stylesheet" href="css/towns/golge_sehir/golge_sehir.css?v=600">
+    <link rel="stylesheet" href="css/towns/golge_sehir/golge_sehir.css?v=602">
     <link
         href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kalam:wght@400;700&family=Sedgwick+Ave&display=swap"
         rel="stylesheet">
@@ -201,7 +201,7 @@
             <div class="helper-modal-body">
                 <div class="helper-speech-bubble">
                     <i class="fa-solid fa-quote-left helper-quote-icon"></i>
-                    <p id="helper-advice-text">Amirims, kasabadaki 5 binanın tamamını incelemeli, delilleri toplamalı ve
+                    <p id="helper-advice-text">Amirim, kasabadaki 5 binanın tamamını incelemeli, delilleri toplamalı ve
                         şüphelileri sorgulamalısınız. Adli Tıp otopsi raporu hazır olduğunda harita ekranından hemen
                         inceleyin!</p>
                 </div>
@@ -290,13 +290,15 @@
                 <!-- Yeşil İpucu Mesaj Kutusu ve Ayrı Ayrı Adli Tıbba Gönder Butonları -->
                 <div id="forensic-finding-box" class="forensic-finding-box hidden">
                     <div id="forensic-blood-item" class="forensic-finding-item hidden">
-                        <div id="forensic-blood-text" class="forensic-item-text"><i class="fa-solid fa-droplet text-red"></i> KAN LEKESİ BULUNDU</div>
+                        <div id="forensic-blood-text" class="forensic-item-text"><i
+                                class="fa-solid fa-droplet text-red"></i> KAN LEKESİ BULUNDU</div>
                         <button id="send-blood-btn" class="btn btn-send-forensics btn-blood">
                             <i class="fa-solid fa-paper-plane"></i> KAN LEKESİNİ ADLİ TIBBA GÖNDER
                         </button>
                     </div>
                     <div id="forensic-fingerprint-item" class="forensic-finding-item hidden" style="margin-top: 10px;">
-                        <div id="forensic-fingerprint-text" class="forensic-item-text"><i class="fa-solid fa-fingerprint text-cyan"></i> PARMAK İZİ BULUNDU</div>
+                        <div id="forensic-fingerprint-text" class="forensic-item-text"><i
+                                class="fa-solid fa-fingerprint text-cyan"></i> PARMAK İZİ BULUNDU</div>
                         <button id="send-fingerprint-btn" class="btn btn-send-forensics btn-fingerprint">
                             <i class="fa-solid fa-paper-plane"></i> PARMAK İZİNİ ADLİ TIBBA GÖNDER
                         </button>
@@ -368,10 +370,25 @@
             <!-- Remaining questions indicator -->
             <div id="npc-talk-stage" class="npc-talk-stage-indicator">Kalan: 5 soru</div>
 
-            <!-- STRESS BAR -->
-            <div class="npc-stress-container" title="NPC Stres Seviyesi - %100 olursa sizi kovar!">
-                <div class="npc-stress-label"><i class="fa-solid fa-heart-pulse"></i> STRES: <span
-                        id="npc-stress-pct">0%</span></div>
+            <!-- STRESS & VITALS MONITOR (EKG / NABIZ / SEMPTOM PANELİ) -->
+            <div class="npc-stress-container" id="npc-vitals-monitor" title="Şüpheli Fiziksel Stres ve Nabız Monitörü">
+                <div class="vitals-header">
+                    <div class="vitals-bpm-box">
+                        <i class="fa-solid fa-heart-pulse vitals-heart-icon"></i>
+                        <span id="npc-bpm-val" class="vitals-bpm-val">72</span> <span class="vitals-bpm-unit">BPM</span>
+                    </div>
+                    <div class="vitals-symptom-tag" id="npc-symptom-tag">
+                        <i class="fa-solid fa-face-meh"></i> <span>Sakin</span>
+                    </div>
+                    <div class="npc-stress-label">STRES: <span id="npc-stress-pct">0%</span></div>
+                </div>
+                <!-- EKG Monitör Dalgası -->
+                <div class="vitals-ecg-canvas-wrapper">
+                    <svg class="vitals-ecg-svg" viewBox="0 0 200 30">
+                        <path class="vitals-ecg-line"
+                            d="M0 15 L30 15 L35 8 L40 22 L45 2 L50 28 L55 15 L90 15 L95 8 L100 22 L105 2 L110 28 L115 15 L150 15 L155 8 L160 22 L165 2 L170 28 L175 15 L200 15" />
+                    </svg>
+                </div>
                 <div class="npc-stress-track">
                     <div id="npc-stress-fill" class="npc-stress-fill" style="width: 0%;"></div>
                 </div>
@@ -516,21 +533,29 @@
     <!-- 13. GLOBAL NOTIFICATION & CONFIRMATION MESSAGE BOX MODAL -->
     <div id="global-notification-modal" class="modal-backdrop hidden" style="z-index: 9999;">
         <div class="notification-card" id="game-messagebox-card">
-            <div class="notification-icon pulse-anim" id="game-messagebox-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+            <div class="notification-icon pulse-anim" id="game-messagebox-icon"><i
+                    class="fa-solid fa-envelope-open-text"></i></div>
             <h3 id="global-notification-title">YENİ BİLGİ!</h3>
-            <p id="global-notification-text">Adli Tıp Merkezi'nden Otopsi Raporu geldi! Harita ekranındaki rapora tıklayarak inceleyebilirsiniz.</p>
+            <p id="global-notification-text">Adli Tıp Merkezi'nden Otopsi Raporu geldi! Harita ekranındaki rapora
+                tıklayarak inceleyebilirsiniz.</p>
             <div id="game-messagebox-actions" style="display:flex; gap:12px; justify-content:center; margin-top:20px;">
-                <button id="messagebox-cancel-btn" class="btn btn-outline hidden" style="flex:1;"><i class="fa-solid fa-xmark"></i> Hayır / İptal</button>
-                <button id="notification-ok-btn" class="btn btn-primary btn-full" style="flex:1;"><i class="fa-solid fa-check"></i> Anladım</button>
+                <button id="messagebox-cancel-btn" class="btn btn-outline hidden" style="flex:1;"><i
+                        class="fa-solid fa-xmark"></i> Hayır / İptal</button>
+                <button id="notification-ok-btn" class="btn btn-primary btn-full" style="flex:1;"><i
+                        class="fa-solid fa-check"></i> Anladım</button>
             </div>
         </div>
     </div>
 
     <!-- 13.5 KASABALI EVİ (FEHMİ BEY) ÖZEL KAPI VİDEOSU SAHNESİ (GENİŞ SİNEMATİK ÇERÇEVE) -->
-    <div id="fehmi-door-animation-modal" class="modal-backdrop hidden" style="z-index: 9500; background: rgba(5,6,8,0.96); backdrop-filter: blur(8px);">
-        <div class="fehmi-door-stage" style="position:relative; width:1020px; height:820px; max-width:96vw; max-height:92vh; border:4px solid #f59e0b; border-radius:18px; overflow:hidden; box-shadow:0 0 70px rgba(245,158,11,0.6), 0 30px 90px rgba(0,0,0,0.98); background:#000;">
+    <div id="fehmi-door-animation-modal" class="modal-backdrop hidden"
+        style="z-index: 9500; background: rgba(5,6,8,0.96); backdrop-filter: blur(8px);">
+        <div class="fehmi-door-stage"
+            style="position:relative; width:1020px; height:820px; max-width:96vw; max-height:92vh; border:4px solid #f59e0b; border-radius:18px; overflow:hidden; box-shadow:0 0 70px rgba(245,158,11,0.6), 0 30px 90px rgba(0,0,0,0.98); background:#000;">
             <!-- Bunu Video Haline Getir MP4 Dosyası -->
-            <video id="fehmi-door-video" playsinline preload="auto" style="width:100%; height:100%; object-fit:contain; background:#000; display:block;" src="images/towns/golge_sehir/bunu_video_haline_getir.mp4"></video>
+            <video id="fehmi-door-video" playsinline preload="auto"
+                style="width:100%; height:100%; object-fit:contain; background:#000; display:block;"
+                src="images/towns/golge_sehir/bunu_video_haline_getir.mp4"></video>
         </div>
     </div>
 
@@ -615,8 +640,11 @@
 
     <!-- Male Mumble -->
     <audio id="mumble-male" preload="auto" src="https://actions.google.com/sounds/v1/foley/shoe_step_wood.ogg"></audio>
-    <!-- Female Mumble -->
-    <audio id="mumble-female" preload="auto" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg"></audio>
+    <!-- Female Mumble (Gerçekçi Fısıltı / Mırıltı) -->
+    <audio id="mumble-female" preload="auto" src="https://actions.google.com/sounds/v1/foley/cloth_movement.ogg"></audio>
+
+    <!-- Judge Gavel Strike (Hakim Tokmak Sesi) -->
+    <audio id="gavel-sound" preload="auto" src="https://actions.google.com/sounds/v1/foley/wood_hit_heavy.ogg"></audio>
 
     <!-- Typewriter Key -->
     <audio id="typewriter-sound" preload="auto"
@@ -639,9 +667,9 @@
     </div>
 
     <!-- Gölge Şehir İzole Modül Dosyaları -->
-    <script src="js/towns/golge_sehir/GolgeSehirConfig.js?v=801?v=800"></script>
-    <script src="js/towns/golge_sehir/GolgeSehirEngine.js?v=801?v=800"></script>
-    <script src="js/app.js?v=801"></script>
+    <script src="js/towns/golge_sehir/GolgeSehirConfig.js?v=813"></script>
+    <script src="js/towns/golge_sehir/GolgeSehirEngine.js?v=813"></script>
+    <script src="js/app.js?v=813"></script>
 </body>
 
 </html>

@@ -48,11 +48,21 @@ window.GolgeSehirEngine = {
     resetGolgeState: function () {
         this.currentActiveTown = 'gizemli';
         window.currentActiveTown = 'gizemli';
+        window.hasEnteredGolgeSehir = false;
+        this.hasShownDualIntro = false;
+        this.introDialogCompleted = false;
+        this.dualDialogStep = 0;
+        this.visitedGolgeBuildings.clear();
         document.body.classList.remove('golge-sehir-theme');
         this.clearGolgeSehirMap();
         const successModal = document.getElementById('golge-success-modal');
         if (successModal) successModal.classList.add('hidden');
         if (window.golgeTypewriterTimer) clearTimeout(window.golgeTypewriterTimer);
+
+        // Kasabaya özel otopsi ve lab durumunu tazele
+        if (typeof window.checkAutopsyConditions === 'function') {
+            window.checkAutopsyConditions();
+        }
     },
 
     // 1. ESKİ KARANLIK NOİR DEDEKTİF TEBRİK ZARFI & KART ANİMASYONU
@@ -140,6 +150,33 @@ window.GolgeSehirEngine = {
         document.body.classList.add('golge-sehir-theme');
         this.registerGolgeSehirData();
 
+        // Kasabaya özel delil ve otopsi durumunu sıfırla / izole et
+        if (Array.isArray(window.currentBag)) {
+            window.currentBag = window.currentBag.filter(c => c.id >= 1000);
+        }
+        window.isAutopsyReady = false;
+        window.isAutopsyTimerStarted = false;
+        if (typeof isAutopsyReady !== 'undefined') isAutopsyReady = false;
+        if (typeof isAutopsyTimerStarted !== 'undefined') isAutopsyTimerStarted = false;
+        if (typeof autopsyTimer !== 'undefined' && autopsyTimer) {
+            clearInterval(autopsyTimer);
+            autopsyTimer = null;
+        }
+
+        // Her yeni Gölge Şehir açılışında katili anında rastgele sıfırla
+        fetch('/api/golge-sehir/reset', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.guiltyNpcId) {
+                    window.guiltyNpcId = data.guiltyNpcId;
+                    if (typeof guiltyNpcId !== 'undefined') {
+                        guiltyNpcId = data.guiltyNpcId;
+                    }
+                    console.log("🎲 Gölge Şehir Rastgele Yeni Katil Belirlendi:", data.guiltyNpcId);
+                }
+            })
+            .catch(err => console.error("Gölge Şehir katil sıfırlama hatası:", err));
+
         let modal = document.getElementById('golge-success-modal');
         if (!modal) {
             this.createEnvelopeSuccessModal();
@@ -178,6 +215,23 @@ window.GolgeSehirEngine = {
         window.hasEnteredGolgeSehir = true;
         document.body.classList.add('golge-sehir-theme');
         this.registerGolgeSehirData();
+
+        // Kasabaya özel çanta ve otopsi izolasyonu
+        if (Array.isArray(window.currentBag)) {
+            window.currentBag = window.currentBag.filter(c => c.id >= 1000);
+            if (typeof currentBag !== 'undefined') currentBag = window.currentBag;
+        }
+        window.isAutopsyReady = false;
+        window.isAutopsyTimerStarted = false;
+        if (typeof isAutopsyReady !== 'undefined') isAutopsyReady = false;
+        if (typeof isAutopsyTimerStarted !== 'undefined') isAutopsyTimerStarted = false;
+        if (typeof autopsyTimer !== 'undefined' && autopsyTimer) {
+            clearInterval(autopsyTimer);
+            autopsyTimer = null;
+        }
+        if (typeof window.checkAutopsyConditions === 'function') {
+            window.checkAutopsyConditions();
+        }
 
         // Her yeni Gölge Şehir oturumunda 101-108 arası RASTGELE yeni katil belirle
         fetch('/api/golge-sehir/reset', { method: 'POST' })
@@ -355,6 +409,12 @@ window.GolgeSehirEngine = {
         document.body.classList.add('golge-sehir-theme');
         this.registerGolgeSehirData();
 
+        // Kasabaya özel çanta ve otopsi durumunu izole et
+        if (Array.isArray(window.currentBag)) {
+            window.currentBag = window.currentBag.filter(c => c.id >= 1000);
+            if (typeof currentBag !== 'undefined') currentBag = window.currentBag;
+        }
+
         const townMapStage = document.getElementById('town-map-stage');
         const townMapScreen = document.getElementById('town-map-screen');
         const worldMapScreen = document.getElementById('world-map-screen');
@@ -366,16 +426,31 @@ window.GolgeSehirEngine = {
                 if (worldMapScreen) worldMapScreen.classList.add('hidden');
                 townMapScreen.classList.remove('hidden');
                 this.applyGolgeSehirState();
+                if (typeof window.checkAutopsyConditions === 'function') {
+                    window.checkAutopsyConditions();
+                }
             });
         } else {
             if (worldMapScreen) worldMapScreen.classList.add('hidden');
             townMapScreen.classList.remove('hidden');
             this.applyGolgeSehirState();
+            if (typeof window.checkAutopsyConditions === 'function') {
+                window.checkAutopsyConditions();
+            }
         }
     },
 
     applyGolgeSehirState: function () {
         this.registerGolgeSehirData();
+
+        // Yağmur ve arka plan müziğinin devam ettiğinden emin ol
+        const isGameMuted = (typeof window.isMuted !== 'undefined') ? window.isMuted : (localStorage.getItem('gameMuted') === 'true');
+        if (!isGameMuted) {
+            const bgMusic = document.getElementById('bg-music');
+            const rainSound = document.getElementById('rain-sound');
+            if (bgMusic && typeof window.playLoopSound === 'function') window.playLoopSound(bgMusic, 0.3);
+            if (rainSound && typeof window.playLoopSound === 'function') window.playLoopSound(rainSound, 0.5);
+        }
 
         const townMapScreen = document.getElementById('town-map-screen');
         const townMapStage = document.getElementById('town-map-stage');
@@ -577,17 +652,22 @@ window.GolgeSehirEngine = {
             }
         };
 
+        const finishIntro = () => {
+            this.introDialogCompleted = true;
+            window.introDialogCompleted = true;
+            const box = document.getElementById('cinematic-helper-box');
+            if (box) {
+                box.classList.remove('rifat-speaking');
+                box.classList.add('cetin-speaking');
+            }
+        };
+
         const showNext = () => {
             if (this.dualDialogStep < dialogs.length) {
                 updateBubbleUI(this.dualDialogStep);
                 this.dualDialogStep++;
             } else {
-                this.introDialogCompleted = true;
-                const box = document.getElementById('cinematic-helper-box');
-                if (box) {
-                    box.classList.remove('rifat-speaking');
-                    box.classList.add('cetin-speaking');
-                }
+                finishIntro();
             }
         };
 
@@ -608,7 +688,7 @@ window.GolgeSehirEngine = {
                 } else if (this.dualDialogStep < dialogs.length) {
                     showNext();
                 } else {
-                    this.introDialogCompleted = true;
+                    finishIntro();
                 }
             };
         }
@@ -796,11 +876,42 @@ window.GolgeSehirEngine = {
 
                 animModal.classList.remove('hidden');
                 doorVideo.currentTime = 0;
-                doorVideo.muted = false; // Video sesini çal
+                doorVideo.muted = true; // Video içindeki tüm konuşma/bağırma sesini tamamen sustur
+
+                const isGameMuted = (typeof window.isMuted !== 'undefined') ? window.isMuted : (localStorage.getItem('gameMuted') === 'true');
+
+                // 1. AŞAMA: Kapı Tıklatma / Vurma Sesi (0. sn)
+                if (!isGameMuted) {
+                    const doorKnock = document.getElementById('door-knock');
+                    if (doorKnock && typeof window.playSound === 'function') {
+                        window.playSound(doorKnock, 0.7);
+                    }
+                }
+
+                // 2. AŞAMA: Kapı Açılma Gıcırtısı (0.6 sn sonra kapı aralanırken)
+                setTimeout(() => {
+                    const isMutedCheck = (typeof window.isMuted !== 'undefined') ? window.isMuted : (localStorage.getItem('gameMuted') === 'true');
+                    if (!isMutedCheck) {
+                        const doorCreak = document.getElementById('door-creak');
+                        if (doorCreak && typeof window.playSound === 'function') {
+                            window.playSound(doorCreak, 0.7);
+                        }
+                    }
+                }, 600);
 
                 const proceedToWarning = () => {
                     animModal.classList.add('hidden');
                     doorVideo.pause();
+
+                    // 3. AŞAMA: Kapı Yüze Çarpılma / Kapanma Sesi
+                    const isMutedNow = (typeof window.isMuted !== 'undefined') ? window.isMuted : (localStorage.getItem('gameMuted') === 'true');
+                    if (!isMutedNow) {
+                        const doorClose = document.getElementById('door-close');
+                        if (doorClose && typeof window.playSound === 'function') {
+                            window.playSound(doorClose, 0.8);
+                        }
+                    }
+
                     window.showGameMessageBox({
                         title: "KAPI YÜZÜNÜZE KAPANDI!",
                         message: "Fehmi Bey öfkeyle kapıyı yüzünüze kapattı! Yine de içeri zorla girmek ve evi aramak istiyor musunuz?",
@@ -824,7 +935,6 @@ window.GolgeSehirEngine = {
                 if (playPromise !== undefined) {
                     playPromise.catch(e => {
                         console.warn("Video otomatik oynatılamadı, tıklandığında geçiliyor:", e);
-                        // Eğer otomatik oynatma engellenirse video tıklandığında başlat
                         doorVideo.onclick = () => doorVideo.play();
                     });
                 }
@@ -845,7 +955,23 @@ window.GolgeSehirEngine = {
         if (intScreen) intScreen.classList.remove('hidden');
 
         const talkNameEl = document.getElementById('talk-npc-name');
-        if (talkNameEl) talkNameEl.innerText = bld.npc.name + ' ile Konuş';
+        const talkBtn = document.getElementById('talk-npc-btn');
+        const isNpcInnocent = (window.innocentNpcIds && window.innocentNpcIds.has(bld.npcId)) || (typeof innocentNpcIds !== 'undefined' && innocentNpcIds.has(bld.npcId));
+
+        if (talkNameEl) {
+            talkNameEl.innerText = isNpcInnocent ? `${bld.npc.name} (Masum İlan Edildi)` : `${bld.npc.name} ile Konuş`;
+        }
+        if (talkBtn) {
+            if (isNpcInnocent) {
+                talkBtn.style.opacity = '0.5';
+                talkBtn.style.cursor = 'not-allowed';
+                talkBtn.title = 'Bu karakter masum ilan edildiği için sorgulanamaz.';
+            } else {
+                talkBtn.style.opacity = '1';
+                talkBtn.style.cursor = 'pointer';
+                talkBtn.title = '';
+            }
+        }
 
         if (typeof window.playSound === 'function' && window.doorCreak) {
             window.playSound(window.doorCreak, 0.7);

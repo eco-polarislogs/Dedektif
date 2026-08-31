@@ -24,15 +24,19 @@ class Program
         Console.OutputEncoding = System.Text.Encoding.UTF8;
 
         var config = LoadConfiguration();
-        var connectionString = config.ConnectionString;
+        var isPostgres = config.DatabaseProvider?.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase) == true;
+        var connectionString = isPostgres && !string.IsNullOrEmpty(config.PostgresConnectionString)
+            ? config.PostgresConnectionString
+            : config.ConnectionString;
+
         var geminiApiKey = config.GeminiApiKey;
         var geminiModel = config.GeminiModel;
 
         if (string.IsNullOrEmpty(geminiApiKey))
             geminiApiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY") ?? "";
 
-        // Veritabanı kontrolü ve Seed
-        var repository = new DatabaseRepository(connectionString);
+        // Veritabanı kontrolü ve Seed (PostgreSQL veya SQLite)
+        var repository = new DatabaseRepository(connectionString, config.DatabaseProvider);
         bool dbConnected = await repository.TestConnectionAsync();
 
         if (dbConnected)
@@ -47,16 +51,13 @@ class Program
                 await repository.SeedHelperMessagesAsync();
                 await repository.EnsureGolgeSehirTablesAsync();
                 
-                // Force AI reseed for Golge Sehir
                 using var db = repository.CreateConnection();
-                await Dapper.SqlMapper.ExecuteAsync(db, "DELETE FROM NPCDialogues");
-                
-                var seeder = new AISeeder(repository);
-                await seeder.Seed1000PlusDialoguesAsync();
+                var count = await Dapper.SqlMapper.ExecuteScalarAsync<int>(db, "SELECT COUNT(*) FROM NPCDialogues");
+                Console.WriteLine($"  🧠 Yerel AI Veritabanında {count:N0} adet senaryo ve diyalog aktif!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"  ⚠️ Yardımcı tablo oluşturma hatası (ihmal edildi): {ex.Message}");
+                Console.WriteLine($"  ⚠️ Yardımcı tablo oluşturma hatası: {ex.Message}");
             }
         }
 
@@ -80,7 +81,7 @@ class Program
 
         // Dependency Injection Servis Kayıtları
         builder.Services.AddSingleton<IGameRepository>(repository);
-        builder.Services.AddSingleton<IAIService, LocalAiEngine>();
+        builder.Services.AddSingleton<IAIService>(sp => new LocalAiEngine(repository, geminiApiKey, geminiModel));
         builder.Services.AddSingleton<IForensicService, ForensicService>();
 
         // CORS Ekle
@@ -151,7 +152,9 @@ public class AccuseRequest
 
 public class AppConfig
 {
-    public string ConnectionString { get; set; } = "Server=(localdb)\\MSSQLLocalDB;Database=DedektiflikRPG;Trusted_Connection=true;TrustServerCertificate=true;";
+    public string DatabaseProvider { get; set; } = "PostgreSQL";
+    public string PostgresConnectionString { get; set; } = "Host=localhost;Port=5432;Database=dedektiflik_rpg;Username=postgres;Password=postgres";
+    public string ConnectionString { get; set; } = "Data Source=Data/dedektiflik.db";
     public string GeminiApiKey { get; set; } = "";
     public string GeminiModel { get; set; } = "gemini-2.0-flash";
 }

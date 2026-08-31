@@ -30,6 +30,7 @@ const doorClose = document.getElementById('door-close');
 const mumbleMale = document.getElementById('mumble-male');
 const mumbleFemale = document.getElementById('mumble-female');
 const typewriterSound = document.getElementById('typewriter-sound');
+const gavelSound = document.getElementById('gavel-sound');
 
 // === GAME STATE ===
 let currentBag = [];
@@ -87,25 +88,30 @@ const SCENE_OBJECTS = {
     1: [ // Kasap Hasan
         {
             id: 1, name: 'Satır', desc: 'Tezgaha sertçe saplanmış paslı bir satır.', top: '75%', left: '45%', img: 'images/bloody_cleaver.png',
-            fingerprintSpot: { xRatio: 0.30, yRatio: 0.72, angle: 0 }, bloodSpot: { xRatio: 0.68, yRatio: 0.28, angle: 0 }
+            fingerprintSpot: { xRatio: 0.22, yRatio: 0.82, angle: 0 }, // Sap kısmında
+            bloodSpot: { xRatio: 0.78, yRatio: 0.22, angle: 0 }        // Keskin ağız ucunda
         },
         {
             id: 2, name: 'Kara Kaplı Defter', desc: 'Veresiye listesinde kurbanın isminin üzeri kırmızı kalemle çizilmiş.', top: '65%', left: '30%', img: 'images/black_notebook.png',
-            fingerprintSpot: { xRatio: 0.26, yRatio: 0.32, angle: 0 }, bloodSpot: null
+            fingerprintSpot: { xRatio: 0.18, yRatio: 0.22, angle: 0 }, // Sol üst köşe
+            bloodSpot: null
         },
         {
             id: 3, name: 'Kasap Önlüğü', desc: 'Askının arkasında asılı duran kasap önlüğü.', top: '40%', left: '10%', img: 'images/torn_apron.png', isHidden: true,
-            fingerprintSpot: null, bloodSpot: { xRatio: 0.62, yRatio: 0.64, angle: 0 }
+            fingerprintSpot: null,
+            bloodSpot: { xRatio: 0.72, yRatio: 0.68, angle: 0 }        // Alt sağ cep bölgesi
         }
     ],
     2: [ // Eczane (Selma)
         {
             id: 4, name: 'İlaç Şişesi', desc: 'İlaç raflarının arkasına konulmuş boş cam şişe.', top: '55%', left: '75%', img: 'images/empty_medicine_bottle.png', isHidden: true,
-            fingerprintSpot: { xRatio: 0.44, yRatio: 0.54, angle: 0 }, bloodSpot: null
+            fingerprintSpot: { xRatio: 0.68, yRatio: 0.38, angle: 0 }, // Camın sağ omuz eğrisi
+            bloodSpot: null
         },
         {
             id: 5, name: 'Reçete Defteri', desc: 'Sayfalarında eksikler bulunan reçete kayıt defteri.', top: '75%', left: '40%', img: 'images/prescription_notebook.png',
-            fingerprintSpot: { xRatio: 0.28, yRatio: 0.44, angle: 0 }, bloodSpot: null
+            fingerprintSpot: { xRatio: 0.75, yRatio: 0.78, angle: 0 }, // Sayfa alt çevirme köşesi
+            bloodSpot: null
         },
         {
             id: 6, name: 'Bitki Yaprağı', desc: 'Tezgah altında kurumaya bırakılmış yabani bir bitki türü.', top: '15%', left: '45%', img: 'images/poison_ivy.png',
@@ -115,43 +121,52 @@ const SCENE_OBJECTS = {
     3: [ // Muhtarlık (Kemal)
         {
             id: 7, name: 'Tehdit Mektubu', desc: 'Muhtarın masa üstünde kurbana yazılmış, henüz gönderilmemiş mektup.', top: '56%', left: '42%', img: 'images/threat_letter.png',
-            fingerprintSpot: { xRatio: 0.72, yRatio: 0.22, angle: 0 }, bloodSpot: null
+            fingerprintSpot: { xRatio: 0.82, yRatio: 0.18, angle: 0 }, // Üst sağ mühür kenarı
+            bloodSpot: null
         },
         {
             id: 8, name: 'Okuma Gözlüğü', desc: 'Masa üzerinde bulunmuş okuma gözlüğü.', top: '58%', left: '54%', img: 'images/broken_glasses.png',
-            fingerprintSpot: { xRatio: 0.32, yRatio: 0.48, angle: 0 }, bloodSpot: { xRatio: 0.68, yRatio: 0.42, angle: 0 }
+            fingerprintSpot: { xRatio: 0.22, yRatio: 0.45, angle: 0 }, // Sol gözlük sapı
+            bloodSpot: { xRatio: 0.76, yRatio: 0.35, angle: 0 }        // Kırık sağ cam çatlağı
         },
         {
             id: 9, name: 'Demir Kasa', desc: 'Arka köşede duran demir kasa.', top: '44%', left: '72%', img: 'images/hidden_safe.png', isHidden: true,
-            fingerprintSpot: { xRatio: 0.62, yRatio: 0.40, angle: 0 }, bloodSpot: null
+            fingerprintSpot: { xRatio: 0.35, yRatio: 0.62, angle: 0 }, // Şifre çarkının altı
+            bloodSpot: null
         }
     ],
     4: [ // Karakol (Komiser Güneş)
         {
             id: 10, name: 'Polis Rozeti', desc: 'Olay yerinde bulunan, numarası kazınmış bir polis rozeti.', top: '65%', left: '40%', img: 'images/police_badge.png',
-            fingerprintSpot: { xRatio: 0.50, yRatio: 0.38, angle: 0 }, bloodSpot: null
+            fingerprintSpot: { xRatio: 0.65, yRatio: 0.28, angle: 0 }, // Yıldızın sağ ucu
+            bloodSpot: null
         },
         {
             id: 11, name: 'Evrak Dosyası', desc: 'Evrak dolabında bulunan resmi bir dosya.', top: '45%', left: '80%', img: 'images/evidence_file.png', isHidden: true,
-            fingerprintSpot: { xRatio: 0.78, yRatio: 0.25, angle: 0 }, bloodSpot: null
+            fingerprintSpot: { xRatio: 0.82, yRatio: 0.20, angle: 0 }, // Dosya kapağı tutamağı
+            bloodSpot: null
         },
         {
             id: 12, name: 'Kayıp Düğme', desc: 'Pahalı bir paltonun kopmuş düğmesi.', top: '85%', left: '60%', img: 'images/missing_button.png',
-            fingerprintSpot: { xRatio: 0.42, yRatio: 0.45, angle: 0 }, bloodSpot: { xRatio: 0.58, yRatio: 0.55, angle: 0 }
+            fingerprintSpot: { xRatio: 0.28, yRatio: 0.32, angle: 0 }, // Kenar çentik
+            bloodSpot: { xRatio: 0.72, yRatio: 0.68, angle: 0 }        // İplik deliği kenarı
         }
     ],
     5: [ // Terzi (Yahya)
         {
             id: 13, name: 'İplik Makarası', desc: 'Tezgahta bulunan sıradan bir iplik makarası.', top: '75%', left: '50%', img: 'images/thread_spool.png',
-            fingerprintSpot: { xRatio: 0.32, yRatio: 0.35, angle: 0 }, bloodSpot: { xRatio: 0.68, yRatio: 0.62, angle: 0 }
+            fingerprintSpot: { xRatio: 0.25, yRatio: 0.28, angle: 0 }, // Ahşap makara başlığı
+            bloodSpot: { xRatio: 0.75, yRatio: 0.65, angle: 0 }        // İpliğin alt katmanı
         },
         {
             id: 14, name: 'Kumaş Parçası', desc: 'Yere düşmüş ufak bir kumaş parçası.', top: '80%', left: '40%', img: 'images/torn_fabric.png',
-            fingerprintSpot: null, bloodSpot: { xRatio: 0.70, yRatio: 0.32, angle: 0 }
+            fingerprintSpot: null,
+            bloodSpot: { xRatio: 0.78, yRatio: 0.28, angle: 0 }        // Yırtık uç köşesi
         },
         {
             id: 15, name: 'Ceket Astarı', desc: 'Mankendeki ceketin iç kısmındaki astar dikişi.', top: '45%', left: '35%', img: 'images/hidden_pocket.png', isHidden: true,
-            fingerprintSpot: { xRatio: 0.55, yRatio: 0.35, angle: 0 }, bloodSpot: null
+            fingerprintSpot: { xRatio: 0.65, yRatio: 0.28, angle: 0 }, // Gizli cep kapağı
+            bloodSpot: null
         }
     ]
 };
@@ -320,14 +335,124 @@ function playSynthVoice(isFemale) {
     } catch (e) { console.log('Web Audio Hatası:', e); }
 }
 
+function playJudgeGavelTripleStrike() {
+    if (isMuted || window.isMuted) return;
+    try {
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    } catch (e) { }
+
+    // 3 Kere Tokmak Vuruşu: Tok... Tok... Tok! (Ağır Mahkeme Kürsüsü Vuruşları: 0.0s, 0.45s, 0.9s)
+    [0, 450, 900].forEach((delay, strikeIndex) => {
+        setTimeout(() => {
+            if (isMuted || window.isMuted) return;
+
+            // HTML5 Ses Çalımı (Hafif arka plan katkısı)
+            const gavelEl = document.getElementById('gavel-sound');
+            if (gavelEl) {
+                try {
+                    const clone = gavelEl.cloneNode();
+                    clone.volume = 0.5;
+                    clone.play().catch(() => { });
+                    clone.onended = () => clone.remove();
+                } catch (e) { }
+            }
+
+            // Web Audio API ile Ağır ve Olgun Masif Ahşap Hakim Tokmağı Sentezi
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const now = audioCtx.currentTime;
+
+                // 1. KATMAN: Derin Ahşap Gövde & Masa Titreşimi (Derin Sub & Low-Mid Bas Vuruşu)
+                const oscLow = audioCtx.createOscillator();
+                const gainLow = audioCtx.createGain();
+                const filterLow = audioCtx.createBiquadFilter();
+
+                oscLow.type = 'sine';
+                // Tok başlangıç frekansı 95Hz'den 28Hz'e inerek ağır masa titreşimi verir
+                oscLow.frequency.setValueAtTime(95, now);
+                oscLow.frequency.exponentialRampToValueAtTime(28, now + 0.32);
+
+                filterLow.type = 'lowpass';
+                filterLow.frequency.setValueAtTime(220, now);
+
+                gainLow.gain.setValueAtTime(0.95, now);
+                gainLow.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+                oscLow.connect(filterLow);
+                filterLow.connect(gainLow);
+                gainLow.connect(audioCtx.destination);
+
+                oscLow.start(now);
+                oscLow.stop(now + 0.32);
+
+                // 2. KATMAN: Tok Ahşap Tak Sesi (Ağır Meşe Ağacı Rezonansı)
+                const oscMid = audioCtx.createOscillator();
+                const gainMid = audioCtx.createGain();
+                const filterMid = audioCtx.createBiquadFilter();
+
+                oscMid.type = 'triangle';
+                oscMid.frequency.setValueAtTime(210, now);
+                oscMid.frequency.exponentialRampToValueAtTime(55, now + 0.16);
+
+                filterMid.type = 'bandpass';
+                filterMid.frequency.setValueAtTime(320, now);
+                filterMid.Q.setValueAtTime(2.5, now);
+
+                gainMid.gain.setValueAtTime(0.85, now);
+                gainMid.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+                oscMid.connect(filterMid);
+                filterMid.connect(gainMid);
+                gainMid.connect(audioCtx.destination);
+
+                oscMid.start(now);
+                oscMid.stop(now + 0.16);
+
+                // 3. KATMAN: Anlık Tok Vuruş Klak Sesi (Keskin ama Asla Tiz Olmayan Sert Temas)
+                const bufferSize = audioCtx.sampleRate * 0.04;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.008));
+                }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+
+                const noiseFilter = audioCtx.createBiquadFilter();
+                noiseFilter.type = 'lowpass';
+                noiseFilter.frequency.setValueAtTime(650, now); // Tizliği kırılmış tok ahşap darbesi
+
+                const noiseGain = audioCtx.createGain();
+                noiseGain.gain.setValueAtTime(0.5, now);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+                noise.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(audioCtx.destination);
+
+                noise.start(now);
+                noise.stop(now + 0.04);
+
+            } catch (err) {
+                console.log('Gavel synthesis error:', err);
+            }
+        }, delay);
+    });
+}
+window.playJudgeGavelTripleStrike = playJudgeGavelTripleStrike;
+
 function playSound(audioEl, volume = 0.5) {
-    if (!audioEl || isMuted) return;
+    if (!audioEl || isMuted || window.isMuted) return;
     try {
         audioEl.volume = Math.min(1, Math.max(0, volume));
         audioEl.currentTime = 0;
         audioEl.play().catch(e => console.log('Ses hatası:', e));
     } catch (e) { console.log('Ses hatası:', e); }
 }
+window.playSound = playSound;
+window.stopSound = stopSound;
 
 function playMumbleSound(audioEl, volume = 0.5) {
     if (!audioEl || isMuted) return;
@@ -340,13 +465,24 @@ function playMumbleSound(audioEl, volume = 0.5) {
 }
 
 function playLoopSound(audioEl, volume = 0.3) {
-    if (!audioEl || isMuted) return;
+    if (!audioEl || isMuted || window.isMuted) return;
     try {
         audioEl.volume = Math.min(1, Math.max(0, volume));
         audioEl.loop = true;
-        audioEl.play().catch(e => console.log('Ses hatası:', e));
+        const p = audioEl.play();
+        if (p !== undefined) {
+            p.catch(e => {
+                // Tarayıcı ilk tıklamada otomatik başlatmayı bekleyebilir
+                const resumeOnInteraction = () => {
+                    if (!isMuted && !window.isMuted) audioEl.play().catch(() => { });
+                    document.removeEventListener('click', resumeOnInteraction);
+                };
+                document.addEventListener('click', resumeOnInteraction, { once: true });
+            });
+        }
     } catch (e) { console.log('Ses hatası:', e); }
 }
+window.playLoopSound = playLoopSound;
 
 function stopSound(audioEl) {
     if (!audioEl) return;
@@ -360,22 +496,31 @@ function stopAllSounds() {
     [bgMusic, rainSound, thunderSound, chatterSound, doorCreak, doorClose, mumbleMale, mumbleFemale, typewriterSound].forEach(a => {
         if (a) { a.pause(); a.currentTime = 0; }
     });
+    const doorVideo = document.getElementById('fehmi-door-video');
+    if (doorVideo) {
+        doorVideo.muted = true;
+    }
 }
 
 function toggleMute() {
     isMuted = !isMuted;
+    window.isMuted = isMuted;
     localStorage.setItem('gameMuted', isMuted);
 
     const btn = document.getElementById('mute-toggle-btn');
     if (!btn) return;
 
+    const doorVideo = document.getElementById('fehmi-door-video');
+
     if (isMuted) {
         btn.classList.add('muted');
         btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
         stopAllSounds();
+        if (doorVideo) doorVideo.muted = true;
     } else {
         btn.classList.remove('muted');
         btn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        if (doorVideo) doorVideo.muted = true; // Video sesi her zaman sessiz (kapı foley sesleri harici çalınır)
         // Arka plan müziğini ve yağmuru tekrar başlat (eğer oyun başladıysa)
         if (!splashScreen || splashScreen.classList.contains('hidden')) {
             playLoopSound(bgMusic, 0.3);
@@ -385,11 +530,19 @@ function toggleMute() {
     }
 }
 
-// OTOPSİ VE ADLİ TİP SİSTEMİ (EN AZ 3 BİNA + EN AZ 3 LAB → 60 SANİYE KÖŞE SAYACI)
+// OTOPSİ VE ADLİ TIP SİSTEMİ (EN AZ 3/4 BİNA + EN AZ 3/4 LAB → 60 SANİYE KÖŞE SAYACI)
 let autopsyTimer = null;
 let autopsyTimeLeft = 60; // 1 dakika (60 saniye)
 let isAutopsyReady = false;
 let isAutopsyTimerStarted = false;
+window.isAutopsyReady = false;
+window.isAutopsyTimerStarted = false;
+
+// KASABALARA ÖZEL OTOPSİ VE LAB DURUM BAYRAKLARI
+window.isAutopsyReadyGizemli = false;
+window.isAutopsyTimerStartedGizemli = false;
+window.isAutopsyReadyGolge = false;
+window.isAutopsyTimerStartedGolge = false;
 
 // KASABALARA ÖZEL LAB SAYACLARI
 window.submittedForensicCountGizemli = window.submittedForensicCountGizemli || 0;
@@ -400,20 +553,35 @@ function checkAutopsyConditions() {
     const reqBuildings = isGolge ? 4 : 3;
     const reqLabs = isGolge ? 4 : 3;
 
-    // Aktif kasabaya göre uygun sayacı al
-    const currentLabCount = isGolge ? window.submittedForensicCountGolge : window.submittedForensicCountGizemli;
-    window.submittedForensicCount = currentLabCount;
+    // Aktif kasabanın otopsi hazır/sayaç durumlarını senkronize et
+    const currentIsReady = isGolge ? window.isAutopsyReadyGolge : window.isAutopsyReadyGizemli;
+    const currentIsTimerStarted = isGolge ? window.isAutopsyTimerStartedGolge : window.isAutopsyTimerStartedGizemli;
+    isAutopsyReady = currentIsReady || false;
+    window.isAutopsyReady = isAutopsyReady;
+    isAutopsyTimerStarted = currentIsTimerStarted || false;
+    window.isAutopsyTimerStarted = isAutopsyTimerStarted;
 
-    if (isGolge && window.GolgeSehirEngine) {
-        window.GolgeSehirEngine.updateGolgeSehirAutopsyUI();
-    }
+    // Aktif kasabaya göre uygun lab sayacını al
+    const currentLabCount = isGolge ? (window.submittedForensicCountGolge || 0) : (window.submittedForensicCountGizemli || 0);
+    window.submittedForensicCount = currentLabCount;
 
     // Aktif kasabaya göre girilmiş bina sayısını al
     let buildingCount = 0;
     if (isGolge) {
-        buildingCount = (window.GolgeSehirEngine && window.GolgeSehirEngine.visitedGolgeBuildings) ? window.GolgeSehirEngine.visitedGolgeBuildings.size : 0;
+        let uniqueGolgeVisited = new Set();
+        if (window.GolgeSehirEngine && window.GolgeSehirEngine.visitedGolgeBuildings) {
+            window.GolgeSehirEngine.visitedGolgeBuildings.forEach(id => uniqueGolgeVisited.add(id));
+        }
+        if (window.visitedBuildings) {
+            window.visitedBuildings.forEach(id => { if (id >= 101) uniqueGolgeVisited.add(id); });
+        }
+        buildingCount = uniqueGolgeVisited.size;
     } else {
-        buildingCount = window.visitedBuildings ? window.visitedBuildings.size : 0;
+        let uniqueGizemliVisited = new Set();
+        if (window.visitedBuildings) {
+            window.visitedBuildings.forEach(id => { if (id < 100) uniqueGizemliVisited.add(id); });
+        }
+        buildingCount = uniqueGizemliVisited.size;
     }
 
     const labCount = currentLabCount;
@@ -421,16 +589,20 @@ function checkAutopsyConditions() {
 
     updateForensicBadge();
 
+    if (isGolge && window.GolgeSehirEngine) {
+        window.GolgeSehirEngine.updateGolgeSehirAutopsyUI();
+    }
+
     if (!container) return;
 
-    if (isAutopsyReady) {
+    if (isAutopsyReady || window.isAutopsyReady) {
         container.classList.remove('hidden', 'pending', 'active-timer');
         container.classList.add('ready');
         container.innerHTML = '<i class="fa-solid fa-file-signature"></i> ✓ OTOPSİ RAPORU HAZIR! (TIKLA)';
         return;
     }
 
-    if (isAutopsyTimerStarted) return;
+    if (isAutopsyTimerStarted || window.isAutopsyTimerStarted) return;
 
     // Durumu ekrandaki göstergede göster
     container.classList.remove('hidden', 'ready', 'active-timer');
@@ -444,11 +616,21 @@ function checkAutopsyConditions() {
 }
 
 function start60SecAutopsyCountdown() {
-    if (isAutopsyTimerStarted || isAutopsyReady) return;
+    const isGolge = (window.currentActiveTown === 'golge_sehir');
+    const currentIsReady = isGolge ? window.isAutopsyReadyGolge : window.isAutopsyReadyGizemli;
+    const currentIsTimerStarted = isGolge ? window.isAutopsyTimerStartedGolge : window.isAutopsyTimerStartedGizemli;
+
+    if (currentIsTimerStarted || currentIsReady) return;
+
+    if (isGolge) {
+        window.isAutopsyTimerStartedGolge = true;
+    } else {
+        window.isAutopsyTimerStartedGizemli = true;
+    }
     isAutopsyTimerStarted = true;
+    window.isAutopsyTimerStarted = true;
     autopsyTimeLeft = 60;
 
-    const isGolge = (window.currentActiveTown === 'golge_sehir');
     const reqBuildings = isGolge ? 4 : 3;
     const reqLabs = isGolge ? 4 : 3;
 
@@ -479,6 +661,15 @@ function start60SecAutopsyCountdown() {
             clearInterval(autopsyTimer);
             autopsyTimer = null;
             isAutopsyReady = true;
+            window.isAutopsyReady = true;
+
+            if (window.currentActiveTown === 'golge_sehir') {
+                window.isAutopsyReadyGolge = true;
+                window.isAutopsyTimerStartedGolge = false;
+            } else {
+                window.isAutopsyReadyGizemli = true;
+                window.isAutopsyTimerStartedGizemli = false;
+            }
 
             if (container) {
                 container.classList.remove('active-timer', 'pending');
@@ -493,8 +684,18 @@ function start60SecAutopsyCountdown() {
 }
 
 function startAutopsyTimer() {
+    const isGolge = (window.currentActiveTown === 'golge_sehir');
+    if (isGolge) {
+        window.isAutopsyTimerStartedGolge = false;
+        window.isAutopsyReadyGolge = false;
+    } else {
+        window.isAutopsyTimerStartedGizemli = false;
+        window.isAutopsyReadyGizemli = false;
+    }
     isAutopsyTimerStarted = false;
+    window.isAutopsyTimerStarted = false;
     isAutopsyReady = false;
+    window.isAutopsyReady = false;
     autopsyTimeLeft = 60;
     if (autopsyTimer) clearInterval(autopsyTimer);
     autopsyTimer = null;
@@ -811,8 +1012,9 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
                     if (interiorScreen) interiorScreen.classList.add('hidden');
                     worldMapScreen.classList.remove('hidden');
 
-                    // UI & Envanter & Ziyaret Sıfırlama
+                    // UI & Envanter & Ziyaret & Masumiyet Sıfırlama (Yeni Oyun)
                     visitedBuildings.clear();
+                    innocentNpcIds.clear();
                     if (window.GolgeSehirEngine) {
                         window.GolgeSehirEngine.visitedGolgeBuildings.clear();
                         window.GolgeSehirEngine.clearGolgeSehirMap();
@@ -867,26 +1069,21 @@ document.querySelectorAll('.region-town').forEach(townEl => {
 
             window.currentActiveTown = 'golge_sehir';
             document.body.classList.add('golge-sehir-theme');
-            // Gölge Şehir delil havuzunu izole et
+            // Gölge Şehir delil havuzunu izole et (Gizemli Kasaba eşyalarını tamamen ayır)
             currentBag = currentBag.filter(c => c.id >= 1000);
+            window.currentBag = currentBag;
 
-            if (window.hasEnteredGolgeSehir) {
-                // Daha önce Gölge Şehir'e girilmişse direkt haritasına geç
-                if (window.GolgeSehirEngine) {
-                    window.GolgeSehirEngine.loadGolgeSehirMap();
-                }
-            } else {
-                // İlk girişte zarf ve intro akışını başlat
-                if (window.GolgeSehirEngine) {
-                    window.GolgeSehirEngine.showSuccessModalBeforeStory();
-                }
+            // Her yeni girişte yeni bir Gölge Şehir vaka oturumu başlat
+            if (window.GolgeSehirEngine) {
+                window.GolgeSehirEngine.showSuccessModalBeforeStory();
             }
         } else if (townId === 'gizemli') {
             // Gizemli Kasaba (1. Seviye) → Osman Bey Hikaye Ekranı
             window.currentActiveTown = 'gizemli';
             document.body.classList.remove('golge-sehir-theme');
-            // Gizemli Kasaba delil havuzunu izole et
+            // Gizemli Kasaba delil havuzunu izole et (Gölge Şehir eşyalarını tamamen ayır)
             currentBag = currentBag.filter(c => c.id < 1000);
+            window.currentBag = currentBag;
 
             if (window.GolgeSehirEngine) {
                 window.GolgeSehirEngine.resetGolgeState();
@@ -931,6 +1128,8 @@ function startTypewriter() {
     if (continueBtn) continueBtn.classList.add('hidden');
     if (cursor) cursor.style.display = 'inline-block';
 
+    playLoopSound(bgMusic, 0.3);
+    playLoopSound(rainSound, 0.5);
     playLoopSound(typewriterSound, 0.4);
 
     if (el) el.textContent = '';
@@ -1006,6 +1205,8 @@ document.getElementById('story-continue-btn').addEventListener('click', () => {
     triggerTransition(() => {
         storyIntroScreen.classList.add('hidden');
         townMapScreen.classList.remove('hidden');
+        playLoopSound(bgMusic, 0.3);
+        playLoopSound(rainSound, 0.5);
         startAutopsyTimer(); // Oyuna (Haritaya) geçildiğinde sayacı başlat
     });
     // Çetin harita girişinde konuşsun
@@ -1234,7 +1435,7 @@ function openBuilding(npcId) {
         if (bld) {
             window.GolgeSehirEngine.onBuildingClick(bld);
             const buildingName = bld.npc.building || bld.title;
-            setTimeout(() => triggerHelperMessage('building_enter', buildingName, true), 1500);
+            setTimeout(() => triggerHelperMessage('building_enter', buildingName, false), 1500);
             logAction('enter_building', npcId, buildingName);
             return;
         }
@@ -1290,7 +1491,24 @@ function openBuilding(npcId) {
         sideRight.style.display = 'none';
     }
 
-    document.getElementById('talk-npc-name').innerText = npc.name + ' ile Konuş';
+    const isNpcInnocent = (window.innocentNpcIds && window.innocentNpcIds.has(npcId)) || innocentNpcIds.has(npcId);
+    const talkBtn = document.getElementById('talk-npc-btn');
+    const talkNameEl = document.getElementById('talk-npc-name');
+
+    if (talkNameEl) {
+        talkNameEl.innerText = isNpcInnocent ? `${npc.name} (Masum İlan Edildi)` : `${npc.name} ile Konuş`;
+    }
+    if (talkBtn) {
+        if (isNpcInnocent) {
+            talkBtn.style.opacity = '0.5';
+            talkBtn.style.cursor = 'not-allowed';
+            talkBtn.title = 'Bu karakter masum ilan edildiği için sorgulanamaz.';
+        } else {
+            talkBtn.style.opacity = '1';
+            talkBtn.style.cursor = 'pointer';
+            talkBtn.title = '';
+        }
+    }
 
     // Load Hotspots (Sadece Gizemli Kasaba için hotspots-container'a yükle; Gölge Şehir'i GolgeSehirEngine yönetecek)
     const container = document.getElementById('hotspots-container');
@@ -1337,7 +1555,7 @@ function openBuilding(npcId) {
 
     // Çetin binaya girişte konuşsun
     const buildingName = npc.building;
-    setTimeout(() => triggerHelperMessage('building_enter', buildingName, true), 1500);
+    setTimeout(() => triggerHelperMessage('building_enter', buildingName, false), 1500);
     logAction('enter_building', npcId, npc.building);
 }
 
@@ -1377,6 +1595,18 @@ function openBuildingClueModal(obj, npcId) {
 document.getElementById('building-clue-take-btn')?.addEventListener('click', () => {
     if (!currentPendingObject) return;
 
+    // Kasaba delil kontrolü (Gölge Şehir'de sadece 1000+, Gizemli Kasaba'da <1000)
+    const isGolge = (window.currentActiveTown === 'golge_sehir');
+    if (isGolge && currentPendingObject.id < 1000) {
+        showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+        buildingClueModal.classList.add('hidden');
+        return;
+    } else if (!isGolge && currentPendingObject.id >= 1000) {
+        showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+        buildingClueModal.classList.add('hidden');
+        return;
+    }
+
     if (currentBag.some(b => b.id === currentPendingObject.id)) {
         showGlobalNotification('Bilgi', 'Bu delil zaten çantanızda bulunuyor.', false);
         buildingClueModal.classList.add('hidden');
@@ -1387,6 +1617,7 @@ document.getElementById('building-clue-take-btn')?.addEventListener('click', () 
         showCinematicHelper('Amirim! Çantamız doldu. Maksimum 5 delil taşıyabiliriz. Önce Adli Tıbba göndermeliyiz!', false);
     } else {
         currentBag.push(currentPendingObject);
+        window.currentBag = currentBag;
         logAction('collect_clue', currentPendingObject.id, currentPendingObject.name);
         saveGameState();
         checkAutopsyConditions();
@@ -1534,6 +1765,18 @@ function openClueInspect(obj, npcId, fromBag = false) {
 document.getElementById('clue-take-btn').addEventListener('click', () => {
     if (!currentPendingObject) return;
 
+    // Kasaba delil kontrolü (Gölge Şehir'de sadece 1000+, Gizemli Kasaba'da <1000)
+    const isGolge = (window.currentActiveTown === 'golge_sehir');
+    if (isGolge && currentPendingObject.id < 1000) {
+        showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+        clueInspectModal.classList.add('hidden');
+        return;
+    } else if (!isGolge && currentPendingObject.id >= 1000) {
+        showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+        clueInspectModal.classList.add('hidden');
+        return;
+    }
+
     if (currentBag.some(b => b.id === currentPendingObject.id)) {
         showGlobalNotification('Bilgi', 'Bu delil zaten çantanızda bulunuyor.', false);
         clueInspectModal.classList.add('hidden');
@@ -1544,9 +1787,10 @@ document.getElementById('clue-take-btn').addEventListener('click', () => {
         showCinematicHelper('Amirim! Çantamız doldu. Maksimum 5 delil taşıyabiliriz. Önce Adli Tıbba göndermeliyiz!', false);
     } else {
         currentBag.push(currentPendingObject);
+        window.currentBag = currentBag;
         logAction('collect_clue', currentPendingObject.id, currentPendingObject.name);
         saveGameState();
-        // Çetin Çantaya Delil Alındığında Otomatik Konuşsun
+        checkAutopsyConditions();
         showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' delilini çantaya attık! (${currentBag.length}/${MAX_BAG_SIZE} delil). Şüphelileri sorgularken bu delili ipucu olarak kullanabiliriz.`, false);
     }
     closeClueInspectAndReturn();
@@ -2138,12 +2382,16 @@ function setupForensicTools() {
 
                         const dist = Math.hypot(x - cx, y - cy);
                         if (dist < 130) {
+                            // Nesne boyutuyla tam orantılı dinamik leke boyutu
+                            const bloodSize = Math.min(72, Math.max(38, Math.min(imgRect.width, imgRect.height) * 0.24));
+                            const halfBlood = bloodSize / 2;
+
                             ctx.save();
                             ctx.globalCompositeOperation = 'source-over';
                             ctx.globalAlpha = Math.min(1.0, (130 - dist) / 60 + 0.4);
                             ctx.shadowColor = 'transparent';
                             ctx.shadowBlur = 0;
-                            ctx.drawImage(realBloodStain, cx - 40, cy - 40, 80, 80);
+                            ctx.drawImage(realBloodStain, cx - halfBlood, cy - halfBlood, bloodSize, bloodSize);
                             ctx.restore();
 
                             triggerForensicFinding(`KAN LEKESİ TESPİT EDİLDİ! (Biyolojik kan lekesi örneği izole edildi)`, 'blood');
@@ -2182,12 +2430,16 @@ function setupForensicTools() {
 
                         const dist = Math.hypot(x - cx, y - cy);
                         if (dist < 110) {
+                            // Nesne boyutuyla tam orantılı dinamik parmak izi boyutu
+                            const printSize = Math.min(60, Math.max(32, Math.min(imgRect.width, imgRect.height) * 0.20));
+                            const halfPrint = printSize / 2;
+
                             ctx.save();
                             ctx.globalCompositeOperation = 'source-over';
                             ctx.globalAlpha = 0.95;
                             ctx.shadowColor = 'transparent';
                             ctx.shadowBlur = 0;
-                            ctx.drawImage(realFingerprint, cx - 35, cy - 35, 70, 70);
+                            ctx.drawImage(realFingerprint, cx - halfPrint, cy - halfPrint, printSize, printSize);
                             ctx.restore();
                             triggerForensicFinding(`PARMAK İZİ BULUNDU! (Yüzey üstü daktilografik iz numunesi izole edildi)`, 'fingerprint');
                         }
@@ -2266,6 +2518,7 @@ document.getElementById('exit-confirm-btn').addEventListener('click', () => {
             const mapScreen = document.getElementById('town-map-screen');
             if (mapScreen) mapScreen.classList.remove('hidden');
             window.GolgeSehirEngine.applyGolgeSehirState();
+            checkAutopsyConditions();
         } else {
             townMapScreen.classList.remove('hidden');
             checkAutopsyConditions();
@@ -2288,6 +2541,12 @@ document.getElementById('talk-npc-btn').addEventListener('click', () => {
 function openNpcTalk(npcId) {
     const npc = NPC_DATA[npcId];
     if (!npc) return;
+
+    // Kural: Masum işaretlenen karakter sorgulanamaz/işlem yapılamaz
+    if ((window.innocentNpcIds && window.innocentNpcIds.has(npcId)) || innocentNpcIds.has(npcId)) {
+        showGlobalNotification("MASUM KARAKTER", `${npc.name} masum ilan edilmiştir ve dava dosyasından çıkarılmıştır. Kendisiyle tekrar sorgu yapılamaz!`, true);
+        return;
+    }
 
     // NPC Konuşma Ekranı Görseli (Tüm ekranı tam kaplayacak şekilde)
     const talkBgImage = npc.talkBg || npc.bg;
@@ -2353,25 +2612,82 @@ document.getElementById('npc-talk-close')?.addEventListener('click', () => {
 function updateQuestionIndicator(npcId) {
     const asked = askedQuestionCount[npcId] || 0;
     const remainingLimit = Math.max(0, 5 - asked);
-    document.getElementById('npc-talk-stage').textContent = `Kalan Soru Hakkı: ${remainingLimit}/5`;
+    const stageIndicator = document.getElementById('npc-talk-stage');
+    if (stageIndicator) stageIndicator.textContent = `Kalan Soru Hakkı: ${remainingLimit}/5`;
 
-    // 5 Soru limitini tamamen UI üzerinden zorla
     const aiSection = document.querySelector('.npc-talk-ai-section');
     const btnContainer = document.getElementById('npc-talk-buttons');
 
-    // Stres Kontrolü
-    const stress = npcStressLevels[npcId] || 0;
+    // Stres, Nabız ve Semptom Monitörü
+    const stress = Math.min(100, Math.max(0, npcStressLevels[npcId] || 0));
     const stressFill = document.getElementById('npc-stress-fill');
     const stressPct = document.getElementById('npc-stress-pct');
-    if (stressFill) stressFill.style.width = stress + '%';
+    const bpmVal = document.getElementById('npc-bpm-val');
+    const symptomTag = document.getElementById('npc-symptom-tag');
+    const monitorContainer = document.getElementById('npc-vitals-monitor');
+    const heartIcon = document.querySelector('.vitals-heart-icon');
+    const ecgSvg = document.querySelector('.vitals-ecg-svg');
+    const ecgLine = document.querySelector('.vitals-ecg-line');
+
+    if (stressFill) {
+        stressFill.style.width = stress + '%';
+        stressFill.className = 'npc-stress-fill';
+        if (stress >= 70) stressFill.classList.add('stress-fill-high');
+        else if (stress >= 40) stressFill.classList.add('stress-fill-med');
+    }
     if (stressPct) stressPct.textContent = stress + '%';
+
+    // Dinamik BPM ve Nabız Hesabı (65 - 145 BPM arası)
+    const currentBpm = Math.round(68 + (stress * 0.75));
+    if (bpmVal) bpmVal.textContent = currentBpm;
+
+    // Semptom ve EKG Animasyon Durumu
+    if (monitorContainer) {
+        monitorContainer.className = 'npc-stress-container';
+        if (stress >= 75) monitorContainer.classList.add('stress-panic');
+        else if (stress >= 40) monitorContainer.classList.add('stress-high');
+    }
+
+    if (heartIcon) {
+        heartIcon.className = 'fa-solid fa-heart-pulse vitals-heart-icon';
+        if (stress >= 75) heartIcon.classList.add('pulse-panic');
+        else if (stress >= 40) heartIcon.classList.add('pulse-fast');
+    }
+
+    if (ecgSvg && ecgLine) {
+        ecgSvg.className = 'vitals-ecg-svg';
+        ecgLine.className = 'vitals-ecg-line';
+        if (stress >= 75) {
+            ecgSvg.classList.add('ecg-panic');
+            ecgLine.classList.add('line-panic');
+        } else if (stress >= 40) {
+            ecgSvg.classList.add('ecg-fast');
+            ecgLine.classList.add('line-nervous');
+        }
+    }
+
+    if (symptomTag) {
+        symptomTag.className = 'vitals-symptom-tag';
+        if (stress >= 85) {
+            symptomTag.classList.add('symptom-panic');
+            symptomTag.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <span>Aşırı Panik / Terleme</span>';
+        } else if (stress >= 60) {
+            symptomTag.classList.add('symptom-panic');
+            symptomTag.innerHTML = '<i class="fa-solid fa-droplet"></i> <span>Göz Kaçırma / Titreme</span>';
+        } else if (stress >= 35) {
+            symptomTag.classList.add('symptom-nervous');
+            symptomTag.innerHTML = '<i class="fa-solid fa-face-frown-open"></i> <span>Tedirgin / Savunmacı</span>';
+        } else {
+            symptomTag.innerHTML = '<i class="fa-solid fa-face-meh"></i> <span>Sakin & Kontrollü</span>';
+        }
+    }
 
     if (stress >= 100) {
         if (aiSection) aiSection.style.display = 'none';
         if (btnContainer) {
-            btnContainer.innerHTML = '<div class="npc-talk-end-msg" style="color:var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> Karakter öfkelendi ve sorguyu terk etti! Artık onunla konuşamazsınız.</div>';
+            btnContainer.innerHTML = '<div class="npc-talk-end-msg" style="color:var(--danger);"><i class="fa-solid fa-triangle-exclamation"></i> Karakter aşırı stres ve panikten sorguyu terk etti! Artık onunla konuşamazsınız.</div>';
         }
-        return; // Soru sorma limitini ezip direkt engelle
+        return;
     }
 
     if (remainingLimit <= 0) {
@@ -2424,13 +2740,20 @@ function loadContextualQuestions(npcId) {
 
             container.innerHTML = '';
 
-            if (!data.success || data.dialogues.length === 0) {
+            let questionsToShow = [];
+            if (data && data.success && Array.isArray(data.dialogues) && data.dialogues.length > 0) {
+                questionsToShow = data.dialogues;
+            } else if (npcId >= 100) {
+                // Gölge Şehir Frontend Fallback (GOLGE_SEHIR_CONFIG içinden 4'lü hazır soru havuzu)
+                questionsToShow = getGolgeFallbackQuestions(npcId, askedCount);
+            }
+
+            if (!questionsToShow || questionsToShow.length === 0) {
                 container.innerHTML = '<div class="npc-talk-end-msg"><i class="fa-solid fa-check-circle"></i> Sorgu tamamlandı. NPC artık konuşmak istemiyor. Geri dönebilirsiniz.</div>';
                 npcTalkCompleted[npcId] = true;
                 return;
             }
 
-            const questionsToShow = data.dialogues;
             questionsToShow.forEach((q, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'npc-talk-btn';
@@ -2442,9 +2765,121 @@ function loadContextualQuestions(npcId) {
             });
         })
         .catch(err => {
-            console.error("Diyalog yükleme hatası:", err);
-            container.innerHTML = '<div style="color:red;">Diyaloglar sunucudan alınamadı!</div>';
+            console.warn("Diyalog API uyarısı, yerel havuz kullanılıyor:", err);
+            container.innerHTML = '';
+            let fallbackQuestions = [];
+            if (npcId >= 100) {
+                fallbackQuestions = getGolgeFallbackQuestions(npcId, askedCount);
+            } else if (NPC_QUESTIONS[npcId]) {
+                const pool = NPC_QUESTIONS[npcId];
+                fallbackQuestions = pool.slice(0, 4);
+            }
+
+            if (fallbackQuestions && fallbackQuestions.length > 0) {
+                fallbackQuestions.forEach((q) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'npc-talk-btn';
+                    btn.innerHTML = `<i class="fa-regular fa-comment-dots"></i> ${q.q}`;
+                    btn.dataset.question = JSON.stringify(q);
+                    btn.onclick = () => { askQuestionBackend(npcId, q); };
+                    container.appendChild(btn);
+                });
+            } else {
+                container.innerHTML = '<div style="color:red;">Diyaloglar yüklenemedi!</div>';
+            }
         });
+}
+
+// Gölge Şehir için her aşamada zengin 4'lü hazır soru üreten yardımcı fonksiyon
+function getGolgeFallbackQuestions(npcId, askedCount) {
+    const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
+    const currentCategory = categories[askedCount] || 'tanisma';
+
+    const golgePools = {
+        101: [ // Oduncu Tahsin
+            { q: 'Cinayet gecesi ormanda kimi gördün?', a: 'Gece yarısı orman yolu zifiri karanlıktı. Fener ışığı gibi bir parıltı gördüm, biri telaşla göl patikasına doğru koşuyordu.', difficulty: 1, category: 'tanisma', relatedClues: [1011] },
+            { q: 'Baltanı en son nerede kullandın?', a: 'Dün akşamüstü tomrukları yontmak için kullandım. Sonra kulübenin kapısına dayadım.', difficulty: 1, category: 'tanisma', relatedClues: [1011] },
+            { q: 'Ekrem Bey ile arandaki borç meselesi nedir?', a: 'Benden kestiğim keresteleri yok pahasına almaya çalışıyordu. Aramızda ticari bir sürtüşme vardı ama bu cinayet sebebi değil!', difficulty: 1, category: 'tanisma', relatedClues: [1012] },
+            { q: 'Ormanda duyduğun sesler kime aitti?', a: 'Saat tam 02:00 gibiydi... Bir dal kırılma sesi ve ardından hızlı ayak sesleri duydum.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Baltanın üzerindeki koyu lekeler nedir?', a: 'Reçinedir o dedektif! Çam reçinesi kuruyunca kararır, aklınıza hemen kan getirmeyin!', difficulty: 2, category: 'derinlesme', relatedClues: [1011] },
+            { q: 'Kereste defterindeki son sipariş kime aitti?', a: 'Ekrem Bey özel av köşkü için kaliteli kereste ayırtmıştı. O gece teslimatı konuşacaktık.', difficulty: 2, category: 'derinlesme', relatedClues: [1012] },
+            { q: 'Muhtar Cevdet ile orman arazisini görüştünüz mü?', a: 'Muhtar arazileri Ekrem\'e satmaya çalışıyordu. Ben de hakkımı yedirmem dedim.', difficulty: 3, category: 'yuzlestirme', relatedClues: [] },
+            { q: 'Son sözün nedir Tahsin?', a: 'Ben dürüst bir oduncuyum amirim! Ekrem ile kavgamız oldu ama ona kıymadım!', difficulty: 4, category: 'son', relatedClues: [] }
+        ],
+        102: [ // Manav Ayşe
+            { q: 'Cinayet gecesi saat kaçta uyudun?', a: 'Gece 01:00\'e kadar kasaları düzenledim amirim. Yağmur başlayınca kepengi çekip içeri girdim.', difficulty: 1, category: 'tanisma', relatedClues: [1021] },
+            { q: 'Ekrem Bey senden ne istiyordu?', a: 'Dükkânımın tapusu onun elindeydi... İpotek borcumu ödeyemezsem beni kapının önüne koymakla tehdit ediyordu!', difficulty: 1, category: 'tanisma', relatedClues: [1022] },
+            { q: 'Dükkânın etrafında dolaşan yabancı kimdi?', a: 'Pelerinli ve uzun boylu biriydi... Yüzünü göremedim ama adımları çok hızlıydı.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Çamur izleri hakkında ne biliyorsun?', a: 'Gece kapımın önünden göl kenarına doğru 42 numara iri çizme izleri gidiyordu.', difficulty: 1, category: 'tanisma', relatedClues: [1023] },
+            { q: 'Kasanın arkasındaki zehirli elma neyin nesi?', a: 'Kurtlanmayı önlemek için tarım ilacı dökmüştüm amirim, kimseye yedirecek değildim!', difficulty: 2, category: 'derinlesme', relatedClues: [1021] },
+            { q: 'İpotek mektubundaki tehditler kime aitti?', a: 'Ekrem Bey yazmıştı! \'Ya parayı getir ya dükkânı boşalt\' diyordu.', difficulty: 3, category: 'yuzlestirme', relatedClues: [1022] },
+            { q: 'Cinayet saatinde dışarı çıktın mı?', a: 'Sadece hava almak için kapıyı araladım, hepsi bu!', difficulty: 4, category: 'baski', relatedClues: [] },
+            { q: 'Son sözün nedir Ayşe?', a: 'Ben iki çocuk annesiyim, dükkânım için yalvardım ama katil olmadım!', difficulty: 5, category: 'son', relatedClues: [] }
+        ],
+        103: [ // Demirci Kazım
+            { q: 'Bu özel çelik kilidi kimin için yaptın?', a: 'Ekrem Bey sipariş etmişti. Çok gizli evraklarını koyacağı çelik bir kasa için özel üç tırnaklı kilit istedi.', difficulty: 1, category: 'tanisma', relatedClues: [1031] },
+            { q: 'Gece ocağı ne zaman söndürdün?', a: 'Gece 01:30 gibi körüğü kapattım. Külleri ıslatıp arkadaki kulübeme geçtim.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Bıçaktaki özel damga senin işin mi?', a: 'Evet, benim çelik damgam. Ama ben o bıçaklardan kasabada isteyen herkese döverim.', difficulty: 1, category: 'tanisma', relatedClues: [1032] },
+            { q: 'Demir tozları neden her yerde?', a: 'Ocak burası amirim! Gece gündüz çekiç vuruyoruz, her yer demir tozu olur elbet.', difficulty: 1, category: 'tanisma', relatedClues: [1033] },
+            { q: 'Çelik kasanın şifresini başka kim biliyordu?', a: 'Sadece Ekrem Bey ve ben... Başka kimseye söylemedim yemin ederim!', difficulty: 2, category: 'derinlesme', relatedClues: [1031] },
+            { q: 'Ocağın arkasındaki kanlı bez parçası kime ait?', a: 'Elimi demir çapağı kestiğinde sardığım bezdir o! Hemen cinayete bağlamayın!', difficulty: 3, category: 'yuzlestirme', relatedClues: [] },
+            { q: 'Ekrem Bey ile tartıştınız mı?', a: 'Kasa parasını eksik verince biraz bağırdık çağırdık, sonra helalleştik.', difficulty: 4, category: 'baski', relatedClues: [] },
+            { q: 'Son sözün nedir Kazım Usta?', a: 'Ben demiri bükerim ama insanın canına kıymam dedektif bey!', difficulty: 5, category: 'son', relatedClues: [] }
+        ],
+        104: [ // Bakkal Naciye
+            { q: 'Veresiye defterindeki isim neden karalandı?', a: 'Ekrem Bey borcunu nakit ödediğini söyleyince çizdim. Yanlış bir şey mi var?', difficulty: 1, category: 'tanisma', relatedClues: [1041] },
+            { q: 'Zehri kime sattığını hatırlıyor musun?', a: 'Fare zehirlerini Hekim Sevgi Hanım ve Manav Ayşe Hanım alırdı depodaki haşereler için.', difficulty: 1, category: 'tanisma', relatedClues: [1042] },
+            { q: 'Ekrem Bey dükkânda ne kadar kaldı?', a: 'Cinayet akşamı saat 20:00 gibi uğradı, kibrit ve tütün alıp 5 dakikada çıktı.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Gece dükkânın arkasından gelen sesler neydi?', a: 'Kedilerdir ya da rüzgardır amirim... Fırtına vardı zaten.', difficulty: 1, category: 'tanisma', relatedClues: [1043] },
+            { q: 'Yırtılan defter sayfasında ne yazıyordu?', a: 'Kasabanın önde gelenlerinin gizli borç listesiydi... Korktum, yırttım attım!', difficulty: 2, category: 'derinlesme', relatedClues: [1041] },
+            { q: 'Hekim Sevgi ile ne konuştunuz?', a: 'Zehir şişelerini teslim ettim, \'Dikkatli kullan\' dedi.', difficulty: 3, category: 'yuzlestirme', relatedClues: [1042] },
+            { q: 'Son sözün nedir Naciye Teyze?', a: 'Ben yaşlı bir bakkalım, kasabanın tüm sırları bendedir ama elim kana bulanmaz!', difficulty: 5, category: 'son', relatedClues: [] }
+        ],
+        105: [ // Hekim Sevgi
+            { q: 'Bu mor sızıntı hangi bitkiden elde ediliyor?', a: 'Banotu ve güzelavrat otu özütü. Ağrı kesici tentürlerde mikro dozlarda kullanırım.', difficulty: 1, category: 'tanisma', relatedClues: [1051] },
+            { q: 'Muayenehaneye son gelen hasta kimdi?', a: 'Gece yarısına doğru Fehmi Bey geldi, tansiyonu fırlamıştı. İlaç verip gönderdim.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Ekrem Bey sağlık sorunları için mi geldi?', a: 'Kalp çarpıntısı ve mide krampları vardı. Ona yatıştırıcı çay hazırlamıştım.', difficulty: 1, category: 'tanisma', relatedClues: [1052] },
+            { q: 'Neşterin üzerindeki izler ne anlama geliyor?', a: 'Tıbbi operasyonlarda kullanılmış steril izlerdir amirim, cinayet aleti değildir.', difficulty: 1, category: 'tanisma', relatedClues: [1053] },
+            { q: 'Banotu zehri ölümcül müdür?', a: 'Yüksek dozda kalbi 10 dakikada durdurur... Ama ben hekimim, can almam can kurtarırım!', difficulty: 2, category: 'derinlesme', relatedClues: [1051] },
+            { q: 'Ekrem Bey\'in tırnaklarındaki morluklar zehir izi mi?', a: 'Olabilir... Otopsi raporu çıkınca gerçek ortaya çıkar zaten.', difficulty: 3, category: 'yuzlestirme', relatedClues: [] },
+            { q: 'Son sözünüz nedir Hekim Hanım?', a: 'Hipokrat yemini ettim ben! Ekrem\'in düşmanları çoktu, beni alet etmeyin!', difficulty: 5, category: 'son', relatedClues: [] }
+        ],
+        106: [ // Muhtar Cevdet
+            { q: 'Orman arazisiyle ilgili tapu kimde?', a: 'Resmi tapular muhtarlık kasasındadır. Ekrem Bey arazileri ucuza kapatmak istiyordu.', difficulty: 1, category: 'tanisma', relatedClues: [1061] },
+            { q: 'Olay gecesi köy meydanında kimler vardı?', a: 'Gece 01:00\'de meydana çıktım, Bekçi Rıfat fenerle turluyordu, başka kimseyi görmedim.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Ekrem Bey ile tartıştığınız doğru mu?', a: 'Kasabanın ortak merası için tartıştık. Muhtar olarak halkın hakkını korumak zorundaydım.', difficulty: 1, category: 'tanisma', relatedClues: [1062] },
+            { q: 'Masandaki mühürlü mektup kime gidecekti?', a: 'Kaymakamlığa resmi şikayet dilekçesiydi. Ekrem\'in usulsüzlüklerini bildiriyordum.', difficulty: 1, category: 'tanisma', relatedClues: [1063] },
+            { q: 'Sahte mühür iddialarına ne diyorsunuz?', a: 'İftira! Ben 15 yıllık muhtarım, mührüm de imzam da tertemizdir!', difficulty: 2, category: 'derinlesme', relatedClues: [1061] },
+            { q: 'Tehdit mektubunu siz mi yazdınız?', a: 'Sert bir dille uyardım evet, ama ölüm tehdidi asla yapmadım!', difficulty: 3, category: 'yuzlestirme', relatedClues: [1062] },
+            { q: 'Son sözünüz nedir Muhtar Bey?', a: 'Gölge Şehir\'in düzenini sağlamak benim görevim. Katili bulun, adalete teslim edin!', difficulty: 5, category: 'son', relatedClues: [] }
+        ],
+        107: [ // Muallim Fehmi Bey
+            { q: 'Saatiniz neden tam cinayet saatinde durdu?', a: '02:14\'te durdu evladım... Dışarıdan gelen korkunç bir feryatla elimdeki köstekli saat yere düştü.', difficulty: 1, category: 'tanisma', relatedClues: [1071] },
+            { q: 'Pencerenizin altından geçenler kimdi?', a: 'Gölge gibi iki karaltı gördüm. Biri diğerini çam ağaçlarının arasına doğru sürüklüyordu.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Kitaptaki notun cinayetle ilgisi nedir?', a: 'Eski bir intikam şiiri... Ekrem Bey yıllar önce babamın tüm mirasını hileyle elimizden almıştı.', difficulty: 1, category: 'tanisma', relatedClues: [1072] },
+            { q: 'Gece dışarı çıkıp feneri neden kullandınız?', a: 'Sesleri duyunca pencereden baktım, göremedim. Kapının önüne kadar çıktım ama korkup geri döndüm.', difficulty: 1, category: 'tanisma', relatedClues: [1073] },
+            { q: 'Ekrem Bey\'den nefret ediyor muydunuz?', a: 'Nefret değil evladım, derin bir keder... Ama Allah\'a havale etmiştim onu.', difficulty: 2, category: 'derinlesme', relatedClues: [1072] },
+            { q: '02:14\'teki feryat kime aitti?', a: 'Ekrem\'in boğuk sesiydi... \'Yapma, dur!\' diye yalvarıyordu.', difficulty: 3, category: 'yuzlestirme', relatedClues: [1071] },
+            { q: 'Son sözünüz nedir Hocam?', a: 'Ömrüm talebe yetiştirmekle geçti. Kan dökmek benim kitabımda yazmaz evladım.', difficulty: 5, category: 'son', relatedClues: [] }
+        ],
+        108: [ // Kunduracı Rasim
+            { q: 'Çamurlu çizmelerin kime ait olduğunu biliyor musun?', a: '42 numara kaba manda derisi... Kasabada 3-4 kişiye dikmiştim o çizmelerden.', difficulty: 1, category: 'tanisma', relatedClues: [1081] },
+            { q: 'Mumlu iplik genelde ne için kullanılır?', a: 'Kalın tabanları dikmek için... Çok sağlamdır, elle koparamazsınız.', difficulty: 1, category: 'tanisma', relatedClues: [1082] },
+            { q: 'Deri kesme bıçağını en son ne zaman biledin?', a: 'Dün akşamüstü biledim. Atölyenin tezgahında durur hep.', difficulty: 1, category: 'tanisma', relatedClues: [1083] },
+            { q: 'Göl kenarında işin neydi?', a: 'Deri tabaklamak için göl suyundan alırım bazen. O gece fırtınadan önce gitmiştim.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+            { q: 'Çizmedeki kan lekesini nasıl açıklıyorsun?', a: 'Deri işlerken parmağımı kestim, çizmeme damlamış! Hemen katil damgası vurmayın!', difficulty: 2, category: 'derinlesme', relatedClues: [1081] },
+            { q: 'Mumlu iplikle boğulma izleri uyuşuyor mu?', a: 'Ben ip satmam, ayakkabı dikerim! Biri benden ip çaldıysa benim suçum ne?!', difficulty: 3, category: 'yuzlestirme', relatedClues: [1082] },
+            { q: 'Son sözün nedir Rasim Usta?', a: 'Ekrem\'e 5 çift çizme borcum vardı, öldürsem borcum mu silinecekti? Ben yapmadım!', difficulty: 5, category: 'son', relatedClues: [] }
+        ]
+    };
+
+    const allNpcQuestions = golgePools[npcId] || [];
+    if (allNpcQuestions.length === 0) return [];
+
+    // Kategoriye veya sıraya göre 4'lü paket seç
+    const startIdx = (askedCount * 2) % Math.max(1, allNpcQuestions.length - 3);
+    const selected = allNpcQuestions.slice(startIdx, startIdx + 4);
+    return selected.length >= 4 ? selected : allNpcQuestions.slice(0, 4);
 }
 
 let currentTypewriterTimeout = null;
@@ -2561,14 +2996,21 @@ function askQuestionBackend(npcId, question) {
                 difficulty: question.difficulty
             });
 
-            // Backend'e diyalog kaydı yaz
-            logDialog(npcId, question.q, answer, question.difficulty || 1, question.category || 'tanisma');
+            // Soru kategorisine ve zorluğuna göre stres artışı
+            let autoStress = 0;
+            if (question.category === 'baski' || question.difficulty >= 4) autoStress = 25;
+            else if (question.category === 'yuzlestirme' || question.difficulty === 3) autoStress = 15;
+            else if (question.category === 'derinlesme' || question.difficulty === 2) autoStress = 8;
+            else autoStress = 3;
 
-            // Kalan soru sayısını güncelle
+            if (guiltyNpcId === npcId) autoStress = Math.round(autoStress * 1.4); // Suçlu daha hızlı strese girer
+            npcStressLevels[npcId] = Math.min(100, (npcStressLevels[npcId] || 0) + autoStress);
+
+            // Kalan soru sayısını ve stres monitörünü güncelle
             updateQuestionIndicator(npcId);
             saveGameState();
 
-            if (btnContainer) btnContainer.style.display = 'grid'; // Grid veya block, loadContextualQuestions hallediyor ama görünür yapalım
+            if (btnContainer) btnContainer.style.display = 'grid';
             loadContextualQuestions(npcId);
         });
 
@@ -2621,15 +3063,37 @@ function askFreeAiQuestion() {
         setTimeout(() => stopSound(mumble), 1500);
     }
 
-    // Backend Yerel Yapay Zeka Motoruna İstek Gönder
-    fetch('/api/game/interrogate', {
+    // Backend Yerel Yapay Zeka Motoruna İstek Gönder (Gölge Şehir veya Gizemli Kasaba)
+    const isGolge = (activeNpcId >= 100);
+    const targetEndpoint = isGolge ? '/api/golge-sehir/interrogate' : '/api/game/interrogate';
+
+    fetch(targetEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ NpcId: activeNpcId, Question: questionText, GuiltyNpcId: guiltyNpcId })
     })
         .then(res => res.json())
         .then(data => {
-            let answer = data.dialogue || "Bu konuda söylenecek bir şey yok.";
+            // Zengin Karakter-Bazlı Offline Fallback (Hiçbir zaman boş/anlamsız yanıt gösterilmez)
+            let answer = data.dialogue;
+            if (!answer || answer.trim() === '') {
+                const npcFallbacks = {
+                    1: "*Satırını tezgaha bırakır* Amirim, kasap dükkânımda her gün yüzlerce et parçası doğrarım. Cinayet soruşturmasıyla ilgili net bir soru sorarsanız size yardımcı olmaya çalışırım.",
+                    2: "*İlaç şişelerini düzenler* Eczanemde her türlü ilacın kaydı var amirim. Osman Bey vakasıyla ilgili ne öğrenmek istiyorsanız açıkça sorun.",
+                    3: "*Evrakları düzeltir* Muhtarlık makamındayım dedektif. Kasabanın huzuru ve davayla ilgili ne soracaksanız buyurun.",
+                    4: "*Rozetini düzeltir* Karakoldayız amirim. Soruşturmayla ilgili tutanaklarımız meydanda, ne bilmek istiyorsanız sorun.",
+                    5: "*İğnesini kumaşa batırır* Yaşlı bir terziyim evladım. Cinayet gecesi ve şüpheliler hakkında ne merak ediyorsanız dinliyorum.",
+                    101: "*Baltasını omzuna alır* Ormandan gelen sesler ve Ekrem Bey cinayeti hakkında ne soracaksanız sorun amirim.",
+                    102: "*Tezgahı siler* Manav Ayşe olarak Ekrem Bey vakası hakkında bildiklerimi anlatmaya hazırım amirim.",
+                    103: "*Çekici örse vurur* Demirci Kâzım'ım ben. Ekrem'in çelik kasası veya cinayet hakkında ne soracaksınız?",
+                    104: "*Veresiye defterini kapatır* Bakkal Naciye her şeyi duyar amirim. Ekrem Bey hakkında ne bilmek istiyorsunuz?",
+                    105: "*Tıp kitabını kapatır* Hekim olarak tıbbi sorularınıza ve cinayet şüphelerinize yanıt verebilirim amirim.",
+                    106: "*Masasına yaslanır* Muhtar Cevdet olarak kasaba halkı ve Ekrem Bey hakkında ne soracaksanız buyurun.",
+                    107: "*Gözlüğünü düzeltir* Muallim Fehmi olarak cinayet gecesi duyduklarım ve kasaba tarihiyle ilgili ne sormak istersiniz?",
+                    108: "*Mumlu ipi çeker* Kunduracı Rasim olarak çamurlu çizmeler ve göl yolundaki izler hakkında ne öğrenmek istiyorsunuz?"
+                };
+                answer = npcFallbacks[activeNpcId] || "*Gözlerini kısarak sizi süzer* Cinayet soruşturması hakkında net bir soru sorarsanız size yardımcı olabilirim amirim.";
+            }
             let emotion = data.emotion || "Sakin";
 
             // Karakter duygu stili
@@ -2841,10 +3305,15 @@ document.getElementById('found-close-btn').addEventListener('click', () => {
 });
 
 function renderFoundScreen() {
-    const isGolge = (window.currentActiveTown === 'golge_sehir');
+    const isGolge = (window.currentActiveTown === 'golge_sehir' || document.body.classList.contains('golge-sehir-theme'));
     const grid = document.getElementById('found-npc-cards');
     if (!grid) return;
     grid.innerHTML = '';
+
+    // Eğer Gölge Şehir verileri henüz NPC_DATA içine yüklenmediyse motoru tetikle
+    if (isGolge && window.GolgeSehirEngine && typeof window.GolgeSehirEngine.registerGolgeSehirData === 'function') {
+        window.GolgeSehirEngine.registerGolgeSehirData();
+    }
 
     // KASABAYA GÖRE GRID DÜZENİNİ AYIR
     if (isGolge) {
@@ -2859,16 +3328,25 @@ function renderFoundScreen() {
     const endId = isGolge ? 108 : 5;
 
     for (let id = startId; id <= endId; id++) {
-        const npc = NPC_DATA[id];
+        let npc = (window.NPC_DATA && window.NPC_DATA[id]) || (typeof NPC_DATA !== 'undefined' ? NPC_DATA[id] : null);
+
+        // Eğer hala bulunamadıysa Gölge Şehir configinden çek
+        if (!npc && isGolge && window.GOLGE_SEHIR_CONFIG && window.GOLGE_SEHIR_CONFIG.buildings) {
+            const bld = window.GOLGE_SEHIR_CONFIG.buildings.find(b => b.npcId === id);
+            if (bld) npc = bld.npc;
+        }
+
         if (!npc) continue;
         const hasHistory = dialogHistory[id] && dialogHistory[id].length > 0;
         const askedCount = askedQuestionCount[id] || 0;
         const baseImg = (id === 107) ? 'images/towns/golge_sehir/npcler/npc_107_talk.jpg' : (npc.portrait || npc.talkBg || npc.img || 'images/dedektif.png');
         const npcImg = `${baseImg.split('?')[0]}?v=${Date.now()}`;
 
+        const isAlreadyInnocent = (window.innocentNpcIds && window.innocentNpcIds.has(id)) || innocentNpcIds.has(id);
         const card = document.createElement('div');
-        card.className = 'found-npc-card';
+        card.className = `found-npc-card ${isAlreadyInnocent ? 'innocent-marked' : ''}`;
         card.innerHTML = `
+            ${isAlreadyInnocent ? '<div class="innocent-stamp">MASUM</div>' : ''}
             <div class="found-npc-photo-wrap">
                 <img src="${npcImg}" alt="${npc.name}" class="found-npc-img" data-npc-id="${id}" title="Konuşma geçmişini görüntüle">
             </div>
@@ -2879,8 +3357,11 @@ function renderFoundScreen() {
                 <button class="btn btn-outline" style="width:100%; margin-bottom:6px;" onclick="window.showNpcHistory(${id})"><i class="fa-solid fa-comments"></i> Notlar</button>
             </div>
             <div class="found-npc-actions" style="display:flex; gap:6px; width:100%;">
-                <button class="btn btn-danger" style="flex:1;" onclick="accuseNpc(${id})"><i class="fa-solid fa-handcuffs"></i> Suçlu</button>
-                <button class="btn btn-success" style="flex:1;" onclick="innocentNpc(${id})"><i class="fa-solid fa-shield-halved"></i> Masum</button>
+                ${isAlreadyInnocent 
+                    ? '<button class="btn btn-success" style="width:100%; pointer-events:none;" disabled><i class="fa-solid fa-shield-check"></i> MASUM İLAN EDİLDİ</button>'
+                    : `<button class="btn btn-danger" style="flex:1;" onclick="if(typeof window.playJudgeGavelTripleStrike==='function')window.playJudgeGavelTripleStrike(); window.accuseNpc(${id});"><i class="fa-solid fa-handcuffs"></i> Suçlu</button>
+                       <button class="btn btn-success" style="flex:1;" onclick="window.innocentNpc(${id})"><i class="fa-solid fa-shield-halved"></i> Masum</button>`
+                }
             </div>
         `;
         grid.appendChild(card);
@@ -2975,6 +3456,11 @@ window.accuseNpc = function (accusedId) {
     }
 
     jailOverlay.classList.remove('hidden');
+
+    // Hakim Tokmak Vuruşları (Tak... Tak... Tak!)
+    if (typeof playJudgeGavelTripleStrike === 'function') {
+        playJudgeGavelTripleStrike();
+    }
 
     // Animasyon sırasında API'ye sor (Gölge Şehir veya Gizemli Kasaba)
     const accuseEndpoint = (accusedId >= 100 || window.currentActiveTown === 'golge_sehir')
@@ -3157,12 +3643,44 @@ window.accuseNpc = function (accusedId) {
         });
 };
 
+// Masum seçilen NPC'lerin oturum boyunca kalıcı tutulduğu küme
+let innocentNpcIds = new Set();
+window.innocentNpcIds = innocentNpcIds;
+
 window.innocentNpc = function (npcId) {
+    if (!npcId) return;
+    innocentNpcIds.add(npcId);
+
+    const npc = (window.NPC_DATA && window.NPC_DATA[npcId]) || NPC_DATA[npcId];
+    const npcName = npc ? npc.name : `Şüpheli #${npcId}`;
+
+    // Ekrandaki kartı anında güncelle
     const card = document.querySelector(`.found-npc-card .found-npc-img[data-npc-id="${npcId}"]`)?.closest('.found-npc-card');
     if (card) {
-        card.style.opacity = '0.3';
-        card.style.pointerEvents = 'none';
+        card.classList.add('innocent-marked');
+        if (!card.querySelector('.innocent-stamp')) {
+            const stamp = document.createElement('div');
+            stamp.className = 'innocent-stamp';
+            stamp.textContent = 'MASUM';
+            card.appendChild(stamp);
+        }
+        const successBtn = card.querySelector('.btn-success');
+        if (successBtn) {
+            successBtn.innerHTML = '<i class="fa-solid fa-shield-check"></i> MASUM İLAN EDİLDİ';
+        }
     }
+
+    // Bina üzerindeki etiketi güncelle
+    const bldDiv = document.querySelector(`.map-building[data-npc-id="${npcId}"]`);
+    if (bldDiv) {
+        const hoverTag = bldDiv.querySelector('.building-hover-tag');
+        if (hoverTag) {
+            hoverTag.innerHTML = `<i class="fa-solid fa-shield-halved" style="color:#22c55e;"></i> ${npcName.toUpperCase()} MASUM`;
+        }
+    }
+
+    showGlobalNotification("MASUM İLAN EDİLDİ", `${npcName} soruşturma dosyasında masum olarak arşivlendi. Yeni bir vaka açılana kadar bu şüpheli masum kalacaktır ve sorgulanamaz.`, false);
+    logAction('mark_innocent', npcId, npcName);
 };
 
 // === GLOBAL RETRY / RETURN TO MAP ===
@@ -3203,13 +3721,13 @@ let currentTipIndex = 0;
 // Fallback mesajlar (API çalışmazsa)
 const HELPER_FALLBACK_MESSAGES = {
     'splash': 'Hoş geldin Amirims! Ben Yardımcı Dedektif Çetin. Bu karanlık davada sana yardımcı olacağım. Hazır olduğunda dosyayı aç ve soruşturmaya başlayalım!',
-    'story_end': 'Soruşturmaya başlamadan önce şunu bil Amirims: Kasabada 5 bina ve 5 şüpheli var. Her binada 3 delil bulabilirsin. Ama dikkat et, çantanda yalnızca 5 delil bulunabilir!',
-    'map_enter': 'İşte kasaba haritası Amirims! Haritadaki binalara tıklayarak soruşturmana başlayabilirsin. Her binada deliller ve şüpheliler seni bekliyor!',
-    'building_enter': 'Olay yerindeki delilleri inceleyebilir, çantana atabilirsin. Ama dikkat et, çantanda yalnızca 5 delil bulunabilir!',
+    'story_end': 'Soruşturmaya başlamadan önce şunu bil Amirims: Kasabada binaları gezmeli, delilleri toplamalı ve şüphelileri sorgulamalısınız. Katili kesin olarak belirlediğinizde, ana haritanın sağ altında sabit duran kırmızı \'BULDUM!\' butonuna basarak mahkemeye sevk edebilirsiniz!',
+    'map_enter': 'İşte kasaba haritası Amirims! Binalara girip delilleri toplayın ve şüphelileri sorgulayın. Katili tespit ettiğinizde haritanın sağ alt köşesinde sabit yer alan kırmızı \'BULDUM!\' butonuyla suçlamanızı yapabilirsiniz!',
+    'building_enter': 'Olay yerindeki delilleri inceleyebilir, çantana atabilirsin. Karakterle konuşmak için sağ alttaki konuşma butonuna tıklayabilirsin!',
     'bag_open': 'Çantandaki delilleri İncele butonuyla detaylı inceleyebilirsin Amirims. Suçluyu bulmak için ipuçlarını birleştir!',
     'clue_inspect': 'Bu delili dikkatle incele Amirims. Suçluya ait olabilecek izler görebilirsin!',
-    'npc_talk': 'Dikkatli soru sor Amirims, sadece 5 soru hakkın var!',
-    'autopsy_ready': 'Amirims! Adli Tıp Merkezi\'nden otopsi raporu geldi! Hemen inceleyin!',
+    'npc_talk': 'Dikkatli soru sor Amirims, şüphelinin tepkilerini iyi analiz et!',
+    'autopsy_ready': 'Amirims! Adli Tıp Merkezi\'nden otopsi raporu geldi! Haritadaki otopsi butonuna basıp hemen inceleyin!',
     'accuse': 'Son kararını vermeden önce tüm delilleri gözden geçir Amirims. Yanlış suçlama kasaba için felaket olur!'
 };
 
@@ -3289,6 +3807,17 @@ function showCinematicHelper(message, isOneTime = true, contextKey = '', skipHis
     isHelperTyping = true;
 
     box.classList.remove('hidden');
+    document.body.classList.add('helper-box-active');
+    const talkBtn = document.getElementById('talk-npc-btn');
+    if (talkBtn) {
+        talkBtn.classList.add('floating-above-helper');
+        // Kutu yüksekliğini ölçüp CSS değişkenine ata
+        setTimeout(() => {
+            const h = box.offsetHeight || 175;
+            document.documentElement.style.setProperty('--helper-box-height', `${h}px`);
+        }, 50);
+    }
+
     document.getElementById('interior-helper-btn')?.classList.add('hidden');
     document.getElementById('town-helper-btn')?.classList.add('hidden');
 
@@ -3319,10 +3848,22 @@ function triggerHelperMessage(context, building = null, isOneTime = true) {
     if (building) params.append('building', building);
 
     fetch(`/api/game/helper/tip?${params}`)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error('API hatası');
+            return res.json();
+        })
         .then(data => {
             if (data.success && data.message) {
                 showCinematicHelper(data.message, isOneTime, contextKey);
+            } else {
+                // API yanıt verdi ama mesaj yok — fallback kullan
+                let msg = '';
+                if (building && BUILDING_HELPER_MESSAGES[building]) {
+                    msg = BUILDING_HELPER_MESSAGES[building];
+                } else {
+                    msg = HELPER_FALLBACK_MESSAGES[context] || 'Amirims, soruşturmaya devam edin!';
+                }
+                showCinematicHelper(msg, isOneTime, contextKey);
             }
         })
         .catch(() => {
@@ -3365,6 +3906,10 @@ function provideBuildingSpecificHint(npcId = activeNpcId) {
 document.getElementById('cinematic-helper-close')?.addEventListener('click', () => {
     const box = document.getElementById('cinematic-helper-box');
     if (box) box.classList.add('hidden');
+    document.body.classList.remove('helper-box-active');
+    const talkBtn = document.getElementById('talk-npc-btn');
+    if (talkBtn) talkBtn.classList.remove('floating-above-helper');
+
     document.getElementById('interior-helper-btn')?.classList.remove('hidden');
     document.getElementById('town-helper-btn')?.classList.remove('hidden');
     isHelperTyping = false;

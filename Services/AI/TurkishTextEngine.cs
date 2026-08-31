@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace DedektiflikRPG.Services.AI;
 
 /// <summary>
-/// %100 Türkçeye Duyarlı, Sokak Ağzı, Devrik Cümle ve Kök Analiz Motoru.
+/// %100 Türkçeye Duyarlı, Sokak Ağzı, Devrik Cümle, Kök ve Anlamsal Konu Analiz Motoru v5.0.
 /// Türkçedeki tüm özel harfleri (ş, ç, ı, ü, ö, ğ, İ, Ş, Ç, Ü, Ö, Ğ) hem orijinal hem esnek işler.
-/// Devrik cümleleri ve karmaşık Türkçe soru kalıplarını anlamlı niyete (Intent) dönüştürür.
+/// Devrik cümleleri, karmaşık soru kalıplarını ve cinayet dışı alakasız/genel konuları derinlemesine ayrıştırır.
 /// </summary>
 public static class TurkishTextEngine
 {
@@ -42,8 +43,8 @@ public static class TurkishTextEngine
     public static string PreprocessSentence(string text)
     {
         string normalized = NormalizeToAscii(text);
-        var tokens = normalized.Split(new[] { ' ', '.', ',', '?', '!', ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
-        var stopWords = new HashSet<string> { "mi", "mu", "miyim", "mısın", "musun", "müsün", "var", "yok", "bir", "ve", "ile", "için", "icin", "diye", "bu", "şu", "su", "da", "de", "ki", "işte", "iste" };
+        var tokens = normalized.Split(new[] { ' ', '.', ',', '?', '!', ';', ':', '-', '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+        var stopWords = new HashSet<string> { "mi", "mu", "mı", "mü", "miyim", "mısın", "musun", "müsün", "var", "yok", "bir", "ve", "ile", "için", "icin", "diye", "bu", "şu", "su", "da", "de", "ki", "işte", "iste", "yani", "ise", "ama", "fakat", "lakin" };
 
         List<string> processed = new List<string>();
         foreach (var t in tokens)
@@ -64,11 +65,12 @@ public static class TurkishTextEngine
 
         // Türkçe Çekim ve Yapım Eklerini Temizleme
         string[] suffixes = {
-            "yordu", "yorsun", "yorsunuz", "lerdir", "lardir", "lardan", "lerden", "larina", "lerine",
-            "misin", "musun", "misiniz", "musunuz", "miyor", "kiyor", "diler", "dilar", "tilar", "tiler",
-            "acak", "ecek", "iyor", "lar", "ler", "dan", "den", "tan", "ten", "nin", "nun",
-            "yla", "yle", "siz", "suz", "sun", "sunuz", "siniz", "sin", "yim", "dik", "tik", "duk", "tuk",
-            "di", "ti", "du", "tu", "yi", "ya", "ye", "in", "un", "im", "um", "miz", "muz"
+            "yorsunuz", "yorsunuzdur", "yordunuz", "lardir", "lerdir", "lardan", "lerden", "larina", "lerine",
+            "misiniz", "musunuz", "musunuzdur", "misinizdir", "mislersiniz", "diler", "dilar", "tilar", "tiler",
+            "yorsun", "yordu", "miyor", "miyorlar", "miyor musun", "miyor musunuz", "miyor musun",
+            "acak", "ecek", "iyor", "lar", "ler", "dan", "den", "tan", "ten", "nin", "nun", "nün", "nın",
+            "yla", "yle", "siz", "suz", "süz", "sız", "sun", "sunuz", "siniz", "sin", "yim", "dik", "tik", "duk", "tuk",
+            "di", "ti", "du", "tu", "yi", "ya", "ye", "in", "un", "ün", "ın", "im", "um", "üm", "ım", "miz", "muz", "müz", "mız"
         };
 
         foreach (var suffix in suffixes)
@@ -79,7 +81,7 @@ public static class TurkishTextEngine
             }
         }
 
-        if ((word.EndsWith("a") || word.EndsWith("e") || word.EndsWith("i") || word.EndsWith("u")) && word.Length >= 4)
+        if ((word.EndsWith("a") || word.EndsWith("e") || word.EndsWith("i") || word.EndsWith("u") || word.EndsWith("ü") || word.EndsWith("ı")) && word.Length >= 4)
         {
             return word.Substring(0, word.Length - 1);
         }
@@ -91,79 +93,96 @@ public static class TurkishTextEngine
     {
         return word switch
         {
-            "kanki" or "kral" or "abi" or "dayi" or "usta" or "aga" or "haci" or "bilader" or "sef" or "toprak" => "amirim",
-            "sikti" or "kesti" or "deldi" or "cizdi" or "vurdu" or "indirdi" or "desti" or "kiydi" or "gebertti" or "boctu" or "oldurdu" or "yapti" or "ett" => "oldur",
-            "para" or "mangir" or "sakal" or "avanta" or "cukka" or "veresiye" => "borc",
-            "cirkef" or "pislik" or "kavga" or "gurultu" or "dalaş" or "husumet" => "tartisma",
-            "suphe" or "kusku" or "gizli" => "suphe",
-            "slm" or "s.a" or "sa" or "selamin" or "aleykum" or "selamlar" or "selam" or "selamun" or "hey" or "heyy" => "selam",
-            "mrb" or "meraba" or "mrhb" or "merhaba" or "merhabalar" => "merhaba",
-            "nbr" or "naber" or "naptin" or "napiyosun" or "napiyorsun" or "nabion" or "nasil" or "nasilsin" => "nasilsin",
-            "kim" or "kimdir" or "katil" or "suclu" or "kimyapti" => "kim",
-            "neden" or "niye" or "nicin" or "sebep" => "neden",
+            "kanki" or "kral" or "abi" or "dayi" or "usta" or "aga" or "haci" or "bilader" or "sef" or "toprak" or "hocam" or "baskan" or "baskanim" or "kardes" or "kardesim" or "komutan" or "komutanim" => "amirim",
+            "sikti" or "kesti" or "deldi" or "cizdi" or "vurdu" or "indirdi" or "desti" or "kiydi" or "gebertti" or "boctu" or "oldurdu" or "yapti" or "ett" or "bogdu" or "katletti" or "gecmis" => "oldur",
+            "para" or "mangir" or "sakal" or "avanta" or "cukka" or "veresiye" or "alacak" or "senet" or "borcu" or "nakit" or "metelik" or "servet" => "borc",
+            "cirkef" or "pislik" or "kavga" or "gurultu" or "dalas" or "husumet" or "itidal" or "anlasmazlik" or "dovus" or "niza" or "arbede" => "tartisma",
+            "suphe" or "kusku" or "gizli" or "karanlik" or "supheli" or "zanli" => "suphe",
+            "slm" or "s.a" or "sa" or "selamin" or "aleykum" or "selamlar" or "selam" or "selamun" or "hey" or "heyy" or "selamunaleykum" or "esselamu" or "aleykumselam" => "selam",
+            "mrb" or "meraba" or "mrhb" or "merhaba" or "merhabalar" or "maraba" => "merhaba",
+            "nbr" or "naber" or "naptin" or "napiyosun" or "napiyorsun" or "nabion" or "nasilsin" or "napiosun" or "nehaber" or "naberler" or "nasilsiniz" or "netiniz" => "nasilsin",
+            "gunaydin" or "sabahlar" or "hayirli sabahlar" => "gunaydin",
+            "iyi aksamlar" or "aksamlar" or "hayirli aksamlar" => "iyi aksamlar",
+            "kolay gelsin" or "gelsin" or "bereketli" or "hayirli isler" or "rastgele" => "kolay gelsin",
+            "kim" or "kimdir" or "katil" or "suclu" or "kimyapti" or "fail" or "canavar" or "zanli" => "kim",
+            "neden" or "niye" or "nicin" or "sebep" or "nedendir" or "niyeki" or "ne diye" => "neden",
+            "nasil" or "nasilki" or "ne sekilde" or "neyle" => "nasil",
+            "ispat" or "kanit" or "delil" or "ispatla" or "kanitla" or "belge" or "tutanak" or "iz" => "kanit",
             _ => word
         };
     }
 
     public static bool ContainsAnyConcept(string rawTrLower, string normalizedAscii, params string[] concepts)
     {
-        var inputTokens = normalizedAscii.Split(new[] { ' ', '.', ',', '?', '!' }, StringSplitOptions.RemoveEmptyEntries);
+        if (string.IsNullOrWhiteSpace(normalizedAscii)) return false;
+
+        var inputTokens = normalizedAscii.Split(new[] { ' ', '.', ',', '?', '!', ';', ':', '-', '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
         string noSpaceInput = normalizedAscii.Replace(" ", "");
+
+        // Köklenmiş token kümesi (Stemmed Token Set)
+        var stemmedTokens = inputTokens.Select(Stem).Select(MapSlang).ToHashSet();
 
         foreach (var concept in concepts)
         {
-            string conceptNorm = NormalizeToAscii(concept);
+            string conceptNorm = NormalizeToAscii(concept).Trim();
+            if (string.IsNullOrEmpty(conceptNorm)) continue;
+
+            // 1. TAM EŞLEŞME VEYA KELİME KÜMESİ İÇİNDE BULUNMA
+            if (conceptNorm.Length <= 3)
+            {
+                if (inputTokens.Any(t => t == conceptNorm) || stemmedTokens.Any(s => s == conceptNorm))
+                {
+                    return true;
+                }
+                continue;
+            }
+
             string noSpaceConcept = conceptNorm.Replace(" ", "");
 
+            // 2. DOĞRUDAN ALT METİN / BİTİŞİK YAZIM KONTROLÜ
             if (rawTrLower.Contains(concept) || normalizedAscii.Contains(conceptNorm) || noSpaceInput.Contains(noSpaceConcept))
             {
                 return true;
             }
 
+            // 3. KÖK & SLANG EŞLEŞTİRMESİ
             var conceptTokens = conceptNorm.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var stemmedConceptTokens = conceptTokens.Select(Stem).Select(MapSlang).ToList();
 
-            if (noSpaceConcept.Length >= 5)
+            // Eğer konseptteki tüm kökler cümlede varsa eşleşir (Devrik cümle toleransı)
+            if (stemmedConceptTokens.All(st => stemmedTokens.Contains(st) || inputTokens.Any(it => it.Contains(st))))
             {
-                int maxTypos = Math.Max(1, noSpaceConcept.Length / 4);
-                if (Math.Abs(noSpaceInput.Length - noSpaceConcept.Length) <= maxTypos + 2)
-                {
-                    int dist = LevenshteinDistance(noSpaceInput, noSpaceConcept);
-                    if (dist <= maxTypos) return true;
-                }
+                return true;
             }
 
-            int matchedTokens = 0;
-            int meaningfulTokens = 0;
-            foreach (var cToken in conceptTokens)
+            // 4. HARF HATASI & YAZIM YANLIŞI TOLERANSI (Levenshtein Fuzzy Matching)
+            if (noSpaceConcept.Length >= 4)
             {
-                if (cToken.Length <= 2) continue;
-                meaningfulTokens++;
-                bool foundToken = false;
-                foreach (var iToken in inputTokens)
+                // Cümledeki her token ile konsept tokenlerini kıyasla
+                foreach (var inTok in inputTokens)
                 {
-                    if (iToken.Length > 2)
+                    if (inTok.Length < 3) continue;
+                    foreach (var cTok in conceptTokens)
                     {
-                        if (iToken == cToken || iToken.StartsWith(cToken) || iToken.EndsWith(cToken))
+                        if (cTok.Length < 3) continue;
+                        int maxTypos = (cTok.Length >= 6) ? 2 : 1;
+                        if (Math.Abs(inTok.Length - cTok.Length) <= maxTypos)
                         {
-                            foundToken = true;
-                            break;
-                        }
-
-                        int dist = LevenshteinDistance(iToken, cToken);
-                        int maxTypos = cToken.Length >= 6 ? 2 : (cToken.Length >= 4 ? 1 : 0);
-                        if (dist <= maxTypos)
-                        {
-                            foundToken = true;
-                            break;
+                            int dist = LevenshteinDistance(inTok, cTok);
+                            if (dist <= maxTypos) return true;
                         }
                     }
                 }
-                if (foundToken) matchedTokens++;
-            }
 
-            if (meaningfulTokens > 0 && matchedTokens >= meaningfulTokens)
-            {
-                return true;
+                if (noSpaceConcept.Length >= 6)
+                {
+                    int maxOverallTypos = Math.Max(1, noSpaceConcept.Length / 4);
+                    if (Math.Abs(noSpaceInput.Length - noSpaceConcept.Length) <= maxOverallTypos + 2)
+                    {
+                        int dist = LevenshteinDistance(noSpaceInput, noSpaceConcept);
+                        if (dist <= maxOverallTypos) return true;
+                    }
+                }
             }
         }
         return false;

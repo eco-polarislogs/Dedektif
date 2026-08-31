@@ -28,14 +28,16 @@ public class AntigravityAiService
     }
 
     /// <summary>
-    /// NPC bağlamı ve oyuncunun sorusuna göre AI'dan cevap üretir.
+    /// NPC bağlamı, diyalog geçmişi ve oyuncunun sorusuna göre AI'dan cevap üretir.
     /// </summary>
     public async Task<AIInteractionResponse> GetNPCResponseAsync(
         NPC npc,
         string playerQuestion,
-        IEnumerable<Clue> playerClues)
+        IEnumerable<Clue> playerClues,
+        bool isGuilty = false,
+        IEnumerable<DialogLog>? recentDialogs = null)
     {
-        var systemPrompt = BuildSystemPrompt(npc, playerClues);
+        var systemPrompt = BuildSystemPrompt(npc, playerClues, isGuilty, recentDialogs);
         var response = await CallGeminiApiAsync(systemPrompt, playerQuestion);
         return response;
     }
@@ -43,13 +45,20 @@ public class AntigravityAiService
     /// <summary>
     /// NPC bilgilerinden dinamik bir system prompt oluşturur.
     /// </summary>
-    private string BuildSystemPrompt(NPC npc, IEnumerable<Clue> playerClues)
+    private string BuildSystemPrompt(NPC npc, IEnumerable<Clue> playerClues, bool isGuilty, IEnumerable<DialogLog>? recentDialogs)
     {
         var clueList = string.Join("\n", playerClues.Select(c => $"  - {c.Title}: {c.Description}"));
         if (string.IsNullOrEmpty(clueList))
             clueList = "  (Henüz ipucu yok)";
 
-        var guiltStatus = npc.IsGuilty ? "SUÇLU (Katilsin. Bunu kesinlikle gizlemeye çalışmalısın. İpuçları köşeye sıkıştırırsa açık verebilirsin.)" : "MASUM (Katil değilsin ama yine de şüpheli davranabilirsin veya panikleyebilirsin.)";
+        var historyList = recentDialogs != null && recentDialogs.Any()
+            ? string.Join("\n", recentDialogs.Take(3).Select(h => $"  [Dedektif]: {h.PlayerQuestion}\n  [{npc.Name}]: {h.NPCResponse}"))
+            : "  (Henüz önceki konuşma yok)";
+
+        string victimName = (npc.NPCId >= 100) ? "Ekrem Bey" : "Osman Bey";
+        var guiltStatus = isGuilty 
+            ? $"SUÇLU (Katilsin. Cinayeti sen işledin ama ASLA 'Ben öldürdüm' ya da 'Ben suçluyum' diye doğrudan itiraf etmeyeceksin! Alakasız bahaneler bul, terle, kıvır, delil iste veya başka birini işaret et.)" 
+            : $"MASUM (Katil değilsin! Kurban {victimName}'in katili başkası. Kendini savun, masumiyetini açıkla, gerekirse iftira atıldığını söyleyip öfkelen.)";
 
         return $$"""
 Sen bir dedektiflik RPG oyunundaki NPC karakterisin. Aşağıdaki kurallara uymalısın:
@@ -64,6 +73,9 @@ KARAKTERİN:
 
 OYUNCUNUN ELİNDEKİ İPUÇLARI:
 {{clueList}}
+
+SON 3 DİYALOG GEÇMİŞİ (Önceki konuşulanları hatırla ve takip sorularında bağlamı koru):
+{{historyList}}
 
 DAVRANIŞ KURALLARI VE DİL ANLAYIŞI (ÇOK ÖNEMLİ):
 1. TESPİT VE TOLERANS: Oyuncunun (Dedektif) sorduğu sorularda devrik cümleler, sokak ağzı (slang), edebi ifadeler, yazım hataları veya eksik/yanlış harfler (örn. 'slm', 'nerdeydn', 'naptın', 'çko', 'zmn') olabilir. Bunları kusursuzca tolere et, oyuncunun asıl niyetini ve ne sormak istediğini mutlaka anla ve buna göre mantıklı bir cevap ver. Asla 'Ne demek istediğinizi anlamadım' deme.
