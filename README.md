@@ -1,4 +1,4 @@
-# 🔍 Dedektif — Karanlık Kasabanın Sırrı & Gölge Şehir Vaka Dosyaları
+﻿# 🔍 Dedektif — Karanlık Kasabanın Sırrı & Gölge Şehir Vaka Dosyaları
 
 Yapay zeka (AI) hikâye tabanlı, **Point & Click (Tıkla & Bul)** tarzı gelişmiş bir web dedektiflik RPG oyunudur. Gizemli Kasaba ve Gölge Şehir haritalarında işlenen karmaşık cinayetleri çözmek için binaları gezmeli, 3D delilleri toplamalı, laboratuvar araçlarıyla adli tıp incelemeleri yapmalı ve şüphelileri yapay zekayla sorguya çekerek gerçek katili adalete teslim etmelisiniz!
 
@@ -74,7 +74,7 @@ Sisli ve tekinsiz bir dağ kasabası olan Gölge Şehir'in çam ormanı girişin
 
 ### 1. Projeyi Klonlayın
 ```bash
-git clone https://github.com/solmazgulecren-ux/Dedektif.git
+git clone https://github.com/eco-polarislogs/Dedektif.git
 cd Dedektif
 ```
 
@@ -129,4 +129,5 @@ Dedektif/
 ---
 
 ## 👩‍💻 Geliştirici
-**Ecren Solmazgül** — [GitHub](https://github.com/solmazgulecren-ux)
+**Ecren Solmazgül** — [GitHub](https://github.com/eco-polarislogs)
+
