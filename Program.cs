@@ -41,10 +41,7 @@ class Program
 
         if (dbConnected)
         {
-            if (await repository.TablesExistAsync())
-            {
-                await repository.SeedDataAsync();
-            }
+            await repository.SeedDataAsync();
             try
             {
                 await repository.EnsureHelperTablesAsync();
@@ -148,6 +145,7 @@ public class InterrogationRequest
 public class AccuseRequest
 {
     public int NpcId { get; set; }
+    public int? GuiltyNpcId { get; set; }
 }
 
 public class AppConfig

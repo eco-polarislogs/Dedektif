@@ -2755,21 +2755,20 @@ function loadContextualQuestions(npcId) {
                 questionsToShow = pool.slice(0, 4);
             }
 
-            if (!questionsToShow || questionsToShow.length === 0) {
-                if (npcId >= 100) {
-                    questionsToShow = getGolgeFallbackQuestions(npcId, askedCount);
-                }
+            if (questionsToShow && questionsToShow.length > 0) {
+                container.innerHTML = '';
+                questionsToShow.forEach((q, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'npc-talk-btn';
+                    btn.innerHTML = `<i class="fa-regular fa-comment-dots"></i> ${q.q}`;
+
+                    btn.dataset.question = JSON.stringify(q);
+                    btn.onclick = () => { askQuestionBackend(npcId, q); };
+                    container.appendChild(btn);
+                });
+            } else {
+                container.innerHTML = '<div style="color:var(--text-muted); text-align:center;">Diyalog bulunamadı.</div>';
             }
-
-            questionsToShow.forEach((q, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'npc-talk-btn';
-                btn.innerHTML = `<i class="fa-regular fa-comment-dots"></i> ${q.q}`;
-
-                btn.dataset.question = JSON.stringify(q);
-                btn.onclick = () => { askQuestionBackend(npcId, q); };
-                container.appendChild(btn);
-            });
         })
         .catch(err => {
             console.warn("Diyalog API uyarısı, yerel havuz kullanılıyor:", err);
@@ -3485,7 +3484,10 @@ window.accuseNpc = function (accusedId) {
     fetch(accuseEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ NpcId: accusedId })
+        body: JSON.stringify({ 
+            NpcId: accusedId,
+            GuiltyNpcId: (typeof guiltyNpcId !== 'undefined' && guiltyNpcId) ? guiltyNpcId : (window.guiltyNpcId || null)
+        })
     })
         .then(res => res.json())
         .then(data => {
@@ -4138,6 +4140,9 @@ function checkAndDropClues(npcId, clueIds) {
     if (!npcSceneObjects) return;
 
     clueIds.forEach(clueId => {
+        // Çanta limiti kontrolü (Maksimum MAX_BAG_SIZE / 5)
+        if (currentBag.length >= MAX_BAG_SIZE) return;
+
         // Zaten çantada var mı?
         if (currentBag.some(c => c.id === clueId)) return;
 
@@ -4145,19 +4150,22 @@ function checkAndDropClues(npcId, clueIds) {
         const clueInfo = npcSceneObjects.find(obj => obj.id === clueId);
         if (clueInfo) {
             currentBag.push(clueInfo);
+            window.currentBag = currentBag;
             newCluesFound = true;
         }
     });
 
     if (newCluesFound) {
         showClueBadge();
+        saveGameState();
+        checkAutopsyConditions();
         // Sinematik bildirim
         triggerHelperMessage('clue_found', null, false);
     }
 }
 
 function saveTestimonyToBag(npcName, testimonyText) {
-    if (currentBag.length >= 5) {
+    if (currentBag.length >= MAX_BAG_SIZE) {
         showCinematicHelper("Amirim! Çantamız dolu. Önce çantadaki delilleri Adli Tıp laboratuvarına incelemeye göndermelisiniz.", false);
         return;
     }
@@ -4173,6 +4181,7 @@ function saveTestimonyToBag(npcName, testimonyText) {
     };
 
     currentBag.push(testimonyClue);
+    window.currentBag = currentBag;
     showClueBadge();
     triggerHelperMessage('testimony_saved', `Amirims, ${npcName} karakterinin bu sözünü kaydettim! Diğer şüphelilere bu ifadeyi kanıt olarak sunabilirsiniz.`, true);
     saveGameState();

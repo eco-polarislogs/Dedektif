@@ -292,16 +292,32 @@ public class DatabaseRepository : IGameRepository
         using var db = CreateConnection();
         try
         {
-            var npcCount = await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM NPCs");
+            int npcCount = 0;
+            try
+            {
+                npcCount = await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM NPCs");
+            }
+            catch
+            {
+                npcCount = 0;
+            }
 
             // schema.sql varsa çalıştır (Eğer tablo yoksa vs.)
             var schemaPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "schema.sql");
             if (File.Exists(schemaPath) && npcCount < 5)
             {
                 var sql = File.ReadAllText(schemaPath);
+                if (_isPostgres)
+                {
+                    sql = sql.Replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
+                             .Replace("datetime('now')", "CURRENT_TIMESTAMP")
+                             .Replace("IsAccusatory INTEGER", "IsAccusatory BOOLEAN")
+                             .Replace("IsActive    INTEGER", "IsActive    BOOLEAN")
+                             .Replace("IsGuilty    INTEGER", "IsGuilty    BOOLEAN")
+                             .Replace("IsDiscovered INTEGER", "IsDiscovered BOOLEAN");
+                }
                 await db.ExecuteAsync(sql);
             }
-
 
             // Gelişmiş yapay zeka hafıza verilerini yükle (1000+ Cümle)
             var aiSeeder = new AISeeder(this);
@@ -529,6 +545,46 @@ public class DatabaseRepository : IGameRepository
                 );
             ");
         }
+        else if (_isPostgres)
+        {
+            await db.ExecuteAsync(@"
+                CREATE TABLE IF NOT EXISTS GameSessions (
+                    SessionId SERIAL PRIMARY KEY,
+                    GuiltyNPCId INT NOT NULL,
+                    StartedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    EndedAt TIMESTAMP NULL,
+                    Result VARCHAR(50) NULL,
+                    AccusedNPCId INT NULL,
+                    TotalQuestions INT DEFAULT 0,
+                    CluesCollected INT DEFAULT 0
+                );
+
+                CREATE TABLE IF NOT EXISTS PlayerActions (
+                    ActionId SERIAL PRIMARY KEY,
+                    SessionId INT NOT NULL,
+                    ActionType VARCHAR(100) NOT NULL,
+                    TargetId INT NULL,
+                    Details TEXT NULL,
+                    CreatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+
+                CREATE TABLE IF NOT EXISTS GameStates (
+                    StateId SERIAL PRIMARY KEY,
+                    SessionId INT NOT NULL,
+                    StateData TEXT NOT NULL,
+                    SavedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                );
+
+                CREATE TABLE IF NOT EXISTS HelperMessages (
+                    MessageId SERIAL PRIMARY KEY,
+                    Context VARCHAR(100) NOT NULL,
+                    BuildingName VARCHAR(100) NULL,
+                    Message TEXT NOT NULL,
+                    Priority INT DEFAULT 1,
+                    IsOneTime BOOLEAN DEFAULT TRUE
+                );
+            ");
+        }
         else
         {
             await db.ExecuteAsync(@"
@@ -634,6 +690,12 @@ public class DatabaseRepository : IGameRepository
             if (File.Exists(schemaPath))
             {
                 var sql = await File.ReadAllTextAsync(schemaPath);
+                if (_isPostgres)
+                {
+                    sql = sql.Replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
+                             .Replace("datetime('now')", "CURRENT_TIMESTAMP")
+                             .Replace("INSERT OR REPLACE INTO", "INSERT INTO");
+                }
                 await db.ExecuteAsync(sql);
             }
         }

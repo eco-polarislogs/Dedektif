@@ -175,10 +175,17 @@ public static class GameEndpoints
 
                     var golgeNPCs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
                     var guiltyGolge = golgeNPCs.FirstOrDefault(n => n.IsGuilty);
-                    var guiltyNameGolge = guiltyGolge?.Name ?? "Bilinmiyor";
-                    var guiltyIdGolge = guiltyGolge?.NPCId ?? 101;
+                    
+                    int guiltyIdGolge = request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value >= 100
+                        ? request.GuiltyNpcId.Value
+                        : (guiltyGolge?.NPCId ?? 101);
 
-                    if (golgeNpc.IsGuilty)
+                    var actualGuiltyNpc = golgeNPCs.FirstOrDefault(n => n.NPCId == guiltyIdGolge) ?? guiltyGolge;
+                    var guiltyNameGolge = actualGuiltyNpc?.Name ?? "Bilinmiyor";
+
+                    bool isGuilty = (request.NpcId == guiltyIdGolge) || golgeNpc.IsGuilty;
+
+                    if (isGuilty)
                     {
                         return Results.Ok(new { success = true, message = $"Tebrikler! Gölge Şehir katilinin {golgeNpc.Name} olduğunu kanıtladınız!", accusedName = golgeNpc.Name, guiltyNpcName = guiltyNameGolge, guiltyNpcId = guiltyIdGolge });
                     }
@@ -194,10 +201,17 @@ public static class GameEndpoints
 
                 var npcs = (await repo.GetAllNPCsAsync()).ToList();
                 var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
-                var guiltyName = guiltyNpc?.Name ?? "Bilinmiyor";
-                var guiltyId = guiltyNpc?.NPCId ?? 0;
 
-                if (npc.IsGuilty)
+                int guiltyId = request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value > 0
+                    ? request.GuiltyNpcId.Value
+                    : (guiltyNpc?.NPCId ?? 1);
+
+                var actualGuilty = npcs.FirstOrDefault(n => n.NPCId == guiltyId) ?? guiltyNpc;
+                var guiltyName = actualGuilty?.Name ?? "Bilinmiyor";
+
+                bool isGuiltyPerson = (request.NpcId == guiltyId) || npc.IsGuilty;
+
+                if (isGuiltyPerson)
                 {
                     return Results.Ok(new { success = true, message = $"Tebrikler! Suçlunun {npc.Name} olduğunu doğru tahmin ettiniz.", accusedName = npc.Name, guiltyNpcName = guiltyName, guiltyNpcId = guiltyId });
                 }
@@ -670,10 +684,17 @@ public static class GameEndpoints
 
                 var npcs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
                 var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
-                var guiltyName = guiltyNpc?.Name ?? "Bilinmiyor";
-                var guiltyId = guiltyNpc?.NPCId ?? 101;
+                
+                int guiltyId = request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value >= 100
+                    ? request.GuiltyNpcId.Value
+                    : (guiltyNpc?.NPCId ?? 101);
 
-                if (npc.IsGuilty)
+                var actualGuilty = npcs.FirstOrDefault(n => n.NPCId == guiltyId) ?? guiltyNpc;
+                var guiltyName = actualGuilty?.Name ?? "Bilinmiyor";
+
+                bool isGuiltyPerson = (request.NpcId == guiltyId) || npc.IsGuilty;
+
+                if (isGuiltyPerson)
                 {
                     return Results.Ok(new { success = true, message = $"Tebrikler! Gölge Şehir katilinin {npc.Name} olduğunu çözdünüz.", accusedName = npc.Name, guiltyNpcName = guiltyName, guiltyNpcId = guiltyId });
                 }

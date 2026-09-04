@@ -110,7 +110,15 @@ public class AISeeder
                 INSERT INTO NPCDialogues (NPCId, Difficulty, Category, PlayerText, NPCResponse, GuiltyResponses, IsAccusatory)
                 VALUES (@NPCId, @Difficulty, @Category, @PlayerText, @NPCResponse, @GuiltyResponses, @IsAccusatory)";
             
-            await db.ExecuteAsync(sql, insertList, transaction);
+            await db.ExecuteAsync(sql, insertList.Select(x => new {
+                x.NPCId,
+                x.Difficulty,
+                x.Category,
+                x.PlayerText,
+                x.NPCResponse,
+                x.GuiltyResponses,
+                IsAccusatory = x.IsAccusatory ? 1 : 0
+            }), transaction);
             transaction.Commit();
             Console.WriteLine($"Başarıyla {insertList.Count} adet senaryo bazlı AI diyalog varyasyonu eklendi!");
         }
