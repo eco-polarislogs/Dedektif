@@ -2749,26 +2749,33 @@ function openNpcTalk(npcId) {
         return;
     }
 
-    // NPC Konuşma Ekranı Görseli (Tüm ekranı tam kaplayacak şekilde)
+    // Konuşma ekranında NPC portresi kullanılır; bina iç sahnesi bu katmana taşınmaz.
     const talkBgImage = npc.talkBg || npc.bg;
     const talkContainer = document.querySelector('.npc-talk-container');
     const characterLayer = document.getElementById('npc-talk-character-layer');
 
     if (talkContainer) {
-        talkContainer.style.backgroundImage = `url('${talkBgImage}?v=${Date.now()}')`;
-        talkContainer.style.backgroundSize = 'cover';
+        talkContainer.style.backgroundImage = 'none';
+        talkContainer.style.backgroundSize = 'contain';
         talkContainer.style.backgroundPosition = 'center';
         talkContainer.className = 'npc-talk-container';
     }
 
     if (characterLayer) {
-        characterLayer.style.backgroundImage = 'none';
+        characterLayer.style.backgroundImage = (window.currentActiveTown === 'sisoren' && (npc.portrait || talkBgImage))
+            ? `url('${npc.portrait || talkBgImage}?v=${Date.now()}')`
+            : 'none';
+        characterLayer.style.backgroundSize = 'contain';
+        characterLayer.style.backgroundPosition = 'center';
+        characterLayer.style.backgroundRepeat = 'no-repeat';
         characterLayer.className = 'npc-talk-character-layer';
     }
 
     const portraitImg = document.getElementById('npc-talk-portrait-img');
     if (portraitImg) {
-        portraitImg.style.display = 'none';
+        portraitImg.src = `${npc.portrait || talkBgImage || ''}?v=${Date.now()}`;
+        portraitImg.alt = npc.name;
+        portraitImg.style.display = npc.portrait || talkBgImage ? 'block' : 'none';
     }
 
     // Chat alanını temizle
@@ -2957,6 +2964,7 @@ function loadContextualQuestions(npcId) {
             }
 
             if (questionsToShow && questionsToShow.length > 0) {
+                if (npcId >= 200) questionsToShow = ensureFourSisorenQuestions(questionsToShow, npcId, askedCount);
                 container.innerHTML = '';
                 questionsToShow.forEach((q, index) => {
                     const btn = document.createElement('button');
@@ -2985,6 +2993,7 @@ function loadContextualQuestions(npcId) {
             }
 
             if (fallbackQuestions && fallbackQuestions.length > 0) {
+                if (npcId >= 200) fallbackQuestions = ensureFourSisorenQuestions(fallbackQuestions, npcId, askedCount);
                 fallbackQuestions.forEach((q) => {
                     const btn = document.createElement('button');
                     btn.className = 'npc-talk-btn';
@@ -2996,7 +3005,27 @@ function loadContextualQuestions(npcId) {
             } else {
                 container.innerHTML = '<div style="color:red;">Diyaloglar yüklenemedi!</div>';
             }
+
         });
+}
+
+function ensureFourSisorenQuestions(questions, npcId, askedCount) {
+    const result = [...questions];
+    const npc = window.NPC_DATA && window.NPC_DATA[npcId];
+    while (result.length < 4) {
+        const source = result[result.length % Math.max(1, result.length)] || {
+            q: 'O gece başka hangi ayrıntıyı hatırlıyorsun?',
+            a: 'Bu ayrıntıyı tam hatırlamıyorum amirim.',
+            difficulty: 2,
+            category: 'derinlesme'
+        };
+        result.push({
+            ...source,
+            q: `${source.q} (Ek ayrıntı ${askedCount + result.length + 1})`,
+            a: source.a || `${npc ? npc.name : 'Tanık'} bu konuda kesin konuşmaktan kaçınıyor.`
+        });
+    }
+    return result.slice(0, 4);
 }
 
 // Sisören için her aşamada zengin hazır soru üreten yardımcı fonksiyon

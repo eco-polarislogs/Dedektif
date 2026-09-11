@@ -506,7 +506,7 @@ window.SisorenEngine = {
 
         if (stageCanvas && interiorImgUrl) {
             stageCanvas.style.backgroundImage = `url('${interiorImgUrl}?v=${Date.now()}')`;
-            stageCanvas.style.backgroundSize = '100% 100%';
+            stageCanvas.style.backgroundSize = 'cover';
             stageCanvas.style.backgroundPosition = 'center center';
             stageCanvas.style.backgroundRepeat = 'no-repeat';
             stageCanvas.style.backgroundColor = '#030806';

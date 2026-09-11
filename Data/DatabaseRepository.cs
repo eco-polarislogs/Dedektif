@@ -797,8 +797,44 @@ public class DatabaseRepository : IGameRepository
     {
         using var db = CreateConnection();
         var sql = _isPostgres
-            ? """CREATE TABLE IF NOT EXISTS SisorenNPCDialogues (DialogueId SERIAL PRIMARY KEY, NPCId INTEGER NOT NULL, QuestionText TEXT NOT NULL, ResponseText TEXT NOT NULL, GuiltyResponseText TEXT NOT NULL, Stage INTEGER NOT NULL, ButtonIndex INTEGER NOT NULL DEFAULT 0, Difficulty INTEGER NOT NULL DEFAULT 1, Category TEXT NOT NULL DEFAULT 'tanisma', UNIQUE (NPCId, Stage, ButtonIndex));"""
-            : """CREATE TABLE IF NOT EXISTS SisorenNPCDialogues (DialogueId INTEGER PRIMARY KEY AUTOINCREMENT, NPCId INTEGER NOT NULL, QuestionText TEXT NOT NULL, ResponseText TEXT NOT NULL, GuiltyResponseText TEXT NOT NULL, Stage INTEGER NOT NULL, ButtonIndex INTEGER NOT NULL DEFAULT 0, Difficulty INTEGER NOT NULL DEFAULT 1, Category TEXT NOT NULL DEFAULT 'tanisma', UNIQUE (NPCId, Stage, ButtonIndex));""";
+            ? """
+              CREATE TABLE IF NOT EXISTS SisorenNPCs (
+                  NPCId INTEGER PRIMARY KEY, Name TEXT NOT NULL, Role TEXT NOT NULL,
+                  BuildingId TEXT NOT NULL, IsExtra BOOLEAN NOT NULL DEFAULT FALSE,
+                  IsChild BOOLEAN NOT NULL DEFAULT FALSE, Portrait TEXT NOT NULL DEFAULT ''
+              );
+              CREATE TABLE IF NOT EXISTS SisorenBuildings (
+                  BuildingId TEXT PRIMARY KEY, Title TEXT NOT NULL, InteriorFile TEXT NOT NULL,
+                  MapTop TEXT NOT NULL, MapLeft TEXT NOT NULL
+              );
+              CREATE TABLE IF NOT EXISTS SisorenNPCDialogues (
+                  DialogueId SERIAL PRIMARY KEY, NPCId INTEGER NOT NULL,
+                  QuestionText TEXT NOT NULL, ResponseText TEXT NOT NULL,
+                  GuiltyResponseText TEXT NOT NULL, Stage INTEGER NOT NULL,
+                  ButtonIndex INTEGER NOT NULL DEFAULT 0, Difficulty INTEGER NOT NULL DEFAULT 1,
+                  Category TEXT NOT NULL DEFAULT 'tanisma',
+                  UNIQUE (NPCId, Stage, ButtonIndex)
+              );
+              """
+            : """
+              CREATE TABLE IF NOT EXISTS SisorenNPCs (
+                  NPCId INTEGER PRIMARY KEY, Name TEXT NOT NULL, Role TEXT NOT NULL,
+                  BuildingId TEXT NOT NULL, IsExtra INTEGER NOT NULL DEFAULT 0,
+                  IsChild INTEGER NOT NULL DEFAULT 0, Portrait TEXT NOT NULL DEFAULT ''
+              );
+              CREATE TABLE IF NOT EXISTS SisorenBuildings (
+                  BuildingId TEXT PRIMARY KEY, Title TEXT NOT NULL, InteriorFile TEXT NOT NULL,
+                  MapTop TEXT NOT NULL, MapLeft TEXT NOT NULL
+              );
+              CREATE TABLE IF NOT EXISTS SisorenNPCDialogues (
+                  DialogueId INTEGER PRIMARY KEY AUTOINCREMENT, NPCId INTEGER NOT NULL,
+                  QuestionText TEXT NOT NULL, ResponseText TEXT NOT NULL,
+                  GuiltyResponseText TEXT NOT NULL, Stage INTEGER NOT NULL,
+                  ButtonIndex INTEGER NOT NULL DEFAULT 0, Difficulty INTEGER NOT NULL DEFAULT 1,
+                  Category TEXT NOT NULL DEFAULT 'tanisma',
+                  UNIQUE (NPCId, Stage, ButtonIndex)
+              );
+              """;
         await db.ExecuteAsync(sql);
 
         var names = new Dictionary<int, (string Name, string Tone)>
@@ -814,6 +850,36 @@ public class DatabaseRepository : IGameRepository
             [313] = ("Küçük Ayşe", "child"), [314] = ("Gece Bekçisi Recep", "senior"),
             [315] = ("Küçük Elif", "child"), [316] = ("Can", "child"), [317] = ("Selin", "child"), [318] = ("Kerem", "child")
         };
+        foreach (var npc in names)
+        {
+            await db.ExecuteAsync(_isPostgres
+                ? "INSERT INTO SisorenNPCs (NPCId,Name,Role,BuildingId,IsExtra,IsChild) VALUES (@NPCId,@Name,@Role,@BuildingId,@IsExtra,@IsChild) ON CONFLICT (NPCId) DO UPDATE SET Name=EXCLUDED.Name,Role=EXCLUDED.Role"
+                : "INSERT OR REPLACE INTO SisorenNPCs (NPCId,Name,Role,BuildingId,IsExtra,IsChild) VALUES (@NPCId,@Name,@Role,@BuildingId,@IsExtra,@IsChild)",
+                new { NPCId = npc.Key, Name = npc.Value.Name, Role = npc.Value.Tone, BuildingId = npc.Key >= 300 ? "sisoren_extra" : "sisoren_building", IsExtra = npc.Key >= 300, IsChild = npc.Value.Tone == "child" });
+        }
+        var buildings = new[]
+        {
+            ("telgrafhane", "Telgrafhane", "images/towns/sisoren/interiors/telgrafhane_interior.jpg"),
+            ("kahvehane", "Kahvehane", "images/towns/sisoren/interiors/kahvehane_interior.jpg"),
+            ("sinema", "Sinema", "images/towns/sisoren/interiors/sinema_interior.jpg"),
+            ("bakkal", "Bakkal", "images/towns/sisoren/interiors/bakkal_interior.jpg"),
+            ("sahaf", "Sahaf", "images/towns/sisoren/interiors/sahaf_interior.jpg"),
+            ("muhtarlik", "Muhtarlık", "images/towns/sisoren/interiors/muhtarlik_interior.jpg"),
+            ("tutuncu", "Tütüncü", "images/towns/sisoren/interiors/tutuncu_interior.jpg"),
+            ("ahir", "Ahır", "images/towns/sisoren/interiors/ahir_interior.jpg"),
+            ("tupcu", "Tüpçü", "images/towns/sisoren/interiors/tupcu_interior.jpg"),
+            ("hurdaci", "Hurdacı", "images/towns/sisoren/interiors/hurdaci_interior.jpg"),
+            ("kasabali_evi_1", "Kasabalı Evi Sol", "images/towns/sisoren/interiors/kasabali_evi_interior.jpg"),
+            ("kasabali_evi_2", "Kasabalı Evi Orta", "images/towns/sisoren/interiors/kasabali_evi_interior.jpg"),
+            ("kasabali_evi_3", "Kasabalı Evi Yamaç", "images/towns/sisoren/interiors/kasabali_evi_interior.jpg")
+        };
+        foreach (var building in buildings)
+        {
+            await db.ExecuteAsync(_isPostgres
+                ? "INSERT INTO SisorenBuildings (BuildingId,Title,InteriorFile,MapTop,MapLeft) VALUES (@BuildingId,@Title,@InteriorFile,'0%','0%') ON CONFLICT (BuildingId) DO UPDATE SET Title=EXCLUDED.Title,InteriorFile=EXCLUDED.InteriorFile"
+                : "INSERT OR REPLACE INTO SisorenBuildings (BuildingId,Title,InteriorFile,MapTop,MapLeft) VALUES (@BuildingId,@Title,@InteriorFile,'0%','0%')",
+                new { BuildingId = building.Item1, Title = building.Item2, InteriorFile = building.Item3 });
+        }
         var questions = new[] { "Cinayet gecesi binanda kim vardı?", "O gece saat iki civarında ne gördün?", "Bu olayla ilgili sakladığın belge ya da eşya nedir?", "Başka hangi kasabalı bu ayrıntıyı doğrulayabilir?" };
         var categories = new[] { "tanisma", "derinlesme", "yuzlestirme", "baski", "son" };
         foreach (var npc in names)

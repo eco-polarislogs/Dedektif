@@ -12,7 +12,7 @@
 #town-map-screen.sisoren-active,
 #town-map-stage.sisoren-active {
     background-image: url('/images/towns/sisoren/sisoren_map_v5.jpg') !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
     overflow: hidden;
@@ -462,7 +462,7 @@ body.sisoren-theme #interior-screen {
 
 body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     background-color: #030806 !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
     width: 100% !important;
@@ -502,7 +502,7 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
 
 @media screen and (max-height: 800px) {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
-        background-size: 100% 100% !important;
+        background-size: cover !important;
     }
 }
 
