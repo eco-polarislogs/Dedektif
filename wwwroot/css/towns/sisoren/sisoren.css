@@ -462,7 +462,7 @@ body.sisoren-theme #interior-screen {
 
 body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     background-color: #030806 !important;
-    background-size: contain !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
     width: 100% !important;
@@ -502,13 +502,13 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
 
 @media screen and (max-height: 800px) {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
-        background-size: contain !important;
+        background-size: cover !important;
     }
 }
 
 @media screen and (max-width: 1440px) {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
-        background-size: contain !important;
+        background-size: cover !important;
     }
 }
 
@@ -516,6 +516,8 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
    BİNA İÇİ NPC KONUŞMA BALONU — KARAKTERİN ÜZERİNDE
    ======================================== */
 .sisoren-interior-npc-marker {
+    min-width: 86px;
+    min-height: 92px;
     position: absolute;
     transform: translate(-50%, -100%);
     z-index: 300;
@@ -526,6 +528,9 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     gap: 4px;
     pointer-events: auto;
     transition: transform 0.2s ease;
+    border: 0;
+    background: transparent;
+    color: inherit;
 }
 
 .sisoren-interior-npc-marker:hover {

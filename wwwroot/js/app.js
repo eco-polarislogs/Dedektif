@@ -3006,8 +3006,18 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
         if (window.SISOREN_CONFIG.extraNpcs) {
             const extra = window.SISOREN_CONFIG.extraNpcs.find(e => e.numericId === npcId);
             if (extra && extra.questions) {
-                // Sorulan sayıya göre kalan soruları ver
-                return extra.questions.slice(askedCount, askedCount + 4);
+                const registered = window.NPC_DATA && window.NPC_DATA[npcId];
+                const questions = registered && Array.isArray(registered.questions)
+                    ? registered.questions
+                    : extra.questions.map((q, index) => ({
+                        q: typeof q === 'string' ? q : q.q,
+                        a: typeof q === 'string'
+                            ? `${extra.name} bu ayrıntıyı hatırlıyor: ${q}`
+                            : q.a,
+                        difficulty: index > 2 ? 2 : 1,
+                        category: 'tanisma'
+                    }));
+                return questions.slice(askedCount, askedCount + 4);
             }
         }
         // Çocuk NPC'ler
@@ -3016,12 +3026,16 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
                 if (bld.children) {
                     const ch = bld.children.find(c => c.numericId === npcId || c.id === npcId);
                     if (ch && ch.questions) {
-                        return ch.questions.map(qText => (typeof qText === 'string' ? {
-                            q: qText,
-                            a: ch.greeting || 'Bilmiyorum dedektif amca...',
-                            difficulty: 1,
-                            category: 'tanisma'
-                        } : qText)).slice(askedCount, askedCount + 4);
+                        const registered = window.NPC_DATA && window.NPC_DATA[npcId];
+                        const questions = registered && Array.isArray(registered.questions)
+                            ? registered.questions
+                            : ch.questions.map(qText => (typeof qText === 'string' ? {
+                                q: qText,
+                                a: ch.greeting || 'Bilmiyorum dedektif amca...',
+                                difficulty: 1,
+                                category: 'tanisma'
+                            } : qText));
+                        return questions.slice(askedCount, askedCount + 4);
                     }
                 }
             }
