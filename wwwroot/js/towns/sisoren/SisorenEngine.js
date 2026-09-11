@@ -498,7 +498,7 @@ window.SisorenEngine = {
         interiorScreen.classList.remove('hidden');
         interiorScreen.setAttribute('data-npc-id', bld.npcId);
 
-        // İç mekan: tek görsel, tekrarsız, ekrana sığdır (contain)
+        // İç mekan: tek görsel, tekrarsız, görüntünün tamamını ekrana doldur.
         this.clearInteriorMarkers();
         const interiorImgUrl = bld.interiorImg || bld.npc.bg || bld.npc.talkBg;
         interiorScreen.style.backgroundImage = 'none';
@@ -506,7 +506,7 @@ window.SisorenEngine = {
 
         if (stageCanvas && interiorImgUrl) {
             stageCanvas.style.backgroundImage = `url('${interiorImgUrl}?v=${Date.now()}')`;
-            stageCanvas.style.backgroundSize = 'cover';
+            stageCanvas.style.backgroundSize = '100% 100%';
             stageCanvas.style.backgroundPosition = 'center center';
             stageCanvas.style.backgroundRepeat = 'no-repeat';
             stageCanvas.style.backgroundColor = '#030806';

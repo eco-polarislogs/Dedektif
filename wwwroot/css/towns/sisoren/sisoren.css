@@ -462,7 +462,9 @@ body.sisoren-theme #interior-screen {
 
 body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     background-color: #030806 !important;
-    background-size: cover !important;
+    /* Sisoren interiors are square source images. Fill the stage so the full
+       image remains visible instead of cropping it with cover. */
+    background-size: 100% 100% !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
     width: 100% !important;
@@ -502,7 +504,7 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
 
 @media screen and (max-height: 800px) {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
-        background-size: cover !important;
+        background-size: 100% 100% !important;
     }
 }
 
