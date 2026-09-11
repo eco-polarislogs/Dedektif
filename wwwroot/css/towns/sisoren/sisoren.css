@@ -12,7 +12,7 @@
 #town-map-screen.sisoren-active,
 #town-map-stage.sisoren-active {
     background-image: url('/images/towns/sisoren/sisoren_map_v5.jpg') !important;
-    background-size: 100% 100% !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
     overflow: hidden;
@@ -34,7 +34,7 @@ body.sisoren-theme {
     pointer-events: none;
     z-index: 8;
     background: radial-gradient(circle at 40% 40%, rgba(6, 78, 59, 0.08) 0%, rgba(2, 44, 34, 0.3) 65%, rgba(0, 0, 0, 0.6) 100%),
-                linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(5, 150, 105, 0.03) 50%, rgba(0, 0, 0, 0.45) 100%);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(5, 150, 105, 0.03) 50%, rgba(0, 0, 0, 0.45) 100%);
     mix-blend-mode: screen;
     animation: sisorenFogPulse 9s ease-in-out infinite alternate;
 }
@@ -44,6 +44,7 @@ body.sisoren-theme {
         opacity: 0.65;
         transform: scale(1);
     }
+
     100% {
         opacity: 0.9;
         transform: scale(1.02);
@@ -178,7 +179,7 @@ body.sisoren-theme .map-building.building-sisoren-ahir .building-hover-tag {
     border: 1.5px solid #d97706 !important;
     color: #fef3c7 !important;
     font-family: 'Cinzel', serif !important;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.95), 0 0 16px rgba(217, 119, 6, 0.6) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.95), 0 0 16px rgba(217, 119, 6, 0.6) !important;
     text-shadow: 0 0 8px rgba(245, 158, 11, 0.8) !important;
 }
 
@@ -257,10 +258,13 @@ body.sisoren-theme .found-btn,
 }
 
 @keyframes sisorenFoundPulse {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 4px 15px rgba(0, 0, 0, 0.6);
         transform: scale(1);
     }
+
     50% {
         box-shadow: 0 0 40px rgba(52, 211, 153, 0.95), 0 6px 22px rgba(0, 0, 0, 0.8);
         transform: scale(1.04);
@@ -409,6 +413,7 @@ body.sisoren-theme .cinematic-close:hover {
         padding: 4px 10px !important;
         top: -34px !important;
     }
+
     .sisoren-grid {
         grid-template-columns: repeat(4, 1fr) !important;
         gap: 12px !important;
@@ -423,6 +428,7 @@ body.sisoren-theme .cinematic-close:hover {
         top: -30px !important;
         letter-spacing: 0.8px !important;
     }
+
     .sisoren-grid {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 10px !important;
@@ -436,6 +442,7 @@ body.sisoren-theme .cinematic-close:hover {
         padding: 3px 8px !important;
         top: -30px !important;
     }
+
     .sisoren-grid {
         max-height: 55vh !important;
     }
@@ -462,9 +469,10 @@ body.sisoren-theme #interior-screen {
 
 body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     background-color: #030806 !important;
-    background-size: contain !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-repeat: no-repeat !important;
+
     width: 100vw !important;
     height: 100vh !important;
     object-fit: contain !important;
@@ -475,18 +483,70 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
         background-size: contain !important;
         background-position: center center !important;
+
+        width: 100% !important;
+        height: 100% !important;
     }
+
+}
+
+body.sisoren-theme #npc-talk-modal .npc-talk-buttons-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+}
+
+body.sisoren-theme #npc-talk-modal .npc-talk-btn {
+    min-width: 0;
+    min-height: 48px;
+}
+
+.sisoren-primary-npc-marker {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    z-index: 320;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: 2px solid #fbbf24;
+    border-radius: 12px;
+    background: rgba(3, 8, 6, 0.9);
+    color: #fef3c7;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.sisoren-primary-npc-marker img {
+    width: 76px;
+    height: 76px;
+    object-fit: cover;
+    display: block;
+}
+
+.sisoren-primary-npc-marker span {
+    max-width: 150px;
+    padding: 3px 7px 5px;
+    font-size: 0.72rem;
+    white-space: nowrap;
+
 }
 
 @media screen and (max-height: 800px) {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
+
         background-size: contain !important;
         max-height: 100vh !important;
+
+        background-size: cover !important;
+
     }
 }
 
 @media screen and (max-width: 1440px) {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
+
         background-size: contain !important;
         max-width: 100vw !important;
     }
@@ -497,6 +557,9 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
         background-size: contain !important;
         background-position: center center !important;
+
+        background-size: 100% 100% !important;
+
     }
 }
 
@@ -504,6 +567,8 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
    BİNA İÇİ NPC KONUŞMA BALONU — KARAKTERİN ÜZERİNDE
    ======================================== */
 .sisoren-interior-npc-marker {
+    min-width: 86px;
+    min-height: 92px;
     position: absolute;
     transform: translate(-50%, -110%);
     z-index: 300;
@@ -514,6 +579,9 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     gap: 4px;
     pointer-events: auto;
     transition: transform 0.2s ease;
+    border: 0;
+    background: transparent;
+    color: inherit;
 }
 
 .sisoren-interior-npc-marker:hover {
@@ -580,4 +648,3 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
 .sisoren-extra-card .found-npc-name {
     color: #6ee7b7 !important;
 }
-

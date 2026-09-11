@@ -826,3 +826,90 @@ window.SISOREN_INTERIOR_POSITIONS = {
     // Tüpçü - yardımcı
     tupcu_yardimci: { top: '45%', left: '50%' }
 };
+
+// Her görselin içindeki karakterlere göre normalize edilmiş tıklama noktaları.
+// Noktalar sahne yüzdesidir; görsel laptopta yeniden ölçeklense bile karakterle birlikte kalır.
+window.SISOREN_INTERIOR_LAYOUTS = {
+    kahvehane: {
+        primary: { top: '56%', left: '68%' },
+        kahve_celal: { top: '54%', left: '22%' },
+        kahve_hamdi: { top: '65%', left: '42%' },
+        kahve_cirak: { top: '40%', left: '72%' }
+    },
+    bakkal: {
+        primary: { top: '58%', left: '70%' },
+        bakkal_cocuk_1: { top: '58%', left: '38%' }
+    },
+    sahaf: {
+        primary: { top: '58%', left: '70%' },
+        sahaf_cocuk_1: { top: '74%', left: '30%' },
+        sahaf_cocuk_2: { top: '74%', left: '46%' }
+    },
+    ahir: {
+        primary: { top: '58%', left: '30%' },
+        ahir_cocuk_1: { top: '54%', left: '54%' }
+    }
+};
+
+// Sisören'in mevcut iç mekân görsellerini bütün binalara güvenli biçimde bağla.
+// Yeni görseller eklendiğinde bu eşleme yalnızca ilgili bina için değiştirilebilir.
+(function normalizeSisorenPresentation() {
+    const config = window.SISOREN_CONFIG;
+    const availableInteriors = [
+        'images/towns/sisoren/interiors/kahvehane_interior.jpg',
+        'images/towns/sisoren/interiors/bakkal_interior.jpg',
+        'images/towns/sisoren/interiors/sahaf_interior.jpg',
+        'images/towns/sisoren/interiors/ahir_interior.jpg'
+    ];
+    const primaryPositions = [
+        { top: '55%', left: '30%' }, { top: '58%', left: '58%' },
+        { top: '56%', left: '76%' }, { top: '60%', left: '24%' },
+        { top: '58%', left: '72%' }, { top: '54%', left: '62%' },
+        { top: '58%', left: '42%' }, { top: '55%', left: '66%' },
+        { top: '60%', left: '34%' }, { top: '58%', left: '72%' },
+        { top: '62%', left: '30%' }, { top: '62%', left: '62%' },
+        { top: '55%', left: '48%' }
+    ];
+
+    config.buildings.forEach((building, index) => {
+        building.interiorImg = building.interiorImg || availableInteriors[index % availableInteriors.length];
+        if (building.npc) {
+            building.npc.bg = building.interiorImg;
+            building.npc.talkBg = building.npc.portrait;
+        }
+        const layout = window.SISOREN_INTERIOR_LAYOUTS[building.id];
+        building.interiorLayout = layout || {};
+        building.primaryNpcPos = (layout && layout.primary) || building.primaryNpcPos || primaryPositions[index];
+        if (!building.hotspots || building.hotspots.length === 0) {
+            building.hotspots = [1, 2, 3, 4].map((slot, slotIndex) => ({
+                id: building.npcId * 10 + slotIndex + 1,
+                name: `${building.title} inceleme noktası ${slot}`,
+                desc: `${building.title} içindeki bu bölümde soruşturmayla bağlantılı bir iz aranabilir.`,
+                top: `${28 + slotIndex * 16}%`,
+                left: `${22 + (slotIndex % 2) * 52}%`,
+                img: building.interiorImg,
+                relatedNPCId: building.npcId,
+                fingerprintSpot: null,
+                bloodSpot: null
+            }));
+        }
+    });
+
+    Object.keys(config.fallbackQuestions).forEach(npcId => {
+        const pool = config.fallbackQuestions[npcId];
+        const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
+        let index = 0;
+        while (pool.length < 20) {
+            const source = pool[index % pool.length];
+            const round = Math.floor(pool.length / 4) + 1;
+            pool.push({
+                ...source,
+                q: `${source.q} Başka hangi ayrıntıyı hatırlıyorsun? (Soru ${pool.length + 1})`,
+                a: `${source.a} Bu konuda hatırladığım ek ayrıntı şu: olayın zamanı ve yeri konusunda dikkatli düşününce başka bir iz daha ortaya çıkıyor.`,
+                category: categories[Math.floor(pool.length / 4) % categories.length],
+                difficulty: Math.min(5, Math.max(1, source.difficulty || round))
+            });
+            index++;
+        }
+    });
+})();

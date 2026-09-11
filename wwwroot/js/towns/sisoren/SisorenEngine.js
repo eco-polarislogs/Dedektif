@@ -10,34 +10,38 @@ window.SisorenEngine = {
     introDialogCompleted: false,
     visitedSisorenBuildings: new Set(),
 
+    normalizeNpcQuestions: function (npcId, name, questions) {
+        const fallback = window.SISOREN_CONFIG && window.SISOREN_CONFIG.fallbackQuestions
+            ? window.SISOREN_CONFIG.fallbackQuestions[npcId] || []
+            : [];
+        const normalized = (questions || []).map((question, index) => {
+            if (typeof question === 'object') return question;
+            const knownAnswer = fallback[index] && fallback[index].a;
+            return {
+                q: question,
+                a: knownAnswer || `${name} bir an duraksıyor: "${question}" sorusunun cevabını olay gecesindeki ayrıntıları hatırlayarak anlatıyor. Bu konuda bildiğim tek şey, izlerin bina çevresinden dağ yoluna doğru devam ettiğidir.`,
+                difficulty: index > 2 ? 2 : 1,
+                category: index > 2 ? 'yuzlestirme' : 'tanisma'
+            };
+        });
+        while (normalized.length < 4) {
+            const index = normalized.length;
+            normalized.push({
+                q: `${name}, olay gecesiyle ilgili başka hangi ayrıntıyı hatırlıyorsun?`,
+                a: `${name} başını sallıyor: "Bunu daha önce anlatmadım; olay gecesi ${index + 1}. saatte bina çevresinde kısa bir hareketlilik vardı. Ayrıntıyı araştırmanız gerekiyor."`,
+                difficulty: 2,
+                category: 'derinlesme'
+            });
+        }
+        return normalized.slice(0, 4);
+    },
+
     init: function () {
         console.log("🌲 Sisören Dağ Kasabası Motoru v3.0 Başlatıldı.");
         this.registerSisorenData();
         this.setupEventListeners();
         this.setupMapObserver();
 
-        // URL parametresi ile doğrudan Sisören açılış kontrolü (?town=sisoren veya ?town=sisoren/buldum)
-        const urlParams = new URLSearchParams(window.location.search);
-        const townParam = urlParams.get('town');
-        if (townParam && townParam.toLowerCase().includes('sisoren')) {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                if (splash) splash.classList.add('hidden');
-                const worldMap = document.getElementById('world-map-screen');
-                if (worldMap) worldMap.classList.add('hidden');
-                const townMapScreen = document.getElementById('town-map-screen');
-                if (townMapScreen) townMapScreen.classList.remove('hidden');
-                this.loadSisorenMap();
-
-                // Eğer buldum parametresi de varsa direkt buldum ekranını aç
-                if (townParam.toLowerCase().includes('buldum')) {
-                    setTimeout(() => {
-                        const foundBtn = document.getElementById('found-btn');
-                        if (foundBtn) foundBtn.click();
-                    }, 600);
-                }
-            }, 300);
-        }
     },
 
     // =============================
@@ -51,6 +55,7 @@ window.SisorenEngine = {
             // Ana 13 şüpheli binalarını kaydet
             window.SISOREN_CONFIG.buildings.forEach(bld => {
                 if (bld.npc) {
+                    bld.npc.questions = this.normalizeNpcQuestions(bld.npcId, bld.npc.name, bld.npc.questions);
                     window.NPC_DATA[bld.npcId] = bld.npc;
                 }
                 if (bld.hotspots && bld.hotspots.length > 0) {
@@ -70,7 +75,7 @@ window.SisorenEngine = {
                             bg: null,
                             talkBg: null,
                             greeting: child.greeting,
-                            questions: child.questions || [],
+                            questions: this.normalizeNpcQuestions(child.numericId || child.id, child.name, child.questions),
                             isExtra: true,
                             canBeGuilty: false,
                             isChild: true,
@@ -97,7 +102,7 @@ window.SisorenEngine = {
                         bg: null,
                         talkBg: null,
                         greeting: extra.greeting,
-                        questions: extra.questions || [],
+                        questions: this.normalizeNpcQuestions(extra.numericId, extra.name, extra.questions),
                         isExtra: true,
                         canBeGuilty: false,
                         age: extra.age,
@@ -122,11 +127,6 @@ window.SisorenEngine = {
             document.querySelector('.town-sisoren-btn');
         if (sisorenTownBtn) {
             sisorenTownBtn.setAttribute('data-town-id', 'sisoren');
-            sisorenTownBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.showSisorenStoryIntro();
-            });
         }
 
         const gizemliTownBtn = document.querySelector('.region-town[data-town-id="gizemli"]');
@@ -498,7 +498,7 @@ window.SisorenEngine = {
         interiorScreen.classList.remove('hidden');
         interiorScreen.setAttribute('data-npc-id', bld.npcId);
 
-        // İç mekan: tek görsel, tekrarsız, ekrana sığdır (contain)
+        // İç mekan: tek görsel, tekrarsız ve tam ekran.
         this.clearInteriorMarkers();
         const interiorImgUrl = bld.interiorImg || bld.npc.bg || bld.npc.talkBg;
         interiorScreen.style.backgroundImage = 'none';
@@ -506,7 +506,7 @@ window.SisorenEngine = {
 
         if (stageCanvas && interiorImgUrl) {
             stageCanvas.style.backgroundImage = `url('${interiorImgUrl}?v=${Date.now()}')`;
-            stageCanvas.style.backgroundSize = 'contain';
+            stageCanvas.style.setProperty('background-size', 'cover', 'important');
             stageCanvas.style.backgroundPosition = 'center center';
             stageCanvas.style.backgroundRepeat = 'no-repeat';
             stageCanvas.style.backgroundColor = '#030806';
@@ -530,6 +530,7 @@ window.SisorenEngine = {
 
         // Bina içindeki diğer karakterler için panel göster (Celal Amca, Hamdi Dayı, Gofretli Kız vs.)
         const allExtrasInBuilding = [...buildingExtras, ...buildingChildren];
+        this.renderPrimaryNpc(npc, bld);
         this.renderInteriorOccupants(allExtrasInBuilding, bld, npc);
 
         // Ses efektleri
@@ -560,12 +561,34 @@ window.SisorenEngine = {
     // =============================
     clearInteriorMarkers: function () {
         document.querySelectorAll('.sisoren-interior-npc-marker').forEach(el => el.remove());
+        document.querySelectorAll('.sisoren-primary-npc-marker').forEach(el => el.remove());
         const panel = document.getElementById('sisoren-extra-npc-panel');
         if (panel) panel.remove();
     },
 
+    renderPrimaryNpc: function (npc, bld) {
+        const stageCanvas = document.getElementById('interior-stage-canvas');
+        if (!stageCanvas || !npc || !bld.primaryNpcPos) return;
+
+        const marker = document.createElement('button');
+        marker.type = 'button';
+        marker.className = 'sisoren-primary-npc-marker';
+        marker.style.top = bld.primaryNpcPos.top;
+        marker.style.left = bld.primaryNpcPos.left;
+        marker.title = `${npc.name} ile Konuş`;
+        marker.innerHTML = `<img src="${npc.portrait}" alt="${npc.name}"><span>${npc.name}</span>`;
+        marker.onclick = (event) => {
+            event.stopPropagation();
+            if (typeof window.openNpcTalk === 'function') window.openNpcTalk(npc.id);
+        };
+        stageCanvas.appendChild(marker);
+    },
+
     getInteriorPos: function (extra, bldId) {
         if (extra.interiorPos) return extra.interiorPos;
+        const layout = window.SISOREN_INTERIOR_LAYOUTS && window.SISOREN_INTERIOR_LAYOUTS[bldId];
+        const layoutPos = layout && layout[extra.id || extra.extraId];
+        if (layoutPos) return layoutPos;
         const fallback = (window.SISOREN_INTERIOR_POSITIONS || {})[extra.id || extra.extraId];
         if (fallback) return fallback;
 
@@ -590,7 +613,6 @@ window.SisorenEngine = {
     },
 
     renderInteriorOccupants: function (extras, bld, mainNpc) {
-        this.clearInteriorMarkers();
         if (!extras || extras.length === 0) return;
 
         const stageCanvas = document.getElementById('interior-stage-canvas');
@@ -604,9 +626,10 @@ window.SisorenEngine = {
             marker.style.left = pos.left;
             marker.title = `${extra.name} ile Konuş`;
 
+            marker.setAttribute('aria-label', `${extra.name} ile konuş`);
             marker.innerHTML = `
-                <div class="sisoren-npc-bubble"><i class="fa-solid fa-comment-dots"></i></div>
-                <div class="sisoren-npc-tag">${extra.name}</div>
+                <span class="sisoren-npc-bubble"><i class="fa-solid fa-comment-dots"></i></span>
+                <span class="sisoren-npc-tag">${extra.name}</span>
             `;
 
             marker.onclick = (e) => {

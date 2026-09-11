@@ -14,6 +14,7 @@ namespace DedektiflikRPG.Controllers;
 public static class GameEndpoints
 {
     private static readonly System.Threading.SemaphoreSlim _resetSemaphore = new System.Threading.SemaphoreSlim(1, 1);
+    private static int _sisorenGuiltyNpcId = 201;
 
     public static void MapGameEndpoints(this IEndpointRouteBuilder app)
     {
@@ -381,6 +382,24 @@ public static class GameEndpoints
         {
             try
             {
+                if ((npcId >= 201 && npcId <= 213) || (npcId >= 301 && npcId <= 318))
+                {
+                    var sisorenDialogues = (await repo.GetSisorenDialoguesAsync(npcId, null)).ToList();
+                    sisorenDialogues = sisorenDialogues.OrderBy(_ => Random.Shared.Next()).Take(4).ToList();
+                    return Results.Ok(new
+                    {
+                        success = true,
+                        dialogues = sisorenDialogues.Select(d => new
+                        {
+                            q = d.PlayerText,
+                            a = d.NPCResponse,
+                            response = d.NPCResponse,
+                            category = d.Category,
+                            difficulty = d.Difficulty
+                        })
+                    });
+                }
+
                 // Gölge Şehir NPC'leri (101 - 108) Veritabanı sorgusu
                 if (npcId >= 100)
                 {
@@ -762,6 +781,39 @@ public static class GameEndpoints
     // ========================================================================
     public static void MapSisorenEndpoints(WebApplication app)
     {
+        app.MapPost("/api/sisoren/interrogate", async (InterrogationRequest request, IGameRepository repo) =>
+        {
+            if (request == null || !IsSisorenNpc(request.NpcId) ||
+                string.IsNullOrWhiteSpace(request.Question))
+            {
+                return Results.BadRequest("Geçersiz Sisören sorgulama isteği.");
+            }
+
+            var npc = request.NpcId >= 300 ? GetFallbackSisorenExtraNPC(request.NpcId) : GetFallbackSisorenNPC(request.NpcId);
+            if (npc == null) return Results.NotFound("Sisören şüphelisi bulunamadı.");
+
+            var guiltyId = _sisorenGuiltyNpcId;
+            var pool = (await repo.GetSisorenDialoguesAsync(request.NpcId)).ToList();
+            var matched = pool.FirstOrDefault(d => string.Equals(d.PlayerText, request.Question, StringComparison.OrdinalIgnoreCase));
+            var dialogue = matched == null
+                ? $"{npc.Name} temkinli bir ifadeyle cevap veriyor: Bu konuda kesin konuşamam; olay gecesindeki ayrıntıları yeniden kontrol etmelisiniz."
+                : (npc.NPCId == guiltyId ? matched.GuiltyResponses : matched.NPCResponse);
+            if (npc.NPCId != guiltyId && IsSisorenWitness(npc.NPCId, guiltyId))
+                dialogue += $" {npc.Name}, bazı işaretlerin {GetSisorenNPCName(guiltyId)} ile aynı yöne çıktığını ima ediyor; yine de kesin bir suçlama yapmaktan kaçınıyor.";
+
+            return Results.Ok(new
+            {
+                success = true,
+                dialogue,
+                emotion = npc.NPCId == guiltyId ? "nervous" : "neutral",
+                trustChange = npc.NPCId == guiltyId ? -1 : 0,
+                stressIncrease = npc.NPCId == guiltyId ? 4 : 1,
+                npcId = npc.NPCId,
+                town = "sisoren",
+                guiltyIdUsed = guiltyId
+            });
+        });
+
         // 1. Sisören Suçlama (13 Şüpheli + Ekstra NPC'ler)
         app.MapPost("/api/sisoren/accuse", (AccuseRequest request) =>
         {
@@ -818,6 +870,7 @@ public static class GameEndpoints
         {
             var rnd = new Random();
             int guiltyId = rnd.Next(201, 214); // 201-213 arası şüpheli
+            _sisorenGuiltyNpcId = guiltyId;
             return Results.Ok(new 
             { 
                 success = true, 
@@ -911,5 +964,57 @@ public static class GameEndpoints
             _ => null
         };
     }
-}
 
+    private static NPC? GetFallbackSisorenNPC(int npcId)
+    {
+        return npcId switch
+        {
+            201 => new NPC { NPCId = 201, Name = "Telgrafçı Rüstem", Role = "Telgrafçı", SecretInfo = "Cinayet gecesi dağ hattından gelen şifreli mesajı sakladı." },
+            202 => new NPC { NPCId = 202, Name = "Kahveci İrfan", Role = "Kahveci", SecretInfo = "Gece yarısı kahvehanede duyduğu tartışmayı gizliyor." },
+            203 => new NPC { NPCId = 203, Name = "Sinemacı Nejat", Role = "Sinemacı", SecretInfo = "Film makinesinin saat kaydını değiştirdi." },
+            204 => new NPC { NPCId = 204, Name = "Bakkal Cemile", Role = "Bakkal", SecretInfo = "Kırmızı-yeşil yün ipliğini cinayet gecesi sattı." },
+            205 => new NPC { NPCId = 205, Name = "Sahaf Hikmet", Role = "Sahaf", SecretInfo = "Eski tapu defterindeki bir sayfayı kopardı." },
+            206 => new NPC { NPCId = 206, Name = "Muhtar Meliha Hanım", Role = "Köy Muhtarı", SecretInfo = "Maden yolu için yapılan gizli anlaşmayı biliyor." },
+            207 => new NPC { NPCId = 207, Name = "Tütüncü Nermin Hanım", Role = "Tütüncü", SecretInfo = "Olay gecesi dükkânına gelen kişiyi saklıyor." },
+            208 => new NPC { NPCId = 208, Name = "Çoban Durmuş", Role = "Çiftçi ve Çoban", SecretInfo = "Dağ yolundaki taze kazılmış çukuru gördü." },
+            209 => new NPC { NPCId = 209, Name = "Tüpçü Şevket", Role = "Tüpçü", SecretInfo = "Gece taşınan ağır sandığın izlerini fark etti." },
+            210 => new NPC { NPCId = 210, Name = "Hurdacı Zehra", Role = "Hurdacı", SecretInfo = "Yeraltı tüneline açılan kapağın anahtarını taşıyor." },
+            211 => new NPC { NPCId = 211, Name = "Zeynep Teyze", Role = "Ev Hanımı", SecretInfo = "Meydandaki fener ışığını penceresinden gördü." },
+            212 => new NPC { NPCId = 212, Name = "Hatice Nine", Role = "Kasaba Büyüğü", SecretInfo = "Kasabanın eski maden sırrını biliyor." },
+            213 => new NPC { NPCId = 213, Name = "Emine Hanım", Role = "Dağ Sakini", SecretInfo = "Dağ yolunda gömülü bir nesne buldu." },
+            _ => null
+        };
+    }
+
+    private static bool IsSisorenNpc(int npcId) =>
+        (npcId >= 201 && npcId <= 213) || (npcId >= 301 && npcId <= 318);
+
+    private static bool IsSisorenWitness(int npcId, int guiltyId) =>
+        ((npcId * 17) + guiltyId) % 5 < 2;
+
+    private static NPC? GetFallbackSisorenExtraNPC(int npcId)
+    {
+        return npcId switch
+        {
+            301 => new NPC { NPCId = 301, Name = "Celal Amca", Role = "Emekli Ormancı" },
+            302 => new NPC { NPCId = 302, Name = "Hamdi Dayı", Role = "Emekli Madenci" },
+            303 => new NPC { NPCId = 303, Name = "Kahveci Çırağı Salih", Role = "Kahveci Çırağı" },
+            304 => new NPC { NPCId = 304, Name = "Şerife Teyze", Role = "Kasabalı" },
+            305 => new NPC { NPCId = 305, Name = "Oduncu Çırağı Cemal", Role = "Oduncu Çırağı" },
+            306 => new NPC { NPCId = 306, Name = "Postacı Nuri Efendi", Role = "Postacı" },
+            307 => new NPC { NPCId = 307, Name = "Telgraf Çırağı Yusuf", Role = "Telgraf Çırağı" },
+            308 => new NPC { NPCId = 308, Name = "Biletçi Fatma", Role = "Biletçi" },
+            309 => new NPC { NPCId = 309, Name = "Kâtip Sami Efendi", Role = "Kâtip" },
+            310 => new NPC { NPCId = 310, Name = "Tütün Tiryakisi Osman", Role = "Kasabalı" },
+            311 => new NPC { NPCId = 311, Name = "Hurda Toplayan Ali", Role = "Çocuk Tanık" },
+            312 => new NPC { NPCId = 312, Name = "Tüp Dağıtıcısı Mehmet", Role = "Dağıtıcı" },
+            313 => new NPC { NPCId = 313, Name = "Küçük Ayşe", Role = "Çocuk Tanık" },
+            314 => new NPC { NPCId = 314, Name = "Gece Bekçisi Recep", Role = "Gece Bekçisi" },
+            315 => new NPC { NPCId = 315, Name = "Küçük Elif", Role = "Çocuk Tanık" },
+            316 => new NPC { NPCId = 316, Name = "Can", Role = "Çocuk Tanık" },
+            317 => new NPC { NPCId = 317, Name = "Selin", Role = "Çocuk Tanık" },
+            318 => new NPC { NPCId = 318, Name = "Kerem", Role = "Çocuk Tanık" },
+            _ => null
+        };
+    }
+}
