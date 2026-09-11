@@ -3191,7 +3191,7 @@ function typeWriter(element, text, i, onComplete) {
     }
 }
 
-function askQuestionBackend(npcId, question) {
+async function askQuestionBackend(npcId, question) {
     const npc = NPC_DATA[npcId];
     const chatArea = document.getElementById('npc-talk-chat');
 
@@ -3235,8 +3235,24 @@ function askQuestionBackend(npcId, question) {
 
     // NPC cevabını belirle
     let answer = question.a || question.response || question.NPCResponse || question.responseText || "Söyleyecek bir şeyim yok amirim.";
-    if (npcId >= 200 && guiltyNpcId === npcId && question.guiltyResponse) {
-        answer = question.guiltyResponse;
+    if (npcId >= 201 && npcId <= 213) {
+        try {
+            const sisorenResponse = await fetch('/api/sisoren/interrogate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    NpcId: npcId,
+                    Question: question.q,
+                    GuiltyNpcId: guiltyNpcId
+                })
+            });
+            if (sisorenResponse.ok) {
+                const data = await sisorenResponse.json();
+                if (data.dialogue) answer = data.dialogue;
+            }
+        } catch (error) {
+            console.warn('Sisören kayıtlı diyalog yanıtı alınamadı, yerel cevap kullanılacak.', error);
+        }
     }
     if (question.guiltyResponse && guiltyNpcId && question.guiltyResponse[guiltyNpcId]) {
         answer = question.guiltyResponse[guiltyNpcId];

@@ -385,6 +385,9 @@ public static class GameEndpoints
                 if (npcId >= 200 && npcId <= 213)
                 {
                     var sisorenDialogues = (await repo.GetSisorenDialoguesAsync(npcId, category)).ToList();
+                    if (sisorenDialogues.Count == 0)
+                        sisorenDialogues = (await repo.GetSisorenDialoguesAsync(npcId, null)).ToList();
+                    sisorenDialogues = sisorenDialogues.OrderBy(_ => Random.Shared.Next()).Take(4).ToList();
                     return Results.Ok(new
                     {
                         success = true,
@@ -393,7 +396,6 @@ public static class GameEndpoints
                             q = d.PlayerText,
                             a = d.NPCResponse,
                             response = d.NPCResponse,
-                            guiltyResponse = d.GuiltyResponses,
                             category = d.Category,
                             difficulty = d.Difficulty
                         })
