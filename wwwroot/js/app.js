@@ -2967,8 +2967,11 @@ function loadContextualQuestions(npcId) {
                 questionsToShow = pool.slice(0, 4);
             }
 
-            if (questionsToShow && questionsToShow.length > 0) {
-                if (npcId >= 200) questionsToShow = ensureFourSisorenQuestions(questionsToShow, npcId, askedCount);
+            if (npcId >= 200) {
+                questionsToShow = ensureFourSisorenQuestions(questionsToShow, npcId, askedCount);
+            }
+
+            if (questionsToShow.length > 0) {
                 container.innerHTML = '';
                 questionsToShow.forEach((q, index) => {
                     const btn = document.createElement('button');
@@ -2996,8 +2999,11 @@ function loadContextualQuestions(npcId) {
                 fallbackQuestions = pool.slice(0, 4);
             }
 
-            if (fallbackQuestions && fallbackQuestions.length > 0) {
-                if (npcId >= 200) fallbackQuestions = ensureFourSisorenQuestions(fallbackQuestions, npcId, askedCount);
+            if (npcId >= 200) {
+                fallbackQuestions = ensureFourSisorenQuestions(fallbackQuestions, npcId, askedCount);
+            }
+
+            if (fallbackQuestions.length > 0) {
                 fallbackQuestions.forEach((q) => {
                     const btn = document.createElement('button');
                     btn.className = 'npc-talk-btn';
@@ -3014,15 +3020,17 @@ function loadContextualQuestions(npcId) {
 }
 
 function ensureFourSisorenQuestions(questions, npcId, askedCount) {
-    const result = [...questions];
+    const result = Array.isArray(questions) ? [...questions] : [];
     const npc = window.NPC_DATA && window.NPC_DATA[npcId];
     while (result.length < 4) {
-        const source = result[result.length % Math.max(1, result.length)] || {
+        const source = result.length > 0
+            ? result[(result.length - 1) % result.length]
+            : {
             q: 'O gece başka hangi ayrıntıyı hatırlıyorsun?',
             a: 'Bu ayrıntıyı tam hatırlamıyorum amirim.',
             difficulty: 2,
             category: 'derinlesme'
-        };
+            };
         result.push({
             ...source,
             q: `${source.q} (Ek ayrıntı ${askedCount + result.length + 1})`,
