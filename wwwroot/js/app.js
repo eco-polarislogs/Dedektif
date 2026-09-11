@@ -2826,6 +2826,10 @@ function updateQuestionIndicator(npcId) {
 
     const aiSection = document.querySelector('.npc-talk-ai-section');
     const btnContainer = document.getElementById('npc-talk-buttons');
+    if (btnContainer && npcId >= 200) {
+        btnContainer.style.display = 'grid';
+        btnContainer.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
+    }
 
     // Stres, Nabız ve Semptom Monitörü
     const stress = Math.min(100, Math.max(0, npcStressLevels[npcId] || 0));
