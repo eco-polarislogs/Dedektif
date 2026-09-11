@@ -2812,9 +2812,10 @@ document.getElementById('npc-talk-close')?.addEventListener('click', () => {
 
 function updateQuestionIndicator(npcId) {
     const asked = askedQuestionCount[npcId] || 0;
-    const remainingLimit = Math.max(0, 5 - asked);
+    const maxQuestions = 5;
+    const remainingLimit = Math.max(0, maxQuestions - asked);
     const stageIndicator = document.getElementById('npc-talk-stage');
-    if (stageIndicator) stageIndicator.textContent = `Kalan Soru Hakkı: ${remainingLimit}/5`;
+    if (stageIndicator) stageIndicator.textContent = `Kalan Soru Hakkı: ${remainingLimit}/${maxQuestions}`;
 
     const aiSection = document.querySelector('.npc-talk-ai-section');
     const btnContainer = document.getElementById('npc-talk-buttons');
@@ -2915,7 +2916,8 @@ function loadContextualQuestions(npcId) {
         return;
     }
 
-    if (askedCount >= 5) {
+    const maxQuestions = 5;
+    if (askedCount >= maxQuestions) {
         if (aiSection) aiSection.style.display = 'none';
         container.innerHTML = '<div class="npc-talk-end-msg"><i class="fa-solid fa-check-circle"></i> Sorgu tamamlandı. Bu NPC\'ye sorabileceğiniz soru kalmadı. (5/5)</div>';
         npcTalkCompleted[npcId] = true;
@@ -2934,7 +2936,8 @@ function loadContextualQuestions(npcId) {
             // Asenkron istek dönerken stres veya soru limiti dolmuş olabilir
             const currentStress = npcStressLevels[npcId] || 0;
             const currentAsked = askedQuestionCount[npcId] || 0;
-            if (currentStress >= 100 || currentAsked >= 5) {
+            const maxQuestions = 5;
+            if (currentStress >= 100 || currentAsked >= maxQuestions) {
                 updateQuestionIndicator(npcId);
                 return;
             }
@@ -3003,8 +3006,18 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
         if (window.SISOREN_CONFIG.extraNpcs) {
             const extra = window.SISOREN_CONFIG.extraNpcs.find(e => e.numericId === npcId);
             if (extra && extra.questions) {
-                // Sorulan sayıya göre kalan soruları ver
-                return extra.questions.slice(askedCount, askedCount + 4);
+                const registered = window.NPC_DATA && window.NPC_DATA[npcId];
+                const questions = registered && Array.isArray(registered.questions)
+                    ? registered.questions
+                    : extra.questions.map((q, index) => ({
+                        q: typeof q === 'string' ? q : q.q,
+                        a: typeof q === 'string'
+                            ? `${extra.name} bu ayrıntıyı hatırlıyor: ${q}`
+                            : q.a,
+                        difficulty: index > 2 ? 2 : 1,
+                        category: 'tanisma'
+                    }));
+                return questions.slice(askedCount, askedCount + 4);
             }
         }
         // Çocuk NPC'ler
@@ -3013,12 +3026,16 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
                 if (bld.children) {
                     const ch = bld.children.find(c => c.numericId === npcId || c.id === npcId);
                     if (ch && ch.questions) {
-                        return ch.questions.map(qText => (typeof qText === 'string' ? {
-                            q: qText,
-                            a: ch.greeting || 'Bilmiyorum dedektif amca...',
-                            difficulty: 1,
-                            category: 'tanisma'
-                        } : qText)).slice(askedCount, askedCount + 4);
+                        const registered = window.NPC_DATA && window.NPC_DATA[npcId];
+                        const questions = registered && Array.isArray(registered.questions)
+                            ? registered.questions
+                            : ch.questions.map(qText => (typeof qText === 'string' ? {
+                                q: qText,
+                                a: ch.greeting || 'Bilmiyorum dedektif amca...',
+                                difficulty: 1,
+                                category: 'tanisma'
+                            } : qText));
+                        return questions.slice(askedCount, askedCount + 4);
                     }
                 }
             }
@@ -3174,7 +3191,7 @@ function typeWriter(element, text, i, onComplete) {
     }
 }
 
-function askQuestionBackend(npcId, question) {
+async function askQuestionBackend(npcId, question) {
     const npc = NPC_DATA[npcId];
     const chatArea = document.getElementById('npc-talk-chat');
 
@@ -3218,6 +3235,25 @@ function askQuestionBackend(npcId, question) {
 
     // NPC cevabını belirle
     let answer = question.a || question.response || question.NPCResponse || question.responseText || "Söyleyecek bir şeyim yok amirim.";
+    if ((npcId >= 201 && npcId <= 213) || (npcId >= 301 && npcId <= 318)) {
+        try {
+            const sisorenResponse = await fetch('/api/sisoren/interrogate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    NpcId: npcId,
+                    Question: question.q,
+                    GuiltyNpcId: guiltyNpcId
+                })
+            });
+            if (sisorenResponse.ok) {
+                const data = await sisorenResponse.json();
+                if (data.dialogue) answer = data.dialogue;
+            }
+        } catch (error) {
+            console.warn('Sisören kayıtlı diyalog yanıtı alınamadı, yerel cevap kullanılacak.', error);
+        }
+    }
     if (question.guiltyResponse && guiltyNpcId && question.guiltyResponse[guiltyNpcId]) {
         answer = question.guiltyResponse[guiltyNpcId];
     }
@@ -3297,8 +3333,9 @@ function askFreeAiQuestion() {
     if (!questionText) return;
 
     const askedCount = askedQuestionCount[currentNpcId] || 0;
-    if (askedCount >= 5) {
-        showGlobalNotification('Uyarı', 'Bu NPC ile konuşma hakkınız doldu (5/5). Artık soru soramazsınız!', true);
+    const maxQuestions = 5;
+    if (askedCount >= maxQuestions) {
+        showGlobalNotification('Uyarı', `Bu NPC ile konuşma hakkınız doldu (${maxQuestions}/${maxQuestions}). Artık soru soramazsınız!`, true);
         return;
     }
 
@@ -3335,8 +3372,9 @@ function askFreeAiQuestion() {
     }
 
     // Backend Yerel Yapay Zeka Motoruna İstek Gönder (Gölge Şehir veya Gizemli Kasaba)
-    const isGolge = (activeNpcId >= 100);
-    const targetEndpoint = isGolge ? '/api/golge-sehir/interrogate' : '/api/game/interrogate';
+    const isSisoren = window.currentActiveTown === 'sisoren' && activeNpcId >= 200;
+    const isGolge = !isSisoren && (activeNpcId >= 100);
+    const targetEndpoint = isSisoren ? '/api/sisoren/interrogate' : (isGolge ? '/api/golge-sehir/interrogate' : '/api/game/interrogate');
 
     fetch(targetEndpoint, {
         method: 'POST',
