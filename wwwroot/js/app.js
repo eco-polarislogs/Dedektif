@@ -2750,7 +2750,9 @@ function openNpcTalk(npcId) {
     }
 
     // Konuşma ekranında NPC portresi kullanılır; bina iç sahnesi bu katmana taşınmaz.
-    const talkBgImage = npc.talkBg || npc.bg;
+    // Konuşma modalı yalnızca karakter portresini kullanır; bina içi görseli
+    // sadece interior-screen üzerinde kalır.
+    const talkBgImage = npc.portrait || npc.img || npc.talkBg;
     const talkContainer = document.querySelector('.npc-talk-container');
     const characterLayer = document.getElementById('npc-talk-character-layer');
 
@@ -2967,9 +2969,7 @@ function loadContextualQuestions(npcId) {
                 questionsToShow = pool.slice(0, 4);
             }
 
-            if (npcId >= 200) {
-                questionsToShow = ensureFourSisorenQuestions(questionsToShow, npcId, askedCount);
-            }
+            questionsToShow = ensureFourNpcQuestions(questionsToShow, npcId, askedCount);
 
             if (questionsToShow.length > 0) {
                 container.innerHTML = '';
@@ -2999,9 +2999,7 @@ function loadContextualQuestions(npcId) {
                 fallbackQuestions = pool.slice(0, 4);
             }
 
-            if (npcId >= 200) {
-                fallbackQuestions = ensureFourSisorenQuestions(fallbackQuestions, npcId, askedCount);
-            }
+            fallbackQuestions = ensureFourNpcQuestions(fallbackQuestions, npcId, askedCount);
 
             if (fallbackQuestions.length > 0) {
                 fallbackQuestions.forEach((q) => {
@@ -3019,7 +3017,7 @@ function loadContextualQuestions(npcId) {
         });
 }
 
-function ensureFourSisorenQuestions(questions, npcId, askedCount) {
+function ensureFourNpcQuestions(questions, npcId, askedCount) {
     const result = Array.isArray(questions) ? [...questions] : [];
     const npc = window.NPC_DATA && window.NPC_DATA[npcId];
     while (result.length < 4) {
@@ -3038,6 +3036,11 @@ function ensureFourSisorenQuestions(questions, npcId, askedCount) {
         });
     }
     return result.slice(0, 4);
+}
+
+// Eski çağrılar için geriye dönük uyumluluk.
+function ensureFourSisorenQuestions(questions, npcId, askedCount) {
+    return ensureFourNpcQuestions(questions, npcId, askedCount);
 }
 
 // Sisören için her aşamada zengin hazır soru üreten yardımcı fonksiyon
