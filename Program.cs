@@ -99,6 +99,7 @@ class Program
 
         // Katmanlı API Endpoints Haritalaması
         app.MapGameEndpoints();
+        GameEndpoints.MapSisorenEndpoints(app);
 
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("\n  🌍 Akıllı Dedektiflik RPG Web Sunucusu Başlatıldı! (Katmanlı Mimari v4.0)");

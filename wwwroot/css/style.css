@@ -510,6 +510,27 @@ canvas {
     border: 1px solid rgba(0, 230, 150, 0.5);
 }
 
+/* Gizemli Kasaba (Mavi Neon Tema) */
+.status-open.status-open-gizemli,
+.region-town[data-town-id="gizemli"] .status-open {
+    background: rgba(56, 189, 248, 0.2) !important;
+    color: #38bdf8 !important;
+    border: 1px solid rgba(56, 189, 248, 0.6) !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.35) !important;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.5) !important;
+}
+
+/* Sisören Kasabası (Zümrüt Yeşili Tema) */
+.status-open.status-open-sisoren,
+.region-town[data-town-id="sisoren"] .status-open,
+.town-sisoren-btn .status-open {
+    background: rgba(16, 185, 129, 0.2) !important;
+    color: #34d399 !important;
+    border: 1px solid rgba(16, 185, 129, 0.6) !important;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.35) !important;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.5) !important;
+}
+
 .status-locked {
     background: rgba(255, 74, 74, 0.2);
     color: #ff8888;

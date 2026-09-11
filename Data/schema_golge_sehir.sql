@@ -1,4 +1,4 @@
--- ============================================================================
+﻿-- ============================================================================
 -- GÖLGE ÅEHİR (SHADOW CITY) SEQUEL LEVEL DATABASE SCHEMA & SEED DATA
 -- Fully isolated from Gizemli Kasaba tables.
 -- 8 NPCs (IDs 101-108), 32 Clues (4 per building), 160 Dialogues (20 per NPC)
@@ -403,7 +403,7 @@ INSERT OR REPLACE INTO GolgeSehirScenarioHints (GuiltyNPCId, HintText, HintType,
 -- Manav Ayşe suçlu
 (102, 'Manav kasasının altındaki pirinç anahtar kurbanın kasasına ait.', 'clue', 1),
 (102, 'Pelerinden yırtılan kumaş cinayet mahallindeki parçayla eşleşiyor.', 'clue', 2),
-(102, 'Ayşe borç yüzünden çıldırıp peleriniyle gece kurbanı bıçakladı.', 'confession', 3),
+(102, 'Ayşe borç yüzünden çıldırıp gece kurbanı bıçakladı ve pelerininden bir kumaş parçası yırtıldı.', 'confession', 3),
 -- Demirci Kazım suçlu
 (103, 'Örsteki ay damgalı bıçak cinayet silahıyla birebir aynı.', 'clue', 1),
 (103, 'Gizli bölmedeki kanlı mektup Ekrem Bey''in el yazısıyla yazılmış şantaj mektubu.', 'clue', 2),

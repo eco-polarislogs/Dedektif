@@ -1,0 +1,564 @@
+/* ==========================================================================
+   SİSÖREN KASABASI - DERİN ZÜMRÜT YEŞİLİ & AŞIRI YOĞUN SİS NOİR TEMA (v3.0)
+   Gölge Şehir ve Gizemli Kasaba Estetiğinde Otantik Tabelalar & Yoğun Sis
+   Buldum Ekranı, NPC Grid, Found-Btn Yeşil Tema Dahil
+   ========================================================================== */
+
+/* Aktif Sisören Harita Sahnesi - 16:9 Geniş Ekran Doğal Uyum */
+#town-map-screen.sisoren-active {
+    background-color: #030806 !important;
+}
+
+#town-map-screen.sisoren-active,
+#town-map-stage.sisoren-active {
+    background-image: url('/images/towns/sisoren/sisoren_map_v5.jpg') !important;
+    background-size: 100% 100% !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    overflow: hidden;
+}
+
+/* Sisören Özel Kasvetli Zümrüt Yeşili & Dağ Sisi Noir Paleti */
+body.sisoren-theme {
+    --accent: #059669;
+    --accent-glow: rgba(5, 150, 105, 0.45);
+    --gold: #34d399;
+    --primary: #065f46;
+}
+
+/* Dağ Yamacı Üzerinde Süzülen Yoğun Sis & Kasvet Efekti */
+#town-map-stage.sisoren-active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 8;
+    background: radial-gradient(circle at 40% 40%, rgba(6, 78, 59, 0.08) 0%, rgba(2, 44, 34, 0.3) 65%, rgba(0, 0, 0, 0.6) 100%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(5, 150, 105, 0.03) 50%, rgba(0, 0, 0, 0.45) 100%);
+    mix-blend-mode: screen;
+    animation: sisorenFogPulse 9s ease-in-out infinite alternate;
+}
+
+@keyframes sisorenFogPulse {
+    0% {
+        opacity: 0.65;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0.9;
+        transform: scale(1.02);
+    }
+}
+
+/* Sisören Haritasındaki Tıklanabilir Bina Hotspotları — varsayılan görünmez, sadece hover'da yeşil */
+.map-building[class*="building-sisoren-"],
+body.sisoren-theme .map-building[class*="building-sisoren-"],
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"],
+#town-map-stage .map-building[class*="building-sisoren-"] {
+    position: absolute !important;
+    cursor: pointer !important;
+    border: 2px solid transparent !important;
+    border-radius: 10px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 50 !important;
+    background: transparent !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    pointer-events: auto !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.map-building[class*="building-sisoren-"]:hover,
+body.sisoren-theme .map-building[class*="building-sisoren-"]:hover,
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"]:hover,
+#town-map-stage .map-building[class*="building-sisoren-"]:hover {
+    border: 2px solid #10b981 !important;
+    background: rgba(5, 150, 105, 0.35) !important;
+    box-shadow: 0 0 28px rgba(16, 185, 129, 0.75), inset 0 0 18px rgba(52, 211, 153, 0.45) !important;
+    transform: scale(1.02) !important;
+    z-index: 80 !important;
+}
+
+/* Ziyaret Edilmiş Bina — normalde görünmez, hover'da hafif gri */
+.map-building[class*="building-sisoren-"].visited,
+body.sisoren-theme .map-building[class*="building-sisoren-"].visited,
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"].visited {
+    border-color: transparent !important;
+    background: transparent !important;
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+.map-building[class*="building-sisoren-"].visited:hover,
+body.sisoren-theme .map-building[class*="building-sisoren-"].visited:hover,
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"].visited:hover {
+    border: 2px dashed rgba(120, 120, 120, 0.55) !important;
+    background: rgba(0, 0, 0, 0.25) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.map-building[class*="building-sisoren-"].visited .building-hover-tag,
+body.sisoren-theme .map-building[class*="building-sisoren-"].visited .building-hover-tag,
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"].visited .building-hover-tag {
+    background: linear-gradient(135deg, rgba(10, 20, 16, 0.95) 0%, rgba(5, 10, 8, 0.98) 100%) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    color: #9ca3af !important;
+    opacity: 0.85 !important;
+}
+
+/* Türkçe Tabelalar — tamamen gizli, yalnızca hover'da görünür */
+.map-building[class*="building-sisoren-"] .building-hover-tag,
+body.sisoren-theme .map-building[class*="building-sisoren-"] .building-hover-tag,
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"] .building-hover-tag {
+    position: absolute !important;
+    top: -38px !important;
+    bottom: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: linear-gradient(135deg, rgba(6, 32, 24, 0.96) 0%, rgba(2, 18, 14, 0.98) 100%) !important;
+    border: 1.5px solid #10b981 !important;
+    color: #6ee7b7 !important;
+    padding: 5px 14px !important;
+    border-radius: 6px !important;
+    font-family: 'Cinzel', 'Trajan Pro', serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.5px !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 0 12px rgba(16, 185, 129, 0.4) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.8) !important;
+    z-index: 90 !important;
+}
+
+.map-building[class*="building-sisoren-"] .building-hover-tag i,
+body.sisoren-theme .map-building[class*="building-sisoren-"] .building-hover-tag i,
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"] .building-hover-tag i {
+    color: #34d399 !important;
+    font-size: 0.92rem !important;
+    filter: drop-shadow(0 0 4px #10b981) !important;
+}
+
+/* Mouse gelince tabela belirir */
+.map-building[class*="building-sisoren-"]:hover .building-hover-tag,
+body.sisoren-theme .map-building[class*="building-sisoren-"]:hover .building-hover-tag,
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"]:hover .building-hover-tag,
+#town-map-stage .map-building[class*="building-sisoren-"]:hover .building-hover-tag {
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: #ffffff !important;
+    transform: translateX(-50%) translateY(-6px) scale(1.04) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.95), 0 0 30px rgba(52, 211, 153, 0.95) !important;
+    border-color: #34d399 !important;
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.98) 0%, rgba(4, 45, 33, 0.99) 100%) !important;
+}
+
+.map-building[class*="building-sisoren-"].visited:hover .building-hover-tag,
+body.sisoren-theme .map-building[class*="building-sisoren-"].visited:hover .building-hover-tag,
+#town-map-stage.sisoren-active .map-building[class*="building-sisoren-"].visited:hover .building-hover-tag {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* AHIR İÇİN ÖZEL RUSTİK TAHTA TABELA */
+.map-building.building-sisoren-ahir .building-hover-tag,
+body.sisoren-theme .map-building.building-sisoren-ahir .building-hover-tag {
+    background: linear-gradient(135deg, #382012 0%, #1c1009 100%) !important;
+    border: 1.5px solid #d97706 !important;
+    color: #fef3c7 !important;
+    font-family: 'Cinzel', serif !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.95), 0 0 16px rgba(217, 119, 6, 0.6) !important;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.8) !important;
+}
+
+.map-building.building-sisoren-ahir .building-hover-tag i,
+body.sisoren-theme .map-building.building-sisoren-ahir .building-hover-tag i {
+    color: #fbbf24 !important;
+    filter: drop-shadow(0 0 4px #d97706) !important;
+}
+
+/* TABELASIZ KASABALI EVLERİ */
+.map-building.building-sisoren-kasabali_evi_1 .building-hover-tag,
+.map-building.building-sisoren-kasabali_evi_2 .building-hover-tag,
+.map-building.building-sisoren-kasabali_evi_3 .building-hover-tag,
+body.sisoren-theme .map-building.building-sisoren-kasabali_evi_1 .building-hover-tag,
+body.sisoren-theme .map-building.building-sisoren-kasabali_evi_2 .building-hover-tag,
+body.sisoren-theme .map-building.building-sisoren-kasabali_evi_3 .building-hover-tag {
+    background: linear-gradient(135deg, rgba(20, 30, 26, 0.96) 0%, rgba(10, 18, 15, 0.98) 100%) !important;
+    border: 1px dashed rgba(110, 231, 183, 0.6) !important;
+    color: #cbd5e1 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Bölge Haritasındaki Yeşil Sisören Butonu */
+.region-town.town-sisoren-btn.town-active {
+    border: 2px solid #10b981 !important;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.6) !important;
+}
+
+.region-town.town-sisoren-btn:hover {
+    background: rgba(16, 185, 129, 0.18) !important;
+    border-color: #34d399 !important;
+    box-shadow: 0 0 35px rgba(16, 185, 129, 0.8), inset 0 0 20px rgba(52, 211, 153, 0.3) !important;
+    transform: scale(1.05) !important;
+}
+
+.region-town-tag.tag-sisoren {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6) !important;
+}
+
+/* ==========================================================================
+   BULDUM (FOUND) EKRANI — YEŞİL TEMA (SİSÖREN AKTİFKEN)
+   ========================================================================== */
+
+/* Sisören aktifken found-btn yeşil neon tema (Alt-Orta Konumlandırma) */
+body.sisoren-theme #found-btn,
+body.sisoren-theme .found-btn,
+#town-map-stage.sisoren-active #found-btn,
+#town-map-screen.sisoren-active #found-btn {
+    position: fixed !important;
+    bottom: 30px !important;
+    right: 30px !important;
+    left: auto !important;
+    transform: none !important;
+    top: auto !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: linear-gradient(135deg, #059669 0%, #047857 50%, #065f46 100%) !important;
+    border: 2px solid #10b981 !important;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.7), 0 4px 15px rgba(0, 0, 0, 0.6) !important;
+    color: #ecfdf5 !important;
+    padding: 14px 36px !important;
+    border-radius: 28px !important;
+    font-weight: 700 !important;
+    font-family: 'Cinzel', serif !important;
+    letter-spacing: 2.5px !important;
+    font-size: 1.2rem !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    animation: sisorenFoundPulse 2s infinite !important;
+}
+
+@keyframes sisorenFoundPulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), 0 4px 15px rgba(0, 0, 0, 0.6);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(52, 211, 153, 0.95), 0 6px 22px rgba(0, 0, 0, 0.8);
+        transform: scale(1.04);
+    }
+}
+
+body.sisoren-theme #found-btn:hover,
+body.sisoren-theme .found-btn:hover,
+#town-map-stage.sisoren-active #found-btn:hover,
+#town-map-screen.sisoren-active #found-btn:hover {
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%) !important;
+    box-shadow: 0 0 45px rgba(16, 185, 129, 0.98), 0 6px 20px rgba(0, 0, 0, 0.7) !important;
+    transform: scale(1.08) !important;
+}
+
+/* Sisören Buldum Ekranı Video Overlay Yeşil Ton */
+body.sisoren-theme .found-video-overlay {
+    background: linear-gradient(180deg, rgba(6, 95, 70, 0.15) 0%, rgba(0, 0, 0, 0.85) 100%) !important;
+}
+
+/* Sisören Buldum Ekranı Başlık Yeşil */
+body.sisoren-theme .found-header h2 {
+    color: #34d399 !important;
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.6) !important;
+}
+
+body.sisoren-theme .found-header p {
+    color: #6ee7b7 !important;
+}
+
+/* Sisören NPC Grid — 13 Kart (Responsive Grid Düzeni) */
+.sisoren-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    max-height: 68vh !important;
+    overflow-y: auto !important;
+}
+
+/* Sisören NPC Kartları — Yeşil Tema */
+body.sisoren-theme .found-npc-card,
+.found-npc-card.sisoren-card {
+    border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
+    background: rgba(6, 32, 24, 0.9) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 12px rgba(16, 185, 129, 0.2) !important;
+    transition: all 0.25s ease !important;
+}
+
+body.sisoren-theme .found-npc-card:hover,
+.found-npc-card.sisoren-card:hover {
+    border-color: #34d399 !important;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.5) !important;
+    transform: translateY(-3px) !important;
+}
+
+body.sisoren-theme .found-npc-name {
+    color: #34d399 !important;
+}
+
+/* Sisören NPC Fotoğraf Placeholder & Boş İsim */
+.sisoren-placeholder-photo {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 140px !important;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(2, 20, 15, 0.6) 100%) !important;
+    border: 1.5px dashed rgba(52, 211, 153, 0.4) !important;
+    border-radius: 8px !important;
+    margin: 8px auto !important;
+    cursor: pointer;
+}
+
+.sisoren-placeholder-icon {
+    font-size: 2.4rem !important;
+    color: rgba(52, 211, 153, 0.6) !important;
+    margin-bottom: 6px !important;
+}
+
+.sisoren-placeholder-text {
+    font-family: 'Cinzel', serif !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 1.5px !important;
+    color: #6ee7b7 !important;
+    font-weight: 700 !important;
+}
+
+.sisoren-empty-name {
+    color: #6ee7b7 !important;
+    letter-spacing: 3px !important;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+body.sisoren-theme .found-npc-role {
+    color: #a7f3d0 !important;
+}
+
+/* Sisören Otopsi Badge Yeşil Tema */
+body.sisoren-theme .autopsy-timer-container.pending {
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    color: #34d399 !important;
+}
+
+body.sisoren-theme .autopsy-timer-container.ready {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.15) !important;
+    color: #6ee7b7 !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5) !important;
+}
+
+body.sisoren-theme .autopsy-timer-container.active-timer {
+    border-color: #10b981 !important;
+    color: #34d399 !important;
+}
+
+/* Sisören Forensic Badge Yeşil */
+body.sisoren-theme .forensic-status-badge {
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    color: #34d399 !important;
+}
+
+/* Sisören Close Button Yeşil */
+body.sisoren-theme .cinematic-close {
+    border-color: rgba(16, 185, 129, 0.5) !important;
+    color: #34d399 !important;
+}
+
+body.sisoren-theme .cinematic-close:hover {
+    background: rgba(16, 185, 129, 0.2) !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4) !important;
+}
+
+/* ==========================================================================
+   LAPTOP, MASAÜSTÜ & GENİŞ EKRAN TAM DUYARLILIK (RESPONSIVE) UYARLAMASI
+   Görselin oranını bozmadan tüm ekran boyutlarına tam uyum
+   ========================================================================== */
+
+/* Laptop ve Orta Boyutlu Bilgisayar Ekranları (1366x768, 1440x900, 1600x900 vb.) */
+@media screen and (max-width: 1440px) {
+    .map-building[class*="building-sisoren-"] .building-hover-tag {
+        font-size: 0.75rem !important;
+        padding: 4px 10px !important;
+        top: -34px !important;
+    }
+    .sisoren-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 12px !important;
+    }
+}
+
+/* Küçük Laptop Ekranları (1280px ve altı) */
+@media screen and (max-width: 1280px) {
+    .map-building[class*="building-sisoren-"] .building-hover-tag {
+        font-size: 0.7rem !important;
+        padding: 3px 8px !important;
+        top: -30px !important;
+        letter-spacing: 0.8px !important;
+    }
+    .sisoren-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px !important;
+    }
+}
+
+/* Düşük Dikey Yükseklikli Laptop Ekranları (h <= 800px) */
+@media screen and (max-height: 800px) {
+    .map-building[class*="building-sisoren-"] .building-hover-tag {
+        font-size: 0.72rem !important;
+        padding: 3px 8px !important;
+        top: -30px !important;
+    }
+    .sisoren-grid {
+        max-height: 55vh !important;
+    }
+}
+
+/* Ultra Geniş Ekranlar ve 2K / 4K Monitörler */
+@media screen and (min-width: 1920px) {
+    .map-building[class*="building-sisoren-"] .building-hover-tag {
+        font-size: 0.95rem !important;
+        padding: 6px 16px !important;
+        top: -42px !important;
+    }
+}
+
+/* ========================================
+   SİSÖREN BİNA İÇ MEKAN — TEK GÖRSEL, TEKRARSIZ SIĞDIRMA
+   ======================================== */
+body.sisoren-theme #interior-screen.full-screen-interior,
+body.sisoren-theme #interior-screen {
+    background-color: #030806 !important;
+    background-image: none !important;
+    background-repeat: no-repeat !important;
+}
+
+body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
+    background-color: #030806 !important;
+    background-size: contain !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    width: 100vw !important;
+    height: 100vh !important;
+}
+
+@media screen and (max-height: 800px) {
+    body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
+        background-size: contain !important;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
+        background-size: contain !important;
+    }
+}
+
+/* ========================================
+   BİNA İÇİ NPC KONUŞMA BALONU — KARAKTERİN ÜZERİNDE
+   ======================================== */
+.sisoren-interior-npc-marker {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    z-index: 300;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    pointer-events: auto;
+    transition: transform 0.2s ease;
+}
+
+.sisoren-interior-npc-marker:hover {
+    transform: translate(-50%, -100%) scale(1.08);
+    z-index: 350;
+}
+
+.sisoren-npc-bubble {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(6, 78, 59, 0.88);
+    border: 2px solid #34d399;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ecfdf5;
+    font-size: 1rem;
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.55), 0 4px 12px rgba(0, 0, 0, 0.6);
+    transition: all 0.2s ease;
+}
+
+.sisoren-interior-npc-marker:hover .sisoren-npc-bubble {
+    background: rgba(16, 185, 129, 0.95);
+    box-shadow: 0 0 22px rgba(52, 211, 153, 0.85), 0 6px 16px rgba(0, 0, 0, 0.7);
+}
+
+.sisoren-npc-tag {
+    background: rgba(4, 30, 22, 0.94);
+    border: 1px solid rgba(52, 211, 153, 0.65);
+    color: #6ee7b7;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.75);
+}
+
+.sisoren-interior-npc-marker:hover .sisoren-npc-tag {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ========================================
+   EKSTRA NPC KART STİLLERİ (Suçlama Ekranı)
+   ======================================== */
+.sisoren-extra-card {
+    border-color: #059669 !important;
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.25), rgba(4, 120, 87, 0.15)) !important;
+}
+
+.sisoren-extra-card .sisoren-extra-photo {
+    background: linear-gradient(135deg, rgba(6, 95, 70, 0.5), rgba(5, 150, 105, 0.3)) !important;
+    border-color: #34d399 !important;
+}
+
+.sisoren-extra-card .found-npc-name {
+    color: #6ee7b7 !important;
+}
+

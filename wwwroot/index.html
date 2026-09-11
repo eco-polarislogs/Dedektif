@@ -12,9 +12,11 @@
         rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css?v=502">
+    <link rel="stylesheet" href="css/style.css?v=503">
     <!-- Gölge Şehir İzole Stil Dosyası -->
     <link rel="stylesheet" href="css/towns/golge_sehir/golge_sehir.css?v=602">
+    <!-- Sisören İzole Stil Dosyası -->
+    <link rel="stylesheet" href="css/towns/sisoren/sisoren.css?v=509">
     <link
         href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kalam:wght@400;700&family=Sedgwick+Ave&display=swap"
         rel="stylesheet">
@@ -47,7 +49,7 @@
                 data-town-id="gizemli">
                 <div class="region-town-tag tag-active">
                     <i class="fa-solid fa-magnifying-glass"></i> GİZEMLİ KASABA
-                    <span class="status-badge status-open">Soruşturmaya Açık</span>
+                    <span class="status-badge status-open status-open-gizemli">Soruşturmaya Açık</span>
                 </div>
             </div>
 
@@ -59,11 +61,11 @@
                 </div>
             </div>
 
-            <div class="region-town town-locked" style="top: 9%; left: 42%; width: 20%; height: 18%;"
-                data-town-name="Sisören">
-                <div class="region-town-tag tag-locked">
-                    <i class="fa-solid fa-lock"></i> SİSÖREN
-                    <span class="status-badge status-locked">Kilitli Bölge</span>
+            <div class="region-town town-active town-sisoren-btn" style="top: 9%; left: 42%; width: 20%; height: 18%;"
+                data-town-id="sisoren" data-town-name="Sisören">
+                <div class="region-town-tag tag-active tag-sisoren">
+                    <i class="fa-solid fa-mountain-sun"></i> SİSÖREN
+                    <span class="status-badge status-open status-open-sisoren">Soruşturmaya Açık</span>
                 </div>
             </div>
 
@@ -641,7 +643,8 @@
     <!-- Male Mumble -->
     <audio id="mumble-male" preload="auto" src="https://actions.google.com/sounds/v1/foley/shoe_step_wood.ogg"></audio>
     <!-- Female Mumble (Gerçekçi Fısıltı / Mırıltı) -->
-    <audio id="mumble-female" preload="auto" src="https://actions.google.com/sounds/v1/foley/cloth_movement.ogg"></audio>
+    <audio id="mumble-female" preload="auto"
+        src="https://actions.google.com/sounds/v1/foley/cloth_movement.ogg"></audio>
 
     <!-- Judge Gavel Strike (Hakim Tokmak Sesi) -->
     <audio id="gavel-sound" preload="auto" src="https://actions.google.com/sounds/v1/foley/wood_hit_heavy.ogg"></audio>
@@ -669,7 +672,10 @@
     <!-- Gölge Şehir İzole Modül Dosyaları -->
     <script src="js/towns/golge_sehir/GolgeSehirConfig.js?v=815"></script>
     <script src="js/towns/golge_sehir/GolgeSehirEngine.js?v=815"></script>
-    <script src="js/app.js?v=815"></script>
+    <!-- Sisören Modül Dosyaları -->
+    <script src="js/towns/sisoren/SisorenConfig.js?v=828"></script>
+    <script src="js/towns/sisoren/SisorenEngine.js?v=828"></script>
+    <script src="js/app.js?v=828"></script>
 </body>
 
 </html>

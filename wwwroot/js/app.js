@@ -543,37 +543,66 @@ window.isAutopsyReadyGizemli = false;
 window.isAutopsyTimerStartedGizemli = false;
 window.isAutopsyReadyGolge = false;
 window.isAutopsyTimerStartedGolge = false;
+window.isAutopsyReadySisoren = false;
+window.isAutopsyTimerStartedSisoren = false;
 
 // KASABALARA ÖZEL LAB SAYACLARI
 window.submittedForensicCountGizemli = window.submittedForensicCountGizemli || 0;
 window.submittedForensicCountGolge = window.submittedForensicCountGolge || 0;
+window.submittedForensicCountSisoren = window.submittedForensicCountSisoren || 0;
 
 function checkAutopsyConditions() {
     const isGolge = (window.currentActiveTown === 'golge_sehir');
-    const reqBuildings = isGolge ? 4 : 3;
-    const reqLabs = isGolge ? 4 : 3;
+    const isSisoren = (window.currentActiveTown === 'sisoren');
+    const reqBuildings = isSisoren ? 5 : (isGolge ? 4 : 3);
+    const reqLabs = isSisoren ? 5 : (isGolge ? 4 : 3);
 
     // Aktif kasabanın otopsi hazır/sayaç durumlarını senkronize et
-    const currentIsReady = isGolge ? window.isAutopsyReadyGolge : window.isAutopsyReadyGizemli;
-    const currentIsTimerStarted = isGolge ? window.isAutopsyTimerStartedGolge : window.isAutopsyTimerStartedGizemli;
+    let currentIsReady, currentIsTimerStarted;
+    if (isSisoren) {
+        currentIsReady = window.isAutopsyReadySisoren;
+        currentIsTimerStarted = window.isAutopsyTimerStartedSisoren;
+    } else if (isGolge) {
+        currentIsReady = window.isAutopsyReadyGolge;
+        currentIsTimerStarted = window.isAutopsyTimerStartedGolge;
+    } else {
+        currentIsReady = window.isAutopsyReadyGizemli;
+        currentIsTimerStarted = window.isAutopsyTimerStartedGizemli;
+    }
     isAutopsyReady = currentIsReady || false;
     window.isAutopsyReady = isAutopsyReady;
     isAutopsyTimerStarted = currentIsTimerStarted || false;
     window.isAutopsyTimerStarted = isAutopsyTimerStarted;
 
     // Aktif kasabaya göre uygun lab sayacını al
-    const currentLabCount = isGolge ? (window.submittedForensicCountGolge || 0) : (window.submittedForensicCountGizemli || 0);
+    let currentLabCount;
+    if (isSisoren) {
+        currentLabCount = window.submittedForensicCountSisoren || 0;
+    } else if (isGolge) {
+        currentLabCount = window.submittedForensicCountGolge || 0;
+    } else {
+        currentLabCount = window.submittedForensicCountGizemli || 0;
+    }
     window.submittedForensicCount = currentLabCount;
 
     // Aktif kasabaya göre girilmiş bina sayısını al
     let buildingCount = 0;
-    if (isGolge) {
+    if (isSisoren) {
+        let uniqueSisorenVisited = new Set();
+        if (window.SisorenEngine && window.SisorenEngine.visitedSisorenBuildings) {
+            window.SisorenEngine.visitedSisorenBuildings.forEach(id => uniqueSisorenVisited.add(id));
+        }
+        if (window.visitedBuildings) {
+            window.visitedBuildings.forEach(id => { if (id >= 201 && id <= 213) uniqueSisorenVisited.add(id); });
+        }
+        buildingCount = uniqueSisorenVisited.size;
+    } else if (isGolge) {
         let uniqueGolgeVisited = new Set();
         if (window.GolgeSehirEngine && window.GolgeSehirEngine.visitedGolgeBuildings) {
             window.GolgeSehirEngine.visitedGolgeBuildings.forEach(id => uniqueGolgeVisited.add(id));
         }
         if (window.visitedBuildings) {
-            window.visitedBuildings.forEach(id => { if (id >= 101) uniqueGolgeVisited.add(id); });
+            window.visitedBuildings.forEach(id => { if (id >= 101 && id <= 199) uniqueGolgeVisited.add(id); });
         }
         buildingCount = uniqueGolgeVisited.size;
     } else {
@@ -592,13 +621,16 @@ function checkAutopsyConditions() {
     if (isGolge && window.GolgeSehirEngine) {
         window.GolgeSehirEngine.updateGolgeSehirAutopsyUI();
     }
+    if (isSisoren && window.SisorenEngine) {
+        window.SisorenEngine.updateSisorenAutopsyUI();
+    }
 
     if (!container) return;
 
     if (isAutopsyReady || window.isAutopsyReady) {
         container.classList.remove('hidden', 'pending', 'active-timer');
         container.classList.add('ready');
-        container.innerHTML = '<i class="fa-solid fa-file-signature"></i> ✓ OTOPSİ RAPORU HAZIR! (TIKLA)';
+        container.innerHTML = '<i class="fa-solid fa-file-signature"></i> \u2713 OTOPSİ RAPORU HAZIR! (TIKLA)';
         return;
     }
 
@@ -617,12 +649,24 @@ function checkAutopsyConditions() {
 
 function start60SecAutopsyCountdown() {
     const isGolge = (window.currentActiveTown === 'golge_sehir');
-    const currentIsReady = isGolge ? window.isAutopsyReadyGolge : window.isAutopsyReadyGizemli;
-    const currentIsTimerStarted = isGolge ? window.isAutopsyTimerStartedGolge : window.isAutopsyTimerStartedGizemli;
+    const isSisoren = (window.currentActiveTown === 'sisoren');
+    let currentIsReady, currentIsTimerStarted;
+    if (isSisoren) {
+        currentIsReady = window.isAutopsyReadySisoren;
+        currentIsTimerStarted = window.isAutopsyTimerStartedSisoren;
+    } else if (isGolge) {
+        currentIsReady = window.isAutopsyReadyGolge;
+        currentIsTimerStarted = window.isAutopsyTimerStartedGolge;
+    } else {
+        currentIsReady = window.isAutopsyReadyGizemli;
+        currentIsTimerStarted = window.isAutopsyTimerStartedGizemli;
+    }
 
     if (currentIsTimerStarted || currentIsReady) return;
 
-    if (isGolge) {
+    if (isSisoren) {
+        window.isAutopsyTimerStartedSisoren = true;
+    } else if (isGolge) {
         window.isAutopsyTimerStartedGolge = true;
     } else {
         window.isAutopsyTimerStartedGizemli = true;
@@ -631,8 +675,8 @@ function start60SecAutopsyCountdown() {
     window.isAutopsyTimerStarted = true;
     autopsyTimeLeft = 60;
 
-    const reqBuildings = isGolge ? 4 : 3;
-    const reqLabs = isGolge ? 4 : 3;
+    const reqBuildings = isSisoren ? 5 : (isGolge ? 4 : 3);
+    const reqLabs = isSisoren ? 5 : (isGolge ? 4 : 3);
 
     const container = document.getElementById('autopsy-timer-container');
     if (container) {
@@ -663,7 +707,10 @@ function start60SecAutopsyCountdown() {
             isAutopsyReady = true;
             window.isAutopsyReady = true;
 
-            if (window.currentActiveTown === 'golge_sehir') {
+            if (window.currentActiveTown === 'sisoren') {
+                window.isAutopsyReadySisoren = true;
+                window.isAutopsyTimerStartedSisoren = false;
+            } else if (window.currentActiveTown === 'golge_sehir') {
                 window.isAutopsyReadyGolge = true;
                 window.isAutopsyTimerStartedGolge = false;
             } else {
@@ -785,36 +832,73 @@ function updateForensicBadge() {
     const badgeText = document.getElementById('forensic-badge-text');
     if (!badge || !badgeText) return;
 
-    const isGolge = (window.currentActiveTown === 'golge_sehir');
-    const reqLabs = isGolge ? 4 : 3;
+    const isSisoren = (window.currentActiveTown === 'sisoren' || document.body.classList.contains('sisoren-theme'));
+    const isGolge = (window.currentActiveTown === 'golge_sehir' || document.body.classList.contains('golge-sehir-theme'));
+    const reqLabs = isSisoren ? 5 : (isGolge ? 4 : 3);
 
-    if (submittedForensicCount === 0) {
+    const labCount = isSisoren 
+        ? (window.submittedForensicCountSisoren || 0)
+        : (isGolge ? (window.submittedForensicCountGolge || 0) : submittedForensicCount);
+
+    if (labCount === 0) {
         badge.className = 'forensic-status-badge badge-pending';
         badgeText.textContent = `0/${reqLabs} LAB GEREKLİ`;
-    } else if (submittedForensicCount < reqLabs) {
+    } else if (labCount < reqLabs) {
         badge.className = 'forensic-status-badge badge-pending';
-        badgeText.textContent = `${submittedForensicCount}/${reqLabs} LAB GÖNDERİLDİ`;
+        badgeText.textContent = `${labCount}/${reqLabs} LAB GÖNDERİLDİ`;
     } else {
         badge.className = 'forensic-status-badge badge-ready';
-        badgeText.textContent = `✓ ${submittedForensicCount} LAB GÖNDERİLDİ`;
+        badgeText.textContent = `✓ ${labCount} LAB GÖNDERİLDİ`;
     }
 }
 
 document.getElementById('forensic-pending-badge')?.addEventListener('click', () => {
-    const isGolge = (window.currentActiveTown === 'golge_sehir');
-    const reqLabs = isGolge ? 4 : 3;
-    showGlobalNotification("BİLGİ", `Adli Tıp Kurumu'na şu ana kadar ${submittedForensicCount} adet delil bulgusu iletildi. (Otopsi raporunun başlaması için en az ${reqLabs} lab gönderimi gereklidir).`, false);
+    const isSisoren = (window.currentActiveTown === 'sisoren' || document.body.classList.contains('sisoren-theme'));
+    const isGolge = (window.currentActiveTown === 'golge_sehir' || document.body.classList.contains('golge-sehir-theme'));
+    const reqLabs = isSisoren ? 5 : (isGolge ? 4 : 3);
+    const labCount = isSisoren 
+        ? (window.submittedForensicCountSisoren || 0)
+        : (isGolge ? (window.submittedForensicCountGolge || 0) : submittedForensicCount);
+    showGlobalNotification("BİLGİ", `Adli Tıp Kurumu'na şu ana kadar ${labCount} adet delil bulgusu iletildi. (Otopsi raporunun başlaması için en az ${reqLabs} lab gönderimi gereklidir).`, false);
 });
 
 // Otopsi Tıklama Olayı
 document.getElementById('autopsy-timer-container').addEventListener('click', () => {
-    const isGolge = (window.currentActiveTown === 'golge_sehir');
-    const reqBuildings = isGolge ? 4 : 3;
-    const reqLabs = isGolge ? 4 : 3;
+    const isSisoren = (window.currentActiveTown === 'sisoren' || document.body.classList.contains('sisoren-theme'));
+    const isGolge = (window.currentActiveTown === 'golge_sehir' || document.body.classList.contains('golge-sehir-theme'));
+    const reqBuildings = isSisoren ? 5 : (isGolge ? 4 : 3);
+    const reqLabs = isSisoren ? 5 : (isGolge ? 4 : 3);
 
-    const buildingCount = (window.visitedBuildings ? window.visitedBuildings.size : 0) +
-        ((window.GolgeSehirEngine && window.GolgeSehirEngine.visitedGolgeBuildings) ? window.GolgeSehirEngine.visitedGolgeBuildings.size : 0);
-    const labCount = submittedForensicCount;
+    let buildingCount = 0;
+    if (isSisoren) {
+        let uniqueSisorenVisited = new Set();
+        if (window.SisorenEngine && window.SisorenEngine.visitedSisorenBuildings) {
+            window.SisorenEngine.visitedSisorenBuildings.forEach(id => uniqueSisorenVisited.add(id));
+        }
+        if (window.visitedBuildings) {
+            window.visitedBuildings.forEach(id => { if (id >= 201 && id <= 213) uniqueSisorenVisited.add(id); });
+        }
+        buildingCount = uniqueSisorenVisited.size;
+    } else if (isGolge) {
+        let uniqueGolgeVisited = new Set();
+        if (window.GolgeSehirEngine && window.GolgeSehirEngine.visitedGolgeBuildings) {
+            window.GolgeSehirEngine.visitedGolgeBuildings.forEach(id => uniqueGolgeVisited.add(id));
+        }
+        if (window.visitedBuildings) {
+            window.visitedBuildings.forEach(id => { if (id >= 101 && id <= 199) uniqueGolgeVisited.add(id); });
+        }
+        buildingCount = uniqueGolgeVisited.size;
+    } else {
+        let uniqueGizemliVisited = new Set();
+        if (window.visitedBuildings) {
+            window.visitedBuildings.forEach(id => { if (id < 100) uniqueGizemliVisited.add(id); });
+        }
+        buildingCount = uniqueGizemliVisited.size;
+    }
+
+    const labCount = isSisoren 
+        ? (window.submittedForensicCountSisoren || 0)
+        : (isGolge ? (window.submittedForensicCountGolge || 0) : submittedForensicCount);
 
     if (!isAutopsyTimerStarted && !isAutopsyReady) {
         showGlobalNotification("UYARI", `Otopsi raporunun hazırlanmaya başlaması için en az ${reqBuildings} bina incelenmeli (Şu an: ${buildingCount}/${reqBuildings}) ve en az ${reqLabs} delil adli tıbba gönderilmelidir (Şu an: ${labCount}/${reqLabs})!`, true);
@@ -1099,8 +1183,20 @@ document.querySelectorAll('.region-town').forEach(townEl => {
                 initGame();
                 startTypewriter();
             });
+        } else if (townId === 'sisoren' || townName === 'Sisören') {
+            // Sisören (3. Seviye Dağ Kasabası)
+            if (townEl.classList.contains('town-locked') && (!window.gizemliSolved || !window.golgeSolved)) {
+                document.getElementById('locked-town-title').textContent = "SİSÖREN - KİLİTLİ BÖLGE";
+                document.getElementById('locked-town-desc').textContent = "Sisören dağ kasabasına giden patikalar yoğun sis altında kapalı. Önce Gizemli Kasaba ve Gölge Şehir vakalarını aydınlatmalısınız!";
+                if (townLockedModal) townLockedModal.classList.remove('hidden');
+                return;
+            }
+
+            if (window.SisorenEngine) {
+                window.SisorenEngine.showSisorenStoryIntro();
+            }
         } else {
-            // Diğer Kilitli Kasabalar (3, 4, 5)
+            // Diğer Kilitli Kasabalar (4, 5: Yıkıkköy, Karaorman)
             document.getElementById('locked-town-title').textContent = `${(townName || '').toUpperCase()} - KİLİTLİ BÖLGE`;
             document.getElementById('locked-town-desc').textContent = `${townName} kasabasında yol kapalı ve henüz soruşturma izni verilmedi. Önceki vakaları sırasıyla çözmelisiniz!`;
             if (townLockedModal) townLockedModal.classList.remove('hidden');
@@ -1187,6 +1283,23 @@ document.getElementById('skip-story-btn')?.addEventListener('click', () => {
                 continueBtn.innerHTML = '<i class="fa-solid fa-folder-open"></i> DOSYAYI AÇ VE SORUŞTUR';
             }
         }
+    } else if (window.currentActiveTown === 'sisoren') {
+        // Sisören için daktilo atla
+        const el = document.getElementById('typewriter-text');
+        const continueBtn = document.getElementById('story-continue-btn');
+        const skipBtn = document.getElementById('skip-story-btn');
+        const cursor = document.querySelector('.story-cursor');
+        if (window.sisorenTypewriterTimer) clearTimeout(window.sisorenTypewriterTimer);
+        if (typeof window.stopSound === 'function' && window.typewriterSound) {
+            window.stopSound(window.typewriterSound);
+        }
+        if (el && window.SISOREN_CONFIG) el.textContent = window.SISOREN_CONFIG.storyIntroText;
+        if (cursor) cursor.style.display = 'none';
+        if (skipBtn) skipBtn.classList.add('hidden');
+        if (continueBtn) {
+            continueBtn.classList.remove('hidden');
+            continueBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> SORUŞTURMAYI BAŞLAT';
+        }
     } else {
         finishTypewriter();
     }
@@ -1199,6 +1312,17 @@ document.getElementById('story-continue-btn').addEventListener('click', () => {
         if (window.GolgeSehirEngine) {
             window.GolgeSehirEngine.playBekciWalkAnimation();
         }
+        return;
+    }
+
+    if (window.currentActiveTown === 'sisoren') {
+        triggerTransition(() => {
+            storyIntroScreen.classList.add('hidden');
+            townMapScreen.classList.remove('hidden');
+            if (window.SisorenEngine) {
+                window.SisorenEngine.loadSisorenMap();
+            }
+        });
         return;
     }
 
@@ -2519,6 +2643,16 @@ document.getElementById('exit-confirm-btn').addEventListener('click', () => {
             if (mapScreen) mapScreen.classList.remove('hidden');
             window.GolgeSehirEngine.applyGolgeSehirState();
             checkAutopsyConditions();
+        } else if (window.currentActiveTown === 'sisoren' && window.SisorenEngine) {
+            if (typeof window.SisorenEngine.clearInteriorMarkers === 'function') {
+                window.SisorenEngine.clearInteriorMarkers();
+            }
+            const mapScreen = document.getElementById('town-map-screen');
+            if (mapScreen) mapScreen.classList.remove('hidden');
+            window.SisorenEngine.applySisorenState();
+            if (typeof window.checkAutopsyConditions === 'function') {
+                window.checkAutopsyConditions();
+            }
         } else {
             townMapScreen.classList.remove('hidden');
             checkAutopsyConditions();
@@ -2546,7 +2680,68 @@ function openNpcTalk(npcId) {
         const bld = window.GOLGE_SEHIR_CONFIG.buildings.find(b => b.npcId === npcId);
         if (bld) npc = bld.npc;
     }
+    // Sisören ana NPC'leri
+    if (!npc && npcId >= 200 && window.SISOREN_CONFIG && window.SISOREN_CONFIG.buildings) {
+        const bld = window.SISOREN_CONFIG.buildings.find(b => b.npcId === npcId);
+        if (bld) npc = bld.npc;
+    }
+    // Sisören ekstra NPC'leri (numericId ile)
+    if (!npc && npcId >= 300 && window.SISOREN_CONFIG) {
+        if (window.SISOREN_CONFIG.extraNpcs) {
+            const extra = window.SISOREN_CONFIG.extraNpcs.find(e => e.numericId === npcId);
+            if (extra) {
+                npc = {
+                    id: extra.numericId,
+                    name: extra.name,
+                    gender: extra.gender,
+                    building: extra.buildingId || 'Sokak',
+                    role: extra.role,
+                    portrait: extra.portrait,
+                    bg: null,
+                    talkBg: null,
+                    greeting: extra.greeting,
+                    questions: extra.questions || [],
+                    isExtra: true,
+                    canBeGuilty: false
+                };
+                window.NPC_DATA[npcId] = npc;
+            }
+        }
+        // Çocuk NPC'leri (315-318)
+        if (!npc && window.SISOREN_CONFIG.buildings) {
+            for (const bld of window.SISOREN_CONFIG.buildings) {
+                if (bld.children) {
+                    const ch = bld.children.find(c => c.numericId === npcId || c.id === npcId);
+                    if (ch) {
+                        npc = {
+                            id: ch.numericId || ch.id,
+                            name: ch.name,
+                            gender: ch.gender,
+                            building: bld.title,
+                            role: ch.role,
+                            portrait: ch.portrait || null,
+                            bg: null,
+                            talkBg: null,
+                            greeting: ch.greeting,
+                            questions: ch.questions || [],
+                            isExtra: true,
+                            canBeGuilty: false,
+                            isChild: true
+                        };
+                        window.NPC_DATA[npcId] = npc;
+                        break;
+                    }
+                }
+            }
+        }
+    }
     if (!npc) return;
+
+    // Ekstra NPC konuşulduğunda suçlama ekranına ekle
+    if (npc.isExtra && npcId >= 300) {
+        if (!window.sisorenTalkedExtraNpcs) window.sisorenTalkedExtraNpcs = new Set();
+        window.sisorenTalkedExtraNpcs.add(npcId);
+    }
 
     // Kural: Masum işaretlenen karakter sorgulanamaz/işlem yapılamaz
     if ((window.innocentNpcIds && window.innocentNpcIds.has(npcId)) || innocentNpcIds.has(npcId)) {
@@ -2747,6 +2942,9 @@ function loadContextualQuestions(npcId) {
             let questionsToShow = [];
             if (data && data.success && Array.isArray(data.dialogues) && data.dialogues.length > 0) {
                 questionsToShow = data.dialogues;
+            } else if (npcId >= 200) {
+                // Sisören Frontend Fallback (SISOREN_CONFIG içinden hazır soru havuzu)
+                questionsToShow = getSisorenFallbackQuestions(npcId, askedCount);
             } else if (npcId >= 100) {
                 // Gölge Şehir Frontend Fallback (GOLGE_SEHIR_CONFIG içinden 4'lü hazır soru havuzu)
                 questionsToShow = getGolgeFallbackQuestions(npcId, askedCount);
@@ -2774,7 +2972,9 @@ function loadContextualQuestions(npcId) {
             console.warn("Diyalog API uyarısı, yerel havuz kullanılıyor:", err);
             container.innerHTML = '';
             let fallbackQuestions = [];
-            if (npcId >= 100) {
+            if (npcId >= 200) {
+                fallbackQuestions = getSisorenFallbackQuestions(npcId, askedCount);
+            } else if (npcId >= 100) {
                 fallbackQuestions = getGolgeFallbackQuestions(npcId, askedCount);
             } else if (NPC_QUESTIONS[npcId]) {
                 const pool = NPC_QUESTIONS[npcId];
@@ -2794,6 +2994,63 @@ function loadContextualQuestions(npcId) {
                 container.innerHTML = '<div style="color:red;">Diyaloglar yüklenemedi!</div>';
             }
         });
+}
+
+// Sisören için her aşamada zengin hazır soru üreten yardımcı fonksiyon
+function getSisorenFallbackQuestions(npcId, askedCount) {
+    // Ekstra NPC'ler (300+) için config'den soruları çek
+    if (npcId >= 300 && window.SISOREN_CONFIG) {
+        if (window.SISOREN_CONFIG.extraNpcs) {
+            const extra = window.SISOREN_CONFIG.extraNpcs.find(e => e.numericId === npcId);
+            if (extra && extra.questions) {
+                // Sorulan sayıya göre kalan soruları ver
+                return extra.questions.slice(askedCount, askedCount + 4);
+            }
+        }
+        // Çocuk NPC'ler
+        if (window.SISOREN_CONFIG.buildings) {
+            for (const bld of window.SISOREN_CONFIG.buildings) {
+                if (bld.children) {
+                    const ch = bld.children.find(c => c.numericId === npcId || c.id === npcId);
+                    if (ch && ch.questions) {
+                        return ch.questions.map(qText => (typeof qText === 'string' ? {
+                            q: qText,
+                            a: ch.greeting || 'Bilmiyorum dedektif amca...',
+                            difficulty: 1,
+                            category: 'tanisma'
+                        } : qText)).slice(askedCount, askedCount + 4);
+                    }
+                }
+            }
+        }
+    }
+
+    // Ana 13 şüpheli (201-213) için fallbackQuestions'dan çek
+    if (window.SISOREN_CONFIG && window.SISOREN_CONFIG.fallbackQuestions && window.SISOREN_CONFIG.fallbackQuestions[npcId]) {
+        const pool = window.SISOREN_CONFIG.fallbackQuestions[npcId];
+        const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
+        const currentCategory = categories[askedCount] || 'tanisma';
+        // Önce mevcut kategorideki soruları filtrele
+        let filtered = pool.filter(q => q.category === currentCategory);
+        if (filtered.length === 0) filtered = pool.slice(askedCount * 2, askedCount * 2 + 4);
+        if (filtered.length === 0) filtered = pool.slice(0, 4);
+        return filtered.slice(0, 4);
+    }
+
+    // SISOREN_CONFIG buildings içindeki npc.questions'dan fallback
+    if (window.SISOREN_CONFIG && window.SISOREN_CONFIG.buildings) {
+        const bld = window.SISOREN_CONFIG.buildings.find(b => b.npcId === npcId);
+        if (bld && bld.npc && bld.npc.questions) {
+            return bld.npc.questions.slice(askedCount, askedCount + 4).map(q => ({
+                q: q,
+                a: bld.npc.greeting || 'Sorunuzun cevabını düşünüp size döneceğim amirim...',
+                difficulty: 1 + askedCount,
+                category: 'tanisma'
+            }));
+        }
+    }
+
+    return [];
 }
 
 // Gölge Şehir için her aşamada zengin 4'lü hazır soru üreten yardımcı fonksiyon
@@ -3320,53 +3577,96 @@ document.getElementById('found-close-btn').addEventListener('click', () => {
 
 function renderFoundScreen() {
     const isGolge = (window.currentActiveTown === 'golge_sehir' || document.body.classList.contains('golge-sehir-theme'));
+    const isSisoren = (window.currentActiveTown === 'sisoren' || document.body.classList.contains('sisoren-theme'));
     const grid = document.getElementById('found-npc-cards');
     if (!grid) return;
     grid.innerHTML = '';
 
-    // Eğer Gölge Şehir verileri henüz NPC_DATA içine yüklenmediyse motoru tetikle
+    // Verileri yükle
     if (isGolge && window.GolgeSehirEngine && typeof window.GolgeSehirEngine.registerGolgeSehirData === 'function') {
         window.GolgeSehirEngine.registerGolgeSehirData();
     }
+    if (isSisoren && window.SisorenEngine && typeof window.SisorenEngine.registerSisorenData === 'function') {
+        window.SisorenEngine.registerSisorenData();
+    }
 
     // KASABAYA GÖRE GRID DÜZENİNİ AYIR
-    if (isGolge) {
-        grid.classList.remove('desk-photos-grid');
+    grid.classList.remove('desk-photos-grid', 'golge-sehir-grid', 'sisoren-grid');
+    if (isSisoren) {
+        grid.classList.add('sisoren-grid');
+    } else if (isGolge) {
         grid.classList.add('golge-sehir-grid');
     } else {
-        grid.classList.remove('golge-sehir-grid');
         grid.classList.add('desk-photos-grid');
     }
 
-    const startId = isGolge ? 101 : 1;
-    const endId = isGolge ? 108 : 5;
+    let startId, endId;
+    if (isSisoren) {
+        startId = 201; endId = 213;
+    } else if (isGolge) {
+        startId = 101; endId = 108;
+    } else {
+        startId = 1; endId = 5;
+    }
 
     for (let id = startId; id <= endId; id++) {
         let npc = (window.NPC_DATA && window.NPC_DATA[id]) || (typeof NPC_DATA !== 'undefined' ? NPC_DATA[id] : null);
 
-        // Eğer hala bulunamadıysa Gölge Şehir configinden çek
+        // Config'lerden çek
         if (!npc && isGolge && window.GOLGE_SEHIR_CONFIG && window.GOLGE_SEHIR_CONFIG.buildings) {
             const bld = window.GOLGE_SEHIR_CONFIG.buildings.find(b => b.npcId === id);
+            if (bld) npc = bld.npc;
+        }
+        if (!npc && isSisoren && window.SISOREN_CONFIG && window.SISOREN_CONFIG.buildings) {
+            const bld = window.SISOREN_CONFIG.buildings.find(b => b.npcId === id);
             if (bld) npc = bld.npc;
         }
 
         if (!npc) continue;
         const hasHistory = dialogHistory[id] && dialogHistory[id].length > 0;
         const askedCount = askedQuestionCount[id] || 0;
-        const baseImg = (id === 107) ? 'images/towns/golge_sehir/npcler/npc_107_talk.jpg' : (npc.portrait || npc.talkBg || npc.img || 'images/dedektif.png');
-        const npcImg = `${baseImg.split('?')[0]}?v=${Date.now()}`;
+        
+        let baseImg;
+        if (isSisoren) {
+            baseImg = npc.portrait || '';
+        } else if (id === 107) {
+            baseImg = 'images/towns/golge_sehir/npcler/npc_107_talk.jpg';
+        } else {
+            baseImg = npc.portrait || npc.talkBg || npc.img || 'images/dedektif.png';
+        }
+        const npcImg = baseImg ? `${baseImg.split('?')[0]}?v=${Date.now()}` : '';
 
         const isAlreadyInnocent = (window.innocentNpcIds && window.innocentNpcIds.has(id)) || innocentNpcIds.has(id);
         const card = document.createElement('div');
-        card.className = `found-npc-card ${isAlreadyInnocent ? 'innocent-marked' : ''}`;
+        card.className = `found-npc-card ${isAlreadyInnocent ? 'innocent-marked' : ''} ${isSisoren ? 'sisoren-card' : ''}`;
+
+        const photoHtml = (isSisoren && npc.portrait)
+            ? `<div class="found-npc-photo-wrap">
+                   <img src="${npcImg}" alt="${npc.name}" class="found-npc-img" data-npc-id="${id}" title="Konuşma geçmişini görüntüle" onerror="this.src='images/dedektif.png'">
+               </div>`
+            : (isSisoren
+                ? `<div class="found-npc-photo-wrap sisoren-placeholder-photo" data-npc-id="${id}" title="Şüpheli #${id}">
+                       <i class="fa-solid fa-user-secret sisoren-placeholder-icon"></i>
+                       <span class="sisoren-placeholder-text">ŞÜPHELİ #${id - 200}</span>
+                   </div>`
+                : `<div class="found-npc-photo-wrap">
+                       <img src="${npcImg}" alt="${npc.name}" class="found-npc-img" data-npc-id="${id}" title="Konuşma geçmişini görüntüle" onerror="this.src='images/dedektif.png'">
+                   </div>`);
+
+        const nameHtml = (isSisoren && npc.name)
+            ? `<div class="found-npc-name" style="color: #6ee7b7;">${npc.name}</div>`
+            : (isSisoren
+                ? `<div class="found-npc-name sisoren-empty-name">---</div>`
+                : `<div class="found-npc-name">${npc.name}</div>`);
+
+        const roleHtml = `<div class="found-npc-role">${npc.building} (${isSisoren ? (npc.gender === 'female' ? 'Kadın' : 'Erkek') : npc.role})</div>`;
+
         card.innerHTML = `
             ${isAlreadyInnocent ? '<div class="innocent-stamp">MASUM</div>' : ''}
-            <div class="found-npc-photo-wrap">
-                <img src="${npcImg}" alt="${npc.name}" class="found-npc-img" data-npc-id="${id}" title="Konuşma geçmişini görüntüle">
-            </div>
-            <div class="found-npc-name">${npc.name}</div>
-            <div class="found-npc-role">${npc.building}</div>
-            ${hasHistory ? `<div style="font-size:0.8rem; color:#f59e0b; font-weight:bold; margin-bottom:6px;"><i class="fa-solid fa-comment-check"></i> ${askedCount} Soru Soruldu</div>` : '<div style="font-size:0.8rem; color:#888; margin-bottom:6px;">Henüz konuşulmadı</div>'}
+            ${photoHtml}
+            ${nameHtml}
+            ${roleHtml}
+            ${hasHistory ? `<div style="font-size:0.8rem; color:${isSisoren ? '#34d399' : '#f59e0b'}; font-weight:bold; margin-bottom:6px;"><i class="fa-solid fa-comment-check"></i> ${askedCount} Soru Soruldu</div>` : '<div style="font-size:0.8rem; color:#888; margin-bottom:6px;">Henüz konuşulmadı</div>'}
             <div class="found-npc-actions">
                 <button class="btn btn-outline" style="width:100%; margin-bottom:6px;" onclick="window.showNpcHistory(${id})"><i class="fa-solid fa-comments"></i> Notlar</button>
             </div>
@@ -3379,6 +3679,46 @@ function renderFoundScreen() {
             </div>
         `;
         grid.appendChild(card);
+    }
+
+    // === SİSÖREN EKSTRA NPC'LERİ (Konuşulmuş olanlar) ===
+    if (isSisoren && window.sisorenTalkedExtraNpcs && window.sisorenTalkedExtraNpcs.size > 0) {
+        // Ayırıcı başlık
+        const separator = document.createElement('div');
+        separator.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 12px; border-top: 1px solid rgba(52, 211, 153, 0.3); margin-top: 10px;';
+        separator.innerHTML = '<span style="color: #6ee7b7; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px;"><i class="fa-solid fa-users"></i> KONUŞULAN KASABALILAR (Yan Şüpheliler)</span>';
+        grid.appendChild(separator);
+
+        window.sisorenTalkedExtraNpcs.forEach(extraId => {
+            const extraNpc = window.NPC_DATA[extraId];
+            if (!extraNpc) return;
+
+            const hasHistory = dialogHistory[extraId] && dialogHistory[extraId].length > 0;
+            const askedCount = askedQuestionCount[extraId] || 0;
+            const isAlreadyInnocent = (window.innocentNpcIds && window.innocentNpcIds.has(extraId)) || innocentNpcIds.has(extraId);
+
+            const card = document.createElement('div');
+            card.className = `found-npc-card sisoren-card sisoren-extra-card ${isAlreadyInnocent ? 'innocent-marked' : ''}`;
+
+            card.innerHTML = `
+                ${isAlreadyInnocent ? '<div class="innocent-stamp">MASUM</div>' : ''}
+                <div class="found-npc-photo-wrap sisoren-placeholder-photo sisoren-extra-photo" data-npc-id="${extraId}" title="${extraNpc.name}">
+                    <i class="fa-solid fa-user sisoren-placeholder-icon" style="color: #6ee7b7;"></i>
+                    <span class="sisoren-placeholder-text" style="font-size: 0.65rem;">${extraNpc.role || 'Kasabalı'}</span>
+                </div>
+                <div class="found-npc-name" style="color: #6ee7b7; font-size: 0.8rem;">${extraNpc.name}</div>
+                <div class="found-npc-role">${extraNpc.building || 'Sokak'} (${extraNpc.gender === 'female' ? 'Kadın' : 'Erkek'})</div>
+                ${hasHistory ? `<div style="font-size:0.75rem; color:#34d399; font-weight:bold; margin-bottom:6px;"><i class="fa-solid fa-comment-check"></i> ${askedCount} Soru</div>` : ''}
+                <div class="found-npc-actions" style="display:flex; gap:6px; width:100%;">
+                    ${isAlreadyInnocent 
+                        ? '<button class="btn btn-success" style="width:100%; pointer-events:none; font-size:0.75rem;" disabled><i class="fa-solid fa-shield-check"></i> MASUM</button>'
+                        : `<button class="btn btn-danger" style="flex:1; font-size:0.75rem;" onclick="window.accuseNpc(${extraId})"><i class="fa-solid fa-handcuffs"></i> Suçla</button>
+                           <button class="btn btn-success" style="flex:1; font-size:0.75rem;" onclick="window.innocentNpc(${extraId})"><i class="fa-solid fa-shield-halved"></i> Masum</button>`
+                    }
+                </div>
+            `;
+            grid.appendChild(card);
+        });
     }
 
     // NPC görsel tıklanınca konuşma geçmişi
@@ -3422,6 +3762,56 @@ document.getElementById('npc-history-close').addEventListener('click', () => {
 // === ACCUSE NPC (BACKEND CHECK) — YENİ HAPİS ANİMASYONU ===
 window.accuseNpc = function (accusedId) {
     const npc = NPC_DATA[accusedId];
+    if (!npc) return;
+
+    // === EKSTRA NPC SUÇLAMASI: HER ZAMAN MASUM ===
+    if (npc.isExtra || npc.canBeGuilty === false || accusedId >= 300) {
+        foundModal.classList.add('hidden');
+        const resultIcon = document.getElementById('result-icon');
+        const resultTitle = document.getElementById('result-title');
+        const resultMessage = document.getElementById('result-message');
+        const retryBtn = document.getElementById('result-retry-btn');
+        const resultModal = document.getElementById('result-modal');
+
+        if (resultIcon) {
+            resultIcon.className = 'result-icon fail';
+            resultIcon.innerHTML = '<i class="fa-solid fa-shield-halved" style="color: #10b981;"></i>';
+        }
+        if (resultTitle) {
+            resultTitle.textContent = 'BU KİŞİ MASUMDUR!';
+            resultTitle.style.color = '#10b981';
+        }
+        if (resultMessage) {
+            resultMessage.innerHTML = `
+                <div class="result-verdict">
+                    <div class="result-verdict-line"><i class="fa-solid fa-user-check" style="color:#10b981"></i> Suçlanan: <strong>${npc.name}</strong></div>
+                    <div class="result-verdict-line" style="color:#6ee7b7;"><i class="fa-solid fa-shield-check"></i> Durum: <strong>KESİNLİKLE MASUM</strong></div>
+                    <div class="result-verdict-correct" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: #059669;">
+                        <i class="fa-solid fa-circle-info"></i> Bu kişi cinayet gecesi başka bir yerdeydi ve kesinlikle masumdur!
+                    </div>
+                </div>
+                <div class="result-story">
+                    <div class="result-story-header"><i class="fa-solid fa-user-shield"></i> Masumiyet Kanıtı</div>
+                    <div class="result-story-text">${npc.name} (${npc.role || 'Kasabalı'}), cinayet gecesi birden fazla tanık tarafından farklı bir konumda görülmüştür. Bu kişi asıl şüphelilerden biri değildir. Soruşturmayı asıl 13 şühpeliye yoğunlaştırın!</div>
+                </div>`;
+        }
+        if (retryBtn) {
+            retryBtn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Suçlama Ekranına Dön';
+            retryBtn.classList.remove('hidden');
+            retryBtn.onclick = () => {
+                resultModal.classList.add('hidden');
+                renderFoundScreen();
+                foundModal.classList.remove('hidden');
+            };
+        }
+        if (resultModal) resultModal.classList.remove('hidden');
+
+        // Masum olarak işaretle
+        if (window.innocentNpcIds) window.innocentNpcIds.add(accusedId);
+        innocentNpcIds.add(accusedId);
+        return;
+    }
+
     foundModal.classList.add('hidden');
 
     // YENİ HAPİS GÖRSELLERİNİ KULLAN (GİZEMLİ KASABA & GÖLGE ŞEHİR)
@@ -3476,10 +3866,15 @@ window.accuseNpc = function (accusedId) {
         playJudgeGavelTripleStrike();
     }
 
-    // Animasyon sırasında API'ye sor (Gölge Şehir veya Gizemli Kasaba)
-    const accuseEndpoint = (accusedId >= 100 || window.currentActiveTown === 'golge_sehir')
-        ? '/api/golge-sehir/accuse'
-        : '/api/game/accuse';
+    // Animasyon sırasında API'ye sor (Sisören, Gölge Şehir veya Gizemli Kasaba)
+    let accuseEndpoint;
+    if (accusedId >= 201 || window.currentActiveTown === 'sisoren') {
+        accuseEndpoint = '/api/sisoren/accuse';
+    } else if (accusedId >= 100 || window.currentActiveTown === 'golge_sehir') {
+        accuseEndpoint = '/api/golge-sehir/accuse';
+    } else {
+        accuseEndpoint = '/api/game/accuse';
+    }
 
     fetch(accuseEndpoint, {
         method: 'POST',
@@ -3544,6 +3939,18 @@ window.accuseNpc = function (accusedId) {
 
                     if (window.currentActiveTown === 'golge_sehir' || accusedId > 100) {
                         window.golgeSolved = true;
+                        // 3. Bölge: Sisören Kilidini Aç
+                        const sisorenTownBtn = document.querySelector('.region-town[data-town-name="Sisören"]') || document.querySelector('.region-town[data-town-id="sisoren"]');
+                        if (sisorenTownBtn) {
+                            sisorenTownBtn.classList.remove('town-locked');
+                            sisorenTownBtn.classList.add('town-active', 'town-sisoren-active');
+                            const tagEl = sisorenTownBtn.querySelector('.region-town-tag');
+                            if (tagEl) {
+                                tagEl.classList.remove('tag-locked');
+                                tagEl.classList.add('tag-active');
+                                tagEl.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> SİSÖREN <span class="status-badge status-open" style="background:#10b981; color:#064e3b; font-weight:bold;">Soruşturmaya Açık</span>';
+                            }
+                        }
                     }
 
                     // Haritaya dönüş için event listener

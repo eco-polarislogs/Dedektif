@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Sisören Harita Tabela Düzelticisi v3 (Yeni Görsel)</title>
+<style>
+body { margin: 0; background: #111; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+canvas { max-width: 100%; border: 1px solid #333; }
+button { margin: 15px; padding: 12px 30px; font-size: 16px; background: #059669; color: white; border: none; border-radius: 8px; cursor: pointer; }
+button:hover { background: #047857; }
+h2 { color: #34d399; font-family: sans-serif; }
+p { color: #888; font-family: sans-serif; font-size: 14px; }
+</style>
+</head>
+<body>
+<h2>Sisören Harita Tabela Düzelticisi v3 (Yeni Görsel)</h2>
+<p>Yeni üretilen görsel üzerinde tabelalar Türkçe karakterlerle düzeltiliyor...</p>
+<canvas id="canvas"></canvas>
+<button onclick="downloadImage()">Görseli İndir (PNG)</button>
+<script>
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var img = new Image();
+img.crossOrigin = 'anonymous';
+img.onload = function() {
+    canvas.width = img.naturalWidth;
+    canvas.height = img.naturalHeight;
+    ctx.drawImage(img, 0, 0);
+    addAllSigns();
+};
+img.src = 'images/towns/sisoren/sisoren_map_v2_base.jpg';
+
+function coverAndSign(text, cx, cy, cw, ch, sx, sy, sw, sh, opts) {
+    opts = opts || {};
+    var textColor = opts.textColor || '#F0E4D0';
+    var style = opts.style || 'wooden';
+    var fontSize = opts.fontSize || null;
+
+    // Cover old garbled sign with color from surroundings
+    if (opts.coverColor) {
+        ctx.save();
+        ctx.fillStyle = opts.coverColor;
+        ctx.fillRect(cx, cy, cw, ch);
+        ctx.restore();
+    }
+
+    // Draw new clean sign
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetX = 1;
+    ctx.shadowOffsetY = 2;
+
+    if (style === 'marquee') {
+        ctx.fillStyle = '#151210';
+        ctx.fillRect(sx - 2, sy - 2, sw + 4, sh + 4);
+        ctx.fillStyle = '#1e180e';
+        ctx.fillRect(sx, sy, sw, sh);
+        ctx.strokeStyle = '#d4a017';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(sx, sy, sw, sh);
+        ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+        var grd = ctx.createRadialGradient(sx+sw/2, sy+sh/2, 0, sx+sw/2, sy+sh/2, sw*0.6);
+        grd.addColorStop(0, 'rgba(212,160,23,0.12)');
+        grd.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grd;
+        ctx.fillRect(sx, sy, sw, sh);
+    } else if (style === 'stone') {
+        ctx.fillStyle = '#3a3a3a';
+        ctx.fillRect(sx - 1, sy - 1, sw + 2, sh + 2);
+        ctx.fillStyle = '#4a4a4a';
+        ctx.fillRect(sx, sy, sw, sh);
+        ctx.strokeStyle = '#5a5a5a';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(sx, sy, sw, sh);
+        ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+    } else if (style === 'rustic') {
+        ctx.fillStyle = '#281608';
+        ctx.fillRect(sx - 2, sy - 2, sw + 4, sh + 4);
+        ctx.fillStyle = '#3a2212';
+        ctx.fillRect(sx, sy, sw, sh);
+        ctx.strokeStyle = '#5a3a1e';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(sx, sy, sw, sh);
+        ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+    } else if (style === 'hanging') {
+        ctx.fillStyle = '#3d2a14';
+        ctx.fillRect(sx - 3, sy - 3, sw + 6, sh + 6);
+        ctx.fillStyle = '#c4b08a';
+        ctx.fillRect(sx, sy, sw, sh);
+        ctx.strokeStyle = '#7a6840';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(sx - 1, sy - 1, sw + 2, sh + 2);
+        ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+    } else {
+        // default wooden
+        ctx.fillStyle = '#201008';
+        ctx.fillRect(sx - 2, sy - 2, sw + 4, sh + 4);
+        ctx.fillStyle = '#2c1a0c';
+        ctx.fillRect(sx, sy, sw, sh);
+        ctx.strokeStyle = '#6a5030';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(sx, sy, sw, sh);
+        ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+    }
+
+    var fs = fontSize || Math.min(sh * 0.65, sw / (text.length * 0.62));
+    ctx.font = 'bold ' + fs + 'px "Segoe UI", "Arial", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    if (style === 'marquee') {
+        ctx.fillStyle = '#e8b810';
+        ctx.shadowColor = 'rgba(232, 184, 16, 0.7)';
+        ctx.shadowBlur = 10;
+    } else if (style === 'hanging') {
+        ctx.fillStyle = '#2a1808';
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.shadowBlur = 1;
+    } else {
+        ctx.fillStyle = textColor;
+        ctx.shadowColor = 'rgba(0,0,0,0.4)';
+        ctx.shadowBlur = 2;
+    }
+
+    ctx.fillText(text, sx + sw/2, sy + sh/2 + 1);
+    ctx.restore();
+}
+
+function addAllSigns() {
+    var W = canvas.width;
+    var H = canvas.height;
+
+    // Bu koordinatlar yeni v2 görsel için ayarlanmıştır
+    // Görselin piksel boyutlarına göre ince ayar yapılmalı
+
+    // 1. SİSÖREN asılı tabela - sol üst köşe
+    coverAndSign('SİSÖREN',
+        22, 18, 130, 50,
+        28, 24, 110, 38,
+        {style: 'hanging', fontSize: 17}
+    );
+
+    // 2. TELGRAFHANE - üst sol bina (anten olan)
+    coverAndSign('TELGRAFHANE',
+        395, 88, 185, 35,
+        400, 92, 175, 28,
+        {style: 'wooden', textColor: '#E8DCC8', fontSize: 13}
+    );
+
+    // 3. KAHVEHANE - üst orta bina
+    coverAndSign('KAHVEHANE',
+        575, 50, 175, 38,
+        580, 55, 165, 30,
+        {style: 'wooden', textColor: '#E8DCC8', fontSize: 14}
+    );
+
+    // 4. SİNEMA - sağ üst ışıklı marquee
+    coverAndSign('SİNEMA',
+        830, 100, 150, 42,
+        835, 104, 140, 34,
+        {style: 'marquee', fontSize: 18}
+    );
+
+    // 5. BAKKAL - merkez üst bakkal
+    coverAndSign('BAKKAL',
+        455, 280, 130, 32,
+        460, 284, 120, 26,
+        {style: 'wooden', textColor: '#E8DCC8', fontSize: 13}
+    );
+
+    // 6. MUHTARLIK - merkez sağ gri taş bina
+    coverAndSign('MUHTARLIK',
+        648, 265, 160, 35,
+        653, 269, 150, 28,
+        {style: 'stone', textColor: '#DDD8C8', fontSize: 13}
+    );
+
+    // 7. SAHAF - merkez sol sahaf
+    coverAndSign('SAHAF',
+        398, 390, 105, 30,
+        402, 394, 96, 24,
+        {style: 'wooden', textColor: '#E8DCC8', fontSize: 12}
+    );
+
+    // 8. TÜTÜNCÜ - sağ orta tütüncü
+    coverAndSign('TÜTÜNCÜ',
+        775, 365, 140, 32,
+        780, 369, 130, 26,
+        {style: 'wooden', textColor: '#E8DCC8', fontSize: 13}
+    );
+
+    // 9. AHIR - alt sol ahır
+    coverAndSign('AHIR',
+        225, 600, 100, 30,
+        230, 604, 90, 24,
+        {style: 'rustic', textColor: '#fde68a', fontSize: 14}
+    );
+
+    // 10. TÜPÇÜ - alt orta tüpçü
+    coverAndSign('TÜPÇÜ',
+        590, 620, 115, 30,
+        595, 624, 105, 24,
+        {style: 'wooden', textColor: '#E0E0E0', fontSize: 13}
+    );
+
+    // 11. HURDACI - alt sağ hurdacı
+    coverAndSign('HURDACI',
+        720, 670, 125, 30,
+        725, 674, 115, 24,
+        {style: 'rustic', textColor: '#D8C8B8', fontSize: 12}
+    );
+}
+
+function downloadImage() {
+    var link = document.createElement('a');
+    link.download = 'sisoren_map_v2.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+}
+</script>
+</body>
+</html>

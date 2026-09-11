@@ -756,6 +756,133 @@ public static class GameEndpoints
         });
     }
 
+    // ========================================================================
+    // SİSÖREN KASABASI ENDPOINT'LERİ (KATMANLI MİMARİ ENTEGRASYONU)
+    // NPC Aralığı: 201-213 & Ekstra NPC'ler (301-318)
+    // ========================================================================
+    public static void MapSisorenEndpoints(WebApplication app)
+    {
+        // 1. Sisören Suçlama (13 Şüpheli + Ekstra NPC'ler)
+        app.MapPost("/api/sisoren/accuse", (AccuseRequest request) =>
+        {
+            if (request == null || request.NpcId <= 0)
+            {
+                return Results.BadRequest("Geçersiz suçlama isteği.");
+            }
+
+            // Ekstra veya çocuk NPC'ler (301-318) her zaman masumdur
+            if (request.NpcId >= 300)
+            {
+                int gId = request.GuiltyNpcId ?? 201;
+                return Results.Ok(new 
+                { 
+                    success = false, 
+                    message = "Bu kişi suçlanamayacak bir kasabalı/tanıktır ve tamamen masumdur!", 
+                    accusedName = "Kasabalı / Tanık", 
+                    guiltyNpcName = GetSisorenNPCName(gId), 
+                    guiltyNpcId = gId 
+                });
+            }
+
+            int guiltyId = request.GuiltyNpcId ?? 201;
+            bool isGuilty = (request.NpcId == guiltyId);
+            string accusedName = GetSisorenNPCName(request.NpcId);
+            string guiltyName = GetSisorenNPCName(guiltyId);
+
+            if (isGuilty)
+            {
+                return Results.Ok(new 
+                { 
+                    success = true, 
+                    message = $"Tebrikler! Sisören dağ kasabasının gerçek katilinin {accusedName} olduğunu kanıtladınız!", 
+                    accusedName = accusedName, 
+                    guiltyNpcName = guiltyName, 
+                    guiltyNpcId = guiltyId 
+                });
+            }
+            else
+            {
+                return Results.Ok(new 
+                { 
+                    success = false, 
+                    message = $"{accusedName} masum çıktı! Sisören'in gerçek katili {guiltyName} idi.", 
+                    accusedName = accusedName, 
+                    guiltyNpcName = guiltyName, 
+                    guiltyNpcId = guiltyId 
+                });
+            }
+        });
+
+        // 2. Sisören Sıfırla (201-213 arası rastgele yeni katil belirleme)
+        app.MapPost("/api/sisoren/reset", () =>
+        {
+            var rnd = new Random();
+            int guiltyId = rnd.Next(201, 214); // 201-213 arası şüpheli
+            return Results.Ok(new 
+            { 
+                success = true, 
+                message = "Sisören sıfırlandı ve yeni suçlu belirlendi.", 
+                guiltyNpcId = guiltyId,
+                guiltyNpcName = GetSisorenNPCName(guiltyId)
+            });
+        });
+
+        // 3. Sisören NPC Listesi
+        app.MapGet("/api/sisoren/npcs", () =>
+        {
+            var npcs = new[]
+            {
+                new { npcId = 201, name = "Telgrafçı Rüstem", role = "Telgrafçı", building = "Telgrafhane" },
+                new { npcId = 202, name = "Kahveci İrfan", role = "Kahveci", building = "Kahvehane" },
+                new { npcId = 203, name = "Sinemacı Nejat", role = "Sinemacı", building = "Sinema" },
+                new { npcId = 204, name = "Bakkal Cemile", role = "Bakkal", building = "Bakkal" },
+                new { npcId = 205, name = "Sahaf Hikmet", role = "Sahaf", building = "Sahaf" },
+                new { npcId = 206, name = "Muhtar Meliha Hanım", role = "Köy Muhtarı", building = "Muhtarlık" },
+                new { npcId = 207, name = "Tütüncü Nermin Hanım", role = "Tütüncü", building = "Tütüncü" },
+                new { npcId = 208, name = "Çoban Durmuş", role = "Çiftçi & Çoban", building = "Ahır" },
+                new { npcId = 209, name = "Tüpçü Şevket", role = "Tüpçü", building = "Tüpçü" },
+                new { npcId = 210, name = "Hurdacı Zehra", role = "Hurdacı", building = "Hurdacı" },
+                new { npcId = 211, name = "Zeynep Teyze", role = "Ev Hanımı", building = "Kasabalı Evi" },
+                new { npcId = 212, name = "Hatice Nine", role = "Kasaba Büyüğü", building = "Kasabalı Evi" },
+                new { npcId = 213, name = "Emine Hanım", role = "Dağ Sakini", building = "Kasabalı Evi" }
+            };
+            return Results.Ok(new { success = true, npcs = npcs });
+        });
+
+        // 4. Sisören Yardımcı Mesajları
+        app.MapGet("/api/sisoren/helper/tip", (string context, string? building) =>
+        {
+            return Results.Ok(new 
+            { 
+                success = true, 
+                message = "Amirims, Sisören dağ kasabasında soruşturmaya devam edelim! Bu sisli dağ yamacında her taşın altında bir sır saklı!", 
+                speaker = "cetin", 
+                context = context 
+            });
+        });
+    }
+
+    private static string GetSisorenNPCName(int npcId)
+    {
+        return npcId switch
+        {
+            201 => "Telgrafçı Rüstem",
+            202 => "Kahveci İrfan",
+            203 => "Sinemacı Nejat",
+            204 => "Bakkal Cemile",
+            205 => "Sahaf Hikmet",
+            206 => "Muhtar Meliha Hanım",
+            207 => "Tütüncü Nermin Hanım",
+            208 => "Çoban Durmuş",
+            209 => "Tüpçü Şevket",
+            210 => "Hurdacı Zehra",
+            211 => "Zeynep Teyze",
+            212 => "Hatice Nine",
+            213 => "Emine Hanım",
+            _ => "Bilinmeyen Şüpheli"
+        };
+    }
+
     private static NPC? GetFallbackGizemliNPC(int npcId)
     {
         return npcId switch
