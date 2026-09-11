@@ -1228,8 +1228,9 @@ body.helper-box-active .talk-corner-btn,
 }
 
 .npc-talk-buttons-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(48px, auto);
     gap: 10px;
     width: 100%;
 }
@@ -2265,10 +2266,6 @@ body.helper-box-active .talk-corner-btn,
     .npc-talk-chat-area {
         width: calc(100% - 40px);
         max-height: 35vh;
-    }
-
-    .npc-talk-buttons-grid {
-        grid-template-columns: 1fr;
     }
 
     .found-npc-grid {

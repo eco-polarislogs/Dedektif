@@ -2750,7 +2750,9 @@ function openNpcTalk(npcId) {
     }
 
     // Konuşma ekranında NPC portresi kullanılır; bina iç sahnesi bu katmana taşınmaz.
-    const talkBgImage = npc.talkBg || npc.bg;
+    // Konuşma modalı yalnızca karakter portresini kullanır; bina içi görseli
+    // sadece interior-screen üzerinde kalır.
+    const talkBgImage = npc.portrait || npc.img || npc.talkBg;
     const talkContainer = document.querySelector('.npc-talk-container');
     const characterLayer = document.getElementById('npc-talk-character-layer');
 
@@ -2967,8 +2969,9 @@ function loadContextualQuestions(npcId) {
                 questionsToShow = pool.slice(0, 4);
             }
 
-            if (questionsToShow && questionsToShow.length > 0) {
-                if (npcId >= 200) questionsToShow = ensureFourSisorenQuestions(questionsToShow, npcId, askedCount);
+            questionsToShow = ensureFourNpcQuestions(questionsToShow, npcId, askedCount);
+
+            if (questionsToShow.length > 0) {
                 container.innerHTML = '';
                 questionsToShow.forEach((q, index) => {
                     const btn = document.createElement('button');
@@ -2996,8 +2999,9 @@ function loadContextualQuestions(npcId) {
                 fallbackQuestions = pool.slice(0, 4);
             }
 
-            if (fallbackQuestions && fallbackQuestions.length > 0) {
-                if (npcId >= 200) fallbackQuestions = ensureFourSisorenQuestions(fallbackQuestions, npcId, askedCount);
+            fallbackQuestions = ensureFourNpcQuestions(fallbackQuestions, npcId, askedCount);
+
+            if (fallbackQuestions.length > 0) {
                 fallbackQuestions.forEach((q) => {
                     const btn = document.createElement('button');
                     btn.className = 'npc-talk-btn';
@@ -3013,16 +3017,18 @@ function loadContextualQuestions(npcId) {
         });
 }
 
-function ensureFourSisorenQuestions(questions, npcId, askedCount) {
-    const result = [...questions];
+function ensureFourNpcQuestions(questions, npcId, askedCount) {
+    const result = Array.isArray(questions) ? [...questions] : [];
     const npc = window.NPC_DATA && window.NPC_DATA[npcId];
     while (result.length < 4) {
-        const source = result[result.length % Math.max(1, result.length)] || {
+        const source = result.length > 0
+            ? result[(result.length - 1) % result.length]
+            : {
             q: 'O gece başka hangi ayrıntıyı hatırlıyorsun?',
             a: 'Bu ayrıntıyı tam hatırlamıyorum amirim.',
             difficulty: 2,
             category: 'derinlesme'
-        };
+            };
         result.push({
             ...source,
             q: `${source.q} (Ek ayrıntı ${askedCount + result.length + 1})`,
@@ -3030,6 +3036,11 @@ function ensureFourSisorenQuestions(questions, npcId, askedCount) {
         });
     }
     return result.slice(0, 4);
+}
+
+// Eski çağrılar için geriye dönük uyumluluk.
+function ensureFourSisorenQuestions(questions, npcId, askedCount) {
+    return ensureFourNpcQuestions(questions, npcId, askedCount);
 }
 
 // Sisören için her aşamada zengin hazır soru üreten yardımcı fonksiyon

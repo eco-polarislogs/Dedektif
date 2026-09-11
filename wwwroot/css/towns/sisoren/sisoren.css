@@ -469,6 +469,17 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     height: 100% !important;
 }
 
+body.sisoren-theme #npc-talk-modal .npc-talk-buttons-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+}
+
+body.sisoren-theme #npc-talk-modal .npc-talk-btn {
+    min-width: 0;
+    min-height: 48px;
+}
+
 .sisoren-primary-npc-marker {
     position: absolute;
     transform: translate(-50%, -100%);
