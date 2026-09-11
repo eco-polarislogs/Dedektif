@@ -16,28 +16,6 @@ window.SisorenEngine = {
         this.setupEventListeners();
         this.setupMapObserver();
 
-        // URL parametresi ile doğrudan Sisören açılış kontrolü (?town=sisoren veya ?town=sisoren/buldum)
-        const urlParams = new URLSearchParams(window.location.search);
-        const townParam = urlParams.get('town');
-        if (townParam && townParam.toLowerCase().includes('sisoren')) {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                if (splash) splash.classList.add('hidden');
-                const worldMap = document.getElementById('world-map-screen');
-                if (worldMap) worldMap.classList.add('hidden');
-                const townMapScreen = document.getElementById('town-map-screen');
-                if (townMapScreen) townMapScreen.classList.remove('hidden');
-                this.loadSisorenMap();
-
-                // Eğer buldum parametresi de varsa direkt buldum ekranını aç
-                if (townParam.toLowerCase().includes('buldum')) {
-                    setTimeout(() => {
-                        const foundBtn = document.getElementById('found-btn');
-                        if (foundBtn) foundBtn.click();
-                    }, 600);
-                }
-            }, 300);
-        }
     },
 
     // =============================
@@ -122,11 +100,6 @@ window.SisorenEngine = {
             document.querySelector('.town-sisoren-btn');
         if (sisorenTownBtn) {
             sisorenTownBtn.setAttribute('data-town-id', 'sisoren');
-            sisorenTownBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.showSisorenStoryIntro();
-            });
         }
 
         const gizemliTownBtn = document.querySelector('.region-town[data-town-id="gizemli"]');
