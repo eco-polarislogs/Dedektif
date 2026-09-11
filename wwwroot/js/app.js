@@ -2812,7 +2812,7 @@ document.getElementById('npc-talk-close')?.addEventListener('click', () => {
 
 function updateQuestionIndicator(npcId) {
     const asked = askedQuestionCount[npcId] || 0;
-    const maxQuestions = window.currentActiveTown === 'sisoren' && npcId >= 200 ? 20 : 5;
+    const maxQuestions = 5;
     const remainingLimit = Math.max(0, maxQuestions - asked);
     const stageIndicator = document.getElementById('npc-talk-stage');
     if (stageIndicator) stageIndicator.textContent = `Kalan Soru Hakkı: ${remainingLimit}/${maxQuestions}`;
@@ -2916,7 +2916,7 @@ function loadContextualQuestions(npcId) {
         return;
     }
 
-    const maxQuestions = window.currentActiveTown === 'sisoren' && npcId >= 200 ? 20 : 5;
+    const maxQuestions = 5;
     if (askedCount >= maxQuestions) {
         if (aiSection) aiSection.style.display = 'none';
         container.innerHTML = '<div class="npc-talk-end-msg"><i class="fa-solid fa-check-circle"></i> Sorgu tamamlandı. Bu NPC\'ye sorabileceğiniz soru kalmadı. (5/5)</div>';
@@ -2927,7 +2927,7 @@ function loadContextualQuestions(npcId) {
     container.innerHTML = '<div style="color:var(--text-muted); text-align:center;">Diyaloglar yükleniyor...</div>';
 
     const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
-    const currentCategory = categories[Math.floor(askedCount / 4)] || 'son';
+    const currentCategory = categories[askedCount] || 'son';
 
     // C# API'den diyalogları çek
     fetch(`/api/game/dialogues?npcId=${npcId}&category=${currentCategory}`)
@@ -2936,7 +2936,7 @@ function loadContextualQuestions(npcId) {
             // Asenkron istek dönerken stres veya soru limiti dolmuş olabilir
             const currentStress = npcStressLevels[npcId] || 0;
             const currentAsked = askedQuestionCount[npcId] || 0;
-            const maxQuestions = window.currentActiveTown === 'sisoren' && npcId >= 200 ? 20 : 5;
+            const maxQuestions = 5;
             if (currentStress >= 100 || currentAsked >= maxQuestions) {
                 updateQuestionIndicator(npcId);
                 return;
@@ -3046,7 +3046,7 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
     if (window.SISOREN_CONFIG && window.SISOREN_CONFIG.fallbackQuestions && window.SISOREN_CONFIG.fallbackQuestions[npcId]) {
         const pool = window.SISOREN_CONFIG.fallbackQuestions[npcId];
         const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
-        const currentCategory = categories[Math.floor(askedCount / 4)] || 'tanisma';
+        const currentCategory = categories[askedCount] || 'tanisma';
         // Önce mevcut kategorideki soruları filtrele
         let filtered = pool.filter(q => q.category === currentCategory);
         if (filtered.length === 0) filtered = pool.slice(askedCount * 2, askedCount * 2 + 4);
@@ -3073,7 +3073,7 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
 // Gölge Şehir için her aşamada zengin 4'lü hazır soru üreten yardımcı fonksiyon
 function getGolgeFallbackQuestions(npcId, askedCount) {
     const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
-    const currentCategory = categories[Math.floor(askedCount / 4)] || 'tanisma';
+    const currentCategory = categories[askedCount] || 'tanisma';
 
     const golgePools = {
         101: [ // Oduncu Tahsin
@@ -3235,6 +3235,9 @@ function askQuestionBackend(npcId, question) {
 
     // NPC cevabını belirle
     let answer = question.a || question.response || question.NPCResponse || question.responseText || "Söyleyecek bir şeyim yok amirim.";
+    if (npcId >= 200 && guiltyNpcId === npcId && question.guiltyResponse) {
+        answer = question.guiltyResponse;
+    }
     if (question.guiltyResponse && guiltyNpcId && question.guiltyResponse[guiltyNpcId]) {
         answer = question.guiltyResponse[guiltyNpcId];
     }
@@ -3314,7 +3317,7 @@ function askFreeAiQuestion() {
     if (!questionText) return;
 
     const askedCount = askedQuestionCount[currentNpcId] || 0;
-    const maxQuestions = window.currentActiveTown === 'sisoren' && currentNpcId >= 200 ? 20 : 5;
+    const maxQuestions = 5;
     if (askedCount >= maxQuestions) {
         showGlobalNotification('Uyarı', `Bu NPC ile konuşma hakkınız doldu (${maxQuestions}/${maxQuestions}). Artık soru soramazsınız!`, true);
         return;

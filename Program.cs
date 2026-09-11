@@ -47,6 +47,7 @@ class Program
                 await repository.EnsureHelperTablesAsync();
                 await repository.SeedHelperMessagesAsync();
                 await repository.EnsureGolgeSehirTablesAsync();
+                await repository.EnsureSisorenTablesAsync();
                 
                 using var db = repository.CreateConnection();
                 var count = await Dapper.SqlMapper.ExecuteScalarAsync<int>(db, "SELECT COUNT(*) FROM NPCDialogues");

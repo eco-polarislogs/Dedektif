@@ -14,6 +14,7 @@ namespace DedektiflikRPG.Controllers;
 public static class GameEndpoints
 {
     private static readonly System.Threading.SemaphoreSlim _resetSemaphore = new System.Threading.SemaphoreSlim(1, 1);
+    private static int _sisorenGuiltyNpcId = 201;
 
     public static void MapGameEndpoints(this IEndpointRouteBuilder app)
     {
@@ -381,6 +382,24 @@ public static class GameEndpoints
         {
             try
             {
+                if (npcId >= 200 && npcId <= 213)
+                {
+                    var sisorenDialogues = (await repo.GetSisorenDialoguesAsync(npcId, category)).ToList();
+                    return Results.Ok(new
+                    {
+                        success = true,
+                        dialogues = sisorenDialogues.Select(d => new
+                        {
+                            q = d.PlayerText,
+                            a = d.NPCResponse,
+                            response = d.NPCResponse,
+                            guiltyResponse = d.GuiltyResponses,
+                            category = d.Category,
+                            difficulty = d.Difficulty
+                        })
+                    });
+                }
+
                 // Gölge Şehir NPC'leri (101 - 108) Veritabanı sorgusu
                 if (npcId >= 100)
                 {
@@ -762,7 +781,7 @@ public static class GameEndpoints
     // ========================================================================
     public static void MapSisorenEndpoints(WebApplication app)
     {
-        app.MapPost("/api/sisoren/interrogate", async (InterrogationRequest request, IAIService aiService) =>
+        app.MapPost("/api/sisoren/interrogate", async (InterrogationRequest request, IGameRepository repo) =>
         {
             if (request == null || request.NpcId < 201 || request.NpcId > 213 ||
                 string.IsNullOrWhiteSpace(request.Question))
@@ -775,20 +794,23 @@ public static class GameEndpoints
 
             var guiltyId = request.GuiltyNpcId is >= 201 and <= 213
                 ? request.GuiltyNpcId.Value
-                : 201;
-            var response = await aiService.GenerateResponseAsync(
-                npc, guiltyId, request.Question,
-                Array.Empty<Clue>(), Array.Empty<DialogLog>());
+                : _sisorenGuiltyNpcId;
+            var pool = (await repo.GetSisorenDialoguesAsync(request.NpcId)).ToList();
+            var matched = pool.FirstOrDefault(d => string.Equals(d.PlayerText, request.Question, StringComparison.OrdinalIgnoreCase));
+            var dialogue = matched == null
+                ? $"{npc.Name} temkinli bir ifadeyle cevap veriyor: Bu konuda kesin konuşamam; olay gecesindeki ayrıntıları yeniden kontrol etmelisiniz."
+                : (npc.NPCId == guiltyId ? matched.GuiltyResponses : matched.NPCResponse);
 
             return Results.Ok(new
             {
                 success = true,
-                dialogue = response.Dialogue,
-                emotion = response.Emotion,
-                trustChange = response.TrustChange,
-                stressIncrease = response.StressIncrease,
+                dialogue,
+                emotion = npc.NPCId == guiltyId ? "nervous" : "neutral",
+                trustChange = npc.NPCId == guiltyId ? -1 : 0,
+                stressIncrease = npc.NPCId == guiltyId ? 4 : 1,
                 npcId = npc.NPCId,
-                town = "sisoren"
+                town = "sisoren",
+                guiltyIdUsed = guiltyId
             });
         });
 
@@ -848,6 +870,7 @@ public static class GameEndpoints
         {
             var rnd = new Random();
             int guiltyId = rnd.Next(201, 214); // 201-213 arası şüpheli
+            _sisorenGuiltyNpcId = guiltyId;
             return Results.Ok(new 
             { 
                 success = true, 

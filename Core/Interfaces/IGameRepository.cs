@@ -46,4 +46,6 @@ public interface IGameRepository
     Task<IEnumerable<NPCDialogue>> GetGolgeSehirDialoguesAsync(int npcId, string? category = null);
     Task<IEnumerable<HelperMessage>> GetGolgeSehirHelperMessagesAsync(string context, string? building = null);
     Task ResetGolgeSehirSessionAsync(int guiltyNpcId);
+    Task EnsureSisorenTablesAsync();
+    Task<IEnumerable<NPCDialogue>> GetSisorenDialoguesAsync(int npcId, string? category = null);
 }

@@ -771,6 +771,7 @@ public class DatabaseRepository : IGameRepository
                     Category = (string)(r.Category ?? "tanisma")
                 });
             }
+
             else
             {
                 var rows = await db.QueryAsync<dynamic>("SELECT * FROM GolgeSehirNPCDialogues WHERE NPCId = @NPCId AND Category = @Category", new { NPCId = npcId, Category = category });
@@ -790,6 +791,56 @@ public class DatabaseRepository : IGameRepository
         {
             return Enumerable.Empty<NPCDialogue>();
         }
+    }
+
+    public async Task EnsureSisorenTablesAsync()
+    {
+        using var db = CreateConnection();
+        var sql = _isPostgres
+            ? """CREATE TABLE IF NOT EXISTS SisorenNPCDialogues (DialogueId SERIAL PRIMARY KEY, NPCId INTEGER NOT NULL, QuestionText TEXT NOT NULL, ResponseText TEXT NOT NULL, GuiltyResponseText TEXT NOT NULL, Stage INTEGER NOT NULL, ButtonIndex INTEGER NOT NULL DEFAULT 0, Difficulty INTEGER NOT NULL DEFAULT 1, Category TEXT NOT NULL DEFAULT 'tanisma', UNIQUE (NPCId, Stage, ButtonIndex));"""
+            : """CREATE TABLE IF NOT EXISTS SisorenNPCDialogues (DialogueId INTEGER PRIMARY KEY AUTOINCREMENT, NPCId INTEGER NOT NULL, QuestionText TEXT NOT NULL, ResponseText TEXT NOT NULL, GuiltyResponseText TEXT NOT NULL, Stage INTEGER NOT NULL, ButtonIndex INTEGER NOT NULL DEFAULT 0, Difficulty INTEGER NOT NULL DEFAULT 1, Category TEXT NOT NULL DEFAULT 'tanisma', UNIQUE (NPCId, Stage, ButtonIndex));""";
+        await db.ExecuteAsync(sql);
+
+        var names = new Dictionary<int, string>
+        {
+            [201] = "Telgrafçı Rüstem", [202] = "Kahveci İrfan", [203] = "Sinemacı Nejat",
+            [204] = "Bakkal Cemile", [205] = "Sahaf Hikmet", [206] = "Muhtar Meliha",
+            [207] = "Tütüncü Nermin", [208] = "Çoban Durmuş", [209] = "Tüpçü Şevket",
+            [210] = "Hurdacı Zehra", [211] = "Zeynep Teyze", [212] = "Hatice Nine", [213] = "Emine Hanım"
+        };
+        var questions = new[] { "Cinayet gecesi binanda kim vardı?", "O gece saat iki civarında ne gördün?", "Bu olayla ilgili sakladığın belge ya da eşya nedir?", "Başka hangi kasabalı bu ayrıntıyı doğrulayabilir?" };
+        var categories = new[] { "tanisma", "derinlesme", "yuzlestirme", "baski", "son" };
+        foreach (var npc in names)
+        for (var stage = 0; stage < 5; stage++)
+        for (var button = 0; button < 4; button++)
+        {
+            var parameters = new
+            {
+                NPCId = npc.Key,
+                QuestionText = $"{questions[button]} (Soru {stage * 4 + button + 1})",
+                ResponseText = $"{npc.Value} temkinli konuşuyor: Bu ayrıntıyı doğrudan doğrulayamam; {stage + 1}. aşamada bina çevresindeki izlerin dağ yoluna yöneldiğini gördüm.",
+                GuiltyResponseText = $"{npc.Value} gözlerini kaçırıyor: Bu soruya cevap veremem. O geceyi anlatırsam başka birinin başı derde girer; bildiğim tek şey, aradığınız izin kasaba dışına çıkmadığıdır.",
+                Stage = stage, ButtonIndex = button, Difficulty = Math.Min(5, stage + 1), Category = categories[stage]
+            };
+            await db.ExecuteAsync(_isPostgres
+                ? "INSERT INTO SisorenNPCDialogues (NPCId,QuestionText,ResponseText,GuiltyResponseText,Stage,ButtonIndex,Difficulty,Category) VALUES (@NPCId,@QuestionText,@ResponseText,@GuiltyResponseText,@Stage,@ButtonIndex,@Difficulty,@Category) ON CONFLICT (NPCId,Stage,ButtonIndex) DO UPDATE SET QuestionText=EXCLUDED.QuestionText,ResponseText=EXCLUDED.ResponseText,GuiltyResponseText=EXCLUDED.GuiltyResponseText"
+                : "INSERT OR REPLACE INTO SisorenNPCDialogues (NPCId,QuestionText,ResponseText,GuiltyResponseText,Stage,ButtonIndex,Difficulty,Category) VALUES (@NPCId,@QuestionText,@ResponseText,@GuiltyResponseText,@Stage,@ButtonIndex,@Difficulty,@Category)", parameters);
+        }
+    }
+
+    public async Task<IEnumerable<NPCDialogue>> GetSisorenDialoguesAsync(int npcId, string? category = null)
+    {
+        using var db = CreateConnection();
+        var rows = await db.QueryAsync<dynamic>(
+            "SELECT DialogueId,NPCId,QuestionText,ResponseText,GuiltyResponseText,Difficulty,Category FROM SisorenNPCDialogues WHERE NPCId=@NPCId " +
+            (string.IsNullOrWhiteSpace(category) ? "" : "AND Category=@Category ") + "ORDER BY Stage,ButtonIndex",
+            new { NPCId = npcId, Category = category });
+        return rows.Select(r => new NPCDialogue
+        {
+            DialogueId = (int)r.DialogueId, NPCId = (int)r.NPCId, PlayerText = (string)r.QuestionText,
+            NPCResponse = (string)r.ResponseText, GuiltyResponses = (string)r.GuiltyResponseText,
+            Difficulty = (int)r.Difficulty, Category = (string)r.Category
+        });
     }
 
     public async Task<IEnumerable<HelperMessage>> GetGolgeSehirHelperMessagesAsync(string context, string? building = null)
