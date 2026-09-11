@@ -35,6 +35,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'TELGRAFHANE',
             icon: 'fa-solid fa-tower-broadcast',
             hasSign: true,
+            interiorImg: 'images/towns/sisoren/interiors/telgrafhane_interior.jpg',
             details: 'Çatısında yüksek telgraf anteni, elektrik telleri ve pencereleri olan dağ zirve iletişim merkezi.',
             style: { top: '11%', left: '50%', width: '11%', height: '17%' },
             npc: {
@@ -44,7 +45,8 @@ window.SISOREN_CONFIG = {
                 building: 'Telgrafhane',
                 role: 'Telgrafçı',
                 portrait: 'images/towns/sisoren/npcler/npc_201.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_201.jpg',
+                bg: 'images/towns/sisoren/interiors/telgrafhane_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/telgrafhane_interior.jpg',
                 greeting: 'Tik tak tik tak... Bu telgraf telleri her şeyi duyar amirim.',
                 questions: ['Cinayet gecesi telgrafhaneye mesaj geldi mi?', 'Hangi kasabalılar düzenli telgraf çekiyor?', 'Şifreli mesajlar hakkında ne biliyorsun?', 'O gece tellerde garip bir sinyal fark ettin mi?']
             },
@@ -83,7 +85,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'SİNEMA',
             icon: 'fa-solid fa-film',
             hasSign: true,
-            interiorImg: 'images/towns/sisoren/npcler/npc_203.jpg',
+            interiorImg: 'images/towns/sisoren/interiors/sinema_interior.jpg',
             details: 'Işıklı sarı SİNEMA tabelası ve duvarında nostaljik film afişleri bulunan sinema salonu.',
             style: { top: '22%', left: '72%', width: '11%', height: '21%' },
             npc: {
@@ -93,8 +95,8 @@ window.SISOREN_CONFIG = {
                 building: 'Sinema',
                 role: 'Sinemacı',
                 portrait: 'images/towns/sisoren/npcler/npc_203.jpg',
-                bg: 'images/towns/sisoren/npcler/npc_203.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_203.jpg',
+                bg: 'images/towns/sisoren/interiors/sinema_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/sinema_interior.jpg',
                 greeting: 'Film bitti ama perde henüz inmedi amirim...',
                 questions: ['O gece sinema salonunda kimler vardı?', 'Arka kapıdan biri girip çıktı mı?', 'Film makinesi odasında saklanan ne?', 'Karanlık salonda şüpheli bir şey gördün mü?']
             },
@@ -200,6 +202,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'MUHTARLIK',
             icon: 'fa-solid fa-building-flag',
             hasSign: true,
+            interiorImg: 'images/towns/sisoren/interiors/muhtarlik_interior.jpg',
             details: 'Sağlam gri taştan yapılmış iki katlı resmi köy muhtarlık binası.',
             style: { top: '39%', left: '59.5%', width: '14.5%', height: '23%' },
             npc: {
@@ -209,8 +212,8 @@ window.SISOREN_CONFIG = {
                 building: 'Muhtarlık',
                 role: 'Köy Muhtarı',
                 portrait: 'images/towns/sisoren/npcler/npc_206.jpg',
-                bg: 'images/towns/sisoren/npcler/npc_206.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_206.jpg',
+                bg: 'images/towns/sisoren/interiors/muhtarlik_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/muhtarlik_interior.jpg',
                 greeting: 'Bu dağ kasabasında herkes birbirini tanır amirim. Sırlar sisin ardına saklanır.',
                 questions: ['Arazi kavgaları kimler arasında?', 'Resmi mühürü en son kim kullandı?', 'Cinayet gecesi köy meydanında kimler vardı?', 'Kasabanın karanlık geçmişi hakkında ne biliyorsun?']
             },
@@ -224,6 +227,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'TÜTÜNCÜ',
             icon: 'fa-solid fa-smoking',
             hasSign: true,
+            interiorImg: 'images/towns/sisoren/interiors/tutuncu_interior.jpg',
             details: 'Saçaklarında ipe dizili kurutulmuş tütün yaprakları sarkan dağ tütüncüsü.',
             style: { top: '45.5%', left: '72.5%', width: '13%', height: '20%' },
             npc: {
@@ -233,8 +237,8 @@ window.SISOREN_CONFIG = {
                 building: 'Tütüncü',
                 role: 'Tütüncü',
                 portrait: 'images/towns/sisoren/npcler/npc_207.jpg',
-                bg: 'images/towns/sisoren/npcler/npc_207.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_207.jpg',
+                bg: 'images/towns/sisoren/interiors/tutuncu_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/tutuncu_interior.jpg',
                 greeting: 'Duman her zaman bir iz bırakır amirim...',
                 questions: ['Özel karışım tütününü kimler satın alıyor?', 'O gece dükkânın arka odasında ne oldu?', 'Tütün yaprakları arasında saklanan ne?', 'Kaçak tütün ticareti hakkında ne biliyorsun?']
             },
@@ -289,6 +293,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'TÜPÇÜ',
             icon: 'fa-solid fa-fire-flame-simple',
             hasSign: true,
+            interiorImg: 'images/towns/sisoren/interiors/tupcu_interior.jpg',
             details: 'Sundurması altında sıra sıra mavi ve gri çelik mutfak tüpleri dizilmiş tüp bayii.',
             style: { top: '67.5%', left: '60%', width: '12%', height: '17%' },
             npc: {
@@ -298,8 +303,8 @@ window.SISOREN_CONFIG = {
                 building: 'Tüpçü',
                 role: 'Tüpçü',
                 portrait: 'images/towns/sisoren/npcler/npc_209.jpg',
-                bg: 'images/towns/sisoren/npcler/npc_209.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_209.jpg',
+                bg: 'images/towns/sisoren/interiors/tupcu_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/tupcu_interior.jpg',
                 greeting: 'Gaz sızıntısı her zaman tehlikelidir amirim... Ama bazı patlamalar kasıtlıdır.',
                 questions: ['Son tüp teslimatını kime yaptın?', 'Depo kayıtlarında eksik tüp var mı?', 'O gece dükkânına gelen oldu mu?', 'Gaz kokusu nereden geliyor?']
             },
@@ -313,6 +318,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'HURDACI',
             icon: 'fa-solid fa-gears',
             hasSign: true,
+            interiorImg: 'images/towns/sisoren/interiors/hurdaci_interior.jpg',
             details: 'Önünde ıslak paslı çarklar, vagon tekerlekleri ve hurda demir parçaları yığılı kulübe.',
             style: { top: '70%', left: '76%', width: '16%', height: '19%' },
             npc: {
@@ -322,8 +328,8 @@ window.SISOREN_CONFIG = {
                 building: 'Hurdacı',
                 role: 'Hurdacı',
                 portrait: 'images/towns/sisoren/npcler/npc_210.jpg',
-                bg: 'images/towns/sisoren/npcler/npc_210.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_210.jpg',
+                bg: 'images/towns/sisoren/interiors/hurdaci_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/hurdaci_interior.jpg',
                 greeting: 'Paslanmış demir bile bir hikâye anlatır amirim... Buraya gelen her hurdanın izi bendedir.',
                 questions: ['Son getirilen hurda parçalar nereden geldi?', 'Paslı bıçak kime ait?', 'Hurda yığınları arasında saklanan ne?', 'O gece dükkânından garip sesler duyuldu mu?']
             },
@@ -337,6 +343,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'KASABALI EVİ',
             icon: 'fa-solid fa-house',
             hasSign: false,
+            interiorImg: 'images/towns/sisoren/interiors/kasabali_evi_1_interior.jpg',
             details: 'Tabelasız, lambaları yanan ve kapısında kadın duran sakin dağ evi.',
             style: { top: '64%', left: '2.5%', width: '23%', height: '32%' },
             npc: {
@@ -346,8 +353,8 @@ window.SISOREN_CONFIG = {
                 building: 'Kasabalı Evi',
                 role: 'Ev Hanımı',
                 portrait: 'images/towns/sisoren/npcler/npc_211.jpg',
-                bg: 'images/towns/sisoren/npcler/npc_211.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_211.jpg',
+                bg: 'images/towns/sisoren/interiors/kasabali_evi_1_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/kasabali_evi_1_interior.jpg',
                 greeting: 'Oğlum pencereden gördüklerimi anlatayım sana...',
                 questions: ['O gece pencereden kimi gördün?', 'Komşularla aranda husumet var mı?', 'Evinde sakladığın eski mektuplar neler?', 'Kasabanın geçmişinde karanlık bir olay mı var?']
             },
@@ -361,6 +368,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'KASABALI EVİ',
             icon: 'fa-solid fa-house-chimney',
             hasSign: false,
+            interiorImg: 'images/towns/sisoren/interiors/kasabali_evi_2_interior.jpg',
             details: 'Tabelasız, çamur patika kenarında kapısında kadın oturan taş dağ evi.',
             style: { top: '75.5%', left: '35.5%', width: '19%', height: '23%' },
             npc: {
@@ -370,8 +378,8 @@ window.SISOREN_CONFIG = {
                 building: 'Kasabalı Evi',
                 role: 'Kasaba Büyüğü',
                 portrait: 'images/towns/sisoren/npcler/npc_212.jpg',
-                bg: 'images/towns/sisoren/npcler/npc_212.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_212.jpg',
+                bg: 'images/towns/sisoren/interiors/kasabali_evi_2_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/kasabali_evi_2_interior.jpg',
                 greeting: 'Bu yaştan sonra ne sırlar gördüm amirim... Dağın sisi bile saklayamaz bazı günahları.',
                 questions: ['O gece neden uyumadın?', 'Dışarıdan gelen ayak seslerini tanıdın mı?', 'Eski fotoğraf albümünde saklanan sır ne?', 'Kasabadaki herkesin geçmişini biliyorsun, anlat bakalım.']
             },
@@ -385,6 +393,7 @@ window.SISOREN_CONFIG = {
             hoverTag: 'KASABALI EVİ',
             icon: 'fa-solid fa-house-chimney-window',
             hasSign: false,
+            interiorImg: 'images/towns/sisoren/interiors/kasabali_evi_3_interior.jpg',
             details: 'Tabelasız, yamaçta çam ağaçları arasındaki ahşap taş karışımı dağ evi.',
             style: { top: '25%', left: '26%', width: '12%', height: '17%' },
             npc: {
@@ -394,8 +403,8 @@ window.SISOREN_CONFIG = {
                 building: 'Kasabalı Evi',
                 role: 'Dağ Sakini & Dokumacı',
                 portrait: 'images/towns/sisoren/npcler/npc_213.jpg',
-                bg: 'images/towns/sisoren/npcler/npc_213.jpg',
-                talkBg: 'images/towns/sisoren/npcler/npc_213.jpg',
+                bg: 'images/towns/sisoren/interiors/kasabali_evi_3_interior.jpg',
+                talkBg: 'images/towns/sisoren/interiors/kasabali_evi_3_interior.jpg',
                 greeting: 'Dağ yamaçları sessiz görünür amirim ama gece rüzgarı her fısıltıyı taşır...',
                 questions: ['Yamaçtan kasaba meydanını görebiliyor musun?', 'O gece fenerle dağa çıkan birini gördün mü?', 'Dokuduğun yün atkılardan birini meydanda bulan oldu mu?', 'Kasabada en çok kimden şüpheleniyorsun?']
             },
@@ -793,22 +802,27 @@ window.SISOREN_CONFIG = {
 
 // Bina içi ekstra NPC konuşma balonu konumları (görseldeki karakterlerin üzerinde)
 window.SISOREN_INTERIOR_POSITIONS = {
-    // Kahvehane
-    kahve_celal: { top: '54%', left: '22%' },
-    kahve_hamdi: { top: '65%', left: '42%' },
-    kahve_cirak: { top: '40%', left: '72%' },
-    // Bakkal
-    bakkal_cocuk_1: { top: '58%', left: '38%' },
-    // Sahaf
-    sahaf_cocuk_1: { top: '74%', left: '30%' },
-    sahaf_cocuk_2: { top: '74%', left: '46%' },
-    // Ahır
-    ahir_cocuk_1: { top: '54%', left: '54%' },
-    // Diğer binalar (portrait arka plan)
-    telgraf_cirak: { top: '45%', left: '50%' },
-    sinema_biletci: { top: '42%', left: '45%' },
-    muhtarlik_katip: { top: '48%', left: '55%' },
-    tutuncu_musteri: { top: '50%', left: '40%' },
-    hurdaci_cocuk: { top: '55%', left: '48%' },
-    tupcu_yardimci: { top: '48%', left: '52%' }
+    // Kahvehane - 3 farklı konumda karakterler
+    kahve_celal: { top: '35%', left: '25%' },
+    kahve_hamdi: { top: '55%', left: '60%' },
+    kahve_cirak: { top: '70%', left: '45%' },
+    // Bakkal - gofret alan kız
+    bakkal_cocuk_1: { top: '65%', left: '35%' },
+    // Sahaf - 2 çocuk
+    sahaf_cocuk_1: { top: '45%', left: '30%' },
+    sahaf_cocuk_2: { top: '55%', left: '70%' },
+    // Ahır - çoban çırağı
+    ahir_cocuk_1: { top: '60%', left: '50%' },
+    // Telgrafhane - çırak
+    telgraf_cirak: { top: '40%', left: '55%' },
+    // Sinema - biletçi
+    sinema_biletci: { top: '35%', left: '40%' },
+    // Muhtarlık - kâtip
+    muhtarlik_katip: { top: '50%', left: '60%' },
+    // Tütüncü - müşteri
+    tutuncu_musteri: { top: '55%', left: '35%' },
+    // Hurdacı - çocuk
+    hurdaci_cocuk: { top: '65%', left: '40%' },
+    // Tüpçü - yardımcı
+    tupcu_yardimci: { top: '45%', left: '50%' }
 };

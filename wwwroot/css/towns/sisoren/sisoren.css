@@ -467,17 +467,36 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     background-repeat: no-repeat !important;
     width: 100vw !important;
     height: 100vh !important;
+    object-fit: contain !important;
+}
+
+/* Laptop ve Bilgisayar Ekranları için Tam Uyum */
+@media screen and (min-width: 1366px) and (max-width: 1920px) {
+    body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
+        background-size: contain !important;
+        background-position: center center !important;
+    }
 }
 
 @media screen and (max-height: 800px) {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
         background-size: contain !important;
+        max-height: 100vh !important;
     }
 }
 
 @media screen and (max-width: 1440px) {
     body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
         background-size: contain !important;
+        max-width: 100vw !important;
+    }
+}
+
+/* Ultra Geniş Ekranlar için */
+@media screen and (min-width: 1920px) {
+    body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
+        background-size: contain !important;
+        background-position: center center !important;
     }
 }
 
@@ -486,7 +505,7 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
    ======================================== */
 .sisoren-interior-npc-marker {
     position: absolute;
-    transform: translate(-50%, -100%);
+    transform: translate(-50%, -110%);
     z-index: 300;
     cursor: pointer;
     display: flex;
@@ -498,13 +517,13 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
 }
 
 .sisoren-interior-npc-marker:hover {
-    transform: translate(-50%, -100%) scale(1.08);
+    transform: translate(-50%, -110%) scale(1.08);
     z-index: 350;
 }
 
 .sisoren-npc-bubble {
-    width: 38px;
-    height: 38px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     background: rgba(6, 78, 59, 0.88);
     border: 2px solid #34d399;
@@ -512,7 +531,7 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     align-items: center;
     justify-content: center;
     color: #ecfdf5;
-    font-size: 1rem;
+    font-size: 1.1rem;
     box-shadow: 0 0 14px rgba(16, 185, 129, 0.55), 0 4px 12px rgba(0, 0, 0, 0.6);
     transition: all 0.2s ease;
 }
@@ -526,10 +545,10 @@ body.sisoren-theme #interior-stage-canvas.interior-stage-canvas {
     background: rgba(4, 30, 22, 0.94);
     border: 1px solid rgba(52, 211, 153, 0.65);
     color: #6ee7b7;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 6px;
     font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.8px;
     white-space: nowrap;

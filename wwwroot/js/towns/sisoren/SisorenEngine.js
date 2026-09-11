@@ -568,7 +568,25 @@ window.SisorenEngine = {
         if (extra.interiorPos) return extra.interiorPos;
         const fallback = (window.SISOREN_INTERIOR_POSITIONS || {})[extra.id || extra.extraId];
         if (fallback) return fallback;
-        return { top: '50%', left: '50%' };
+
+        // Varsayılan pozisyonlar - binaya göre farklı konumlar
+        const defaultPositions = {
+            'kahvehane': { top: '45%', left: '35%' },
+            'bakkal': { top: '55%', left: '40%' },
+            'sahaf': { top: '50%', left: '45%' },
+            'ahir': { top: '60%', left: '35%' },
+            'telgrafhane': { top: '45%', left: '50%' },
+            'sinema': { top: '50%', left: '55%' },
+            'muhtarlik': { top: '40%', left: '45%' },
+            'tutuncu': { top: '55%', left: '40%' },
+            'tupcu': { top: '50%', left: '45%' },
+            'hurdaci': { top: '45%', left: '40%' },
+            'kasabali_evi_1': { top: '50%', left: '45%' },
+            'kasabali_evi_2': { top: '55%', left: '40%' },
+            'kasabali_evi_3': { top: '45%', left: '50%' }
+        };
+
+        return defaultPositions[bldId] || { top: '50%', left: '50%' };
     },
 
     renderInteriorOccupants: function (extras, bld, mainNpc) {
