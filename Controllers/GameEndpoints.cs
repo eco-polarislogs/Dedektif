@@ -762,6 +762,36 @@ public static class GameEndpoints
     // ========================================================================
     public static void MapSisorenEndpoints(WebApplication app)
     {
+        app.MapPost("/api/sisoren/interrogate", async (InterrogationRequest request, IAIService aiService) =>
+        {
+            if (request == null || request.NpcId < 201 || request.NpcId > 213 ||
+                string.IsNullOrWhiteSpace(request.Question))
+            {
+                return Results.BadRequest("Geçersiz Sisören sorgulama isteği.");
+            }
+
+            var npc = GetFallbackSisorenNPC(request.NpcId);
+            if (npc == null) return Results.NotFound("Sisören şüphelisi bulunamadı.");
+
+            var guiltyId = request.GuiltyNpcId is >= 201 and <= 213
+                ? request.GuiltyNpcId.Value
+                : 201;
+            var response = await aiService.GenerateResponseAsync(
+                npc, guiltyId, request.Question,
+                Array.Empty<Clue>(), Array.Empty<DialogLog>());
+
+            return Results.Ok(new
+            {
+                success = true,
+                dialogue = response.Dialogue,
+                emotion = response.Emotion,
+                trustChange = response.TrustChange,
+                stressIncrease = response.StressIncrease,
+                npcId = npc.NPCId,
+                town = "sisoren"
+            });
+        });
+
         // 1. Sisören Suçlama (13 Şüpheli + Ekstra NPC'ler)
         app.MapPost("/api/sisoren/accuse", (AccuseRequest request) =>
         {
@@ -911,5 +941,25 @@ public static class GameEndpoints
             _ => null
         };
     }
-}
 
+    private static NPC? GetFallbackSisorenNPC(int npcId)
+    {
+        return npcId switch
+        {
+            201 => new NPC { NPCId = 201, Name = "Telgrafçı Rüstem", Role = "Telgrafçı", SecretInfo = "Cinayet gecesi dağ hattından gelen şifreli mesajı sakladı." },
+            202 => new NPC { NPCId = 202, Name = "Kahveci İrfan", Role = "Kahveci", SecretInfo = "Gece yarısı kahvehanede duyduğu tartışmayı gizliyor." },
+            203 => new NPC { NPCId = 203, Name = "Sinemacı Nejat", Role = "Sinemacı", SecretInfo = "Film makinesinin saat kaydını değiştirdi." },
+            204 => new NPC { NPCId = 204, Name = "Bakkal Cemile", Role = "Bakkal", SecretInfo = "Kırmızı-yeşil yün ipliğini cinayet gecesi sattı." },
+            205 => new NPC { NPCId = 205, Name = "Sahaf Hikmet", Role = "Sahaf", SecretInfo = "Eski tapu defterindeki bir sayfayı kopardı." },
+            206 => new NPC { NPCId = 206, Name = "Muhtar Meliha Hanım", Role = "Köy Muhtarı", SecretInfo = "Maden yolu için yapılan gizli anlaşmayı biliyor." },
+            207 => new NPC { NPCId = 207, Name = "Tütüncü Nermin Hanım", Role = "Tütüncü", SecretInfo = "Olay gecesi dükkânına gelen kişiyi saklıyor." },
+            208 => new NPC { NPCId = 208, Name = "Çoban Durmuş", Role = "Çiftçi ve Çoban", SecretInfo = "Dağ yolundaki taze kazılmış çukuru gördü." },
+            209 => new NPC { NPCId = 209, Name = "Tüpçü Şevket", Role = "Tüpçü", SecretInfo = "Gece taşınan ağır sandığın izlerini fark etti." },
+            210 => new NPC { NPCId = 210, Name = "Hurdacı Zehra", Role = "Hurdacı", SecretInfo = "Yeraltı tüneline açılan kapağın anahtarını taşıyor." },
+            211 => new NPC { NPCId = 211, Name = "Zeynep Teyze", Role = "Ev Hanımı", SecretInfo = "Meydandaki fener ışığını penceresinden gördü." },
+            212 => new NPC { NPCId = 212, Name = "Hatice Nine", Role = "Kasaba Büyüğü", SecretInfo = "Kasabanın eski maden sırrını biliyor." },
+            213 => new NPC { NPCId = 213, Name = "Emine Hanım", Role = "Dağ Sakini", SecretInfo = "Dağ yolunda gömülü bir nesne buldu." },
+            _ => null
+        };
+    }
+}

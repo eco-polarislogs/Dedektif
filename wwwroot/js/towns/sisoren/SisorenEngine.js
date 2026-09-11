@@ -503,6 +503,7 @@ window.SisorenEngine = {
 
         // Bina içindeki diğer karakterler için panel göster (Celal Amca, Hamdi Dayı, Gofretli Kız vs.)
         const allExtrasInBuilding = [...buildingExtras, ...buildingChildren];
+        this.renderPrimaryNpc(npc, bld);
         this.renderInteriorOccupants(allExtrasInBuilding, bld, npc);
 
         // Ses efektleri
@@ -533,8 +534,27 @@ window.SisorenEngine = {
     // =============================
     clearInteriorMarkers: function () {
         document.querySelectorAll('.sisoren-interior-npc-marker').forEach(el => el.remove());
+        document.querySelectorAll('.sisoren-primary-npc-marker').forEach(el => el.remove());
         const panel = document.getElementById('sisoren-extra-npc-panel');
         if (panel) panel.remove();
+    },
+
+    renderPrimaryNpc: function (npc, bld) {
+        const stageCanvas = document.getElementById('interior-stage-canvas');
+        if (!stageCanvas || !npc || !bld.primaryNpcPos) return;
+
+        const marker = document.createElement('button');
+        marker.type = 'button';
+        marker.className = 'sisoren-primary-npc-marker';
+        marker.style.top = bld.primaryNpcPos.top;
+        marker.style.left = bld.primaryNpcPos.left;
+        marker.title = `${npc.name} ile Konuş`;
+        marker.innerHTML = `<img src="${npc.portrait}" alt="${npc.name}"><span>${npc.name}</span>`;
+        marker.onclick = (event) => {
+            event.stopPropagation();
+            if (typeof window.openNpcTalk === 'function') window.openNpcTalk(npc.id);
+        };
+        stageCanvas.appendChild(marker);
     },
 
     getInteriorPos: function (extra, bldId) {

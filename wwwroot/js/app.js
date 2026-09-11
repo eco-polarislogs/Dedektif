@@ -2812,9 +2812,10 @@ document.getElementById('npc-talk-close')?.addEventListener('click', () => {
 
 function updateQuestionIndicator(npcId) {
     const asked = askedQuestionCount[npcId] || 0;
-    const remainingLimit = Math.max(0, 5 - asked);
+    const maxQuestions = window.currentActiveTown === 'sisoren' && npcId >= 200 ? 20 : 5;
+    const remainingLimit = Math.max(0, maxQuestions - asked);
     const stageIndicator = document.getElementById('npc-talk-stage');
-    if (stageIndicator) stageIndicator.textContent = `Kalan Soru Hakkı: ${remainingLimit}/5`;
+    if (stageIndicator) stageIndicator.textContent = `Kalan Soru Hakkı: ${remainingLimit}/${maxQuestions}`;
 
     const aiSection = document.querySelector('.npc-talk-ai-section');
     const btnContainer = document.getElementById('npc-talk-buttons');
@@ -2915,7 +2916,8 @@ function loadContextualQuestions(npcId) {
         return;
     }
 
-    if (askedCount >= 5) {
+    const maxQuestions = window.currentActiveTown === 'sisoren' && npcId >= 200 ? 20 : 5;
+    if (askedCount >= maxQuestions) {
         if (aiSection) aiSection.style.display = 'none';
         container.innerHTML = '<div class="npc-talk-end-msg"><i class="fa-solid fa-check-circle"></i> Sorgu tamamlandı. Bu NPC\'ye sorabileceğiniz soru kalmadı. (5/5)</div>';
         npcTalkCompleted[npcId] = true;
@@ -2925,7 +2927,7 @@ function loadContextualQuestions(npcId) {
     container.innerHTML = '<div style="color:var(--text-muted); text-align:center;">Diyaloglar yükleniyor...</div>';
 
     const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
-    const currentCategory = categories[askedCount] || 'son';
+    const currentCategory = categories[Math.floor(askedCount / 4)] || 'son';
 
     // C# API'den diyalogları çek
     fetch(`/api/game/dialogues?npcId=${npcId}&category=${currentCategory}`)
@@ -2934,7 +2936,8 @@ function loadContextualQuestions(npcId) {
             // Asenkron istek dönerken stres veya soru limiti dolmuş olabilir
             const currentStress = npcStressLevels[npcId] || 0;
             const currentAsked = askedQuestionCount[npcId] || 0;
-            if (currentStress >= 100 || currentAsked >= 5) {
+            const maxQuestions = window.currentActiveTown === 'sisoren' && npcId >= 200 ? 20 : 5;
+            if (currentStress >= 100 || currentAsked >= maxQuestions) {
                 updateQuestionIndicator(npcId);
                 return;
             }
@@ -3029,7 +3032,7 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
     if (window.SISOREN_CONFIG && window.SISOREN_CONFIG.fallbackQuestions && window.SISOREN_CONFIG.fallbackQuestions[npcId]) {
         const pool = window.SISOREN_CONFIG.fallbackQuestions[npcId];
         const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
-        const currentCategory = categories[askedCount] || 'tanisma';
+        const currentCategory = categories[Math.floor(askedCount / 4)] || 'tanisma';
         // Önce mevcut kategorideki soruları filtrele
         let filtered = pool.filter(q => q.category === currentCategory);
         if (filtered.length === 0) filtered = pool.slice(askedCount * 2, askedCount * 2 + 4);
@@ -3056,7 +3059,7 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
 // Gölge Şehir için her aşamada zengin 4'lü hazır soru üreten yardımcı fonksiyon
 function getGolgeFallbackQuestions(npcId, askedCount) {
     const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
-    const currentCategory = categories[askedCount] || 'tanisma';
+    const currentCategory = categories[Math.floor(askedCount / 4)] || 'tanisma';
 
     const golgePools = {
         101: [ // Oduncu Tahsin
@@ -3297,8 +3300,9 @@ function askFreeAiQuestion() {
     if (!questionText) return;
 
     const askedCount = askedQuestionCount[currentNpcId] || 0;
-    if (askedCount >= 5) {
-        showGlobalNotification('Uyarı', 'Bu NPC ile konuşma hakkınız doldu (5/5). Artık soru soramazsınız!', true);
+    const maxQuestions = window.currentActiveTown === 'sisoren' && currentNpcId >= 200 ? 20 : 5;
+    if (askedCount >= maxQuestions) {
+        showGlobalNotification('Uyarı', `Bu NPC ile konuşma hakkınız doldu (${maxQuestions}/${maxQuestions}). Artık soru soramazsınız!`, true);
         return;
     }
 
@@ -3335,8 +3339,9 @@ function askFreeAiQuestion() {
     }
 
     // Backend Yerel Yapay Zeka Motoruna İstek Gönder (Gölge Şehir veya Gizemli Kasaba)
-    const isGolge = (activeNpcId >= 100);
-    const targetEndpoint = isGolge ? '/api/golge-sehir/interrogate' : '/api/game/interrogate';
+    const isSisoren = window.currentActiveTown === 'sisoren' && activeNpcId >= 200;
+    const isGolge = !isSisoren && (activeNpcId >= 100);
+    const targetEndpoint = isSisoren ? '/api/sisoren/interrogate' : (isGolge ? '/api/golge-sehir/interrogate' : '/api/game/interrogate');
 
     fetch(targetEndpoint, {
         method: 'POST',
