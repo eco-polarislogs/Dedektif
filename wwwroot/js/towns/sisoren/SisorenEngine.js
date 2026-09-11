@@ -586,6 +586,9 @@ window.SisorenEngine = {
 
     getInteriorPos: function (extra, bldId) {
         if (extra.interiorPos) return extra.interiorPos;
+        const layout = window.SISOREN_INTERIOR_LAYOUTS && window.SISOREN_INTERIOR_LAYOUTS[bldId];
+        const layoutPos = layout && layout[extra.id || extra.extraId];
+        if (layoutPos) return layoutPos;
         const fallback = (window.SISOREN_INTERIOR_POSITIONS || {})[extra.id || extra.extraId];
         if (fallback) return fallback;
         return { top: '50%', left: '50%' };

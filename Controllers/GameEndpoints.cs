@@ -800,7 +800,7 @@ public static class GameEndpoints
             var dialogue = matched == null
                 ? $"{npc.Name} temkinli bir ifadeyle cevap veriyor: Bu konuda kesin konuşamam; olay gecesindeki ayrıntıları yeniden kontrol etmelisiniz."
                 : (npc.NPCId == guiltyId ? matched.GuiltyResponses : matched.NPCResponse);
-            if (npc.NPCId >= 300 && npc.NPCId != guiltyId && IsSisorenWitness(npc.NPCId, guiltyId))
+            if (npc.NPCId != guiltyId && IsSisorenWitness(npc.NPCId, guiltyId))
                 dialogue += $" {npc.Name}, bazı işaretlerin {GetSisorenNPCName(guiltyId)} ile aynı yöne çıktığını ima ediyor; yine de kesin bir suçlama yapmaktan kaçınıyor.";
 
             return Results.Ok(new

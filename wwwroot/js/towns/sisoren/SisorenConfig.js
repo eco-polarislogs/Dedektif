@@ -813,6 +813,30 @@ window.SISOREN_INTERIOR_POSITIONS = {
     tupcu_yardimci: { top: '48%', left: '52%' }
 };
 
+// Her görselin içindeki karakterlere göre normalize edilmiş tıklama noktaları.
+// Noktalar sahne yüzdesidir; görsel laptopta yeniden ölçeklense bile karakterle birlikte kalır.
+window.SISOREN_INTERIOR_LAYOUTS = {
+    kahvehane: {
+        primary: { top: '56%', left: '68%' },
+        kahve_celal: { top: '54%', left: '22%' },
+        kahve_hamdi: { top: '65%', left: '42%' },
+        kahve_cirak: { top: '40%', left: '72%' }
+    },
+    bakkal: {
+        primary: { top: '58%', left: '70%' },
+        bakkal_cocuk_1: { top: '58%', left: '38%' }
+    },
+    sahaf: {
+        primary: { top: '58%', left: '70%' },
+        sahaf_cocuk_1: { top: '74%', left: '30%' },
+        sahaf_cocuk_2: { top: '74%', left: '46%' }
+    },
+    ahir: {
+        primary: { top: '58%', left: '30%' },
+        ahir_cocuk_1: { top: '54%', left: '54%' }
+    }
+};
+
 // Sisören'in mevcut iç mekân görsellerini bütün binalara güvenli biçimde bağla.
 // Yeni görseller eklendiğinde bu eşleme yalnızca ilgili bina için değiştirilebilir.
 (function normalizeSisorenPresentation() {
@@ -839,7 +863,9 @@ window.SISOREN_INTERIOR_POSITIONS = {
             building.npc.bg = building.interiorImg;
             building.npc.talkBg = building.npc.portrait;
         }
-        building.primaryNpcPos = building.primaryNpcPos || primaryPositions[index];
+        const layout = window.SISOREN_INTERIOR_LAYOUTS[building.id];
+        building.interiorLayout = layout || {};
+        building.primaryNpcPos = (layout && layout.primary) || building.primaryNpcPos || primaryPositions[index];
         if (!building.hotspots || building.hotspots.length === 0) {
             building.hotspots = [1, 2, 3, 4].map((slot, slotIndex) => ({
                 id: building.npcId * 10 + slotIndex + 1,
