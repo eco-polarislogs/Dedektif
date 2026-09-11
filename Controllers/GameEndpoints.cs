@@ -384,9 +384,7 @@ public static class GameEndpoints
             {
                 if ((npcId >= 201 && npcId <= 213) || (npcId >= 301 && npcId <= 318))
                 {
-                    var sisorenDialogues = (await repo.GetSisorenDialoguesAsync(npcId, category)).ToList();
-                    if (sisorenDialogues.Count == 0)
-                        sisorenDialogues = (await repo.GetSisorenDialoguesAsync(npcId, null)).ToList();
+                    var sisorenDialogues = (await repo.GetSisorenDialoguesAsync(npcId, null)).ToList();
                     sisorenDialogues = sisorenDialogues.OrderBy(_ => Random.Shared.Next()).Take(4).ToList();
                     return Results.Ok(new
                     {
