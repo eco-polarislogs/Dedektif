@@ -3235,7 +3235,7 @@ async function askQuestionBackend(npcId, question) {
 
     // NPC cevabını belirle
     let answer = question.a || question.response || question.NPCResponse || question.responseText || "Söyleyecek bir şeyim yok amirim.";
-    if (npcId >= 201 && npcId <= 213) {
+    if ((npcId >= 201 && npcId <= 213) || (npcId >= 301 && npcId <= 318)) {
         try {
             const sisorenResponse = await fetch('/api/sisoren/interrogate', {
                 method: 'POST',

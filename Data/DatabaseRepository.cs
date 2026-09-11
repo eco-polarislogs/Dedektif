@@ -801,12 +801,18 @@ public class DatabaseRepository : IGameRepository
             : """CREATE TABLE IF NOT EXISTS SisorenNPCDialogues (DialogueId INTEGER PRIMARY KEY AUTOINCREMENT, NPCId INTEGER NOT NULL, QuestionText TEXT NOT NULL, ResponseText TEXT NOT NULL, GuiltyResponseText TEXT NOT NULL, Stage INTEGER NOT NULL, ButtonIndex INTEGER NOT NULL DEFAULT 0, Difficulty INTEGER NOT NULL DEFAULT 1, Category TEXT NOT NULL DEFAULT 'tanisma', UNIQUE (NPCId, Stage, ButtonIndex));""";
         await db.ExecuteAsync(sql);
 
-        var names = new Dictionary<int, string>
+        var names = new Dictionary<int, (string Name, string Tone)>
         {
-            [201] = "Telgrafçı Rüstem", [202] = "Kahveci İrfan", [203] = "Sinemacı Nejat",
-            [204] = "Bakkal Cemile", [205] = "Sahaf Hikmet", [206] = "Muhtar Meliha",
-            [207] = "Tütüncü Nermin", [208] = "Çoban Durmuş", [209] = "Tüpçü Şevket",
-            [210] = "Hurdacı Zehra", [211] = "Zeynep Teyze", [212] = "Hatice Nine", [213] = "Emine Hanım"
+            [201] = ("Telgrafçı Rüstem", "adult"), [202] = ("Kahveci İrfan", "adult"), [203] = ("Sinemacı Nejat", "adult"),
+            [204] = ("Bakkal Cemile", "adult"), [205] = ("Sahaf Hikmet", "adult"), [206] = ("Muhtar Meliha", "adult"),
+            [207] = ("Tütüncü Nermin", "adult"), [208] = ("Çoban Durmuş", "adult"), [209] = ("Tüpçü Şevket", "adult"),
+            [210] = ("Hurdacı Zehra", "adult"), [211] = ("Zeynep Teyze", "senior"), [212] = ("Hatice Nine", "senior"), [213] = ("Emine Hanım", "adult"),
+            [301] = ("Celal Amca", "senior"), [302] = ("Hamdi Dayı", "senior"), [303] = ("Kahveci Çırağı Salih", "young"),
+            [304] = ("Şerife Teyze", "senior"), [305] = ("Oduncu Çırağı Cemal", "young"), [306] = ("Postacı Nuri Efendi", "adult"),
+            [307] = ("Telgraf Çırağı Yusuf", "young"), [308] = ("Biletçi Fatma", "adult"), [309] = ("Kâtip Sami Efendi", "adult"),
+            [310] = ("Tütün Tiryakisi Osman", "adult"), [311] = ("Hurda Toplayan Ali", "child"), [312] = ("Tüp Dağıtıcısı Mehmet", "adult"),
+            [313] = ("Küçük Ayşe", "child"), [314] = ("Gece Bekçisi Recep", "senior"),
+            [315] = ("Küçük Elif", "child"), [316] = ("Can", "child"), [317] = ("Selin", "child"), [318] = ("Kerem", "child")
         };
         var questions = new[] { "Cinayet gecesi binanda kim vardı?", "O gece saat iki civarında ne gördün?", "Bu olayla ilgili sakladığın belge ya da eşya nedir?", "Başka hangi kasabalı bu ayrıntıyı doğrulayabilir?" };
         var categories = new[] { "tanisma", "derinlesme", "yuzlestirme", "baski", "son" };
@@ -818,14 +824,36 @@ public class DatabaseRepository : IGameRepository
             {
                 NPCId = npc.Key,
                 QuestionText = $"{questions[button]} (Soru {stage * 4 + button + 1})",
-                ResponseText = $"{npc.Value} temkinli konuşuyor: Bu ayrıntıyı doğrudan doğrulayamam; {stage + 1}. aşamada bina çevresindeki izlerin dağ yoluna yöneldiğini gördüm.",
-                GuiltyResponseText = $"{npc.Value} gözlerini kaçırıyor: Bu soruya cevap veremem. O geceyi anlatırsam başka birinin başı derde girer; bildiğim tek şey, aradığınız izin kasaba dışına çıkmadığıdır.",
+                ResponseText = BuildSisorenSeedResponse(npc.Value.Name, npc.Value.Tone, stage, button),
+                GuiltyResponseText = BuildSisorenGuiltyResponse(npc.Value.Name, npc.Value.Tone, stage, button),
                 Stage = stage, ButtonIndex = button, Difficulty = Math.Min(5, stage + 1), Category = categories[stage]
             };
             await db.ExecuteAsync(_isPostgres
                 ? "INSERT INTO SisorenNPCDialogues (NPCId,QuestionText,ResponseText,GuiltyResponseText,Stage,ButtonIndex,Difficulty,Category) VALUES (@NPCId,@QuestionText,@ResponseText,@GuiltyResponseText,@Stage,@ButtonIndex,@Difficulty,@Category) ON CONFLICT (NPCId,Stage,ButtonIndex) DO UPDATE SET QuestionText=EXCLUDED.QuestionText,ResponseText=EXCLUDED.ResponseText,GuiltyResponseText=EXCLUDED.GuiltyResponseText"
                 : "INSERT OR REPLACE INTO SisorenNPCDialogues (NPCId,QuestionText,ResponseText,GuiltyResponseText,Stage,ButtonIndex,Difficulty,Category) VALUES (@NPCId,@QuestionText,@ResponseText,@GuiltyResponseText,@Stage,@ButtonIndex,@Difficulty,@Category)", parameters);
         }
+    }
+
+    private static string BuildSisorenSeedResponse(string name, string tone, int stage, int button)
+    {
+        if (tone == "child")
+            return $"{name} heyecanla anlatıyor: Ben sadece gördüğümü biliyorum; sisin içinde bir ışık vardı ve biri hızlı hızlı yürüyordu. Belki başka bir büyüğe de soralım.";
+        if (tone == "young")
+            return $"{name} biraz çekinerek anlatıyor: O gece bir hareketlilik fark ettim ama her şeyi net göremedim. Duyduğum sesin hangi binadan geldiğini araştırmanız daha doğru olur.";
+        if (tone == "senior")
+            return $"{name} ağır ağır konuşuyor: Bu dağda yıllar içinde çok şey gördüm evladım. O geceki izler bana eski maden yolunu hatırlattı; kesin hüküm vermeden önce başka tanıkları da dinleyin.";
+        return $"{name} temkinli konuşuyor: Bu ayrıntıyı doğrudan doğrulayamam; olay gecesinde bina çevresindeki izler dağ yoluna yöneliyordu. Başka bir tanığın kaydı bunu açıklayabilir.";
+    }
+
+    private static string BuildSisorenGuiltyResponse(string name, string tone, int stage, int button)
+    {
+        if (tone == "child")
+            return $"{name} ürkekçe başını sallıyor: Ben kötü bir şey görmedim, sadece sisin içinde bir gölge gördüm. Daha fazla konuşmak istemiyorum.";
+        if (tone == "young")
+            return $"{name} gözlerini kaçırıyor: O geceyi tam hatırlamıyorum. Yanlış bir şey söyleyip birini suçlamak istemem; bildiğim kadarıyla izler dağ tarafına gidiyordu.";
+        if (tone == "senior")
+            return $"{name} iç çekiyor: Bazı gerçekler aceleyle söylenmez evladım. Beni bu işin içine çekmeyin; gördüğüm izleri ancak kanıtla birlikte değerlendirin.";
+        return $"{name} sakin görünmeye çalışıyor: Bu konuda kesin konuşamam. O geceyi anlatırsam başka birinin başı derde girebilir; önce delilleri karşılaştırmanız gerekir.";
     }
 
     public async Task<IEnumerable<NPCDialogue>> GetSisorenDialoguesAsync(int npcId, string? category = null)

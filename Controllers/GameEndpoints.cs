@@ -382,7 +382,7 @@ public static class GameEndpoints
         {
             try
             {
-                if (npcId >= 200 && npcId <= 213)
+                if ((npcId >= 201 && npcId <= 213) || (npcId >= 301 && npcId <= 318))
                 {
                     var sisorenDialogues = (await repo.GetSisorenDialoguesAsync(npcId, category)).ToList();
                     if (sisorenDialogues.Count == 0)
@@ -785,23 +785,23 @@ public static class GameEndpoints
     {
         app.MapPost("/api/sisoren/interrogate", async (InterrogationRequest request, IGameRepository repo) =>
         {
-            if (request == null || request.NpcId < 201 || request.NpcId > 213 ||
+            if (request == null || !IsSisorenNpc(request.NpcId) ||
                 string.IsNullOrWhiteSpace(request.Question))
             {
                 return Results.BadRequest("Geçersiz Sisören sorgulama isteği.");
             }
 
-            var npc = GetFallbackSisorenNPC(request.NpcId);
+            var npc = request.NpcId >= 300 ? GetFallbackSisorenExtraNPC(request.NpcId) : GetFallbackSisorenNPC(request.NpcId);
             if (npc == null) return Results.NotFound("Sisören şüphelisi bulunamadı.");
 
-            var guiltyId = request.GuiltyNpcId is >= 201 and <= 213
-                ? request.GuiltyNpcId.Value
-                : _sisorenGuiltyNpcId;
+            var guiltyId = _sisorenGuiltyNpcId;
             var pool = (await repo.GetSisorenDialoguesAsync(request.NpcId)).ToList();
             var matched = pool.FirstOrDefault(d => string.Equals(d.PlayerText, request.Question, StringComparison.OrdinalIgnoreCase));
             var dialogue = matched == null
                 ? $"{npc.Name} temkinli bir ifadeyle cevap veriyor: Bu konuda kesin konuşamam; olay gecesindeki ayrıntıları yeniden kontrol etmelisiniz."
                 : (npc.NPCId == guiltyId ? matched.GuiltyResponses : matched.NPCResponse);
+            if (npc.NPCId >= 300 && npc.NPCId != guiltyId && IsSisorenWitness(npc.NPCId, guiltyId))
+                dialogue += $" {npc.Name}, bazı işaretlerin {GetSisorenNPCName(guiltyId)} ile aynı yöne çıktığını ima ediyor; yine de kesin bir suçlama yapmaktan kaçınıyor.";
 
             return Results.Ok(new
             {
@@ -984,6 +984,38 @@ public static class GameEndpoints
             211 => new NPC { NPCId = 211, Name = "Zeynep Teyze", Role = "Ev Hanımı", SecretInfo = "Meydandaki fener ışığını penceresinden gördü." },
             212 => new NPC { NPCId = 212, Name = "Hatice Nine", Role = "Kasaba Büyüğü", SecretInfo = "Kasabanın eski maden sırrını biliyor." },
             213 => new NPC { NPCId = 213, Name = "Emine Hanım", Role = "Dağ Sakini", SecretInfo = "Dağ yolunda gömülü bir nesne buldu." },
+            _ => null
+        };
+    }
+
+    private static bool IsSisorenNpc(int npcId) =>
+        (npcId >= 201 && npcId <= 213) || (npcId >= 301 && npcId <= 318);
+
+    private static bool IsSisorenWitness(int npcId, int guiltyId) =>
+        ((npcId * 17) + guiltyId) % 5 < 2;
+
+    private static NPC? GetFallbackSisorenExtraNPC(int npcId)
+    {
+        return npcId switch
+        {
+            301 => new NPC { NPCId = 301, Name = "Celal Amca", Role = "Emekli Ormancı" },
+            302 => new NPC { NPCId = 302, Name = "Hamdi Dayı", Role = "Emekli Madenci" },
+            303 => new NPC { NPCId = 303, Name = "Kahveci Çırağı Salih", Role = "Kahveci Çırağı" },
+            304 => new NPC { NPCId = 304, Name = "Şerife Teyze", Role = "Kasabalı" },
+            305 => new NPC { NPCId = 305, Name = "Oduncu Çırağı Cemal", Role = "Oduncu Çırağı" },
+            306 => new NPC { NPCId = 306, Name = "Postacı Nuri Efendi", Role = "Postacı" },
+            307 => new NPC { NPCId = 307, Name = "Telgraf Çırağı Yusuf", Role = "Telgraf Çırağı" },
+            308 => new NPC { NPCId = 308, Name = "Biletçi Fatma", Role = "Biletçi" },
+            309 => new NPC { NPCId = 309, Name = "Kâtip Sami Efendi", Role = "Kâtip" },
+            310 => new NPC { NPCId = 310, Name = "Tütün Tiryakisi Osman", Role = "Kasabalı" },
+            311 => new NPC { NPCId = 311, Name = "Hurda Toplayan Ali", Role = "Çocuk Tanık" },
+            312 => new NPC { NPCId = 312, Name = "Tüp Dağıtıcısı Mehmet", Role = "Dağıtıcı" },
+            313 => new NPC { NPCId = 313, Name = "Küçük Ayşe", Role = "Çocuk Tanık" },
+            314 => new NPC { NPCId = 314, Name = "Gece Bekçisi Recep", Role = "Gece Bekçisi" },
+            315 => new NPC { NPCId = 315, Name = "Küçük Elif", Role = "Çocuk Tanık" },
+            316 => new NPC { NPCId = 316, Name = "Can", Role = "Çocuk Tanık" },
+            317 => new NPC { NPCId = 317, Name = "Selin", Role = "Çocuk Tanık" },
+            318 => new NPC { NPCId = 318, Name = "Kerem", Role = "Çocuk Tanık" },
             _ => null
         };
     }
