@@ -1,4 +1,4 @@
-// =============================================================
+﻿// =============================================================
 // 🔍 DEDEKTİFLİK RPG - TAM OYUN MOTORU v2.0
 // 5 NPC, Kademesiz Karışık Diyalog, Rastgele Suçlu, Ses Sistemi
 // =============================================================
@@ -35,80 +35,6 @@ const gavelSound = document.getElementById('gavel-sound');
 // === GAME STATE ===
 let currentBag = [];
 window.currentBag = currentBag;
-
-// --- TOWN STATE ISOLATION (BAG & HELPER HISTORY) ---
-window.townStates = {
-    'gizemli': { bag: [], helperHistory: [], helperHistoryIdx: -1 },
-    'golge_sehir': { bag: [], helperHistory: [], helperHistoryIdx: -1 },
-    'sisoren': { bag: [], helperHistory: [], helperHistoryIdx: -1 }
-};
-let _currentActiveTown = 'gizemli';
-
-Object.defineProperty(window, 'currentActiveTown', {
-    get: function() { return _currentActiveTown; },
-    set: function(val) {
-        if (_currentActiveTown && window.townStates[_currentActiveTown]) {
-            if (typeof currentBag !== 'undefined') {
-                window.townStates[_currentActiveTown].bag = [...currentBag];
-            }
-            if (typeof helperMessageHistory !== 'undefined') {
-                window.townStates[_currentActiveTown].helperHistory = [...helperMessageHistory];
-            }
-            if (typeof currentHelperHistoryIndex !== 'undefined') {
-                window.townStates[_currentActiveTown].helperHistoryIdx = currentHelperHistoryIndex;
-            }
-        }
-        _currentActiveTown = val;
-        if (!window.townStates[val]) {
-            window.townStates[val] = { bag: [], helperHistory: [], helperHistoryIdx: -1 };
-        }
-        
-        if (typeof currentBag !== 'undefined') {
-            currentBag = [...window.townStates[val].bag];
-            window.currentBag = currentBag;
-        }
-        if (typeof helperMessageHistory !== 'undefined') {
-            helperMessageHistory = [...window.townStates[val].helperHistory];
-        }
-        if (typeof currentHelperHistoryIndex !== 'undefined') {
-            currentHelperHistoryIndex = window.townStates[val].helperHistoryIdx;
-        }
-        
-        if (typeof updateBagUI === 'function') updateBagUI();
-        if (typeof checkAutopsyConditions === 'function') checkAutopsyConditions();
-
-        // Harita üzerindeki binaları kasabaya göre gizle/göster
-        if (typeof document !== 'undefined') {
-            const mapStage = document.getElementById('town-map-stage');
-            if (mapStage) {
-                const allBuildings = mapStage.querySelectorAll('.map-building');
-                allBuildings.forEach(el => {
-                    if (val === 'gizemli') {
-                        if (el.className.includes('building-golge-') || el.className.includes('building-sisoren-')) {
-                            el.style.display = 'none';
-                        } else {
-                            el.style.display = 'block';
-                        }
-                    } else if (val === 'golge_sehir') {
-                        if (el.className.includes('building-golge-')) {
-                            el.style.display = 'block';
-                        } else {
-                            el.style.display = 'none';
-                        }
-                    } else if (val === 'sisoren') {
-                        if (el.className.includes('building-sisoren-')) {
-                            el.style.display = 'block';
-                        } else {
-                            el.style.display = 'none';
-                        }
-                    }
-                });
-            }
-        }
-    }
-});
-// ----------------------------------------------------
-
 const MAX_BAG_SIZE = 5;
 let activeNpcId = null;
 let currentSessionId = 0;
@@ -1177,21 +1103,7 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
                         window.GolgeSehirEngine.visitedGolgeBuildings.clear();
                         window.GolgeSehirEngine.clearGolgeSehirMap();
                     }
-                    if (window.SisorenEngine) {
-                        window.SisorenEngine.visitedSisorenBuildings.clear();
-                        window.SisorenEngine.clearSisorenMap();
-                    }
-                    const tuccar = document.getElementById('tuccar-quick-tip-btn');
-                    if (tuccar) tuccar.remove();
-                    const cinematicBox = document.getElementById('cinematic-helper-box');
-                    if (cinematicBox) cinematicBox.classList.remove('visible');
                     currentBag = [];
-                    window.currentBag = [];
-                    if (window.townStates) {
-                        Object.keys(window.townStates).forEach(k => {
-                            window.townStates[k].bag = [];
-                        });
-                    }
                     submittedBloodClueIds.clear();
                     submittedPrintClueIds.clear();
                     submittedForensicCount = 0;
@@ -1200,11 +1112,6 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
                     dialogHistory = {};
                     npcTalkCompleted = {};
                     activeNpcId = null;
-
-                    const stageCanvas = document.getElementById('interior-stage-canvas');
-                    if (stageCanvas) stageCanvas.querySelectorAll('.clue-hotspot').forEach(el => el.remove());
-                    const hContainer = document.getElementById('hotspots-container');
-                    if (hContainer) hContainer.innerHTML = '';
 
                     updateForensicBadge();
                     checkAutopsyConditions();
@@ -1247,7 +1154,8 @@ document.querySelectorAll('.region-town').forEach(townEl => {
             window.currentActiveTown = 'golge_sehir';
             document.body.classList.add('golge-sehir-theme');
             // Gölge Şehir delil havuzunu izole et (Gizemli Kasaba eşyalarını tamamen ayır)
-            /* Bag filtering removed in favor of state isolation */
+            currentBag = currentBag.filter(c => c.id >= 1000);
+            window.currentBag = currentBag;
 
             // Her yeni girişte yeni bir Gölge Şehir vaka oturumu başlat
             if (window.GolgeSehirEngine) {
@@ -1256,10 +1164,10 @@ document.querySelectorAll('.region-town').forEach(townEl => {
         } else if (townId === 'gizemli') {
             // Gizemli Kasaba (1. Seviye) → Osman Bey Hikaye Ekranı
             window.currentActiveTown = 'gizemli';
-            document.body.classList.remove('golge-sehir-theme', 'sisoren-theme');
-                            if(typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
+            document.body.classList.remove('golge-sehir-theme');
             // Gizemli Kasaba delil havuzunu izole et (Gölge Şehir eşyalarını tamamen ayır)
-            /* Bag filtering removed in favor of state isolation */
+            currentBag = currentBag.filter(c => c.id < 1000);
+            window.currentBag = currentBag;
 
             if (window.GolgeSehirEngine) {
                 window.GolgeSehirEngine.resetGolgeState();
@@ -1811,15 +1719,13 @@ function openBuildingClueModal(obj, npcId) {
 document.getElementById('building-clue-take-btn')?.addEventListener('click', () => {
     if (!currentPendingObject) return;
 
-    // Kasaba delil kontrolü (Gölge Şehir'de 1000-1999, Gizemli Kasaba'da <1000, Sisören'de >= 2000)
-    const activeTown = window.currentActiveTown;
-    const objId = currentPendingObject.id;
-    let wrongTown = false;
-    if (activeTown === 'gizemli' && objId >= 1000) wrongTown = true;
-    if (activeTown === 'golge_sehir' && (objId < 1000 || objId >= 2000)) wrongTown = true;
-    if (activeTown === 'sisoren' && objId < 2000) wrongTown = true;
-
-    if (wrongTown) {
+    // Kasaba delil kontrolü (Gölge Şehir'de sadece 1000+, Gizemli Kasaba'da <1000)
+    const isGolge = (window.currentActiveTown === 'golge_sehir');
+    if (isGolge && currentPendingObject.id < 1000) {
+        showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+        buildingClueModal.classList.add('hidden');
+        return;
+    } else if (!isGolge && currentPendingObject.id >= 1000) {
         showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
         buildingClueModal.classList.add('hidden');
         return;
@@ -1983,15 +1889,13 @@ function openClueInspect(obj, npcId, fromBag = false) {
 document.getElementById('clue-take-btn').addEventListener('click', () => {
     if (!currentPendingObject) return;
 
-    // Kasaba delil kontrolü (Gölge Şehir'de 1000-1999, Gizemli Kasaba'da <1000, Sisören'de >= 2000)
-    const activeTown = window.currentActiveTown;
-    const objId = currentPendingObject.id;
-    let wrongTown = false;
-    if (activeTown === 'gizemli' && objId >= 1000) wrongTown = true;
-    if (activeTown === 'golge_sehir' && (objId < 1000 || objId >= 2000)) wrongTown = true;
-    if (activeTown === 'sisoren' && objId < 2000) wrongTown = true;
-
-    if (wrongTown) {
+    // Kasaba delil kontrolü (Gölge Şehir'de sadece 1000+, Gizemli Kasaba'da <1000)
+    const isGolge = (window.currentActiveTown === 'golge_sehir');
+    if (isGolge && currentPendingObject.id < 1000) {
+        showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+        clueInspectModal.classList.add('hidden');
+        return;
+    } else if (!isGolge && currentPendingObject.id >= 1000) {
         showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
         clueInspectModal.classList.add('hidden');
         return;
@@ -2627,41 +2531,12 @@ function setupForensicTools() {
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
 
-            const imgRect = imgEl.getBoundingClientRect();
-            const wrapperRect = wrapper.getBoundingClientRect();
-            
-            // Calculate actual rendered image dimensions inside object-fit: contain
-            const imgRatio = imgEl.naturalWidth / imgEl.naturalHeight;
-            const containerRatio = imgRect.width / imgRect.height;
-            let renderWidth, renderHeight, renderLeft, renderTop;
-            if (imgRatio > containerRatio) {
-                renderWidth = imgRect.width;
-                renderHeight = imgRect.width / imgRatio;
-                renderLeft = imgRect.left;
-                renderTop = imgRect.top + (imgRect.height - renderHeight) / 2;
-            } else {
-                renderHeight = imgRect.height;
-                renderWidth = imgRect.height * imgRatio;
-                renderTop = imgRect.top;
-                renderLeft = imgRect.left + (imgRect.width - renderWidth) / 2;
-            }
-
-            const imgOffsetLeft = renderLeft - wrapperRect.left;
-            const imgOffsetTop = renderTop - wrapperRect.top;
-
             for (let i = 0; i < 18; i++) {
                 const rx = (Math.random() - 0.5) * 36;
                 const ry = (Math.random() - 0.5) * 36;
-                const finalX = x + rx;
-                const finalY = y + ry;
-
-                // Sadece GERÇEK render edilen resim sınırları içinde çiz
-                if (finalX >= imgOffsetLeft && finalX <= imgOffsetLeft + renderWidth &&
-                    finalY >= imgOffsetTop && finalY <= imgOffsetTop + renderHeight) {
-                    ctx.beginPath();
-                    ctx.arc(finalX, finalY, Math.random() * 2.5 + 1, 0, Math.PI * 2);
-                    ctx.fill();
-                }
+                ctx.beginPath();
+                ctx.arc(x + rx, y + ry, Math.random() * 2.5 + 1, 0, Math.PI * 2);
+                ctx.fill();
             }
 
             // Parmak izi gösterimi — SADECE tozlama fırçası TAM lekenin üstüne sürülürse göster!
@@ -2889,7 +2764,7 @@ function openNpcTalk(npcId) {
     }
 
     if (characterLayer) {
-        characterLayer.style.backgroundImage = ((npc.portrait || talkBgImage))
+        characterLayer.style.backgroundImage = (window.currentActiveTown === 'sisoren' && (npc.portrait || talkBgImage))
             ? `url('${npc.portrait || talkBgImage}?v=${Date.now()}')`
             : 'none';
         characterLayer.style.backgroundSize = 'contain';
@@ -3909,8 +3784,9 @@ function renderFoundScreen() {
 
             card.innerHTML = `
                 ${isAlreadyInnocent ? '<div class="innocent-stamp">MASUM</div>' : ''}
-                <div class="found-npc-photo-wrap" data-npc-id="${extraId}" title="${extraNpc.name}">
-                    <img src="${extraNpc.avatar || `images/towns/sisoren/npcler/${extraId}.png`}" class="found-npc-photo" alt="${extraNpc.name}" onerror="this.src='images/towns/sisoren/npcler/default_extra.png'; this.onerror=null;">
+                <div class="found-npc-photo-wrap sisoren-placeholder-photo sisoren-extra-photo" data-npc-id="${extraId}" title="${extraNpc.name}">
+                    <i class="fa-solid fa-user sisoren-placeholder-icon" style="color: #6ee7b7;"></i>
+                    <span class="sisoren-placeholder-text" style="font-size: 0.65rem;">${extraNpc.role || 'Kasabalı'}</span>
                 </div>
                 <div class="found-npc-name" style="color: #6ee7b7; font-size: 0.8rem;">${extraNpc.name}</div>
                 <div class="found-npc-role">${extraNpc.building || 'Sokak'} (${extraNpc.gender === 'female' ? 'Kadın' : 'Erkek'})</div>
@@ -4171,8 +4047,7 @@ window.accuseNpc = function (accusedId) {
 
                             // Kasaba durumunu temizle
                             window.currentActiveTown = 'gizemli';
-                            document.body.classList.remove('golge-sehir-theme', 'sisoren-theme');
-                            if(typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
+                            document.body.classList.remove('golge-sehir-theme');
                             visitedBuildings.clear();
                             if (window.GolgeSehirEngine) {
                                 window.GolgeSehirEngine.visitedGolgeBuildings.clear();
@@ -4237,8 +4112,7 @@ window.accuseNpc = function (accusedId) {
 
                             // Kasaba durumunu temizle
                             window.currentActiveTown = 'gizemli';
-                            document.body.classList.remove('golge-sehir-theme', 'sisoren-theme');
-                            if(typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
+                            document.body.classList.remove('golge-sehir-theme');
                             visitedBuildings.clear();
                             if (window.GolgeSehirEngine) {
                                 window.GolgeSehirEngine.visitedGolgeBuildings.clear();
@@ -4394,7 +4268,7 @@ function showCinematicHelper(message, isOneTime = true, contextKey = '', skipHis
     // Apply speaker details if provided
     if (speakerInfo) {
         if (speakerInfo.theme) {
-            box.classList.remove('rifat-speaking', 'cetin-speaking', 'ilyas-speaking');
+            box.classList.remove('rifat-speaking', 'cetin-speaking');
             box.classList.add(speakerInfo.theme);
         }
         if (speakerInfo.avatar && avatarImg) {
@@ -4452,8 +4326,6 @@ function showCinematicHelper(message, isOneTime = true, contextKey = '', skipHis
 
     document.getElementById('interior-helper-btn')?.classList.add('hidden');
     document.getElementById('town-helper-btn')?.classList.add('hidden');
-    if (document.getElementById('bekci-quick-tip-btn')) document.getElementById('bekci-quick-tip-btn').style.display = 'none';
-    if (document.getElementById('tuccar-quick-tip-btn')) document.getElementById('tuccar-quick-tip-btn').style.display = 'none';
 
     let i = 0;
     const speed = 26;
@@ -4546,8 +4418,6 @@ document.getElementById('cinematic-helper-close')?.addEventListener('click', () 
 
     document.getElementById('interior-helper-btn')?.classList.remove('hidden');
     document.getElementById('town-helper-btn')?.classList.remove('hidden');
-    if (document.body.classList.contains('golge-sehir-theme') && document.getElementById('bekci-quick-tip-btn')) document.getElementById('bekci-quick-tip-btn').style.display = 'flex';
-    if (document.body.classList.contains('sisoren-theme') && document.getElementById('tuccar-quick-tip-btn')) document.getElementById('tuccar-quick-tip-btn').style.display = 'flex';
     isHelperTyping = false;
     if (cinematicTypewriterTimeout) clearTimeout(cinematicTypewriterTimeout);
 });
@@ -4562,9 +4432,7 @@ function reopenHelperSpeechBubble() {
     if (box) {
         box.classList.remove('hidden');
         document.getElementById('interior-helper-btn')?.classList.add('hidden');
-    document.getElementById('town-helper-btn')?.classList.add('hidden');
-    if (document.getElementById('bekci-quick-tip-btn')) document.getElementById('bekci-quick-tip-btn').style.display = 'none';
-    if (document.getElementById('tuccar-quick-tip-btn')) document.getElementById('tuccar-quick-tip-btn').style.display = 'none';
+        document.getElementById('town-helper-btn')?.classList.add('hidden');
 
         isHelperTyping = false;
         if (cinematicTypewriterTimeout) clearTimeout(cinematicTypewriterTimeout);

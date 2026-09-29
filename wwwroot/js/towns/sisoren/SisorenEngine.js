@@ -5,7 +5,7 @@
  */
 
 window.SisorenEngine = {
-    currentActiveTown: 'gizemli',
+    currentActiveTown: null,
     hasShownSisorenIntro: false,
     introDialogCompleted: false,
     visitedSisorenBuildings: new Set(),
@@ -19,7 +19,7 @@ window.SisorenEngine = {
             const knownAnswer = fallback[index] && fallback[index].a;
             return {
                 q: question,
-                a: knownAnswer || `${name} bir an duraksıyor: "${question}" sorusunun cevabını olay gecesindeki ayrıntıları hatırlayarak anlatıyor. Bu konuda bildiğim tek şey, izlerin bina çevresinden dağ yoluna doğru devam ettiğidir.`,
+                a: knownAnswer || `Amirim bu soruyu sorduğunuz iyi oldu... "${question}" demiştiniz değil mi? O gece etrafta çok fazla karanlık şey oldu. Bildiğim tek şey, bina çevresindeki izlerin dağ yoluna doğru gittiğidir. Başka bir şey görmedim.`,
                 difficulty: index > 2 ? 2 : 1,
                 category: index > 2 ? 'yuzlestirme' : 'tanisma'
             };
@@ -27,8 +27,8 @@ window.SisorenEngine = {
         while (normalized.length < 4) {
             const index = normalized.length;
             normalized.push({
-                q: `${name}, olay gecesiyle ilgili başka hangi ayrıntıyı hatırlıyorsun?`,
-                a: `${name} başını sallıyor: "Bunu daha önce anlatmadım; olay gecesi ${index + 1}. saatte bina çevresinde kısa bir hareketlilik vardı. Ayrıntıyı araştırmanız gerekiyor."`,
+                q: `Olay gecesiyle ilgili başka hangi ayrıntıyı hatırlıyorsun?`,
+                a: `*Başını sallayarak* Bunu daha önce anlatmadım ama... olay gecesi saat ${index + 1} sularında buralarda kısa bir hareketlilik oldu amirim. Gidip detayları kendiniz araştırmalısınız, ben pek bir şey göremedim.`,
                 difficulty: 2,
                 category: 'derinlesme'
             });
@@ -38,16 +38,23 @@ window.SisorenEngine = {
 
     init: function () {
         console.log("🌲 Sisören Dağ Kasabası Motoru v3.0 Başlatıldı.");
+        if (window.currentActiveTown) {
+            this.currentActiveTown = window.currentActiveTown;
+        }
         this.registerSisorenData();
         this.setupEventListeners();
         this.setupMapObserver();
-
+        this.createTuccarHelperWidget();
+        this.createSisorenEnvelopeModal();
     },
 
     // =============================
     // 1. NPC & DELİL VERİ KAYDI
     // =============================
+    _dataRegistered: false,
+
     registerSisorenData: function () {
+        if (this._dataRegistered) return;
         if (window.SISOREN_CONFIG && window.SISOREN_CONFIG.buildings) {
             window.NPC_DATA = window.NPC_DATA || {};
             window.SCENE_OBJECTS = window.SCENE_OBJECTS || {};
@@ -115,6 +122,7 @@ window.SisorenEngine = {
             if (!window.sisorenTalkedExtraNpcs) {
                 window.sisorenTalkedExtraNpcs = new Set();
             }
+            this._dataRegistered = true;
         }
     },
 
@@ -147,6 +155,8 @@ window.SisorenEngine = {
         this.introDialogCompleted = false;
         this.visitedSisorenBuildings.clear();
         document.body.classList.remove('sisoren-theme');
+        const tuccar = document.getElementById('tuccar-quick-tip-btn');
+        if (tuccar) tuccar.remove();
         this.clearSisorenMap();
 
         // Kasabaya özel otopsi ve lab durumunu tazele
@@ -154,6 +164,145 @@ window.SisorenEngine = {
             window.checkAutopsyConditions();
         }
     },
+
+    createTuccarHelperWidget: function () {
+        let widget = document.getElementById('tuccar-quick-tip-btn');
+        if (widget) widget.remove();
+
+        widget = document.createElement('div');
+        widget.id = 'tuccar-quick-tip-btn';
+        widget.className = 'helper-detective-widget sisoren-tuccar-widget';
+        widget.title = 'Tüccar İlyas\'tan İpucu Al';
+        widget.style.cssText = 'position: fixed !important; left: auto !important; right: 20px !important; bottom: 15px !important; z-index: 9999 !important; display: none;';
+        widget.innerHTML = `
+            <img src="images/towns/sisoren/npcler/tuccar_ilyas_helper.png" class="helper-detective-img" alt="Tüccar İlyas">
+            <div class="helper-detective-badge">TÜCCAR İLYAS</div>
+        `;
+
+        widget.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.triggerTuccarTip();
+        });
+
+        const mapStage = document.getElementById('town-map-stage');
+        const interiorStage = document.getElementById('interior-stage');
+        
+        document.body.appendChild(widget);
+    },
+
+    triggerTuccarTip: function () {
+        if (window.currentActiveTown !== 'sisoren') return;
+
+        const currentNpc = window.activeNpcId;
+        const box = document.getElementById('cinematic-helper-box');
+        const avatarImg = document.querySelector('.cinematic-helper-avatar img');
+        const nameEl = document.querySelector('.cinematic-helper-name');
+
+        if (box && avatarImg && nameEl) {
+            box.classList.remove('cetin-speaking');
+            box.classList.add('ilyas-speaking');
+            avatarImg.src = 'images/towns/sisoren/npcler/tuccar_ilyas_helper.png';
+            nameEl.textContent = 'DAĞCI TÜCCAR İLYAS';
+            nameEl.style.color = '#4ade80'; // Green color for Ilyas
+        }
+
+        const tips = {
+            201: "Telgrafçı Rüstem o gece çok tuhaftı amirim. Mesajlarda bir şeyler saklıyor olabilir.",
+            202: "Kahveci İrfan sürekli kulak misafiri olur. Fincanların arasına sakladığı sırlar var.",
+            203: "Sinemacı Nejat makine dairesinde neler saklıyor bir baksanız iyi olur.",
+            204: "Bakkal Cemile'nin veresiye defteri hiç de masum görünmüyor amirim.",
+            205: "Sahaf Hikmet eski kitapların arasında zehir tarifleri okuyor, dikkat edin.",
+            206: "Muhtar Meliha'nın sahte mühürleri olduğunu duydum amirim. Kendisine güven olmaz.",
+            207: "Tütüncü Nermin o gece çok gerginmiş, birileriyle kavga etmiş diyorlar.",
+            208: "Çoban Durmuş dağlarda sadece koyun gütmüyor amirim, gece işleri de var.",
+            209: "Tüpçü Şevket'in anahtarı çok ağırdır amirim. Kimseye acımaz.",
+            210: "Hurdacı Zehra kasadaki paraları nereye saklıyor sormak lazım.",
+            211: "Zeynep Teyze'nin maden kayıtlarında usulsüzlük var amirim.",
+            212: "Hatice Nine'nin sandığında neler gizli bir bilseniz...",
+            213: "Emine Hanım otlarla sadece şifa dağıtmıyor amirim, bazen zehir de yapıyor."
+        };
+
+        const msg = (currentNpc && tips[currentNpc])
+            ? tips[currentNpc]
+            : "Dağların sisi gerçeği saklar ama benim katırlarım her dedikoduyu duyar! Şüphelilerin anlattıklarına dikkat et.";
+
+        if (typeof window.showCinematicHelper === 'function') {
+            window.showCinematicHelper(msg, false, 'ilyas_interactive_tip', false, {
+                speaker: 'ilyas',
+                speakerName: 'DAĞCI TÜCCAR İLYAS',
+                avatar: 'images/towns/sisoren/npcler/tuccar_ilyas_helper.png',
+                theme: 'ilyas-speaking'
+            });
+        }
+    },
+
+    createEnvelopeSuccessModal: function () {
+        let modal = document.getElementById('sisoren-success-modal');
+        if (modal) modal.remove();
+
+        modal = document.createElement('div');
+        modal.id = 'sisoren-success-modal';
+        modal.className = 'envelope-modal-backdrop hidden';
+        modal.innerHTML = `
+            <div class="envelope-scene">
+                <div class="envelope-wrapper" id="sisoren-envelope-wrapper">
+                    <div class="envelope-base">
+                        <div class="envelope-top-flap" id="sisoren-envelope-top-flap"></div>
+                        <div class="envelope-pocket"></div>
+                        
+                        <div class="envelope-letter-card" id="sisoren-envelope-letter-card">
+                            <div class="envelope-stamp-badge"><i class="fa-solid fa-ribbon"></i> EMNİYET MÜDÜRLÜĞÜ GİZLİ VAKA DOSYASI</div>
+                            <h2 class="letter-title">TEBRİKLER DEDEKTİF!</h2>
+                            <div class="letter-subtitle">VAKA #201 (GÖLGE ŞEHİR) BAŞARIYLA ÇÖZÜLDÜ</div>
+                            <div class="letter-divider"></div>
+                            <p class="letter-body">
+                                Gölge Şehir cinayetini ve karanlık sırlarını aydınlattınız.<br><br>
+                                <strong style="color:#d97706; font-size:1.1rem;">ğŸ“ YENİ GÖREV DOSYASI #301: SİSÖREN CİNAYETİ</strong><br>
+                                Sarp yamaçlar arasında göz gözü görmeyen Sisören kasabasında Madenci Halil Efendi katledildi. Yeni şüpheliler ve dağların soğuk sırları sizi bekliyor.
+                            </p>
+                            <button id="sisoren-envelope-accept-btn" class="letter-accept-btn">
+                                GÖREVİ KABUL ET VE SİSÖREN'E GİT <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="wax-seal" id="sisoren-envelope-wax-seal" title="Mührü Kır ve Zarfı Aç">
+                        <i class="fa-solid fa-stamp"></i>
+                        <span>AÇ</span>
+                    </div>
+                </div>
+                <div class="envelope-prompt-text" id="sisoren-envelope-prompt-text">
+                    <i class="fa-solid fa-hand-pointer"></i> Mührün üzerine tıklayarak görevi açın!
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const seal = document.getElementById('sisoren-envelope-wax-seal');
+        const flap = document.getElementById('sisoren-envelope-top-flap');
+        const card = document.getElementById('sisoren-envelope-letter-card');
+        const prompt = document.getElementById('sisoren-envelope-prompt-text');
+
+        const openEnvelope = () => {
+            if (seal) seal.classList.add('broken');
+            if (flap) flap.classList.add('opened');
+            if (prompt) prompt.style.display = 'none';
+            if (typeof window.playSound === 'function' && window.doorCreak) window.playSound(window.doorCreak, 0.4);
+            setTimeout(() => { if (card) card.classList.add('slid-out'); }, 600);
+        };
+
+        seal?.addEventListener('click', openEnvelope);
+        document.getElementById('sisoren-envelope-wrapper')?.addEventListener('click', (e) => {
+            if (!flap?.classList.contains('opened')) openEnvelope();
+        });
+
+        document.getElementById('sisoren-envelope-accept-btn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            modal.classList.add('hidden');
+            this.showSisorenStoryIntro();
+        });
+    },
+
+    // showSisorenStoryIntro — tam versiyon satır 723'te tanımlı (kısa duplicate kaldırıldı)
 
     // =============================
     // 4. HARİTA GÖZLEMCISI
@@ -166,6 +315,7 @@ window.SisorenEngine = {
             const isVisible = !townMapScreen.classList.contains('hidden');
             if (isVisible) {
                 if (window.currentActiveTown === 'sisoren') {
+                    document.body.classList.remove('theme-golge', 'theme-gizemli', 'golge-sehir-theme');
                     document.body.classList.add('sisoren-theme');
                     if (!townMapScreen.classList.contains('sisoren-active')) {
                         this.applySisorenState();
@@ -190,6 +340,7 @@ window.SisorenEngine = {
         window.currentActiveTown = 'sisoren';
         this.currentActiveTown = 'sisoren';
         document.body.classList.remove('golge-sehir-theme');
+        document.body.classList.remove('theme-golge', 'theme-gizemli', 'golge-sehir-theme');
         document.body.classList.add('sisoren-theme');
         this.registerSisorenData();
 
@@ -226,15 +377,10 @@ window.SisorenEngine = {
     applySisorenState: function () {
         this.registerSisorenData();
 
-        // Yağmur ve arka plan müziğinin devam ettiğinden emin ol
-        const isGameMuted = (typeof window.isMuted !== 'undefined') ? window.isMuted : (localStorage.getItem('gameMuted') === 'true');
-        if (!isGameMuted) {
-            const bgMusic = document.getElementById('bg-music');
-            const rainSound = document.getElementById('rain-sound');
-            if (bgMusic && typeof window.playLoopSound === 'function') window.playLoopSound(bgMusic, 0.3);
-            if (rainSound && typeof window.playLoopSound === 'function') window.playLoopSound(rainSound, 0.5);
+        // Sisören'e özel ses durumunu merkezi fonksiyondan çek (syncAudioState)
+        if (typeof window.syncAudioState === 'function') {
+            window.syncAudioState();
         }
-
         const townMapScreen = document.getElementById('town-map-screen');
         const townMapStage = document.getElementById('town-map-stage');
         if (!townMapScreen || !townMapStage) return;
@@ -268,6 +414,12 @@ window.SisorenEngine = {
         allOtherBuildings.forEach(el => {
             el.style.display = 'none';
         });
+
+        // Tüccar İlyas butonunu göster
+        const tuccarBtn = document.getElementById('tuccar-quick-tip-btn');
+        if (tuccarBtn) {
+            tuccarBtn.style.display = 'flex';
+        }
 
         // BULDUM! butonunu Sisören için kesin olarak görünür yap ve en öne getir
         const foundBtn = document.getElementById('found-btn');
@@ -321,17 +473,250 @@ window.SisorenEngine = {
         // Çetin yardımcı mesajı (ilk giriş)
         if (!this.hasShownSisorenIntro) {
             this.hasShownSisorenIntro = true;
-            setTimeout(() => {
-                if (typeof window.showCinematicHelper === 'function') {
-                    window.showCinematicHelper(
-                        'Amirims, Sisören dağ kasabasına hoş geldiniz! Yoğun sis ve karanlık dağ yamaçları arasında gizlenen kasabada en az 5 binayı incelemeli ve 5 delili Adli Tıbba göndermeliyiz. Binalara tıklayarak soruşturmaya başlayalım!\n\n👥 Binalara girip hem dükkan sahipleriyle hem de içerideki kasabalılarla konuşabilirsiniz!',
-                        false, 'sisoren_intro'
-                    );
-                }
-            }, 1200);
+            setTimeout(() => this.playDualAssistantBubbleDialogue(), 500);
         }
 
-        // Sokak NPC konuşma noktaları şimdilik kapalı (bina hotspotlarıyla çakışıyordu)
+        // Sokak NPC konuşma noktaları
+        document.querySelectorAll('.sisoren-street-npc').forEach(el => el.remove());
+        const streetNpcs = (window.SISOREN_CONFIG.extraNpcs || []).filter(e => e.buildingId === null);
+        streetNpcs.forEach(extra => {
+            if (!extra.mapPos) return;
+            const marker = document.createElement('div');
+            marker.className = 'sisoren-street-npc sisoren-npc-bubble-marker clue-hotspot';
+            marker.title = `${extra.name} ile Konuş`;
+            marker.style.top = extra.mapPos.top;
+            marker.style.left = extra.mapPos.left;
+            marker.style.position = 'absolute';
+            marker.style.zIndex = '60';
+            marker.style.cursor = 'pointer';
+
+            marker.innerHTML = `
+                <div class="sisoren-npc-bubble" style="font-size: 24px; color: white; text-shadow: 0 0 10px rgba(0,0,0,0.8); text-align: center;"><i class="fa-solid fa-comment-dots"></i></div>
+                <div class="sisoren-npc-tag" style="background: rgba(0,0,0,0.7); color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; white-space: nowrap; margin-top: 5px; text-align: center;">${extra.name}</div>
+            `;
+
+            marker.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.openExtraNpcTalk(extra);
+            };
+            townMapStage.appendChild(marker);
+        });
+    },
+
+    // =============================
+    // ÇİFT YARDIMCI DİNAMİK KONUŞMA BALONU
+    // =============================
+    playDualAssistantBubbleDialogue: function () {
+        const dialogs = window.SISOREN_CONFIG.assistants.introDialogue;
+        let step = 0;
+
+        const updateBubbleUI = (index) => {
+            if (index < 0 || index >= dialogs.length) return;
+
+            const current = dialogs[index];
+            const isCetin = (current.speaker === 'Çetin');
+
+            const speakerInfo = {
+                speaker: isCetin ? 'cetin' : 'tuccar',
+                speakerName: isCetin ? 'YARDIMCI DEDEKTİF ÇETİN' : 'DAĞCI TÜCCAR İLYAS',
+                avatar: isCetin ? 'images/dedektif_helper.png' : 'images/towns/sisoren/npcler/tuccar_ilyas_helper.png',
+                theme: isCetin ? 'cetin-speaking' : 'tuccar-speaking'
+            };
+
+            const box = document.getElementById('cinematic-helper-box');
+            const avatarImg = document.querySelector('.cinematic-helper-avatar img');
+            const nameEl = document.querySelector('.cinematic-helper-name');
+
+            if (box) {
+                box.classList.remove('tuccar-speaking', 'cetin-speaking', 'rifat-speaking', 'ilyas-speaking');
+                box.classList.add(speakerInfo.theme);
+            }
+            if (avatarImg) avatarImg.src = speakerInfo.avatar;
+            if (nameEl) nameEl.textContent = speakerInfo.speakerName;
+
+            if (typeof window.showCinematicHelper === 'function') {
+                window.showCinematicHelper(current.text, false, `sisoren_intro_${index}`, false, speakerInfo);
+            }
+
+            const prevBtn = document.getElementById('cinematic-prev-btn');
+            if (prevBtn) {
+                prevBtn.style.display = (index > 0) ? 'inline-block' : 'none';
+            }
+        };
+
+        const finishIntro = () => {
+            this.introDialogCompleted = true;
+            window.introDialogCompleted = true;
+            const box = document.getElementById('cinematic-helper-box');
+            if (box) {
+                box.classList.remove('tuccar-speaking', 'rifat-speaking', 'ilyas-speaking');
+                box.classList.add('cetin-speaking');
+            }
+        };
+
+        const showNext = () => {
+            if (step < dialogs.length) {
+                updateBubbleUI(step);
+                step++;
+            } else {
+                finishIntro();
+            }
+        };
+
+        showNext();
+
+        const skipBtn = document.getElementById('cinematic-skip-btn');
+        if (skipBtn) {
+            // Remove previous onclick to prevent memory leaks if intro is triggered again
+            skipBtn.onclick = (e) => {
+                e.stopImmediatePropagation();
+                if (window.isHelperTyping) {
+                    window.isHelperTyping = false;
+                    if (window.cinematicTypewriterTimeout) clearTimeout(window.cinematicTypewriterTimeout);
+                    const textEl = document.getElementById('cinematic-helper-text');
+                    if (textEl && window.currentHelperMessageText) {
+                        textEl.textContent = window.currentHelperMessageText;
+                        textEl.classList.add('typing-done');
+                    }
+                } else if (step < dialogs.length) {
+                    showNext();
+                } else {
+                    finishIntro();
+                    skipBtn.onclick = null; // Clean up
+                }
+            };
+        }
+
+        const prevBtn = document.getElementById('cinematic-prev-btn');
+        if (prevBtn) {
+            prevBtn.onclick = (e) => {
+                e.stopImmediatePropagation();
+                if (step > 1) {
+                    step -= 2;
+                    showNext();
+                }
+            };
+        }
+    },
+
+    // =============================
+    // 6.4 SİSÖREN ÖZEL GÖREV ZARFI & KART ANİMASYONU
+    // =============================
+    createSisorenEnvelopeModal: function () {
+        let modal = document.getElementById('sisoren-success-modal');
+        if (modal) modal.remove();
+
+        modal = document.createElement('div');
+        modal.id = 'sisoren-success-modal';
+        modal.className = 'envelope-modal-backdrop hidden';
+        modal.innerHTML = `
+            <div class="envelope-scene sisoren-envelope-scene">
+                <div class="envelope-wrapper" id="sisoren-envelope-wrapper">
+                    <div class="envelope-base">
+                        <div class="envelope-top-flap" id="sisoren-envelope-top-flap"></div>
+                        <div class="envelope-pocket"></div>
+                        
+                        <!-- Zarfın İçinden Çıkan Eski Parşömen Görev Kartı -->
+                        <div class="envelope-letter-card sisoren-letter-card" id="sisoren-envelope-letter-card">
+                            <div class="envelope-stamp-badge"><i class="fa-solid fa-ribbon"></i> EMNİYET MÜDÜRLÜĞÜ GİZLİ VAKA DOSYASI</div>
+                            <h2 class="letter-title">TEBRİKLER DEDEKTİF!</h2>
+                            <div class="letter-subtitle">VAKA #201 (GÖLGE ŞEHİR) BAŞARIYLA ÇÖZÜLDÜ</div>
+                            <div class="letter-divider"></div>
+                            <p class="letter-body">
+                                Gölge Şehir cinayetini ve karanlık sırlarını üstün bir dedektiflik zekasıyla aydınlattınız. Katili bularak adaleti sağladınız.<br><br>
+                                <strong style="color:#0f766e; font-size:1.1rem;">ğŸ“ YENİ GÖREV DOSYASI #301: SİSÖREN DAĞ KASABASI</strong><br>
+                                Uçsuz bucaksız sisli dağların zirvesinde yeni bir ceset bulundu. Sarp yamaçlar ve yoğun sis altında 13 şüpheli ve saklı sırlar sizi bekliyor.
+                            </p>
+                            <button id="sisoren-envelope-accept-btn" class="letter-accept-btn" style="background-color: #0f766e;">
+                                GÖREVİ KABUL ET VE SİSÖREN'E GİT <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Koyu Yeşil Balmumu Mühür -->
+                    <div class="wax-seal sisoren-wax-seal" id="sisoren-envelope-wax-seal" title="Mührü Kır ve Zarfı Aç">
+                        <i class="fa-solid fa-stamp"></i>
+                        <span>AÇ</span>
+                    </div>
+                </div>
+
+                <div class="envelope-prompt-text" id="sisoren-envelope-prompt-text">
+                    <i class="fa-solid fa-hand-pointer"></i> Mührün üzerine tıklayarak tebrik ve görev zarfını açın!
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        const seal = document.getElementById('sisoren-envelope-wax-seal');
+        const flap = document.getElementById('sisoren-envelope-top-flap');
+        const card = document.getElementById('sisoren-envelope-letter-card');
+        const prompt = document.getElementById('sisoren-envelope-prompt-text');
+
+        const openEnvelope = () => {
+            if (seal) seal.classList.add('broken');
+            if (flap) flap.classList.add('opened');
+            if (prompt) prompt.style.display = 'none';
+
+            if (typeof window.playSound === 'function' && window.doorCreak) {
+                window.playSound(window.doorCreak, 0.4);
+            }
+
+            setTimeout(() => {
+                if (card) card.classList.add('slid-out');
+            }, 600);
+        };
+
+        seal?.addEventListener('click', openEnvelope);
+        document.getElementById('sisoren-envelope-wrapper')?.addEventListener('click', (e) => {
+            if (!flap?.classList.contains('opened')) {
+                openEnvelope();
+            }
+        });
+
+        document.getElementById('sisoren-envelope-accept-btn')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            modal.classList.add('hidden');
+            this.showSisorenStoryIntro();
+        });
+    },
+
+    showSisorenSuccessModalBeforeStory: function () {
+        window.currentActiveTown = 'sisoren';
+        this.currentActiveTown = 'sisoren';
+        document.body.classList.add('sisoren-theme');
+        this.registerSisorenData();
+
+        // Kasabaya özel delil izolasyonu
+        // Bag is isolated by app.js setter
+
+        let modal = document.getElementById('sisoren-success-modal');
+        if (!modal) {
+            this.createSisorenEnvelopeModal();
+            modal = document.getElementById('sisoren-success-modal');
+        }
+
+        const seal = document.getElementById('sisoren-envelope-wax-seal');
+        const flap = document.getElementById('sisoren-envelope-top-flap');
+        const card = document.getElementById('sisoren-envelope-letter-card');
+        const prompt = document.getElementById('sisoren-envelope-prompt-text');
+
+        if (seal) seal.classList.remove('broken');
+        if (flap) flap.classList.remove('opened');
+        if (card) card.classList.remove('slid-out');
+        if (prompt) prompt.style.display = 'block';
+
+        if (modal) {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                const s = document.getElementById('sisoren-envelope-wax-seal');
+                if (s && !s.classList.contains('broken')) {
+                    s.click();
+                }
+            }, 1000);
+        } else {
+            this.showSisorenStoryIntro();
+        }
     },
 
     // =============================
@@ -341,8 +726,12 @@ window.SisorenEngine = {
         window.currentActiveTown = 'sisoren';
         this.currentActiveTown = 'sisoren';
         document.body.classList.remove('golge-sehir-theme');
+        document.body.classList.remove('theme-golge', 'theme-gizemli', 'golge-sehir-theme');
         document.body.classList.add('sisoren-theme');
         this.registerSisorenData();
+
+        // Kasabaya özel çanta izolasyonu (Gölge Şehir patternine uyumlu)
+        // Bag is isolated by app.js setter
 
         // Kasabaya özel otopsi ve lab durumunu hazırla
         window.isAutopsyReady = false;
@@ -363,7 +752,7 @@ window.SisorenEngine = {
                     if (typeof guiltyNpcId !== 'undefined') {
                         guiltyNpcId = data.guiltyNpcId;
                     }
-                    console.log("🎲 Sisören Rastgele Yeni Katil Belirlendi:", data.guiltyNpcId);
+                    console.log("ğŸ² Sisören Rastgele Yeni Katil Belirlendi:", data.guiltyNpcId);
                 }
             })
             .catch(err => console.error("Sisören katil sıfırlama hatası:", err));
@@ -465,7 +854,6 @@ window.SisorenEngine = {
 
         // NPC konuşma verileri (activeNpcId)
         window.activeNpcId = bld.npcId;
-        if (typeof window.activeNpcId !== 'undefined') window.activeNpcId = bld.npcId;
 
         // Bina içi ekstra NPC'leri bul
         const buildingExtras = (window.SISOREN_CONFIG.extraNpcs || []).filter(e => e.buildingId === bld.id);
@@ -530,8 +918,11 @@ window.SisorenEngine = {
 
         // Bina içindeki diğer karakterler için panel göster (Celal Amca, Hamdi Dayı, Gofretli Kız vs.)
         const allExtrasInBuilding = [...buildingExtras, ...buildingChildren];
-        this.renderPrimaryNpc(npc, bld);
+        // this.renderPrimaryNpc(npc, bld); // Disabled as per user request to remove photo button
         this.renderInteriorOccupants(allExtrasInBuilding, bld, npc);
+
+        // DELİLLERİ RENDER ET
+        this.renderSisorenBuildingClueHotspots(bld);
 
         // Ses efektleri
         if (typeof window.playSound === 'function' && window.doorCreak) {
@@ -566,6 +957,63 @@ window.SisorenEngine = {
         if (panel) panel.remove();
     },
 
+    renderSisorenBuildingClueHotspots: function (bld) {
+        const stageCanvas = document.getElementById('interior-stage-canvas');
+        if (!stageCanvas) return;
+
+        stageCanvas.querySelectorAll('.clue-hotspot').forEach(el => el.remove());
+        const container = document.getElementById('hotspots-container');
+        if (container) container.innerHTML = '';
+
+        if (!bld.hotspots) return;
+
+        bld.hotspots.forEach((clue) => {
+            const spot = document.createElement('div');
+            spot.className = 'sisoren-clue-hotspot clue-hotspot';
+            spot.title = clue.name;
+            spot.style.top = clue.top;
+            spot.style.left = clue.left;
+            spot.style.width = '70px';
+            spot.style.height = '70px';
+            spot.style.position = 'absolute';
+            spot.style.cursor = 'pointer';
+            spot.style.zIndex = '9999';
+
+            const img = document.createElement('img');
+            img.src = clue.img;
+            img.alt = clue.name;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'contain';
+
+            const label = document.createElement('span');
+            label.className = 'sisoren-clue-label';
+            label.textContent = clue.name;
+            label.style.display = 'block';
+            label.style.background = 'rgba(0,0,0,0.8)';
+            label.style.color = '#fff';
+            label.style.padding = '2px 5px';
+            label.style.borderRadius = '4px';
+            label.style.fontSize = '12px';
+            label.style.textAlign = 'center';
+            label.style.marginTop = '5px';
+
+            spot.appendChild(img);
+            spot.appendChild(label);
+
+            spot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (typeof window.openBuildingClueModal === 'function') {
+                    window.openBuildingClueModal(clue, bld.npcId);
+                } else if (typeof window.openClueInspect === 'function') {
+                    window.openClueInspect(clue, bld.npcId);
+                }
+            });
+
+            stageCanvas.appendChild(spot);
+        });
+    },
+
     renderPrimaryNpc: function (npc, bld) {
         const stageCanvas = document.getElementById('interior-stage-canvas');
         if (!stageCanvas || !npc || !bld.primaryNpcPos) return;
@@ -576,7 +1024,7 @@ window.SisorenEngine = {
         marker.style.top = bld.primaryNpcPos.top;
         marker.style.left = bld.primaryNpcPos.left;
         marker.title = `${npc.name} ile Konuş`;
-        marker.innerHTML = `<img src="${npc.portrait}" alt="${npc.name}"><span>${npc.name}</span>`;
+        marker.innerHTML = `<span><i class="fa-solid fa-comment-dots"></i> ${npc.name}</span>`;
         marker.onclick = (event) => {
             event.stopPropagation();
             if (typeof window.openNpcTalk === 'function') window.openNpcTalk(npc.id);
@@ -594,19 +1042,19 @@ window.SisorenEngine = {
 
         // Varsayılan pozisyonlar - binaya göre farklı konumlar
         const defaultPositions = {
-            'kahvehane': { top: '45%', left: '35%' },
-            'bakkal': { top: '55%', left: '40%' },
-            'sahaf': { top: '50%', left: '45%' },
-            'ahir': { top: '60%', left: '35%' },
-            'telgrafhane': { top: '45%', left: '50%' },
-            'sinema': { top: '50%', left: '55%' },
-            'muhtarlik': { top: '40%', left: '45%' },
-            'tutuncu': { top: '55%', left: '40%' },
-            'tupcu': { top: '50%', left: '45%' },
-            'hurdaci': { top: '45%', left: '40%' },
-            'kasabali_evi_1': { top: '50%', left: '45%' },
-            'kasabali_evi_2': { top: '55%', left: '40%' },
-            'kasabali_evi_3': { top: '45%', left: '50%' }
+            'kahvehane': { top: '45%', left: '60%' },
+            'bakkal': { top: '55%', left: '65%' },
+            'sahaf': { top: '50%', left: '70%' },
+            'ahir': { top: '60%', left: '65%' },
+            'telgrafhane': { top: '45%', left: '75%' },
+            'sinema': { top: '50%', left: '80%' },
+            'muhtarlik': { top: '40%', left: '70%' },
+            'tutuncu': { top: '55%', left: '65%' },
+            'tupcu': { top: '50%', left: '70%' },
+            'hurdaci': { top: '45%', left: '75%' },
+            'kasabali_evi_1': { top: '50%', left: '70%' },
+            'kasabali_evi_2': { top: '55%', left: '65%' },
+            'kasabali_evi_3': { top: '45%', left: '75%' }
         };
 
         return defaultPositions[bldId] || { top: '50%', left: '50%' };
@@ -697,6 +1145,11 @@ window.SisorenEngine = {
             // Gizemli kasaba binalarını geri göster
             const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"]):not([class*="building-sisoren-"])');
             gizemliBuildings.forEach(el => el.style.display = '');
+        }
+
+        const tuccarBtn = document.getElementById('tuccar-quick-tip-btn');
+        if (tuccarBtn) {
+            tuccarBtn.style.display = 'none';
         }
     },
 

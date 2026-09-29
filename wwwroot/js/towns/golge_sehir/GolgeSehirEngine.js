@@ -151,9 +151,7 @@ window.GolgeSehirEngine = {
         this.registerGolgeSehirData();
 
         // Kasabaya özel delil ve otopsi durumunu sıfırla / izole et
-        if (Array.isArray(window.currentBag)) {
-            window.currentBag = window.currentBag.filter(c => c.id >= 1000);
-        }
+        // Bag is isolated by app.js setter
         window.isAutopsyReady = false;
         window.isAutopsyTimerStarted = false;
         if (typeof isAutopsyReady !== 'undefined') isAutopsyReady = false;
@@ -217,10 +215,7 @@ window.GolgeSehirEngine = {
         this.registerGolgeSehirData();
 
         // Kasabaya özel çanta ve otopsi izolasyonu
-        if (Array.isArray(window.currentBag)) {
-            window.currentBag = window.currentBag.filter(c => c.id >= 1000);
-            if (typeof currentBag !== 'undefined') currentBag = window.currentBag;
-        }
+        // Bag is isolated by app.js setter
         window.isAutopsyReady = false;
         window.isAutopsyTimerStarted = false;
         if (typeof isAutopsyReady !== 'undefined') isAutopsyReady = false;
@@ -466,6 +461,11 @@ window.GolgeSehirEngine = {
         const bekciBtn = document.getElementById('bekci-quick-tip-btn');
         if (bekciBtn) {
             bekciBtn.style.display = 'block';
+        }
+
+        const tuccarBtn = document.getElementById('tuccar-quick-tip-btn');
+        if (tuccarBtn) {
+            tuccarBtn.style.display = 'none';
         }
 
         const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"])');
@@ -772,6 +772,10 @@ window.GolgeSehirEngine = {
         const bekciBtn = document.getElementById('bekci-quick-tip-btn');
         if (bekciBtn) {
             bekciBtn.style.display = 'none';
+        }
+        const tuccarBtn = document.getElementById('tuccar-quick-tip-btn');
+        if (tuccarBtn) {
+            tuccarBtn.style.display = 'none';
         }
 
         const townMapScreen = document.getElementById('town-map-screen');
@@ -1120,7 +1124,7 @@ window.GolgeSehirEngine = {
         const stageCanvas = document.getElementById('interior-stage-canvas');
         if (!stageCanvas) return;
 
-        stageCanvas.querySelectorAll('.golge-clue-hotspot').forEach(el => el.remove());
+        stageCanvas.querySelectorAll('.clue-hotspot').forEach(el => el.remove());
         const container = document.getElementById('hotspots-container');
         if (container) container.innerHTML = '';
 
