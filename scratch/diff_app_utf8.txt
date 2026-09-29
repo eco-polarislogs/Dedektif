@@ -1,0 +1,1168 @@
+﻿diff --git a/wwwroot/js/app.js b/wwwroot/js/app.js
+index 4d5e869..27cdc8e 100644
+--- a/wwwroot/js/app.js
++++ b/wwwroot/js/app.js
+@@ -1,5 +1,21 @@
++
++function setTownTheme(town) {
++    document.body.classList.remove('golge-sehir-theme', 'sisoren-theme');
++    
++    const mapScreen = document.getElementById('town-map-screen');
++    const mapStage = document.getElementById('town-map-stage');
++    if (mapScreen) mapScreen.classList.remove('golge-sehir-active', 'sisoren-active');
++    if (mapStage) mapStage.classList.remove('golge-sehir-active', 'sisoren-active');
++
++    window.currentActiveTown = town;
++    if (town === 'golge_sehir') {
++        document.body.classList.add('golge-sehir-theme');
++    } else if (town === 'sisoren') {
++        document.body.classList.add('sisoren-theme');
++    }
++}
+ // =============================================================
+-// 🔍 DEDEKTİFLİK RPG - TAM OYUN MOTORU v2.0
++// ğŸ” DEDEKTİFLİK RPG - TAM OYUN MOTORU v2.0
+ // 5 NPC, Kademesiz Karışık Diyalog, Rastgele Suçlu, Ses Sistemi
+ // =============================================================
+ 
+@@ -59,8 +75,8 @@ var currentHelperMessageText = '';
+ const NPC_DATA = {
+     1: {
+         id: 1, name: 'Kasap Hasan', building: 'Kasap', role: 'Kasabadaki eski kasap', img: 'images/hasan.png', bg: 'images/butcher_interior.png', talkBg: 'images/hasan.png', clipPath: 'ellipse(22% 35% at 50% 55%)',
+-        secret: 'Cinayet gecesi dükkânında gizlice muhtara et sattı.',
+-        murderStory: 'Yağmurlu bir sonbahar gecesiydi. Kasap Hasan, dükkânını kapattıktan sonra doğruca Osman Bey\'in evine yürüdü. Yıllardır biriken veresiye borcu artık dayanılmaz bir hal almıştı — Osman Bey her seferinde ödemeyi erteliyordu. O gece Hasan son kez parasını istemeye gitti. Kapıyı Osman Bey açtığında, Hasan\'ın gözlerindeki öfkeyi fark edemedi. "Paran yarın gelecek" dedi alaycı bir gülümsemeyle. "Yarın mı? Yıllardır yarın diyorsun!" diye kükredi Hasan. Tartışma kızıştıkça Hasan\'ın eli yanında getirdiği satıra gitti. Bir anlık öfke krizinde, o ağır satırı kurbanın boyun bölgesine indirdi. Derin, tırtıklı yara — ancak bir kasabın elinden çıkabilecek bir darbeydi. Osman Bey son çırpınışlarında Hasan\'ın siyah deri önlüğünden parçalar kopartmaya çalıştı, tırnakları arasında kalan o küçük parçalar, son nefesinde bile savaştığının kanıtıydı. Hasan panikle satırı dükkânına götürüp tezgaha sapladı. Kanlı önlüğünü bir köşeye fırlattı, kara kaplı veresiye defterindeki Osman\'ın adını kırmızı kalemle çizdi. Ama karanlıkta ne kadar temizlerse temizlesin, kanın izi her yere sinmişti.'
++        secret: 'Cinayet gecesi dükkÃ¢nında gizlice muhtara et sattı.',
++        murderStory: 'Yağmurlu bir sonbahar gecesiydi. Kasap Hasan, dükkÃ¢nını kapattıktan sonra doğruca Osman Bey\'in evine yürüdü. Yıllardır biriken veresiye borcu artık dayanılmaz bir hal almıştı — Osman Bey her seferinde ödemeyi erteliyordu. O gece Hasan son kez parasını istemeye gitti. Kapıyı Osman Bey açtığında, Hasan\'ın gözlerindeki öfkeyi fark edemedi. "Paran yarın gelecek" dedi alaycı bir gülümsemeyle. "Yarın mı? Yıllardır yarın diyorsun!" diye kükredi Hasan. Tartışma kızıştıkça Hasan\'ın eli yanında getirdiği satıra gitti. Bir anlık öfke krizinde, o ağır satırı kurbanın boyun bölgesine indirdi. Derin, tırtıklı yara — ancak bir kasabın elinden çıkabilecek bir darbeydi. Osman Bey son çırpınışlarında Hasan\'ın siyah deri önlüğünden parçalar kopartmaya çalıştı, tırnakları arasında kalan o küçük parçalar, son nefesinde bile savaştığının kanıtıydı. Hasan panikle satırı dükkÃ¢nına götürüp tezgaha sapladı. Kanlı önlüğünü bir köşeye fırlattı, kara kaplı veresiye defterindeki Osman\'ın adını kırmızı kalemle çizdi. Ama karanlıkta ne kadar temizlerse temizlesin, kanın izi her yere sinmişti.'
+     },
+     2: {
+         id: 2, name: 'Eczacı Selma', building: 'Eczane', role: 'Eczane sahibi', img: 'images/selma.png', bg: 'images/eczane_final.png', talkBg: 'images/eczane_ic_mekan.png', clipPath: 'ellipse(20% 35% at 50% 60%)',
+@@ -70,7 +86,7 @@ const NPC_DATA = {
+     3: {
+         id: 3, name: 'Muhtar Kemal', building: 'Muhtarlık', role: 'Kasabanın muhtarı', img: 'images/kemal.png', bg: 'images/muhtarlik_wide.png', talkBg: 'images/muhtar_final.png', clipPath: 'ellipse(22% 35% at 50% 60%)',
+         secret: 'Kurbanla arazi anlaşmazlığı vardı.',
+-        murderStory: 'Muhtar Kemal, kasabanın en güçlü adamıydı — herkesin sırrını biliyor, her kapıyı açıyordu. Ama yaklaşan belediye seçimleri için büyük bir arazi projesine ihtiyacı vardı ve o arazinin sahibi Osman Bey\'di. Haftalardır Osman\'ı arazisini satması için ikna etmeye çalışmıştı ama Osman direndi. "Bu arazi babamdan kalma, satmam" dedi her seferinde. O gece Kemal, tüm diplomatik maskesini çıkardı. Gece yarısı Osman\'ın evine sızdı — muhtarlık kasasındaki yedek anahtarlarla kapıyı açmak çocuk oyuncağıydı. İçeri girdiğinde Osman masasında oturmuş, belgelerini inceliyordu. "Sen de mi Kemal?" dedi Osman, şaşkınlıkla. Kemal sahte tapu belgelerini masaya fırlattı. "Bunu imzalayacaksın, ya da..." Osman belgeleri yırtmaya başladı. Kemal kontrolünü kaybetti. Masadaki ağır bronz mühürü kaptığı gibi Osman\'ın yüzüne indirdi. Şiddetli bir boğuşma başladı — mobilyalar devrildi, Osman\'ın gözlüğü yere düşüp kırıldı. Kemal, son darbeyi kurbanın şakağına indirdiğinde, Osman\'ın gözleri kararıp yere yığıldı. Ölüm sebebi: ağır darbe sonucu beyin kanaması. Kemal panikle evi terk etti ama aceleyle çıkarken yırtılmış tapu belgelerini ve kırık gözlüğü olduğu yerde bıraktı. Ofisine döndüğünde, titreyerek gizli kasasını açıp sahte belgelerin kopyalarını içine kilitledi.'
++        murderStory: 'Muhtar Kemal, kasabanın en güçlü adamıydı — herkesin sırrını biliyor, her kapıyı açıyordu. Ama yaklaşan belediye seçimleri için büyük bir arazi projesine ihtiyacı vardı ve o arazinin sahibi Osman Bey\'di. Haftalardır Osman\'ı arazisini satması için ikna etmeye çalışmıştı ama Osman direndi. "Bu arazi babamdan kalma, satmam" dedi her seferinde. O gece Kemal, tüm diplomatik maskesini çıkardı. Gece yarısı Osman\'ın evine sızdı — muhtarlık kasasındaki yedek anahtarlarla kapıyı açmak çocuk oyuncağıydı. İçeri girdiğinde Osman masasında oturmuş, belgelerini inceliyordu. "Sen de mi Kemal?" dedi Osman, şaşkınlıkla. Kemal sahte tapu belgelerini masaya fırlattı. "Bunu imzalayacaksın, ya da..." Osman belgeleri yırtmaya başladı. Kemal kontrolünü kaybetti. Masadaki ağır bronz mühürü kaptığı gibi Osman\'ın yüzüne indirdi. Åiddetli bir boğuşma başladı — mobilyalar devrildi, Osman\'ın gözlüğü yere düşüp kırıldı. Kemal, son darbeyi kurbanın şakağına indirdiğinde, Osman\'ın gözleri kararıp yere yığıldı. Ölüm sebebi: ağır darbe sonucu beyin kanaması. Kemal panikle evi terk etti ama aceleyle çıkarken yırtılmış tapu belgelerini ve kırık gözlüğü olduğu yerde bıraktı. Ofisine döndüğünde, titreyerek gizli kasasını açıp sahte belgelerin kopyalarını içine kilitledi.'
+     },
+     4: {
+         id: 4, name: 'Komiser Güneş', building: 'Karakol', role: 'Kadın polis komiseri', img: 'images/gunes.png', bg: 'images/karakol_final.png', talkBg: 'images/karakol_ic_mekan.png', clipPath: 'ellipse(20% 35% at 50% 60%)',
+@@ -80,7 +96,7 @@ const NPC_DATA = {
+     5: {
+         id: 5, name: 'Terzi Yahya', building: 'Terzi', role: 'Kasabanın terzisi', img: 'images/yahya.png', bg: 'images/terzi_final.png', talkBg: 'images/terzi_ic_mekan.png', clipPath: 'ellipse(22% 35% at 50% 60%)',
+         secret: 'Kurbana gizli cepli ceket dikti, son gören kişi.',
+-        murderStory: 'Terzi Yahya, kasabanın en yaşlı ve en saygın ustasıydı. Ama bu saygın cephenin arkasında karanlık bir ortaklık vardı — Yahya, yıllardır Osman Bey\'in gizli işlerinin sessiz ortağıydı. Para aklama, belge saklama, hatta kaçak mal transferi... Osman\'ın son diktirdiği ceketin astarına gizli bir cep dikmişti ve bu cepte, tüm yasadışı işlemlerin kaydını içeren bir USB bellek saklanıyordu. Ama Osman, ortaklığı bitirmeye ve Yahya\'yı saf dışı bırakmaya karar vermişti. O gece Yahya, payını almak için Osman\'ın evine gitti. "Param nerede Osman?" diye sordu titreyen bir sesle. Osman güldü. "Senin paran mı? Bu işte sen artık yoksun yaşlı adam. O USB\'yi de sana vermeyeceğim." Yılların birikimi bir anda patladı. Yahya, meslek hayatının en sadık aleti olan iplik makarasını cebinden çıkardı. Kalın, dayanıklı, kopması imkansız terzi ipliğini Osman\'ın boynuna doladı ve tüm gücüyle sıktı. Osman çırpındı, direndi — bu sırada Yahya\'nın diktiği ceketinden kumaş parçaları yırtıldı. Ama Yahya bırakmadı. İplik boyun bölgesinde derin izler bırakarak, Osman\'ın son nefesini de aldı. Yahya titreyerek ayağa kalktı. Kanlı iplik makarasını cebine koydu, yırtılan kumaş parçalarını toplamaya çalıştı ama hepsini bulamadı. Dükkânına döndüğünde, o gece diktiği son ceketin gizli cebindeki not hâlâ duruyordu: "Bu gece gel, konuşalım."'
++        murderStory: 'Terzi Yahya, kasabanın en yaşlı ve en saygın ustasıydı. Ama bu saygın cephenin arkasında karanlık bir ortaklık vardı — Yahya, yıllardır Osman Bey\'in gizli işlerinin sessiz ortağıydı. Para aklama, belge saklama, hatta kaçak mal transferi... Osman\'ın son diktirdiği ceketin astarına gizli bir cep dikmişti ve bu cepte, tüm yasadışı işlemlerin kaydını içeren bir USB bellek saklanıyordu. Ama Osman, ortaklığı bitirmeye ve Yahya\'yı saf dışı bırakmaya karar vermişti. O gece Yahya, payını almak için Osman\'ın evine gitti. "Param nerede Osman?" diye sordu titreyen bir sesle. Osman güldü. "Senin paran mı? Bu işte sen artık yoksun yaşlı adam. O USB\'yi de sana vermeyeceğim." Yılların birikimi bir anda patladı. Yahya, meslek hayatının en sadık aleti olan iplik makarasını cebinden çıkardı. Kalın, dayanıklı, kopması imkansız terzi ipliğini Osman\'ın boynuna doladı ve tüm gücüyle sıktı. Osman çırpındı, direndi — bu sırada Yahya\'nın diktiği ceketinden kumaş parçaları yırtıldı. Ama Yahya bırakmadı. İplik boyun bölgesinde derin izler bırakarak, Osman\'ın son nefesini de aldı. Yahya titreyerek ayağa kalktı. Kanlı iplik makarasını cebine koydu, yırtılan kumaş parçalarını toplamaya çalıştı ama hepsini bulamadı. DükkÃ¢nına döndüğünde, o gece diktiği son ceketin gizli cebindeki not hÃ¢lÃ¢ duruyordu: "Bu gece gel, konuşalım."'
+     }
+ };
+ 
+@@ -104,7 +120,7 @@ const SCENE_OBJECTS = {
+     ],
+     2: [ // Eczane (Selma)
+         {
+-            id: 4, name: 'İlaç Şişesi', desc: 'İlaç raflarının arkasına konulmuş boş cam şişe.', top: '55%', left: '75%', img: 'images/empty_medicine_bottle.png', isHidden: true,
++            id: 4, name: 'İlaç Åişesi', desc: 'İlaç raflarının arkasına konulmuş boş cam şişe.', top: '55%', left: '75%', img: 'images/empty_medicine_bottle.png', isHidden: true,
+             fingerprintSpot: { xRatio: 0.68, yRatio: 0.38, angle: 0 }, // Camın sağ omuz eğrisi
+             bloodSpot: null
+         },
+@@ -131,7 +147,7 @@ const SCENE_OBJECTS = {
+         },
+         {
+             id: 9, name: 'Demir Kasa', desc: 'Arka köşede duran demir kasa.', top: '44%', left: '72%', img: 'images/hidden_safe.png', isHidden: true,
+-            fingerprintSpot: { xRatio: 0.35, yRatio: 0.62, angle: 0 }, // Şifre çarkının altı
++            fingerprintSpot: { xRatio: 0.35, yRatio: 0.62, angle: 0 }, // Åifre çarkının altı
+             bloodSpot: null
+         }
+     ],
+@@ -176,7 +192,7 @@ window.SCENE_OBJECTS = SCENE_OBJECTS;
+ 
+ 
+ // =============================================================
+-// KADEMESIZ DIYALOG HAVUZU — 20 SORU HER NPC İÇİN (KARIŞIK)
++// KADEMESIZ DIYALOG HAVUZU — 20 SORU HER NPC İÇİN (KARIÅIK)
+ // Her soru difficulty (1-5) ve category ile etiketli
+ // Suçlu NPC'ye göre dinamik cevaplar: guiltyResponse
+ // =============================================================
+@@ -184,20 +200,20 @@ window.SCENE_OBJECTS = SCENE_OBJECTS;
+ const NPC_ALL_QUESTIONS = {
+     1: [ // Kasap Hasan — TÜM 20 SORU TEK HAVUZDA
+         // Eski Kademe 1 (Tanışma - kolay)
+-        { q: 'Cinayet gecesi neredeydin Hasan?', a: 'Buradaydım, dükkânımda. Gece geç saate kadar et doğruyordum. Kimsecikler yoktu ortalıkta, yağmur bardaktan boşalırcasına yağıyordu.', difficulty: 1, category: 'tanisma', relatedClues: [] },
++        { q: 'Cinayet gecesi neredeydin Hasan?', a: 'Buradaydım, dükkÃ¢nımda. Gece geç saate kadar et doğruyordum. Kimsecikler yoktu ortalıkta, yağmur bardaktan boşalırcasına yağıyordu.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+         { q: 'Kurbanı ne kadar iyi tanıyordun?', a: 'Osman Bey mi? Herkes tanır onu. İyi müşterimdi, her hafta gelirdi. Ama son zamanlarda arası bazılarıyla açılmıştı...', difficulty: 1, category: 'tanisma', relatedClues: [] },
+         { q: 'Kasabada düşmanı olan var mıydı?', a: 'Düşman mı? Ha, bir sürü... Muhtar Kemal\'le arazi meselesinden dolayı birbirlerine giriyorlardı. Eczacı Selma da ondan pek hazzetmezdi.', difficulty: 1, category: 'tanisma', relatedClues: [7, 8] },
+-        { q: 'Dükkânında şüpheli bir şey gördün mü?', a: 'Şüpheli mi? Ben sadece kasabım dedektif bey. Ama... o gece garip sesler duydum sokaktan.', difficulty: 1, category: 'tanisma', relatedClues: [] },
++        { q: 'DükkÃ¢nında şüpheli bir şey gördün mü?', a: 'Åüpheli mi? Ben sadece kasabım dedektif bey. Ama... o gece garip sesler duydum sokaktan.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+         // Eski Kademe 2 (Derinleşme)
+         { q: 'O gece duyduğun garip sesler neydi?', a: 'Bağrışma gibiydi... Ama yağmurdan net duyamadım. Saat gece yarısı civarıydı. Sonra bir araba kapısı çarpma sesi... Sonra sessizlik.', difficulty: 2, category: 'derinlesme', relatedClues: [] },
+-        { q: 'Dükkânına gelen şüpheli biri oldu mu?', a: 'Cinayet gecesi muhtar Kemal geldi aslında. Gece vakti et istedi. Aceleyle aldı gitti. Garip buldum ama sormadım.', difficulty: 2, category: 'derinlesme', relatedClues: [7] },
++        { q: 'DükkÃ¢nına gelen şüpheli biri oldu mu?', a: 'Cinayet gecesi muhtar Kemal geldi aslında. Gece vakti et istedi. Aceleyle aldı gitti. Garip buldum ama sormadım.', difficulty: 2, category: 'derinlesme', relatedClues: [7] },
+         { q: 'Kurbanla son ne zaman konuştun?', a: 'Cinayet gününden bir gün önce geldi. "Yarın büyük bir para gelecek" dedi. Bir daha göremedim...', difficulty: 2, category: 'derinlesme', relatedClues: [] },
+         { q: 'Seni şüpheli görüyorlar, biliyor musun?', a: 'Ha! Beni mi? Ben niye öldüreyim müşterimi? Borcunu ödeyecekti, öldürsem para gider! Aklını kullan dedektif...', difficulty: 2, category: 'derinlesme', relatedClues: [1, 2] },
+         // Eski Kademe 3 (Yüzleştirme - orta)
+-        { q: 'Bu kanlı satır senin tezgahından çıktı!', a: 'O... o satır çalınmıştı! Bir hafta önce kayboldu, polise söyledim ama kimse ciddiye almadı! Birisi beni suçlu göstermek istiyor!', difficulty: 3, category: 'yuzlestirme', relatedClues: [1], guiltyResponse: { 1: '*Yüzü bembeyaz olur* O... o satır... Evet, benim ama çalınmıştı! İnanın bana, birisi... birisi çerçeveliyor!', 2: 'Eczacıya sorun! O kadın her şeyi biliyor, zehirler, ilaçlar... Satırı çalan da o olabilir!', 3: 'Muhtar\'ın adamları çalmış olmalı! O gece dükkâna gelen Kemal\'di, belki de satırı o aldı!', 4: 'Komiser Güneş bunu neden araştırmadı? Kayıp bildirimi yaptım ama dosya kayboldu!', 5: 'Terzi Yahya bir bıçak kılıfı diktirdi benden... Acaba o kılıf bu satır için miydi?' } },
++        { q: 'Bu kanlı satır senin tezgahından çıktı!', a: 'O... o satır çalınmıştı! Bir hafta önce kayboldu, polise söyledim ama kimse ciddiye almadı! Birisi beni suçlu göstermek istiyor!', difficulty: 3, category: 'yuzlestirme', relatedClues: [1], guiltyResponse: { 1: '*Yüzü bembeyaz olur* O... o satır... Evet, benim ama çalınmıştı! İnanın bana, birisi... birisi çerçeveliyor!', 2: 'Eczacıya sorun! O kadın her şeyi biliyor, zehirler, ilaçlar... Satırı çalan da o olabilir!', 3: 'Muhtar\'ın adamları çalmış olmalı! O gece dükkÃ¢na gelen Kemal\'di, belki de satırı o aldı!', 4: 'Komiser Güneş bunu neden araştırmadı? Kayıp bildirimi yaptım ama dosya kayboldu!', 5: 'Terzi Yahya bir bıçak kılıfı diktirdi benden... Acaba o kılıf bu satır için miydi?' } },
+         { q: 'Kara defterdeki kurbanın ismi neden çizili?', a: 'Veresiye borcunu ödeyeceğini söyledi diye çizdim! O kadar! Herkes veresiye defteri tutar!', difficulty: 3, category: 'yuzlestirme', relatedClues: [2] },
+         { q: 'Yırtık önlüğündeki anahtar neyin anahtarı?', a: '*Terler* O... o anahtar arka odanın anahtarı. Soğuk hava deposu. İçinde sadece etler var...', difficulty: 3, category: 'yuzlestirme', relatedClues: [3] },
+-        { q: 'Muhtar cinayet gecesi sana geldiğini inkâr ediyor.', a: 'Yalancı! O gece buraya geldi, gözleri dönmüştü! Eğer inkâr ediyorsa gizleyecek bir şeyi var demektir!', difficulty: 3, category: 'yuzlestirme', relatedClues: [7] },
++        { q: 'Muhtar cinayet gecesi sana geldiğini inkÃ¢r ediyor.', a: 'Yalancı! O gece buraya geldi, gözleri dönmüştü! Eğer inkÃ¢r ediyorsa gizleyecek bir şeyi var demektir!', difficulty: 3, category: 'yuzlestirme', relatedClues: [7] },
+         // Eski Kademe 4 (Baskı - zor)
+         { q: 'Soğuk hava deposunda sadece et mi var?', a: '... İyi tamam. Orada eski belgeler de var. Kurbanın bazı evrakları... O bana emanet bırakmıştı.', difficulty: 4, category: 'baski', relatedClues: [3, 9], guiltyResponse: { 1: '*Çok terler* Tamam... orada... sadece belgeler değil... Kurbanla son tartışmamızda... İşler kontrolden çıktı. Ama yemin ederim kaza oldu!', 2: 'O belgeler Selma\'nın zehir siparişlerini gösteriyor! Korktum, sakladım!', 3: 'Muhtar\'ın sahte tapuları orada! Kurban bana emanet bıraktı!', 4: 'Komiser\'in kapatmaya çalıştığı dosyanın kopyası orada... Delil karartıyor!', 5: 'Yahya\'nın diktiği ceketteki USB\'nin kopyası orada...' } },
+         { q: 'Kurbanın sana emanet bıraktığı şey neydi?', a: 'Bir zarf... İçinde arazi tapuları vardı. Muhtarın üzerine kayıtlı arazilerin aslında kurbana ait olduğunu gösteren belgeler.', difficulty: 4, category: 'baski', relatedClues: [9, 7] },
+@@ -206,7 +222,7 @@ const NPC_ALL_QUESTIONS = {
+         // Eski Kademe 5 (Son - çok zor)
+         { q: 'Son sözün nedir Hasan?', a: 'Ben masum bir kasabım! Evet, korkağım, belgeleri sakladım, ama kimseyi öldürmedim! Gerçek katili bulun!', difficulty: 5, category: 'son', relatedClues: [], guiltyResponse: { 1: '*Gözyaşları* Ben... ben sadece kızdım. O gece Osman borcunu ödemeyeceğini söyledi, tartıştık... Satır elimdeydi... Bir anlık öfke... Ama ben katil değilim, bu bir kazaydı!', 2: 'Selma\'nın elindeki zehir şişesini sorun! Ben değilim!', 3: 'Muhtar\'ın tapuları sahte! O öldürdü!', 4: 'Komiser delilleri saklıyor, gerçek katil o!', 5: 'Yahya\'daki USB\'yi açın, her şey orada!' } },
+         { q: 'Katil kim sence?', a: 'Muhtar Kemal! Arazi meselesi yüzünden... Ama komiser de bu işin içinde olabilir. O gece karanlıkta bir kadın silueti gördüm...', difficulty: 5, category: 'son', relatedClues: [7, 10] },
+-        { q: 'Söylemediklerin var mı hâlâ?', a: '*Uzun sessizlik* Eczacı Selma... O gece dükkânını geç kapattı. Pencereden ışık gördüm. Elinde bir şişe vardı...', difficulty: 5, category: 'son', relatedClues: [4, 6] },
++        { q: 'Söylemediklerin var mı hÃ¢lÃ¢?', a: '*Uzun sessizlik* Eczacı Selma... O gece dükkÃ¢nını geç kapattı. Pencereden ışık gördüm. Elinde bir şişe vardı...', difficulty: 5, category: 'son', relatedClues: [4, 6] },
+         { q: 'Masum olduğunu kanıtlayamazsan...', a: 'Emanet zarfı açın! İçindeki belgeler her şeyi anlatır! Ben sadece bir kasabım, korkak bir kasap...', difficulty: 5, category: 'son', relatedClues: [9] }
+     ],
+     2: [ // Eczacı Selma — TÜM 20 SORU
+@@ -215,10 +231,10 @@ const NPC_ALL_QUESTIONS = {
+         { q: 'Kasabada zehirlenme vakaları olduğunu duydunuz mu?', a: 'Ne zehirlenmesi? Ben eczacıyım, ilaç satarım! Zehir değil! Böyle iftiralar atılmasına tahammülüm yok!', difficulty: 1, category: 'tanisma', relatedClues: [6] },
+         { q: 'Kurbanın sağlık durumu hakkında bilginiz var mı?', a: 'Hasta bir adamdı. Kalp ilacı kullanıyordu. Ama son haftalarda reçetesiz bir ilaç daha istemeye başladı...', difficulty: 1, category: 'tanisma', relatedClues: [4, 5] },
+         { q: 'Kurban reçetesiz hangi ilacı istedi?', a: 'Güçlü bir uyku ilacı. Uykusuzluk çektiğini söyledi ama... O dozda kalp hastası için çok tehlikeli olurdu.', difficulty: 2, category: 'derinlesme', relatedClues: [4] },
+-        { q: 'Gece yarısına kadar neden açıktınız?', a: '... Birini bekliyordum tamam mı? Muhtar Kemal aradı, "Acil ilaç lazım, geç geleceğim" dedi. Ama gelmedi.', difficulty: 2, category: 'derinlesme', relatedClues: [7], guiltyResponse: { 1: 'Kasap Hasan o gece geldi, çok gergindi. Ellerinde kan lekesi vardı, "Kesildim" dedi ama inanmadım...', 2: '*Titrer* Tamam... Muhtar\'ı beklemiyordum. Ben... kurbanı bekliyordum. Son ilaç dozunu verecektim ama... dozajı yanlış hesaplamış olabilirim.', 3: 'Muhtar aradı evet, ama sesinde panik vardı. "Selma, beni örtbas et" dedi. Ne demek istediğini anlayamadım...', 4: 'Komiser o gece geldi dükkâna. Defterimi istedi, "Bunu bana ver" dedi. Sayfaları o yırttı!', 5: 'Yahya\'nın o gece paketini gördüm... Kurbanın evine gidiyordu. İçinde ne vardı bilmiyorum ama ağırdı.' } },
+-        { q: 'Komiser Güneş sizi cinayet gecesi gördüğünü söylüyor.', a: 'Nerede görmüş? Ben dükkânımdan çıkmadım! Eğer öyle diyorsa yalan söylüyor...', difficulty: 2, category: 'derinlesme', relatedClues: [10, 11] },
++        { q: 'Gece yarısına kadar neden açıktınız?', a: '... Birini bekliyordum tamam mı? Muhtar Kemal aradı, "Acil ilaç lazım, geç geleceğim" dedi. Ama gelmedi.', difficulty: 2, category: 'derinlesme', relatedClues: [7], guiltyResponse: { 1: 'Kasap Hasan o gece geldi, çok gergindi. Ellerinde kan lekesi vardı, "Kesildim" dedi ama inanmadım...', 2: '*Titrer* Tamam... Muhtar\'ı beklemiyordum. Ben... kurbanı bekliyordum. Son ilaç dozunu verecektim ama... dozajı yanlış hesaplamış olabilirim.', 3: 'Muhtar aradı evet, ama sesinde panik vardı. "Selma, beni örtbas et" dedi. Ne demek istediğini anlayamadım...', 4: 'Komiser o gece geldi dükkÃ¢na. Defterimi istedi, "Bunu bana ver" dedi. Sayfaları o yırttı!', 5: 'Yahya\'nın o gece paketini gördüm... Kurbanın evine gidiyordu. İçinde ne vardı bilmiyorum ama ağırdı.' } },
++        { q: 'Komiser Güneş sizi cinayet gecesi gördüğünü söylüyor.', a: 'Nerede görmüş? Ben dükkÃ¢nımdan çıkmadım! Eğer öyle diyorsa yalan söylüyor...', difficulty: 2, category: 'derinlesme', relatedClues: [10, 11] },
+         { q: 'Kurbanın ölüm sebebi zehirlenme olabilir mi?', a: '*Yüzü solar* Zehirlenme mi? Bu... bu çok kötü. Ben hiçbir şey satmadım, yemin ederim!', difficulty: 2, category: 'derinlesme', relatedClues: [4, 6] },
+-        { q: 'Bu boş ilaç şişesindeki zehri kime sattın?', a: 'O... o ilacı ben kimseye satmadım! Şişe çalınmış olmalı! Belki biri gece dükkâna girdi ve aldı...', difficulty: 3, category: 'yuzlestirme', relatedClues: [4], guiltyResponse: { 1: 'Kasap\'a sorun! O gece dükkânıma girip çıkan birini gördüm, iri yarı biriydi!', 2: '*Yıkılır* O şişe... benim. Kurbanın ilacına karıştırdım ama öldürmek için değil! Acısını dindirmek için! O çok acı çekiyordu, yalvardı bana!', 3: 'Muhtar istedi o ilacı! "Birisi için lazım" dedi. Kim için olduğunu sormadım...', 4: 'O şişeyi komiser aldı! Benden zorla aldı, "Delil" dedi ama rapora yazmadı!', 5: 'Yahya\'nın gizli cepte sakladığı not... O notta bu ilaçtan bahsediliyor olabilir.' } },
++        { q: 'Bu boş ilaç şişesindeki zehri kime sattın?', a: 'O... o ilacı ben kimseye satmadım! Åişe çalınmış olmalı! Belki biri gece dükkÃ¢na girdi ve aldı...', difficulty: 3, category: 'yuzlestirme', relatedClues: [4], guiltyResponse: { 1: 'Kasap\'a sorun! O gece dükkÃ¢nıma girip çıkan birini gördüm, iri yarı biriydi!', 2: '*Yıkılır* O şişe... benim. Kurbanın ilacına karıştırdım ama öldürmek için değil! Acısını dindirmek için! O çok acı çekiyordu, yalvardı bana!', 3: 'Muhtar istedi o ilacı! "Birisi için lazım" dedi. Kim için olduğunu sormadım...', 4: 'O şişeyi komiser aldı! Benden zorla aldı, "Delil" dedi ama rapora yazmadı!', 5: 'Yahya\'nın gizli cepte sakladığı not... O notta bu ilaçtan bahsediliyor olabilir.' } },
+         { q: 'Reçete defterinin son sayfasını neden yırttın?', a: '*Titreyerek* Orada önemli bir not vardı. Kurbanın gerçek teşhisi... Mesleki sorumluluğum...', difficulty: 3, category: 'yuzlestirme', relatedClues: [5] },
+         { q: 'Tezgah altındaki zehirli sarmaşık ne için?', a: 'Tıbbi araştırma! Geleneksel tıpta kullanılır! Ben onu ilaç yapmak için yetiştiriyorum, zehir olarak değil!', difficulty: 3, category: 'yuzlestirme', relatedClues: [6] },
+         { q: 'Kurbanın gerçek teşhisi neydi?', a: '*Uzun sessizlik* Osman Bey zehirleniyordu... Yavaş yavaş. Ama ben yapmadım! Birisi ona düzenli olarak küçük dozlarda zehir veriyordu.', difficulty: 3, category: 'yuzlestirme', relatedClues: [4, 5, 6] },
+@@ -247,7 +263,7 @@ const NPC_ALL_QUESTIONS = {
+         { q: 'Gece yarısı et almak için mi çıktın gerçekten?', a: '... Tamam, et bahaneydi. Kurbanın evinin önünden geçmek istedim. Tehdit mektubu yazdığım için vicdan azabı çekiyordum.', difficulty: 4, category: 'baski', relatedClues: [7], guiltyResponse: { 1: 'Kasap\'ın söylediklerine inanmayın! O adam yalancının teki!', 2: 'Selma beni çerçevelemeye çalışıyor! O zehirci kadın!', 3: '*Masayı yumruklar* TAMAM! Kurbanın evine gittim! Konuşmak istedim, barışmak... Ama o beni kovdu, aşağıladı. "Sahte tapularını biliyorum" dedi. Tartıştık... ve ben... kontrol... *susar*', 4: 'Komiser Güneş her şeyi biliyor! O gece beni aradı, "Muhtar sakin ol" dedi. Neden böyle dedi?', 5: 'Yahya\'nın elinde bir paket vardı o gece, onu araştırın!' } },
+         { q: 'Kurbanın evinde ne gördün?', a: 'Işıklar yanıyordu. Bir gölge gördüm pencerede... Kurban değildi. Başka birisi vardı orada.', difficulty: 4, category: 'baski', relatedClues: [] },
+         { q: 'Komiser Güneş\'le ilişkin nedir?', a: 'Resmi ilişkimiz var... *duraksır* Bazen bazı dosyaların kapanması konusunda ortak çalışırız. Hepsi bu.', difficulty: 4, category: 'baski', relatedClues: [10, 11] },
+-        { q: 'Arazi tapuları aslında kurbanın üzerineymiş.', a: '*Şok olur* Ne?! Tapular... Kim söyledi bunu?! O araziler yasal olarak belediyeye aittir!', difficulty: 4, category: 'baski', relatedClues: [9] },
++        { q: 'Arazi tapuları aslında kurbanın üzerineymiş.', a: '*Åok olur* Ne?! Tapular... Kim söyledi bunu?! O araziler yasal olarak belediyeye aittir!', difficulty: 4, category: 'baski', relatedClues: [9] },
+         { q: 'Son sözün nedir Kemal?', a: 'Ben bu kasabanın muhtarıyım! 20 yıldır hizmet ediyorum. Evet hatalarım oldu ama kimseyi öldürmedim!', difficulty: 5, category: 'son', relatedClues: [] },
+         { q: 'Katil kim sence?', a: 'Kasap Hasan! O satırla... Ama belki eczacı. O kadının ne zehirler bildiğini düşünün! Ya da terzi...', difficulty: 5, category: 'son', relatedClues: [1, 4, 13] },
+         { q: 'Söylemediklerin var mı?', a: '*İç çeker* Komiser Güneş... O gece beni aradı. "Muhtar, evinde kal" dedi. Neden böyle dediğini hiç sormadım...', difficulty: 5, category: 'son', relatedClues: [10, 11] },
+@@ -260,13 +276,13 @@ const NPC_ALL_QUESTIONS = {
+         { q: 'İlk bulgular neler?', a: 'Kafa travması. Sert bir cisimle vurulmuş. Ölüm saati 23:00-01:00 arası. Olay yerinde az sayıda fiziksel delil vardı.', difficulty: 1, category: 'tanisma', relatedClues: [1, 12] },
+         { q: 'Olay yerinde hangi delilleri buldunuz?', a: 'Bir düğme, bazı ayak izleri... Yağmur çoğunu sildi. Standart prosedür uyguladık.', difficulty: 2, category: 'derinlesme', relatedClues: [12] },
+         { q: 'Neden dış dedektif çağrıldı?', a: '*Rahatsız olur* Üst makamın kararı. "Tarafsız göz lazım" dediler. Kasabada herkes birbirini tanıyor.', difficulty: 2, category: 'derinlesme', relatedClues: [] },
+-        { q: 'Muhtar Kemal\'le ilişkiniz profesyonel mi?', a: 'Tabii ki profesyonel! Muhtar resmi makam, ben de polis. Başka bir ilişki yok!', difficulty: 2, category: 'derinlesme', relatedClues: [7, 9], guiltyResponse: { 1: 'Kasap Hasan\'ın dükkânında şüpheli evraklar bulundu, onu soruşturuyorum!', 2: 'Eczacı Selma\'nın zehir stoku var, bunu raporladım ama üst makam ilgilenmedi.', 3: 'Muhtar Kemal... *duraksır* Evet, bazen dosyaları birlikte kapattık. Ama bu normal prosedür!', 4: '*Sertleşir* Ben 15 yıllık polisim! Muhtar\'la profesyonel ilişkimiz var, ama cinayet gecesi... tamam, onu aradım. Uyardım. Çünkü bilgi aldım, ihbar vardı. Ama bu bilgiyi... resmi kanaldan almadım. Bir kaynak... söyleyemem.', 5: 'Terzinin dosyasında adı geçiyor ama bu gizli bir soruşturma!' } },
++        { q: 'Muhtar Kemal\'le ilişkiniz profesyonel mi?', a: 'Tabii ki profesyonel! Muhtar resmi makam, ben de polis. Başka bir ilişki yok!', difficulty: 2, category: 'derinlesme', relatedClues: [7, 9], guiltyResponse: { 1: 'Kasap Hasan\'ın dükkÃ¢nında şüpheli evraklar bulundu, onu soruşturuyorum!', 2: 'Eczacı Selma\'nın zehir stoku var, bunu raporladım ama üst makam ilgilenmedi.', 3: 'Muhtar Kemal... *duraksır* Evet, bazen dosyaları birlikte kapattık. Ama bu normal prosedür!', 4: '*Sertleşir* Ben 15 yıllık polisim! Muhtar\'la profesyonel ilişkimiz var, ama cinayet gecesi... tamam, onu aradım. Uyardım. Çünkü bilgi aldım, ihbar vardı. Ama bu bilgiyi... resmi kanaldan almadım. Bir kaynak... söyleyemem.', 5: 'Terzinin dosyasında adı geçiyor ama bu gizli bir soruşturma!' } },
+         { q: 'Eczacı Selma zehirlenme şüphesini bildirmiş miydi?', a: '*Duraksır* Selma mı söyledi? Bir keresinde "kan değerleri garip" gibi bir şey demişti ama somut kanıt yoktu.', difficulty: 2, category: 'derinlesme', relatedClues: [4, 5] },
+         { q: 'Bu polis rozeti olay yerinde bulundu!', a: '*Yüzü değişir* Kayıp olarak rapor edilmişti. Bir ay önce karakoldan çalındı. Kim aldıysa olay yerine bırakmış.', difficulty: 3, category: 'yuzlestirme', relatedClues: [10] },
+         { q: 'Gizli dosyadaki bilgiler neden rapor edilmedi?', a: 'O dosya devam eden bir soruşturmanın parçası! Her şeyi kamuoyuyla paylaşamam. Prosedür gereği gizli!', difficulty: 3, category: 'yuzlestirme', relatedClues: [11] },
+         { q: 'Bu düğme terzi Yahya\'nın diktiği paltoya ait.', a: 'İlginç... Yahya\'dan düğmenin kime ait olduğunu sorduk ama net cevap vermedi.', difficulty: 3, category: 'yuzlestirme', relatedClues: [12, 14] },
+         { q: 'Eczacının defterinden sayfaları siz mi aldınız?', a: 'NE?! Ben kimsenin defterinden sayfa almadım! Bu çok ciddi bir itham! Kanıtınız var mı?', difficulty: 3, category: 'yuzlestirme', relatedClues: [5] },
+-        { q: 'O gece muhtarı neden arayıp evinde kalmasını söylediniz?', a: '*Şaşırır* Muhtar bunu mu söyledi? Ben onu güvenlik için uyardım! İhbar gelmişti!', difficulty: 4, category: 'baski', relatedClues: [7] },
++        { q: 'O gece muhtarı neden arayıp evinde kalmasını söylediniz?', a: '*Åaşırır* Muhtar bunu mu söyledi? Ben onu güvenlik için uyardım! İhbar gelmişti!', difficulty: 4, category: 'baski', relatedClues: [7] },
+         { q: 'İhbar gelmeden ÖNCE muhtarı aradığınız kanıtlandı.', a: '*Uzun sessizlik* ... Birisi beni aradı. Tanımadığım numara. "Meydanda bir şey olacak" dedi. Ciddiye aldım.', difficulty: 4, category: 'baski', relatedClues: [10, 11], guiltyResponse: { 1: 'Kasap\'ın soğuk hava deposunu araştırın!', 2: 'Eczacının tezgah altındaki bitkileri inceleyin!', 3: 'Muhtar\'ın kasasındaki sahte belgeleri bulun!', 4: '*Masaya yumruğunu vurur* TAMAM! Evet, muhtarı ihbardan önce aradım. Çünkü BEN o ihbarı aldım... kendi kendime. Anonim aramanın kaynağını biliyordum çünkü... o ses benim tanıdığımdı. Ve ben... olay yerine gittiğimde delilleri... düzenledim. Ama öldürmedim! Birisi bana talimat verdi!', 5: 'Yahya\'nın USB belleğinde her şey var!' } },
+         { q: 'Delilleri karartma şüpheniz var.', a: 'Karartma mı?! 15 yıllık polisim! Evet, bazı bilgileri gizli tuttum ama prosedür gereği!', difficulty: 4, category: 'baski', relatedClues: [10, 11] },
+         { q: 'Olay yerinden rapora yazmadığınız neler var?', a: '*Masaya bakar* Bir mektup... Kurbanın cebinden. "Beni takip ediyorlar, bu gece her şeyi açıklayacağım" yazıyordu...', difficulty: 4, category: 'baski', relatedClues: [15] },
+@@ -276,16 +292,16 @@ const NPC_ALL_QUESTIONS = {
+         { q: 'Sizi de şüpheli listesine ekliyorum.', a: '*Sertleşir* Bu sizin hakkınız. Ama gerçek katili bulun, o zaman masumiyetimi görürsünüz.', difficulty: 5, category: 'son', relatedClues: [10, 11] }
+     ],
+     5: [ // Terzi Yahya — TÜM 20 SORU
+-        { q: 'Yahya usta, cinayet gecesi neredeydin?', a: 'Dükkânımdaydım, gece geç saate kadar dikiş dikiyordum. Sipariş yetişmesi lazımdı. Makinenin sesinden başka bir şey duymadım.', difficulty: 1, category: 'tanisma', relatedClues: [] },
++        { q: 'Yahya usta, cinayet gecesi neredeydin?', a: 'DükkÃ¢nımdaydım, gece geç saate kadar dikiş dikiyordum. Sipariş yetişmesi lazımdı. Makinenin sesinden başka bir şey duymadım.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+         { q: 'Kurbanı tanıyor muydun?', a: 'Eski müşterimdi. Son birkaç haftadır sık geliyordu. Özel bir ceket sipariş etmişti... Teslim edemedim.', difficulty: 1, category: 'tanisma', relatedClues: [14, 15] },
+         { q: 'Kasabadaki gerginliklerden haberin var mı?', a: 'Ben terziyim, kumaşla uğraşırım. İnsanların kavgalarına karışmam. Ama... son zamanlarda herkes gergindi.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+-        { q: 'Dükkânında ilginç bir şey fark ettin mi?', a: 'İlginç mi? Hayır, her şey normal... Dikişler, kumaşlar, müşteriler. *Gözlerini kaçırır*', difficulty: 1, category: 'tanisma', relatedClues: [13] },
++        { q: 'DükkÃ¢nında ilginç bir şey fark ettin mi?', a: 'İlginç mi? Hayır, her şey normal... Dikişler, kumaşlar, müşteriler. *Gözlerini kaçırır*', difficulty: 1, category: 'tanisma', relatedClues: [13] },
+         { q: 'Kurbanın sipariş ettiği ceket nasıl bir ceketti?', a: 'Özel bir ceket... Gizli cepleri olan, astarı kalın. "İçine belgeler koyacağım" demişti.', difficulty: 2, category: 'derinlesme', relatedClues: [14, 15] },
+         { q: 'Kurban sana belge saklatmak mı istedi?', a: 'Hayır! Sadece cekete cep dikeyim dedi. Belgeleri kendisi koyacaktı. Ben sadece terziyim!', difficulty: 2, category: 'derinlesme', relatedClues: [15] },
+-        { q: 'Cinayet gecesi dükkânından çıktın mı?', a: '*Duraksır* Bir kez çıktım. Sigara içmeye. Ama hemen döndüm. 10 dakika bile sürmedi.', difficulty: 2, category: 'derinlesme', relatedClues: [], guiltyResponse: { 1: 'Kasap\'ın dükkânında ışık yanıyordu ama girmedim oraya!', 2: 'Eczane\'nin ışığı da açıktı. Selma pencereden baktı ama beni görmemiş olmalı... *yutkunur*', 3: 'Muhtar\'ın sokakta olduğunu gördüm, ama yüzünü seçemedim.', 4: 'Komiser\'in devriye aracı geçti sokaktan... Beni görmüş olabilir.', 5: '*Elleri titrer* Tamam... 10 dakikadan fazla dışarıdaydım. Kurbanın evine gittim. Notu ben yazmıştım, "Bu gece gel konuşalım" diye. Gittim. Kapı açıktı. İçeri girdim. Osman... Osman yerde yatıyordu. Ama ben varmadan ölmüştü! ...Yoksa ölmemiş miydi?' } },
++        { q: 'Cinayet gecesi dükkÃ¢nından çıktın mı?', a: '*Duraksır* Bir kez çıktım. Sigara içmeye. Ama hemen döndüm. 10 dakika bile sürmedi.', difficulty: 2, category: 'derinlesme', relatedClues: [], guiltyResponse: { 1: 'Kasap\'ın dükkÃ¢nında ışık yanıyordu ama girmedim oraya!', 2: 'Eczane\'nin ışığı da açıktı. Selma pencereden baktı ama beni görmemiş olmalı... *yutkunur*', 3: 'Muhtar\'ın sokakta olduğunu gördüm, ama yüzünü seçemedim.', 4: 'Komiser\'in devriye aracı geçti sokaktan... Beni görmüş olabilir.', 5: '*Elleri titrer* Tamam... 10 dakikadan fazla dışarıdaydım. Kurbanın evine gittim. Notu ben yazmıştım, "Bu gece gel konuşalım" diye. Gittim. Kapı açıktı. İçeri girdim. Osman... Osman yerde yatıyordu. Ama ben varmadan ölmüştü! ...Yoksa ölmemiş miydi?' } },
+         { q: 'Eczacı Selma kurbanın evine giderken gördü.', a: 'Selma mı?! Yanılmış olmalı! Sadece sigara içmeye çıktım! *Elleri titrer*', difficulty: 2, category: 'derinlesme', relatedClues: [] },
+         { q: 'Eczacı Selma kurbanın evine giderken gördü.', a: 'Selma mı?! Yanılmış olmalı! Sadece sigara içmeye çıktım! *Elleri titrer*', difficulty: 2, category: 'derinlesme', relatedClues: [] },
+-        { q: 'Bu kanlı iplik makarası senin dükkânından!', a: 'Kan mı?! İmkânsız! Kumaş keserken elimi keserim, o benim kanım olabilir!', difficulty: 3, category: 'yuzlestirme', relatedClues: [13] },
++        { q: 'Bu kanlı iplik makarası senin dükkÃ¢nından!', a: 'Kan mı?! İmkÃ¢nsız! Kumaş keserken elimi keserim, o benim kanım olabilir!', difficulty: 3, category: 'yuzlestirme', relatedClues: [13] },
+         { q: 'Bu yırtık kumaş kurbanın ceketinden kopmuş.', a: '*Yutkunur* O kumaş bende vardı evet. Ceketi dikerken artan parça. Her terzi artık kumaş saklar!', difficulty: 3, category: 'yuzlestirme', relatedClues: [14] },
+         { q: 'Gizli cepteki not "Bu gece gel, konuşalım" yazıyor. Senin el yazın!', a: '*Terler* Ben yazdım evet. Kurban benimle konuşmak istedi! Gizli bir şey anlatacaktı ama... varamadım!', difficulty: 3, category: 'yuzlestirme', relatedClues: [15], guiltyResponse: { 1: 'Kasap Hasan\'ın o satırla bir ilgisi olabilir! Benden bıçak kılıfı istedi!', 2: 'Selma\'nın zehirleri var, onu araştırın! Ben sadece not yazdım!', 3: 'Muhtar\'ın tehdit mektubu daha tehlikeli bir delil!', 4: 'Komiser bu notu biliyordu! Dosyasında yazıyor!', 5: '*Titrer* Evet, o notu ben yazdım. Kurbanla buluşacaktık. Ama gittiğimde... kapı açıktı. Girdim. Tartıştık. O belgeler yüzünden... USB\'deki bilgiler... Ben sadece korumak istiyordum ama Osman vermek istemedi. Çekiştirdik ve...' } },
+         { q: 'Neden varamadın? Yola çıktığını biliyoruz.', a: 'Çıktım evet! Ama yarı yolda döndüm! Korktum... Gölge gibi bir figür gördüm. Korkup geri döndüm!', difficulty: 3, category: 'yuzlestirme', relatedClues: [] },
+@@ -530,7 +546,7 @@ function toggleMute() {
+     }
+ }
+ 
+-// OTOPSİ VE ADLİ TIP SİSTEMİ (EN AZ 3/4 BİNA + EN AZ 3/4 LAB → 60 SANİYE KÖŞE SAYACI)
++// OTOPSİ VE ADLİ TIP SİSTEMİ (EN AZ 3/4 BİNA + EN AZ 3/4 LAB â†’ 60 SANİYE KÖÅE SAYACI)
+ let autopsyTimer = null;
+ let autopsyTimeLeft = 60; // 1 dakika (60 saniye)
+ let isAutopsyReady = false;
+@@ -641,7 +657,7 @@ function checkAutopsyConditions() {
+     container.classList.add('pending');
+     container.innerHTML = `<i class="fa-solid fa-clock-rotate-left"></i> OTOPSİ: BİNA ${buildingCount}/${reqBuildings} | LAB ${labCount}/${reqLabs}`;
+ 
+-    // En az gerekli sayıda binaya girilmiş VE gerekli sayıda lab gönderimi yapılmışsa 60 saniyelik GERİ SAYIM BAŞLAR!
++    // En az gerekli sayıda binaya girilmiş VE gerekli sayıda lab gönderimi yapılmışsa 60 saniyelik GERİ SAYIM BAÅLAR!
+     if (buildingCount >= reqBuildings && labCount >= reqLabs) {
+         start60SecAutopsyCountdown();
+     }
+@@ -685,7 +701,7 @@ function start60SecAutopsyCountdown() {
+         container.innerHTML = `<i class="fa-solid fa-hourglass-half fa-spin"></i> OTOPSİ: 01:00`;
+     }
+ 
+-    showGlobalNotification("BİLGİ", `📋 OTOPSİ RAPORU HAZIRLANIYOR!\n\nEn az ${reqBuildings} bina incelendi ve ${reqLabs} delil adli tıbba gönderildi. Adli Tıp Kurumu otopsi raporunu hazırlamaya başladı! Ekrandaki 60 saniyelik sayacı takip ediniz.`, false);
++    showGlobalNotification("BİLGİ", `ğŸ“‹ OTOPSİ RAPORU HAZIRLANIYOR!\n\nEn az ${reqBuildings} bina incelendi ve ${reqLabs} delil adli tıbba gönderildi. Adli Tıp Kurumu otopsi raporunu hazırlamaya başladı! Ekrandaki 60 saniyelik sayacı takip ediniz.`, false);
+     showCinematicHelper(`Amirims! ${reqBuildings} bina incelemesi ve ${reqLabs} lab gönderimi tamamlandı. Adli Tıp otopsi raporu hazırlanıyor, ekrandaki 60 saniyelik sayacı takip edebilirsiniz!`, false);
+ 
+     if (autopsyTimer) clearInterval(autopsyTimer);
+@@ -721,10 +737,10 @@ function start60SecAutopsyCountdown() {
+             if (container) {
+                 container.classList.remove('active-timer', 'pending');
+                 container.classList.add('ready');
+-                container.innerHTML = '<i class="fa-solid fa-file-signature"></i> ✓ OTOPSİ RAPORU HAZIR! (TIKLA)';
++                container.innerHTML = '<i class="fa-solid fa-file-signature"></i> âœ“ OTOPSİ RAPORU HAZIR! (TIKLA)';
+             }
+ 
+-            showGlobalNotification("BİLGİ", "📋 OTOPSİ RAPORU GELDİ!\n\nAdli Tıp Kurumu'ndan beklenen detaylı otopsi raporu ve laboratuvar analizleri merkeze ulaştı. Haritadaki 'OTOPSİ RAPORU HAZIR' butonuna tıklayarak hemen inceleyebilirsiniz.", false);
++            showGlobalNotification("BİLGİ", "ğŸ“‹ OTOPSİ RAPORU GELDİ!\n\nAdli Tıp Kurumu'ndan beklenen detaylı otopsi raporu ve laboratuvar analizleri merkeze ulaştı. Haritadaki 'OTOPSİ RAPORU HAZIR' butonuna tıklayarak hemen inceleyebilirsiniz.", false);
+             showCinematicHelper("Amirims! Adli Tıp otopsi raporu hazır! Haritadaki 'OTOPSİ RAPORU HAZIR' butonuna tıklayarak hemen inceleyin!", false);
+         }
+     }, 1000);
+@@ -848,7 +864,7 @@ function updateForensicBadge() {
+         badgeText.textContent = `${labCount}/${reqLabs} LAB GÖNDERİLDİ`;
+     } else {
+         badge.className = 'forensic-status-badge badge-ready';
+-        badgeText.textContent = `✓ ${labCount} LAB GÖNDERİLDİ`;
++        badgeText.textContent = `âœ“ ${labCount} LAB GÖNDERİLDİ`;
+     }
+ }
+ 
+@@ -901,7 +917,7 @@ document.getElementById('autopsy-timer-container').addEventListener('click', ()
+         : (isGolge ? (window.submittedForensicCountGolge || 0) : submittedForensicCount);
+ 
+     if (!isAutopsyTimerStarted && !isAutopsyReady) {
+-        showGlobalNotification("UYARI", `Otopsi raporunun hazırlanmaya başlaması için en az ${reqBuildings} bina incelenmeli (Şu an: ${buildingCount}/${reqBuildings}) ve en az ${reqLabs} delil adli tıbba gönderilmelidir (Şu an: ${labCount}/${reqLabs})!`, true);
++        showGlobalNotification("UYARI", `Otopsi raporunun hazırlanmaya başlaması için en az ${reqBuildings} bina incelenmeli (Åu an: ${buildingCount}/${reqBuildings}) ve en az ${reqLabs} delil adli tıbba gönderilmelidir (Åu an: ${labCount}/${reqLabs})!`, true);
+         showCinematicHelper(`Amirims! Otopsi raporunun başlaması için en az ${reqBuildings} bina gezilmeli (${buildingCount}/${reqBuildings}) ve ${reqLabs} delil adli tıbba gönderilmeli (${labCount}/${reqLabs}).`, false);
+         return;
+     }
+@@ -987,7 +1003,7 @@ function initGame() {
+         askedQuestionCount[id] = 0;
+         npcStressLevels[id] = 0;
+     }
+-    // Gölge Şehir (101 - 108) NPC'lerini sıfırla
++    // Gölge Åehir (101 - 108) NPC'lerini sıfırla
+     for (let id = 101; id <= 108; id++) {
+         askedQuestionCount[id] = 0;
+         npcStressLevels[id] = 0;
+@@ -999,11 +1015,11 @@ function initGame() {
+     fetch(resetUrl, { method: 'POST' })
+         .then(res => res.json())
+         .then(data => {
+-            console.log('🔍 API:', data.message);
++            console.log('ğŸ” API:', data.message);
+             // Suçlu NPC ID'sini al
+             if (data.guiltyNpcId) {
+                 guiltyNpcId = data.guiltyNpcId;
+-                console.log('🔍 Suçlu NPC:', guiltyNpcId);
++                console.log('ğŸ” Suçlu NPC:', guiltyNpcId);
+                 // Backend'de oturum başlat
+                 fetch('/api/game/session/start', {
+                     method: 'POST',
+@@ -1044,10 +1060,10 @@ function initGame() {
+ initGame();
+ 
+ // =============================================================
+-// 1. SPLASH → WORLD MAP → STORY INTRO
++// 1. SPLASH â†’ WORLD MAP â†’ STORY INTRO
+ // =============================================================
+ 
+-// Splash → Bölge Haritası
++// Splash â†’ Bölge Haritası
+ document.getElementById('start-btn').addEventListener('click', () => {
+     playLoopSound(bgMusic, 0.3);
+     playLoopSound(rainSound, 0.5);
+@@ -1060,16 +1076,16 @@ document.getElementById('start-btn').addEventListener('click', () => {
+     // Çetin bölge haritasında konuşsun (Geçmiş tecrübeyi ve çözülen kasabaları hatırlar)
+     setTimeout(() => {
+         if (window.gizemliSolved && window.golgeSolved) {
+-            showCinematicHelper("Harika bir iş çıkardık Amirims! Hem Gizemli Kasaba'yı hem de Gölge Şehir'i aydınlattık! Şimdi diğer kasabalardaki yeni gizemlere odaklanalım!", false, 'world_map_both_solved');
++            showCinematicHelper("Harika bir iş çıkardık Amirims! Hem Gizemli Kasaba'yı hem de Gölge Åehir'i aydınlattık! Åimdi diğer kasabalardaki yeni gizemlere odaklanalım!", false, 'world_map_both_solved');
+         } else if (window.gizemliSolved) {
+-            showCinematicHelper("Tebrikler Amirims! Gizemli Kasaba davasını başarıyla çözdük ve Gölge Şehir'in kilidini açtık. Hazır olduğunuzda yeni kasabaya geçelim!", false, 'world_map_gizemli_solved');
++            showCinematicHelper("Tebrikler Amirims! Gizemli Kasaba davasını başarıyla çözdük ve Gölge Åehir'in kilidini açtık. Hazır olduğunuzda yeni kasabaya geçelim!", false, 'world_map_gizemli_solved');
+         } else {
+             triggerHelperMessage('splash');
+         }
+     }, 1000);
+ });
+ 
+-// Bölge Haritası → Ana Menü
++// Bölge Haritası â†’ Ana Menü
+ document.getElementById('exit-game-btn').addEventListener('click', () => {
+     showGameMessageBox({
+         title: "KASABADAN AYRILMA",
+@@ -1088,7 +1104,7 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
+                 const resetData = await res.json();
+                 if (resetData && resetData.guiltyNpcId) {
+                     guiltyNpcId = resetData.guiltyNpcId;
+-                    console.log("🔄 Yeni Rastgele Katil Belirlendi:", guiltyNpcId);
++                    console.log("ğŸ”„ Yeni Rastgele Katil Belirlendi:", guiltyNpcId);
+                 }
+ 
+                 triggerTransition(() => {
+@@ -1102,6 +1118,12 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
+                     if (window.GolgeSehirEngine) {
+                         window.GolgeSehirEngine.visitedGolgeBuildings.clear();
+                         window.GolgeSehirEngine.clearGolgeSehirMap();
++                        window.GolgeSehirEngine.resetGolgeState();
++                    }
++                    if (window.SisorenEngine) {
++                        window.SisorenEngine.visitedSisorenBuildings.clear();
++                        window.SisorenEngine.clearSisorenMap();
++                        window.SisorenEngine.resetSisorenState();
+                     }
+                     currentBag = [];
+                     submittedBloodClueIds.clear();
+@@ -1136,37 +1158,35 @@ document.getElementById('world-back-btn')?.addEventListener('click', () => {
+     });
+ });
+ 
+-// Bölge Haritasındaki Kasaba Tıklamaları & Seviye İlerleme Kilidi (1. Seviye: Gizemli Kasaba, 2. Seviye: Gölge Şehir)
++// Bölge Haritasındaki Kasaba Tıklamaları & Seviye İlerleme Kilidi (1. Seviye: Gizemli Kasaba, 2. Seviye: Gölge Åehir)
+ document.querySelectorAll('.region-town').forEach(townEl => {
+     townEl.addEventListener('click', (e) => {
+         const townId = townEl.getAttribute('data-town-id');
+         const townName = townEl.getAttribute('data-town-name');
+ 
+         if (townId === 'golge_sehir' || townName === 'Gölgeşehir') {
+-            // Kilit Kontrolü: Gizemli Kasaba çözülmeden Gölge Şehir açılamaz
++            // Kilit Kontrolü: Gizemli Kasaba çözülmeden Gölge Åehir açılamaz
+             if (townEl.classList.contains('town-locked') && !window.gizemliSolved) {
+-                document.getElementById('locked-town-title').textContent = "GÖLGE ŞEHİR - KİLİTLİ BÖLGE";
+-                document.getElementById('locked-town-desc').textContent = "Gölge Şehir soruşturmasına geçmek için önce Gizemli Kasaba cinayet vakasını başarıyla çözmeli ve katili bulmalısınız!";
++                document.getElementById('locked-town-title').textContent = "GÖLGE ÅEHİR - KİLİTLİ BÖLGE";
++                document.getElementById('locked-town-desc').textContent = "Gölge Åehir soruşturmasına geçmek için önce Gizemli Kasaba cinayet vakasını başarıyla çözmeli ve katili bulmalısınız!";
+                 if (townLockedModal) townLockedModal.classList.remove('hidden');
+                 return;
+             }
+ 
+-            window.currentActiveTown = 'golge_sehir';
+-            document.body.classList.add('golge-sehir-theme');
+-            // Gölge Şehir delil havuzunu izole et (Gizemli Kasaba eşyalarını tamamen ayır)
+-            currentBag = currentBag.filter(c => c.id >= 1000);
++            setTownTheme('golge_sehir');
++            // Gölge Åehir delil havuzunu izole et (Gizemli Kasaba eşyalarını tamamen ayır)
++            currentBag = [];
+             window.currentBag = currentBag;
+ 
+-            // Her yeni girişte yeni bir Gölge Şehir vaka oturumu başlat
++            // Her yeni girişte yeni bir Gölge Åehir vaka oturumu başlat
+             if (window.GolgeSehirEngine) {
+                 window.GolgeSehirEngine.showSuccessModalBeforeStory();
+             }
+         } else if (townId === 'gizemli') {
+-            // Gizemli Kasaba (1. Seviye) → Osman Bey Hikaye Ekranı
+-            window.currentActiveTown = 'gizemli';
+-            document.body.classList.remove('golge-sehir-theme');
+-            // Gizemli Kasaba delil havuzunu izole et (Gölge Şehir eşyalarını tamamen ayır)
+-            currentBag = currentBag.filter(c => c.id < 1000);
++            // Gizemli Kasaba (1. Seviye) â†’ Osman Bey Hikaye Ekranı
++            setTownTheme('gizemli');
++            // Gizemli Kasaba delil havuzunu izole et (Gölge Åehir eşyalarını tamamen ayır)
++            currentBag = [];
+             window.currentBag = currentBag;
+ 
+             if (window.GolgeSehirEngine) {
+@@ -1187,7 +1207,7 @@ document.querySelectorAll('.region-town').forEach(townEl => {
+             // Sisören (3. Seviye Dağ Kasabası)
+             if (townEl.classList.contains('town-locked') && (!window.gizemliSolved || !window.golgeSolved)) {
+                 document.getElementById('locked-town-title').textContent = "SİSÖREN - KİLİTLİ BÖLGE";
+-                document.getElementById('locked-town-desc').textContent = "Sisören dağ kasabasına giden patikalar yoğun sis altında kapalı. Önce Gizemli Kasaba ve Gölge Şehir vakalarını aydınlatmalısınız!";
++                document.getElementById('locked-town-desc').textContent = "Sisören dağ kasabasına giden patikalar yoğun sis altında kapalı. Önce Gizemli Kasaba ve Gölge Åehir vakalarını aydınlatmalısınız!";
+                 if (townLockedModal) townLockedModal.classList.remove('hidden');
+                 return;
+             }
+@@ -1261,7 +1281,7 @@ function finishTypewriter() {
+     if (skipBtn) skipBtn.classList.add('hidden');
+     if (continueBtn) {
+         continueBtn.classList.remove('hidden');
+-        continueBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> SORUŞTURMAYI BAŞLAT';
++        continueBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> SORUÅTURMAYI BAÅLAT';
+     }
+ }
+ 
+@@ -1280,7 +1300,7 @@ document.getElementById('skip-story-btn')?.addEventListener('click', () => {
+             if (skipBtn) skipBtn.classList.add('hidden');
+             if (continueBtn) {
+                 continueBtn.classList.remove('hidden');
+-                continueBtn.innerHTML = '<i class="fa-solid fa-folder-open"></i> DOSYAYI AÇ VE SORUŞTUR';
++                continueBtn.innerHTML = '<i class="fa-solid fa-folder-open"></i> DOSYAYI AÇ VE SORUÅTUR';
+             }
+         }
+     } else if (window.currentActiveTown === 'sisoren') {
+@@ -1298,14 +1318,14 @@ document.getElementById('skip-story-btn')?.addEventListener('click', () => {
+         if (skipBtn) skipBtn.classList.add('hidden');
+         if (continueBtn) {
+             continueBtn.classList.remove('hidden');
+-            continueBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> SORUŞTURMAYI BAŞLAT';
++            continueBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> SORUÅTURMAYI BAÅLAT';
+         }
+     } else {
+         finishTypewriter();
+     }
+ });
+ 
+-// Story → Town Map (Kasaba Haritası Geçişi)
++// Story â†’ Town Map (Kasaba Haritası Geçişi)
+ document.getElementById('story-continue-btn').addEventListener('click', () => {
+     if (window.currentActiveTown === 'golge_sehir') {
+         storyIntroScreen.classList.add('hidden');
+@@ -1344,7 +1364,7 @@ document.getElementById('story-continue-btn').addEventListener('click', () => {
+     }, 1200);
+ });
+ 
+-// Kasaba Haritası → Bölge Haritası
++// Kasaba Haritası â†’ Bölge Haritası
+ 
+ // =============================================================
+ // 2. TOWN MAP — BUILDING CLICKS & DOOR ANIMATION
+@@ -1359,7 +1379,7 @@ const BUILDING_THEMES = {
+     4: { name: 'Karakol', video: MASTER_VIDEO_PATH, start: 8.0, end: 10.0, glow: 'glow-karakol', icon: 'fa-solid fa-building-shield', color: '#2288ff' },
+     5: { name: 'Terzi', video: MASTER_VIDEO_PATH, start: 6.0, end: 8.0, glow: 'glow-terzi', icon: 'fa-solid fa-scissors', color: '#ffcc00' },
+ 
+-    // Gölge Şehir (101 - 108) - Altın/Sarı Neon Kapılar
++    // Gölge Åehir (101 - 108) - Altın/Sarı Neon Kapılar
+     101: { name: 'Oduncu', video: 'images/towns/golge_sehir/Görseldeki_yazılar_da_türkçe_o.mp4', start: 5.7, end: 7.0, glow: 'glow-golge', icon: 'fa-solid fa-axe', color: '#f59e0b' },
+     102: { name: 'Manav', video: 'images/towns/golge_sehir/Görseldeki_yazılar_da_türkçe_o.mp4', start: 2.8, end: 4.1, glow: 'glow-golge', icon: 'fa-solid fa-carrot', color: '#f59e0b' },
+     103: { name: 'Demirci', video: 'images/towns/golge_sehir/Görseldeki_yazılar_da_türkçe_o.mp4', start: 4.2, end: 5.6, glow: 'glow-golge', icon: 'fa-solid fa-anvil', color: '#f59e0b' },
+@@ -1553,7 +1573,7 @@ cancelEntryBtn?.addEventListener('click', (e) => {
+ function openBuilding(npcId) {
+     activeNpcId = npcId;
+ 
+-    // Gölge Şehir Binaları
++    // Gölge Åehir Binaları
+     if (npcId >= 100 && window.GolgeSehirEngine && window.GOLGE_SEHIR_CONFIG) {
+         const bld = window.GOLGE_SEHIR_CONFIG.buildings.find(b => b.npcId === npcId);
+         if (bld) {
+@@ -1634,7 +1654,7 @@ function openBuilding(npcId) {
+         }
+     }
+ 
+-    // Load Hotspots (Sadece Gizemli Kasaba için hotspots-container'a yükle; Gölge Şehir'i GolgeSehirEngine yönetecek)
++    // Load Hotspots (Sadece Gizemli Kasaba için hotspots-container'a yükle; Gölge Åehir'i GolgeSehirEngine yönetecek)
+     const container = document.getElementById('hotspots-container');
+     if (container) container.innerHTML = '';
+ 
+@@ -1643,6 +1663,7 @@ function openBuilding(npcId) {
+         objects.forEach(obj => {
+             const wrapper = document.createElement('div');
+             wrapper.className = 'hotspot-wrapper';
++            wrapper.setAttribute('data-clue-id', obj.id);
+             wrapper.style.position = 'absolute';
+             wrapper.style.top = obj.top;
+             wrapper.style.left = obj.left;
+@@ -1719,13 +1740,14 @@ function openBuildingClueModal(obj, npcId) {
+ document.getElementById('building-clue-take-btn')?.addEventListener('click', () => {
+     if (!currentPendingObject) return;
+ 
+-    // Kasaba delil kontrolü (Gölge Şehir'de sadece 1000+, Gizemli Kasaba'da <1000)
+-    const isGolge = (window.currentActiveTown === 'golge_sehir');
+-    if (isGolge && currentPendingObject.id < 1000) {
+-        showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+-        buildingClueModal.classList.add('hidden');
+-        return;
+-    } else if (!isGolge && currentPendingObject.id >= 1000) {
++    // Kasaba delil kontrolü (Sisören: 2000+, Gölge: 1000-1999, Gizemli: <1000)
++    const activeTown = window.currentActiveTown || 'gizemli';
++    let isClueValid = true;
++    if (activeTown === 'sisoren' && currentPendingObject.id < 2000) isClueValid = false;
++    else if (activeTown === 'golge_sehir' && (currentPendingObject.id < 1000 || currentPendingObject.id >= 2000)) isClueValid = false;
++    else if (activeTown === 'gizemli' && currentPendingObject.id >= 1000) isClueValid = false;
++
++    if (!isClueValid) {
+         showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+         buildingClueModal.classList.add('hidden');
+         return;
+@@ -1889,13 +1911,14 @@ function openClueInspect(obj, npcId, fromBag = false) {
+ document.getElementById('clue-take-btn').addEventListener('click', () => {
+     if (!currentPendingObject) return;
+ 
+-    // Kasaba delil kontrolü (Gölge Şehir'de sadece 1000+, Gizemli Kasaba'da <1000)
+-    const isGolge = (window.currentActiveTown === 'golge_sehir');
+-    if (isGolge && currentPendingObject.id < 1000) {
+-        showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+-        clueInspectModal.classList.add('hidden');
+-        return;
+-    } else if (!isGolge && currentPendingObject.id >= 1000) {
++    // Kasaba delil kontrolü (Sisören: 2000+, Gölge: 1000-1999, Gizemli: <1000)
++    const activeTown = window.currentActiveTown || 'gizemli';
++    let isClueValid = true;
++    if (activeTown === 'sisoren' && currentPendingObject.id < 2000) isClueValid = false;
++    else if (activeTown === 'golge_sehir' && (currentPendingObject.id < 1000 || currentPendingObject.id >= 2000)) isClueValid = false;
++    else if (activeTown === 'gizemli' && currentPendingObject.id >= 1000) isClueValid = false;
++
++    if (!isClueValid) {
+         showGlobalNotification('Uyarı', 'Bu delil başka bir kasabaya aittir.', true);
+         clueInspectModal.classList.add('hidden');
+         return;
+@@ -1915,7 +1938,7 @@ document.getElementById('clue-take-btn').addEventListener('click', () => {
+         logAction('collect_clue', currentPendingObject.id, currentPendingObject.name);
+         saveGameState();
+         checkAutopsyConditions();
+-        showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' delilini çantaya attık! (${currentBag.length}/${MAX_BAG_SIZE} delil). Şüphelileri sorgularken bu delili ipucu olarak kullanabiliriz.`, false);
++        showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' delilini çantaya attık! (${currentBag.length}/${MAX_BAG_SIZE} delil). Åüphelileri sorgularken bu delili ipucu olarak kullanabiliriz.`, false);
+     }
+     closeClueInspectAndReturn();
+ });
+@@ -1951,7 +1974,7 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+         case 7: // Tehdit Mektubu
+             content.classList.add('threat-letter');
+             content.innerHTML = `
+-                <div class="letter-header">T.C. KASABA MUHTARLIĞI RESMİ NOTU</div>
++                <div class="letter-header">T.C. KASABA MUHTARLIÄI RESMİ NOTU</div>
+                 <div class="letter-body">
+                     <p>Osman Bey,</p>
+                     <p>Karanlık sırlar sonsuza dek gizli kalmaz. Kasaba arazilerini devretmeyi reddetmenin ağır bir bedeli olacak.</p>
+@@ -1963,7 +1986,7 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+         case 15: // Gizli Cep Notu (Başlıksız Gizli Not)
+             content.classList.add('secret-note');
+             content.innerHTML = `
+-                <p>Osman, bugün hava kararınca dükkânıma gel konuşalım. Kimseye görünme, eski defterleri kapatacağız.</p>
++                <p>Osman, bugün hava kararınca dükkÃ¢nıma gel konuşalım. Kimseye görünme, eski defterleri kapatacağız.</p>
+                 <div class="secret-note-sig">- Y.</div>
+             `;
+             break;
+@@ -1998,9 +2021,9 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+                         </div>
+                     </div>
+                     <div class="notebook-page right-page">
+-                        <div class="notebook-title">SÖZLÜ ANLAŞMALAR</div>
+-                        <div class="handwritten-note">• Osman Bey borcunu her soruşumda erteleyip alay ediyor. Sabrım kalmadı.</div>
+-                        <div class="handwritten-note">• Bu borç tahsil edilmezse dükkânı batıracağım. O gece son kez hesaba kapatmaya gideceğim.</div>
++                        <div class="notebook-title">SÖZLÜ ANLAÅMALAR</div>
++                        <div class="handwritten-note">"¢ Osman Bey borcunu her soruşumda erteleyip alay ediyor. Sabrım kalmadı.</div>
++                        <div class="handwritten-note">"¢ Bu borç tahsil edilmezse dükkÃ¢nı batıracağım. O gece son kez hesaba kapatmaya gideceğim.</div>
+                         <div class="notebook-stamp">TAHSİLAT BEKLİYOR</div>
+                     </div>
+                 </div>
+@@ -2010,12 +2033,12 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+             content.classList.add('prescription');
+             content.innerHTML = `
+                 <div class="prescription-header">
+-                    <h3>SAĞLIK OCAĞI REÇETE VE İLAÇ KAYDI</h3>
++                    <h3>SAÄLIK OCAÄI REÇETE VE İLAÇ KAYDI</h3>
+                     <p>Tarih: 12 Kasım 1994 | Protokol No: #904</p>
+                 </div>
+                 <div class="prescription-body">
+                     <p><strong>Hasta Adı:</strong> Osman Bey (Yaş: 54)</p>
+-                    <p><strong>Teşhis:</strong> Şiddetli Uykusuzluk & Göğüs Darlığı</p>
++                    <p><strong>Teşhis:</strong> Åiddetli Uykusuzluk & Göğüs Darlığı</p>
+                     <hr>
+                     <p><strong>Verilen İlaçlar:</strong></p>
+                     <p>1. Diazepam 5mg — Günde 1 Adet (Gece)</p>
+@@ -2026,7 +2049,7 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+         case 9: // Tapu Senedi
+             content.classList.add('title-deed');
+             content.innerHTML = `
+-                <div class="deed-header">T.C. TAPU VE KADASTRO GENEL MÜDÜRLÜĞÜ</div>
++                <div class="deed-header">T.C. TAPU VE KADASTRO GENEL MÜDÜRLÜÄÜ</div>
+                 <div class="deed-title">ARAZİ DEVİR SENEDİ</div>
+                 <p><strong>Ada/Parsel:</strong> #404 - Kasaba Meydan Çarşısı</p>
+                 <p><strong>Mülk Sahibi:</strong> Osman Bey</p>
+@@ -2037,8 +2060,8 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+         case 11: // Gizli Dosya (Karakol Emniyet Dosyası)
+             content.classList.add('confidential-file');
+             content.innerHTML = `
+-                <div class="police-file-header">EMNİYET AMİRLİĞİ SORGULAMA DOSYASI #88</div>
+-                <p><strong>ŞÜPHELİ:</strong> Osman Bey</p>
++                <div class="police-file-header">EMNİYET AMİRLİÄİ SORGULAMA DOSYASI #88</div>
++                <p><strong>ÅÜPHELİ:</strong> Osman Bey</p>
+                 <p><strong>SUÇLAMA:</strong> Yasa Dışı İhbar & İrtikap</p>
+                 <p><strong>DURUM:</strong> Tahkikat komiser emriyle GİZLİ kategorisine alınmış ve durdurulmuştur.</p>
+                 <div class="police-file-sig">İmza: Komiser Güneş</div>
+@@ -2047,12 +2070,12 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+         case 1012: // Gece Kesim Defteri
+             content.classList.add('golge-timber-book');
+             content.innerHTML = `
+-                <div class="letter-header">T.C. ORMAN İŞLETMELERİ MÜDÜRLÜĞÜ GECE KAYDI</div>
++                <div class="letter-header">T.C. ORMAN İÅLETMELERİ MÜDÜRLÜÄÜ GECE KAYDI</div>
+                 <div class="letter-body" style="font-family: var(--font-typewriter); padding: 15px;">
+                     <p><strong>Tarih:</strong> 14 Kasım 1948 | <strong>Kayıt Sahibi:</strong> T. Tahsin</p>
+                     <hr style="border-color: #5c3a21; margin: 12px 0;">
+-                    <p>• Ekrem Bey için gece vakti 15 metreküp özel reçineli çam kereste kesimi yapıldı.</p>
+-                    <p style="color: #8b0000; font-weight: bold; margin-top: 10px;">• Not: Ekrem Bey ormandaki yasa dışı ağaç kesimlerimi ihbar etmekle tehdit ediyor. Eğer savcılığa giderse hayatımı karartacak. Bu gece çam ormanının girişinde buluşup bu işi sonsuza dek bitireceğiz.</p>
++                    <p>"¢ Ekrem Bey için gece vakti 15 metreküp özel reçineli çam kereste kesimi yapıldı.</p>
++                    <p style="color: #8b0000; font-weight: bold; margin-top: 10px;">"¢ Not: Ekrem Bey ormandaki yasa dışı ağaç kesimlerimi ihbar etmekle tehdit ediyor. Eğer savcılığa giderse hayatımı karartacak. Bu gece çam ormanının girişinde buluşup bu işi sonsuza dek bitireceğiz.</p>
+                 </div>
+             `;
+             break;
+@@ -2063,8 +2086,8 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+                 <div class="letter-body" style="font-family: var(--font-typewriter); padding: 10px;">
+                     <p><strong>Alacaklı:</strong> Tüccar Ekrem Bey | <strong>Borçlu:</strong> Manav Ayşe</p>
+                     <hr>
+-                    <p>Manav dükkânına karşılık verilen 15.000 Liralık borcun ödeme vadesi geçmiştir. 15 Kasım gününe kadar nakit ödeme yapılmadığı takdirde dükkân binası ve tezgâhlar haczedilerek mülkiyeti Ekrem Bey'e devredilecektir.</p>
+-                    <div style="font-style: italic; margin-top: 15px;">"Bu dükkân benim her şeyim, Ekrem'in burayı almasına asla izin vermeyeceğim..." - Ayşe'nin el yazısı notu.</div>
++                    <p>Manav dükkÃ¢nına karşılık verilen 15.000 Liralık borcun ödeme vadesi geçmiştir. 15 Kasım gününe kadar nakit ödeme yapılmadığı takdirde dükkÃ¢n binası ve tezgÃ¢hlar haczedilerek mülkiyeti Ekrem Bey'e devredilecektir.</p>
++                    <div style="font-style: italic; margin-top: 15px;">"Bu dükkÃ¢n benim her şeyim, Ekrem'in burayı almasına asla izin vermeyeceğim..." - Ayşe'nin el yazısı notu.</div>
+                 </div>
+             `;
+             break;
+@@ -2091,9 +2114,9 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+                         </div>
+                     </div>
+                     <div class="notebook-page right-page">
+-                        <div class="notebook-title">SÖZLÜ ANLAŞMALAR</div>
+-                        <div class="handwritten-note">• Ekrem borcunu ödemediği gibi 'Beni borçla mı korkutacaksın Naciye, yarın zabıtayı kapına yollarım' diye beni tehdit etti.</div>
+-                        <div class="handwritten-note">• Bakkalımı batırmasına izin vermeyeceğim. Hekimden aldığım fare zehrini Ekrem'in tütününe karıştıracağım. Hak ettiğini bulacak.</div>
++                        <div class="notebook-title">SÖZLÜ ANLAÅMALAR</div>
++                        <div class="handwritten-note">"¢ Ekrem borcunu ödemediği gibi 'Beni borçla mı korkutacaksın Naciye, yarın zabıtayı kapına yollarım' diye beni tehdit etti.</div>
++                        <div class="handwritten-note">"¢ Bakkalımı batırmasına izin vermeyeceğim. Hekimden aldığım fare zehrini Ekrem'in tütününe karıştıracağım. Hak ettiğini bulacak.</div>
+                         <div class="notebook-stamp" style="border-color:#ef4444; color:#ef4444;">KARA LİSTE</div>
+                     </div>
+                 </div>
+@@ -2103,7 +2126,7 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+             content.classList.add('prescription');
+             content.innerHTML = `
+                 <div class="prescription-header">
+-                    <h3>GÖLGE ŞEHİR HEKİMLİĞİ REÇETE KAYDI</h3>
++                    <h3>GÖLGE ÅEHİR HEKİMLİÄİ REÇETE KAYDI</h3>
+                     <p>Tarih: 14 Kasım 1948 | Protokol No: #201</p>
+                 </div>
+                 <div class="prescription-body">
+@@ -2112,14 +2135,14 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+                     <hr>
+                     <p><strong>Verilen İlaçlar:</strong></p>
+                     <p>1. Diazepam 5mg — Günde 1 Adet (Gece)</p>
+-                    <p class="torn-edge-text" style="color:#ef4444; font-weight:bold;">2. Özel İksir: Banotu Kökü Özü (3cc Lethal Doz) ... [YIRTILMIŞ / KESİLMİŞ]</p>
++                    <p class="torn-edge-text" style="color:#ef4444; font-weight:bold;">2. Özel İksir: Banotu Kökü Özü (3cc Lethal Doz) ... [YIRTILMIÅ / KESİLMİÅ]</p>
+                 </div>
+             `;
+             break;
+         case 1061: // Resmi Kasaba Mührü ve Gizli Mektup
+             content.classList.add('threat-letter');
+             content.innerHTML = `
+-                <div class="letter-header">T.C. GÖLGE ŞEHİR MUHTARLIĞI MÜHÜRLÜ NOTU</div>
++                <div class="letter-header">T.C. GÖLGE ÅEHİR MUHTARLIÄI MÜHÜRLÜ NOTU</div>
+                 <div class="letter-body" style="font-family: var(--font-typewriter); padding: 10px;">
+                     <p>Ekrem Bey,</p>
+                     <p>Çam Ormanı arazilerine ait tapu devir senetlerinin sahte olduğunu bildiğinizi biliyorum. Bu konuyu savcılığa taşırsanız muhtarlık makamımı ve kasabadaki tüm nüfuzumu kaybederim.</p>
+@@ -2128,21 +2151,21 @@ document.getElementById('clue-read-btn')?.addEventListener('click', () => {
+                 </div>
+             `;
+             break;
+-        case 1062: // Sahte Gölge Şehir Tapusu
++        case 1062: // Sahte Gölge Åehir Tapusu
+             content.classList.add('title-deed');
+             content.innerHTML = `
+-                <div class="deed-header">T.C. TAPU VE KADASTRO GENEL MÜDÜRLÜĞÜ</div>
++                <div class="deed-header">T.C. TAPU VE KADASTRO GENEL MÜDÜRLÜÄÜ</div>
+                 <div class="deed-title">ARAZİ DEVİR SENEDİ</div>
+-                <p><strong>Bölge:</strong> #201 - Gölge Şehir Çam Ormanı Kuzey Parseli</p>
++                <p><strong>Bölge:</strong> #201 - Gölge Åehir Çam Ormanı Kuzey Parseli</p>
+                 <p><strong>Mülk Sahibi:</strong> Tüccar Ekrem Bey</p>
+-                <p><strong>Devredilen Taraf:</strong> Muhtar Cevdet (Gölge Şehir Muhtarlığı)</p>
++                <p><strong>Devredilen Taraf:</strong> Muhtar Cevdet (Gölge Åehir Muhtarlığı)</p>
+                 <div class="deed-warning" style="border-color:#ef4444; color:#ef4444;">[SAHTE İMZA VE YALAN BEYAN — GEÇERSİZDİR]</div>
+             `;
+             break;
+         case 1072: // Tehdit İçerikli Eski Mektup
+             content.classList.add('threat-letter');
+             content.innerHTML = `
+-                <div class="letter-header">KİŞİSEL UYARI NOTU</div>
++                <div class="letter-header">KİÅİSEL UYARI NOTU</div>
+                 <div class="letter-body" style="font-family: var(--font-typewriter); padding: 10px;">
+                     <p>Fehmi Muallim,</p>
+                     <p>Babanızdan kalan o antika altın köstekli saati bir daha asla göremeyeceksiniz. O saat artık borcunuza karşılık benim kasamda kilitli duruyor. Boşuna jandarmaya gidip şikayet etmeyin, bölge komutanı benim tarafımda.</p>
+@@ -2247,7 +2270,9 @@ document.addEventListener('DOMContentLoaded', () => {
+                         sendBloodBtn.disabled = true;
+                         sendBloodBtn.innerHTML = '<i class="fa-solid fa-check"></i> KAN LEKESİ ADLİ TIBBA GÖNDERİLDİ';
+                         sendBloodBtn.style.opacity = '0.6';
+-                        if (window.currentActiveTown === 'golge_sehir') {
++                        if (window.currentActiveTown === 'sisoren') {
++                            window.submittedForensicCountSisoren++;
++                        } else if (window.currentActiveTown === 'golge_sehir') {
+                             window.submittedForensicCountGolge++;
+                         } else {
+                             window.submittedForensicCountGizemli++;
+@@ -2281,7 +2306,9 @@ document.addEventListener('DOMContentLoaded', () => {
+                         sendPrintBtn.disabled = true;
+                         sendPrintBtn.innerHTML = '<i class="fa-solid fa-check"></i> PARMAK İZİ ADLİ TIBBA GÖNDERİLDİ';
+                         sendPrintBtn.style.opacity = '0.6';
+-                        if (window.currentActiveTown === 'golge_sehir') {
++                        if (window.currentActiveTown === 'sisoren') {
++                            window.submittedForensicCountSisoren++;
++                        } else if (window.currentActiveTown === 'golge_sehir') {
+                             window.submittedForensicCountGolge++;
+                         } else {
+                             window.submittedForensicCountGizemli++;
+@@ -2663,7 +2690,7 @@ document.getElementById('exit-confirm-btn').addEventListener('click', () => {
+ });
+ 
+ // =============================================================
+-// 5. NPC TALK — KADEMESİZ KARIŞIK SİSTEM
++// 5. NPC TALK — KADEMESİZ KARIÅIK SİSTEM
+ // =============================================================
+ 
+ document.getElementById('talk-npc-btn').addEventListener('click', () => {
+@@ -2757,21 +2784,32 @@ function openNpcTalk(npcId) {
+     const characterLayer = document.getElementById('npc-talk-character-layer');
+ 
+     if (talkContainer) {
+-        talkContainer.style.backgroundImage = 'none';
+-        talkContainer.style.backgroundSize = 'contain';
++        if (npcId < 100 && npc.talkBg) {
++            talkContainer.style.backgroundImage = `url('${npc.talkBg}?v=${Date.now()}')`;
++            talkContainer.style.backgroundSize = 'cover';
++        } else {
++            talkContainer.style.backgroundImage = 'none';
++            talkContainer.style.backgroundSize = 'contain';
++        }
+         talkContainer.style.backgroundPosition = 'center';
+         talkContainer.className = 'npc-talk-container';
+     }
+ 
+     if (characterLayer) {
+-        characterLayer.style.backgroundImage = (window.currentActiveTown === 'sisoren' && (npc.portrait || talkBgImage))
++        characterLayer.style.backgroundImage = (npc.portrait || talkBgImage)
+             ? `url('${npc.portrait || talkBgImage}?v=${Date.now()}')`
+             : 'none';
+-        characterLayer.style.backgroundSize = 'contain';
++        
++        if (npcId < 100) {
++            characterLayer.style.backgroundSize = 'cover';
++        } else {
++            characterLayer.style.backgroundSize = 'contain';
++        }
++        
+         characterLayer.style.backgroundPosition = 'center';
+         characterLayer.style.backgroundRepeat = 'no-repeat';
+         characterLayer.className = 'npc-talk-character-layer';
+-    }
++        }
+ 
+     const portraitImg = document.getElementById('npc-talk-portrait-img');
+     if (portraitImg) {
+@@ -2962,7 +3000,7 @@ function loadContextualQuestions(npcId) {
+                 // Sisören Frontend Fallback (SISOREN_CONFIG içinden hazır soru havuzu)
+                 questionsToShow = getSisorenFallbackQuestions(npcId, askedCount);
+             } else if (npcId >= 100) {
+-                // Gölge Şehir Frontend Fallback (GOLGE_SEHIR_CONFIG içinden 4'lü hazır soru havuzu)
++                // Gölge Åehir Frontend Fallback (GOLGE_SEHIR_CONFIG içinden 4'lü hazır soru havuzu)
+                 questionsToShow = getGolgeFallbackQuestions(npcId, askedCount);
+             } else if (NPC_QUESTIONS[npcId]) {
+                 const pool = NPC_QUESTIONS[npcId];
+@@ -3114,7 +3152,7 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
+     return [];
+ }
+ 
+-// Gölge Şehir için her aşamada zengin 4'lü hazır soru üreten yardımcı fonksiyon
++// Gölge Åehir için her aşamada zengin 4'lü hazır soru üreten yardımcı fonksiyon
+ function getGolgeFallbackQuestions(npcId, askedCount) {
+     const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
+     const currentCategory = categories[askedCount] || 'tanisma';
+@@ -3132,13 +3170,13 @@ function getGolgeFallbackQuestions(npcId, askedCount) {
+         ],
+         102: [ // Manav Ayşe
+             { q: 'Cinayet gecesi saat kaçta uyudun?', a: 'Gece 01:00\'e kadar kasaları düzenledim amirim. Yağmur başlayınca kepengi çekip içeri girdim.', difficulty: 1, category: 'tanisma', relatedClues: [1021] },
+-            { q: 'Ekrem Bey senden ne istiyordu?', a: 'Dükkânımın tapusu onun elindeydi... İpotek borcumu ödeyemezsem beni kapının önüne koymakla tehdit ediyordu!', difficulty: 1, category: 'tanisma', relatedClues: [1022] },
+-            { q: 'Dükkânın etrafında dolaşan yabancı kimdi?', a: 'Pelerinli ve uzun boylu biriydi... Yüzünü göremedim ama adımları çok hızlıydı.', difficulty: 1, category: 'tanisma', relatedClues: [] },
++            { q: 'Ekrem Bey senden ne istiyordu?', a: 'DükkÃ¢nımın tapusu onun elindeydi... İpotek borcumu ödeyemezsem beni kapının önüne koymakla tehdit ediyordu!', difficulty: 1, category: 'tanisma', relatedClues: [1022] },
++            { q: 'DükkÃ¢nın etrafında dolaşan yabancı kimdi?', a: 'Pelerinli ve uzun boylu biriydi... Yüzünü göremedim ama adımları çok hızlıydı.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+             { q: 'Çamur izleri hakkında ne biliyorsun?', a: 'Gece kapımın önünden göl kenarına doğru 42 numara iri çizme izleri gidiyordu.', difficulty: 1, category: 'tanisma', relatedClues: [1023] },
+             { q: 'Kasanın arkasındaki zehirli elma neyin nesi?', a: 'Kurtlanmayı önlemek için tarım ilacı dökmüştüm amirim, kimseye yedirecek değildim!', difficulty: 2, category: 'derinlesme', relatedClues: [1021] },
+-            { q: 'İpotek mektubundaki tehditler kime aitti?', a: 'Ekrem Bey yazmıştı! \'Ya parayı getir ya dükkânı boşalt\' diyordu.', difficulty: 3, category: 'yuzlestirme', relatedClues: [1022] },
++            { q: 'İpotek mektubundaki tehditler kime aitti?', a: 'Ekrem Bey yazmıştı! \'Ya parayı getir ya dükkÃ¢nı boşalt\' diyordu.', difficulty: 3, category: 'yuzlestirme', relatedClues: [1022] },
+             { q: 'Cinayet saatinde dışarı çıktın mı?', a: 'Sadece hava almak için kapıyı araladım, hepsi bu!', difficulty: 4, category: 'baski', relatedClues: [] },
+-            { q: 'Son sözün nedir Ayşe?', a: 'Ben iki çocuk annesiyim, dükkânım için yalvardım ama katil olmadım!', difficulty: 5, category: 'son', relatedClues: [] }
++            { q: 'Son sözün nedir Ayşe?', a: 'Ben iki çocuk annesiyim, dükkÃ¢nım için yalvardım ama katil olmadım!', difficulty: 5, category: 'son', relatedClues: [] }
+         ],
+         103: [ // Demirci Kazım
+             { q: 'Bu özel çelik kilidi kimin için yaptın?', a: 'Ekrem Bey sipariş etmişti. Çok gizli evraklarını koyacağı çelik bir kasa için özel üç tırnaklı kilit istedi.', difficulty: 1, category: 'tanisma', relatedClues: [1031] },
+@@ -3153,8 +3191,8 @@ function getGolgeFallbackQuestions(npcId, askedCount) {
+         104: [ // Bakkal Naciye
+             { q: 'Veresiye defterindeki isim neden karalandı?', a: 'Ekrem Bey borcunu nakit ödediğini söyleyince çizdim. Yanlış bir şey mi var?', difficulty: 1, category: 'tanisma', relatedClues: [1041] },
+             { q: 'Zehri kime sattığını hatırlıyor musun?', a: 'Fare zehirlerini Hekim Sevgi Hanım ve Manav Ayşe Hanım alırdı depodaki haşereler için.', difficulty: 1, category: 'tanisma', relatedClues: [1042] },
+-            { q: 'Ekrem Bey dükkânda ne kadar kaldı?', a: 'Cinayet akşamı saat 20:00 gibi uğradı, kibrit ve tütün alıp 5 dakikada çıktı.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+-            { q: 'Gece dükkânın arkasından gelen sesler neydi?', a: 'Kedilerdir ya da rüzgardır amirim... Fırtına vardı zaten.', difficulty: 1, category: 'tanisma', relatedClues: [1043] },
++            { q: 'Ekrem Bey dükkÃ¢nda ne kadar kaldı?', a: 'Cinayet akşamı saat 20:00 gibi uğradı, kibrit ve tütün alıp 5 dakikada çıktı.', difficulty: 1, category: 'tanisma', relatedClues: [] },
++            { q: 'Gece dükkÃ¢nın arkasından gelen sesler neydi?', a: 'Kedilerdir ya da rüzgardır amirim... Fırtına vardı zaten.', difficulty: 1, category: 'tanisma', relatedClues: [1043] },
+             { q: 'Yırtılan defter sayfasında ne yazıyordu?', a: 'Kasabanın önde gelenlerinin gizli borç listesiydi... Korktum, yırttım attım!', difficulty: 2, category: 'derinlesme', relatedClues: [1041] },
+             { q: 'Hekim Sevgi ile ne konuştunuz?', a: 'Zehir şişelerini teslim ettim, \'Dikkatli kullan\' dedi.', difficulty: 3, category: 'yuzlestirme', relatedClues: [1042] },
+             { q: 'Son sözün nedir Naciye Teyze?', a: 'Ben yaşlı bir bakkalım, kasabanın tüm sırları bendedir ama elim kana bulanmaz!', difficulty: 5, category: 'son', relatedClues: [] }
+@@ -3175,7 +3213,7 @@ function getGolgeFallbackQuestions(npcId, askedCount) {
+             { q: 'Masandaki mühürlü mektup kime gidecekti?', a: 'Kaymakamlığa resmi şikayet dilekçesiydi. Ekrem\'in usulsüzlüklerini bildiriyordum.', difficulty: 1, category: 'tanisma', relatedClues: [1063] },
+             { q: 'Sahte mühür iddialarına ne diyorsunuz?', a: 'İftira! Ben 15 yıllık muhtarım, mührüm de imzam da tertemizdir!', difficulty: 2, category: 'derinlesme', relatedClues: [1061] },
+             { q: 'Tehdit mektubunu siz mi yazdınız?', a: 'Sert bir dille uyardım evet, ama ölüm tehdidi asla yapmadım!', difficulty: 3, category: 'yuzlestirme', relatedClues: [1062] },
+-            { q: 'Son sözünüz nedir Muhtar Bey?', a: 'Gölge Şehir\'in düzenini sağlamak benim görevim. Katili bulun, adalete teslim edin!', difficulty: 5, category: 'son', relatedClues: [] }
++            { q: 'Son sözünüz nedir Muhtar Bey?', a: 'Gölge Åehir\'in düzenini sağlamak benim görevim. Katili bulun, adalete teslim edin!', difficulty: 5, category: 'son', relatedClues: [] }
+         ],
+         107: [ // Muallim Fehmi Bey
+             { q: 'Saatiniz neden tam cinayet saatinde durdu?', a: '02:14\'te durdu evladım... Dışarıdan gelen korkunç bir feryatla elimdeki köstekli saat yere düştü.', difficulty: 1, category: 'tanisma', relatedClues: [1071] },
+@@ -3189,8 +3227,8 @@ function getGolgeFallbackQuestions(npcId, askedCount) {
+         108: [ // Kunduracı Rasim
+             { q: 'Göl kenarındaki çamurlu çizme izleri sana mı ait?', a: 'Ben o çizmeleri sipariş üzerine kasabadaki pek çok kişiye diktim amirim. Taban kalıbı benimdir ama izi bırakan ben değilim.', difficulty: 1, category: 'tanisma', relatedClues: [1081] },
+             { q: 'Ekrem Bey sana kaçak deri getirmiş miydi?', a: 'Ekrem Bey ucuza getirdiği manda derilerini bana satmaya çalıştı. Kabul etmeyince aramız açıldı.', difficulty: 1, category: 'tanisma', relatedClues: [1082] },
+-            { q: 'Gece dükkânda ışık neden yanıktı?', a: 'Göl yoluna gidecek bir köylünün acil çizme siparişini yetiştiriyordum. Gece 02:00\'ye kadar mumlu iple diktim.', difficulty: 1, category: 'tanisma', relatedClues: [] },
+-            { q: 'Tezgâhındaki mumlu ip cinayette kullanılabilir mi?', a: 'Bu ip kalın saraç ipidir, kopmaz. Ama ben kundura dikerim, cana kıymam.', difficulty: 1, category: 'tanisma', relatedClues: [1083] },
++            { q: 'Gece dükkÃ¢nda ışık neden yanıktı?', a: 'Göl yoluna gidecek bir köylünün acil çizme siparişini yetiştiriyordum. Gece 02:00\'ye kadar mumlu iple diktim.', difficulty: 1, category: 'tanisma', relatedClues: [] },
++            { q: 'TezgÃ¢hındaki mumlu ip cinayette kullanılabilir mi?', a: 'Bu ip kalın saraç ipidir, kopmaz. Ama ben kundura dikerim, cana kıymam.', difficulty: 1, category: 'tanisma', relatedClues: [1083] },
+             { q: 'Manda derisindeki gizli bölmede ne vardı?', a: 'Sahte senetler ve tapu evrakları saklamıştı Ekrem! Ben görünce öfkeyle üzerime yürüdü!', difficulty: 2, category: 'derinlesme', relatedClues: [1082] },
+             { q: 'Gece 02:00\'den sonra göl kenarına gittin mi?', a: 'Sadece kapımın önündeki çamurları süpürdüm amirim, göle falan gitmedim!', difficulty: 3, category: 'yuzlestirme', relatedClues: [1081] },
+             { q: 'Mumlu iplikle boğulma izleri uyuşuyor mu?', a: 'Ben ip satmam, ayakkabı dikerim! Biri benden ip çaldıysa benim suçum ne?!', difficulty: 4, category: 'baski', relatedClues: [1083] },
+@@ -3261,7 +3299,20 @@ async function askQuestionBackend(npcId, question) {
+     // Duygu durumuna göre CSS sınıfı belirle ve sadece karakter katmanına uygula
+     const characterLayer = document.getElementById('npc-talk-character-layer');
+     if (characterLayer) {
+-        characterLayer.className = 'npc-talk-character-layer'; // Sıfırla
++        characterLayer.style.backgroundImage = (npc.portrait || talkBgImage)
++            ? `url('${npc.portrait || talkBgImage}?v=${Date.now()}')`
++            : 'none';
++        
++        if (npcId < 100) {
++            characterLayer.style.backgroundSize = 'cover';
++        } else {
++            characterLayer.style.backgroundSize = 'contain';
++        }
++        
++        characterLayer.style.backgroundPosition = 'center';
++        characterLayer.style.backgroundRepeat = 'no-repeat';
++        characterLayer.className = 'npc-talk-character-layer';
++        // Sıfırla
+         if (question.difficulty > 3 || question.category === 'baski') {
+             characterLayer.classList.add('emotion-angry');
+         } else if (question.category === 'yuzlestirme') {
+@@ -3415,7 +3466,7 @@ function askFreeAiQuestion() {
+         setTimeout(() => stopSound(mumble), 1500);
+     }
+ 
+-    // Backend Yerel Yapay Zeka Motoruna İstek Gönder (Gölge Şehir veya Gizemli Kasaba)
++    // Backend Yerel Yapay Zeka Motoruna İstek Gönder (Gölge Åehir veya Gizemli Kasaba)
+     const isSisoren = window.currentActiveTown === 'sisoren' && activeNpcId >= 200;
+     const isGolge = !isSisoren && (activeNpcId >= 100);
+     const targetEndpoint = isSisoren ? '/api/sisoren/interrogate' : (isGolge ? '/api/golge-sehir/interrogate' : '/api/game/interrogate');
+@@ -3431,14 +3482,14 @@ function askFreeAiQuestion() {
+             let answer = data.dialogue;
+             if (!answer || answer.trim() === '') {
+                 const npcFallbacks = {
+-                    1: "*Satırını tezgaha bırakır* Amirim, kasap dükkânımda her gün yüzlerce et parçası doğrarım. Cinayet soruşturmasıyla ilgili net bir soru sorarsanız size yardımcı olmaya çalışırım.",
++                    1: "*Satırını tezgaha bırakır* Amirim, kasap dükkÃ¢nımda her gün yüzlerce et parçası doğrarım. Cinayet soruşturmasıyla ilgili net bir soru sorarsanız size yardımcı olmaya çalışırım.",
+                     2: "*İlaç şişelerini düzenler* Eczanemde her türlü ilacın kaydı var amirim. Osman Bey vakasıyla ilgili ne öğrenmek istiyorsanız açıkça sorun.",
+                     3: "*Evrakları düzeltir* Muhtarlık makamındayım dedektif. Kasabanın huzuru ve davayla ilgili ne soracaksanız buyurun.",
+                     4: "*Rozetini düzeltir* Karakoldayız amirim. Soruşturmayla ilgili tutanaklarımız meydanda, ne bilmek istiyorsanız sorun.",
+                     5: "*İğnesini kumaşa batırır* Yaşlı bir terziyim evladım. Cinayet gecesi ve şüpheliler hakkında ne merak ediyorsanız dinliyorum.",
+                     101: "*Baltasını omzuna alır* Ormandan gelen sesler ve Ekrem Bey cinayeti hakkında ne soracaksanız sorun amirim.",
+                     102: "*Tezgahı siler* Manav Ayşe olarak Ekrem Bey vakası hakkında bildiklerimi anlatmaya hazırım amirim.",
+-                    103: "*Çekici örse vurur* Demirci Kâzım'ım ben. Ekrem'in çelik kasası veya cinayet hakkında ne soracaksınız?",
++                    103: "*Çekici örse vurur* Demirci KÃ¢zım'ım ben. Ekrem'in çelik kasası veya cinayet hakkında ne soracaksınız?",
+                     104: "*Veresiye defterini kapatır* Bakkal Naciye her şeyi duyar amirim. Ekrem Bey hakkında ne bilmek istiyorsunuz?",
+                     105: "*Tıp kitabını kapatır* Hekim olarak tıbbi sorularınıza ve cinayet şüphelerinize yanıt verebilirim amirim.",
+                     106: "*Masasına yaslanır* Muhtar Cevdet olarak kasaba halkı ve Ekrem Bey hakkında ne soracaksanız buyurun.",
+@@ -3452,8 +3503,20 @@ function askFreeAiQuestion() {
+             // Karakter duygu stili
+             const characterLayer = document.getElementById('npc-talk-character-layer');
+             if (characterLayer) {
+-                characterLayer.className = 'npc-talk-character-layer';
+-                if (emotion === 'Panik' || emotion === 'Sinirli') {
++        characterLayer.style.backgroundImage = (npc.portrait || talkBgImage)
++            ? `url('${npc.portrait || talkBgImage}?v=${Date.now()}')`
++            : 'none';
++        
++        if (npcId < 100) {
++            characterLayer.style.backgroundSize = 'cover';
++        } else {
++            characterLayer.style.backgroundSize = 'contain';
++        }
++        
++        characterLayer.style.backgroundPosition = 'center';
++        characterLayer.style.backgroundRepeat = 'no-repeat';
++        characterLayer.className = 'npc-talk-character-layer';
++        if (emotion === 'Panik' || emotion === 'Sinirli') {
+                     characterLayer.classList.add('emotion-angry');
+                 } else if (emotion === 'Tedirgin' || emotion === 'Gergin') {
+                     characterLayer.classList.add('emotion-nervous');
+@@ -3626,7 +3689,7 @@ function openBag() {
+         showCinematicHelper("Amirims, çantamız henüz bomboş (0/5 delil)! Binalardaki nesnelere tıklayarak delilleri toplayın.", false);
+     } else {
+         const itemNames = currentBag.map(c => `'${c.name}'`).join(', ');
+-        showCinematicHelper(`Amirims, çantamızda şu an tam ${currentBag.length} delil var: ${itemNames}. Şüphelileri sorgularken bu deliller büyük kozumuz!`, false);
++        showCinematicHelper(`Amirims, çantamızda şu an tam ${currentBag.length} delil var: ${itemNames}. Åüphelileri sorgularken bu deliller büyük kozumuz!`, false);
+     }
+     logAction('open_bag', null, `${currentBag.length} delil`);
+ }
+@@ -3642,7 +3705,7 @@ document.getElementById('close-bag-btn')?.addEventListener('click', () => bagMod
+ document.getElementById('close-bag-x-btn')?.addEventListener('click', () => bagModal.classList.add('hidden'));
+ 
+ // =============================================================
+-// 7. BULDUM! (SUÇLAMA SİSTEMİ) — 8 ŞÜPHELİ MASA KARTLARI
++// 7. BULDUM! (SUÇLAMA SİSTEMİ) — 8 ÅÜPHELİ MASA KARTLARI
+ // =============================================================
+ 
+ document.getElementById('found-btn').addEventListener('click', () => {
+@@ -3727,9 +3790,9 @@ function renderFoundScreen() {
+                    <img src="${npcImg}" alt="${npc.name}" class="found-npc-img" data-npc-id="${id}" title="Konuşma geçmişini görüntüle" onerror="this.src='images/dedektif.png'">
+                </div>`
+             : (isSisoren
+-                ? `<div class="found-npc-photo-wrap sisoren-placeholder-photo" data-npc-id="${id}" title="Şüpheli #${id}">
++                ? `<div class="found-npc-photo-wrap sisoren-placeholder-photo" data-npc-id="${id}" title="Åüpheli #${id}">
+                        <i class="fa-solid fa-user-secret sisoren-placeholder-icon"></i>
+-                       <span class="sisoren-placeholder-text">ŞÜPHELİ #${id - 200}</span>
++                       <span class="sisoren-placeholder-text">ÅÜPHELİ #${id - 200}</span>
+                    </div>`
+                 : `<div class="found-npc-photo-wrap">
+                        <img src="${npcImg}" alt="${npc.name}" class="found-npc-img" data-npc-id="${id}" title="Konuşma geçmişini görüntüle" onerror="this.src='images/dedektif.png'">
+@@ -3768,7 +3831,7 @@ function renderFoundScreen() {
+         // Ayırıcı başlık
+         const separator = document.createElement('div');
+         separator.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 12px; border-top: 1px solid rgba(52, 211, 153, 0.3); margin-top: 10px;';
+-        separator.innerHTML = '<span style="color: #6ee7b7; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px;"><i class="fa-solid fa-users"></i> KONUŞULAN KASABALILAR (Yan Şüpheliler)</span>';
++        separator.innerHTML = '<span style="color: #6ee7b7; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px;"><i class="fa-solid fa-users"></i> KONUÅULAN KASABALILAR (Yan Åüpheliler)</span>';
+         grid.appendChild(separator);
+ 
+         window.sisorenTalkedExtraNpcs.forEach(extraId => {
+@@ -3860,7 +3923,7 @@ window.accuseNpc = function (accusedId) {
+             resultIcon.innerHTML = '<i class="fa-solid fa-shield-halved" style="color: #10b981;"></i>';
+         }
+         if (resultTitle) {
+-            resultTitle.textContent = 'BU KİŞİ MASUMDUR!';
++            resultTitle.textContent = 'BU KİÅİ MASUMDUR!';
+             resultTitle.style.color = '#10b981';
+         }
+         if (resultMessage) {
+@@ -3896,7 +3959,7 @@ window.accuseNpc = function (accusedId) {
+ 
+     foundModal.classList.add('hidden');
+ 
+-    // YENİ HAPİS GÖRSELLERİNİ KULLAN (GİZEMLİ KASABA & GÖLGE ŞEHİR)
++    // YENİ HAPİS GÖRSELLERİNİ KULLAN (GİZEMLİ KASABA & GÖLGE ÅEHİR)
+     const jailImages = {
+         1: 'images/jail_hasan.png',
+         2: 'images/jail_selma.png',
+@@ -3918,7 +3981,7 @@ window.accuseNpc = function (accusedId) {
+     const jailNpcName = document.getElementById('jail-npc-name');
+     const jailArrestedText = document.getElementById('jail-arrested-text');
+ 
+-    if (jailNpcFull) jailNpcFull.src = jailImages[npc.id] || npc.img;
++    if (jailNpcFull) jailNpcFull.src = jailImages[npc.id] || npc.img || npc.portrait;
+     if (jailNpcName) jailNpcName.textContent = npc.name;
+ 
+     // Animasyonu sıfırla
+@@ -3948,7 +4011,7 @@ window.accuseNpc = function (accusedId) {
+         playJudgeGavelTripleStrike();
+     }
+ 
+-    // Animasyon sırasında API'ye sor (Sisören, Gölge Şehir veya Gizemli Kasaba)
++    // Animasyon sırasında API'ye sor (Sisören, Gölge Åehir veya Gizemli Kasaba)
+     let accuseEndpoint;
+     if (accusedId >= 201 || window.currentActiveTown === 'sisoren') {
+         accuseEndpoint = '/api/sisoren/accuse';
+@@ -3983,7 +4046,7 @@ window.accuseNpc = function (accusedId) {
+                 const realKiller = NPC_DATA[serverGuiltyId] || NPC_DATA[1];
+                 const accusedNpc = NPC_DATA[accusedId] || NPC_DATA[1];
+ 
+-                // SUÇLU DOĞRU MU KONTROLÜ (API sonucu veya ID eşleşmesi)
++                // SUÇLU DOÄRU MU KONTROLÜ (API sonucu veya ID eşleşmesi)
+                 const isCorrect = (data.success === true) || (accusedId === serverGuiltyId);
+ 
+                 if (isCorrect) {
+@@ -3997,7 +4060,7 @@ window.accuseNpc = function (accusedId) {
+                             if (tagEl) {
+                                 tagEl.classList.remove('tag-locked');
+                                 tagEl.classList.add('tag-active');
+-                                tagEl.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> GÖLGEŞEHİR <span class="status-badge status-open" style="background:#f59e0b; color:#111;">Soruşturmaya Açık</span>';
++                                tagEl.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> GÖLGEÅEHİR <span class="status-badge status-open" style="background:#f59e0b; color:#111;">Soruşturmaya Açık</span>';
+                             }
+                         }
+                     }
+@@ -4010,7 +4073,7 @@ window.accuseNpc = function (accusedId) {
+                     <div class="result-verdict">
+                         <div class="result-verdict-line"><i class="fa-solid fa-user-check" style="color:var(--success)"></i> Sizin Seçiminiz: <strong>${accusedNpc.name}</strong></div>
+                         <div class="result-verdict-line"><i class="fa-solid fa-handcuffs" style="color:var(--accent)"></i> Gerçek Katil: <strong>${realKiller.name}</strong></div>
+-                        <div class="result-verdict-correct"><i class="fa-solid fa-circle-check"></i> DOĞRU TAHMİN!</div>
++                        <div class="result-verdict-correct"><i class="fa-solid fa-circle-check"></i> DOÄRU TAHMİN!</div>
+                     </div>
+                     <div class="result-story">
+                         <div class="result-story-header"><i class="fa-solid fa-book-skull"></i> O Gecenin Hikayesi</div>
+@@ -4046,15 +4109,20 @@ window.accuseNpc = function (accusedId) {
+                             document.getElementById('world-map-screen')?.classList.remove('hidden');
+ 
+                             // Kasaba durumunu temizle
+-                            window.currentActiveTown = 'gizemli';
+-                            document.body.classList.remove('golge-sehir-theme');
++                            setTownTheme('gizemli');
+                             visitedBuildings.clear();
+                             if (window.GolgeSehirEngine) {
+                                 window.GolgeSehirEngine.visitedGolgeBuildings.clear();
+                                 window.GolgeSehirEngine.clearGolgeSehirMap();
+                                 window.GolgeSehirEngine.resetGolgeState();
+                             }
++                            if (window.SisorenEngine) {
++                                window.SisorenEngine.visitedSisorenBuildings.clear();
++                                window.SisorenEngine.clearSisorenMap();
++                                window.SisorenEngine.resetSisorenState();
++                            }
+                             currentBag = [];
++                            window.currentBag = currentBag;
+                             submittedBloodClueIds.clear();
+                             submittedPrintClueIds.clear();
+                             submittedForensicCount = 0;
+@@ -4075,9 +4143,9 @@ window.accuseNpc = function (accusedId) {
+                         // Çetin bölge haritasında durumu kutlar
+                         setTimeout(() => {
+                             if (window.gizemliSolved && window.golgeSolved) {
+-                                showCinematicHelper("Harika bir iş çıkardık Amirims! Hem Gizemli Kasaba'yı hem de Gölge Şehir'i aydınlattık! Şimdi diğer kasabalardaki yeni gizemlere odaklanalım!", false, 'world_map_both_solved');
++                                showCinematicHelper("Harika bir iş çıkardık Amirims! Hem Gizemli Kasaba'yı hem de Gölge Åehir'i aydınlattık! Åimdi diğer kasabalardaki yeni gizemlere odaklanalım!", false, 'world_map_both_solved');
+                             } else if (window.gizemliSolved) {
+-                                showCinematicHelper("Tebrikler Amirims! Gizemli Kasaba davasını başarıyla çözdük ve Gölge Şehir'in kilidini açtık. Hazır olduğunuzda yeni kasabaya geçelim!", false, 'world_map_gizemli_solved');
++                                showCinematicHelper("Tebrikler Amirims! Gizemli Kasaba davasını başarıyla çözdük ve Gölge Åehir'in kilidini açtık. Hazır olduğunuzda yeni kasabaya geçelim!", false, 'world_map_gizemli_solved');
+                             }
+                         }, 800);
+                     };
+@@ -4092,7 +4160,7 @@ window.accuseNpc = function (accusedId) {
+                     <div class="result-verdict">
+                         <div class="result-verdict-line"><i class="fa-solid fa-user-xmark" style="color:var(--danger)"></i> Sizin Seçiminiz: <strong>${accusedNpc.name}</strong> <span style="color:var(--danger)">(MASUM)</span></div>
+                         <div class="result-verdict-line"><i class="fa-solid fa-handcuffs" style="color:var(--accent)"></i> Gerçek Katil: <strong>${realKiller.name}</strong></div>
+-                        <div class="result-verdict-wrong"><i class="fa-solid fa-circle-xmark"></i> YANLIŞ TAHMİN!</div>
++                        <div class="result-verdict-wrong"><i class="fa-solid fa-circle-xmark"></i> YANLIÅ TAHMİN!</div>
+                     </div>
+                     <div class="result-story">
+                         <div class="result-story-header"><i class="fa-solid fa-book-skull"></i> O Gecenin Hikayesi</div>
+@@ -4111,15 +4179,20 @@ window.accuseNpc = function (accusedId) {
+                             document.getElementById('world-map-screen')?.classList.remove('hidden');
+ 
+                             // Kasaba durumunu temizle
+-                            window.currentActiveTown = 'gizemli';
+-                            document.body.classList.remove('golge-sehir-theme');
++                            setTownTheme('gizemli');
+                             visitedBuildings.clear();
+                             if (window.GolgeSehirEngine) {
+                                 window.GolgeSehirEngine.visitedGolgeBuildings.clear();
+                                 window.GolgeSehirEngine.clearGolgeSehirMap();
+                                 window.GolgeSehirEngine.resetGolgeState();
+                             }
++                            if (window.SisorenEngine) {
++                                window.SisorenEngine.visitedSisorenBuildings.clear();
++                                window.SisorenEngine.clearSisorenMap();
++                                window.SisorenEngine.resetSisorenState();
++                            }
+                             currentBag = [];
++                            window.currentBag = currentBag;
+                             submittedBloodClueIds.clear();
+                             submittedPrintClueIds.clear();
+                             submittedForensicCount = 0;
+@@ -4158,7 +4231,7 @@ window.innocentNpc = function (npcId) {
+     innocentNpcIds.add(npcId);
+ 
+     const npc = (window.NPC_DATA && window.NPC_DATA[npcId]) || NPC_DATA[npcId];
+-    const npcName = npc ? npc.name : `Şüpheli #${npcId}`;
++    const npcName = npc ? npc.name : `Åüpheli #${npcId}`;
+ 
+     // Ekrandaki kartı anında güncelle
+     const card = document.querySelector(`.found-npc-card .found-npc-img[data-npc-id="${npcId}"]`)?.closest('.found-npc-card');
+@@ -4209,16 +4282,16 @@ document.getElementById('result-retry-btn')?.addEventListener('click', () => {
+ 
+ 
+ // =============================================================
+-// 9. YARDIMCI DEDEKTİF (ÇETİN) — SİNEMATİK BAĞLAM SİSTEMİ
++// 9. YARDIMCI DEDEKTİF (ÇETİN) — SİNEMATİK BAÄLAM SİSTEMİ
+ // =============================================================
+ 
+ const HELPER_TIPS = [
+-    "Amirims! Kasap Hasan'ın dükkânındaki kara kaplı veresiye defterine dikkat ettiniz mi? Kurbanın adı çizilmiş!",
+-    "Eczacı Selma sarmaşıklardan ilaç yaptığını söylüyor ama tezgâh altındaki şişe zehir barındırıyor olabilir amirims.",
++    "Amirims! Kasap Hasan'ın dükkÃ¢nındaki kara kaplı veresiye defterine dikkat ettiniz mi? Kurbanın adı çizilmiş!",
++    "Eczacı Selma sarmaşıklardan ilaç yaptığını söylüyor ama tezgÃ¢h altındaki şişe zehir barındırıyor olabilir amirims.",
+     "Muhtar Kemal arazi anlaşmazlıklarını reddediyor ama kasasında sahte tapu evrakları bulduk!",
+     "Komiser Güneş olay yerindeki delilleri gizli tutmaya çalışıyor. Polis rozetini sorgulayın amirims!",
+     "Terzi Yahya ceketlerin astarına gizli cepler diker. Kurbanın son ceketindeki notu ve USB'yi arayın!",
+-    "Amirims, çantanıza aldığınız ipuçlarını 'İncele' butonuna basarak detaylı okuyabilirsiniz. Şifreler orada gizli!"
++    "Amirims, çantanıza aldığınız ipuçlarını 'İncele' butonuna basarak detaylı okuyabilirsiniz. Åifreler orada gizli!"
+ ];
+ 
+ let currentTipIndex = 0;
+@@ -4239,8 +4312,8 @@ const HELPER_FALLBACK_MESSAGES = {
+ 
+ // Bina-bazlı fallback mesajlar
+ const BUILDING_HELPER_MESSAGES = {
+-    'Kasap': 'Burası Kasap Hasan\'ın dükkânı Amirims. Tezgahtaki satıra, deftere ve yırtık önlüğe dikkat et. Hasan sert bir adam, ama gözlerinde korku var...',
+-    'Eczane': 'Eczacı Selma\'nın dükkânındayız Amirims. Tezgah altına, reçete defterine ve ilaç şişelerine dikkat et. Bu kadın zehirler konusunda uzman...',
++    'Kasap': 'Burası Kasap Hasan\'ın dükkÃ¢nı Amirims. Tezgahtaki satıra, deftere ve yırtık önlüğe dikkat et. Hasan sert bir adam, ama gözlerinde korku var...',
++    'Eczane': 'Eczacı Selma\'nın dükkÃ¢nındayız Amirims. Tezgah altına, reçete defterine ve ilaç şişelerine dikkat et. Bu kadın zehirler konusunda uzman...',
+     'Muhtarlık': 'Muhtar Kemal\'in ofisindeyiz Amirims. Çekmecesindeki mektuplara, kırık gözlüğe ve kasasına dikkat et. Bu adam her şeyi kontrol etmek istiyor...',
+     'Karakol': 'Komiser Güneş\'in karakolundayız Amirims. Polis rozetine, gizli dosyaya ve kayıp düğmeye dikkat et. Bir polis neden delilleri saklasın ki?',
+     'Terzi': 'Terzi Yahya\'nın atölyesindeyiz Amirims. İplik makarasına, yırtık kumaşa ve gizli cebe dikkat et. Bu yaşlı adam bildiklerinden fazlasını saklıyor...'
+@@ -4268,7 +4341,7 @@ function showCinematicHelper(message, isOneTime = true, contextKey = '', skipHis
+     // Apply speaker details if provided
+     if (speakerInfo) {
+         if (speakerInfo.theme) {
+-            box.classList.remove('rifat-speaking', 'cetin-speaking');
++            box.classList.remove('rifat-speaking', 'cetin-speaking', 'ilyas-speaking');
+             box.classList.add(speakerInfo.theme);
+         }
+         if (speakerInfo.avatar && avatarImg) {
+@@ -4279,7 +4352,7 @@ function showCinematicHelper(message, isOneTime = true, contextKey = '', skipHis
+         }
+     } else {
+         // Default to Çetin
+-        box.classList.remove('rifat-speaking');
++        box.classList.remove('rifat-speaking', 'ilyas-speaking');
+         box.classList.add('cetin-speaking');
+         if (avatarImg) avatarImg.src = 'images/dedektif_helper.png';
+         if (nameEl) nameEl.textContent = 'YARDIMCI DEDEKTİF ÇETİN';
+@@ -4292,7 +4365,7 @@ function showCinematicHelper(message, isOneTime = true, contextKey = '', skipHis
+                 speaker: 'cetin',
+                 speakerName: nameEl ? nameEl.textContent : 'YARDIMCI DEDEKTİF ÇETİN',
+                 avatar: avatarImg ? avatarImg.src : 'images/dedektif_helper.png',
+-                theme: box.classList.contains('rifat-speaking') ? 'rifat-speaking' : 'cetin-speaking'
++                theme: box.classList.contains('rifat-speaking') ? 'rifat-speaking' : (box.classList.contains('ilyas-speaking') ? 'ilyas-speaking' : 'cetin-speaking')
+             }
+         };
+         helperMessageHistory.push(historyItem);
+@@ -4395,15 +4468,15 @@ function provideBuildingSpecificHint(npcId = activeNpcId) {
+ 
+     let hintMsg = `Amirims, ${npc.building} binasındayız! Odada incelenebilecek deliller: ${clueNames}. `;
+     if (npcId === 1) { // Kasap
+-        hintMsg += `Tezgaha saplanan Kanlı Satır'daki kan izlerine, Kara Kaplı Defter'e ve Yırtık Önlük'e dikkat et. Şüpheli sırrı: "${npc.secret}"`;
++        hintMsg += `Tezgaha saplanan Kanlı Satır'daki kan izlerine, Kara Kaplı Defter'e ve Yırtık Önlük'e dikkat et. Åüpheli sırrı: "${npc.secret}"`;
+     } else if (npcId === 2) { // Eczane
+-        hintMsg += `Tezgah altındaki Zehirli Sarmaşık'a, Boş İlaç Şişesi'ne ve Reçete Defteri'ne odaklan. Şüpheli sırrı: "${npc.secret}"`;
++        hintMsg += `Tezgah altındaki Zehirli Sarmaşık'a, Boş İlaç Åişesi'ne ve Reçete Defteri'ne odaklan. Åüpheli sırrı: "${npc.secret}"`;
+     } else if (npcId === 3) { // Muhtarlık
+-        hintMsg += `Çekmecedeki Tehdit Mektubu'na, Tablonun arkasındaki Gizli Kasa'ya ve yerdeki Kırık Gözlük'e dikkat et. Şüpheli sırrı: "${npc.secret}"`;
++        hintMsg += `Çekmecedeki Tehdit Mektubu'na, Tablonun arkasındaki Gizli Kasa'ya ve yerdeki Kırık Gözlük'e dikkat et. Åüpheli sırrı: "${npc.secret}"`;
+     } else if (npcId === 4) { // Karakol
+-        hintMsg += `Masadaki 'GİZLİ' damgalı dosyaya, Polis Rozeti'ne ve paltonun Kopmuş Düğmesi'ne odaklan. Şüpheli sırrı: "${npc.secret}"`;
++        hintMsg += `Masadaki 'GİZLİ' damgalı dosyaya, Polis Rozeti'ne ve paltonun Kopmuş Düğmesi'ne odaklan. Åüpheli sırrı: "${npc.secret}"`;
+     } else if (npcId === 5) { // Terzi
+-        hintMsg += `Kanlı İplik Makarası'na, Yırtık Kumaş parçasına ve ceketin astarındaki Gizli Cep'e dikkat et. Şüpheli sırrı: "${npc.secret}"`;
++        hintMsg += `Kanlı İplik Makarası'na, Yırtık Kumaş parçasına ve ceketin astarındaki Gizli Cep'e dikkat et. Åüpheli sırrı: "${npc.secret}"`;
+     }
+     showCinematicHelper(hintMsg, false);
+ }
+@@ -4629,27 +4702,21 @@ function checkAndDropClues(npcId, clueIds) {
+     if (!npcSceneObjects) return;
+ 
+     clueIds.forEach(clueId => {
+-        // Çanta limiti kontrolü (Maksimum MAX_BAG_SIZE / 5)
+-        if (currentBag.length >= MAX_BAG_SIZE) return;
+-
+-        // Zaten çantada var mı?
+         if (currentBag.some(c => c.id === clueId)) return;
+ 
+-        // Clue bilgisini SCENE_OBJECTS içinden bul
+         const clueInfo = npcSceneObjects.find(obj => obj.id === clueId);
+         if (clueInfo) {
+-            currentBag.push(clueInfo);
+-            window.currentBag = currentBag;
+-            newCluesFound = true;
++            const hotspot = document.querySelector(`.hotspot-wrapper[data-clue-id="${clueId}"]`);
++            if (hotspot && hotspot.classList.contains('hidden-clue')) {
++                hotspot.classList.remove('hidden-clue');
++                newCluesFound = true;
++            }
+         }
+     });
+ 
+     if (newCluesFound) {
+-        showClueBadge();
++        showCinematicHelper("Amirim! Åüphelinin anlattıklarına göre odada yeni bir delil olmalı, etrafı inceleyelim!", false);
+         saveGameState();
+-        checkAutopsyConditions();
+-        // Sinematik bildirim
+-        triggerHelperMessage('clue_found', null, false);
+     }
+ }
+ 
+@@ -4780,3 +4847,4 @@ function startThunder() {
+ 
+ // Start thunder immediately when game starts
+ startThunder();
++

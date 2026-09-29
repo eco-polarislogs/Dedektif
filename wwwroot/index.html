@@ -53,19 +53,19 @@
                 </div>
             </div>
 
-            <div class="region-town town-locked" style="top: 18%; left: 10%; width: 20%; height: 20%;"
+            <div class="region-town town-active" style="top: 18%; left: 10%; width: 20%; height: 20%;"
                 data-town-name="Gölgeşehir">
-                <div class="region-town-tag tag-locked">
-                    <i class="fa-solid fa-lock"></i> GÖLGEŞEHİR
-                    <span class="status-badge status-locked">Kilitli Bölge</span>
+                <div class="region-town-tag tag-active tag-golge">
+                    <i class="fa-solid fa-magnifying-glass"></i> GÖLGEŞEHİR
+                    <span class="status-badge status-open status-open-golge">Soruşturmaya Açık </span>
                 </div>
             </div>
 
-            <div class="region-town town-locked town-sisoren-btn" style="top: 9%; left: 42%; width: 20%; height: 18%;"
+            <div class="region-town town-active  town-sisoren-btn" style="top: 9%; left: 42%; width: 20%; height: 18%;"
                 data-town-id="sisoren" data-town-name="Sisören">
-                <div class="region-town-tag tag-locked tag-sisoren">
-                    <i class="fa-solid fa-lock"></i> SİSÖREN
-                    <span class="status-badge status-locked">Kilitli Bölge</span>
+                <div class="region-town-tag tag-active tag-sisoren">
+                    <i class="fa-solid fa-magnifying-glass"></i> SİSÖREN
+                    <span class="status-badge status-open status-open-sisoren">Soruşturmaya Açık</span>
                 </div>
             </div>
 
@@ -145,8 +145,8 @@
             </div>
             <!-- YARDIMCI DEDEKTİF AVATARI (HARİTA) -->
             <div id="town-helper-btn" class="helper-detective-widget" title="Yardımcı Dedektif Çetin'den İpucu Al">
-                <img src="images/dedektif_helper.png" alt="Yardımcı Dedektif" class="helper-detective-img">
-                <div class="helper-detective-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
+                <img src="images/dedektif_helper.png" alt="Yardımcı Dedektif" class="helper-detective-img cetin-img">
+                <div class="helper-detective-badge cetin-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
             </div>
         </div>
 
@@ -176,8 +176,8 @@
 
             <!-- YARDIMCI DEDEKTİF AVATARI (BİNA İÇİ) -->
             <div id="interior-helper-btn" class="helper-detective-widget" title="Yardımcı Dedektif Çetin'den İpucu Al">
-                <img src="images/dedektif_helper.png?v=10" alt="Yardımcı Dedektif" class="helper-detective-img">
-                <div class="helper-detective-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
+                <img src="images/dedektif_helper.png?v=10" alt="Yardımcı Dedektif" class="helper-detective-img cetin-img">
+                <div class="helper-detective-badge cetin-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
             </div>
         </div>
 
@@ -187,7 +187,7 @@
         <button id="interior-bag-btn" class="global-bag-btn"><i class="fa-solid fa-briefcase"></i> Çanta</button>
     </div>
 
-    <!-- YARDIMCI DEDEKTİF MODALI / İPUCU BALONCUÄU -->
+    <!-- YARDIMCI DEDEKTİF MODALI / İPUCU BALONCUĞU -->
     <div id="helper-modal" class="modal-backdrop hidden" style="z-index: 5000;">
         <div class="helper-modal-container">
             <div class="helper-modal-header">
@@ -620,9 +620,8 @@
     </button>
 
     <!-- AUDIO ELEMENTS -->
-    <!-- Noir ambiance/music (CHANGED TO DARK AMBIENT CITY) -->
-    <audio id="bg-music" loop preload="auto"
-        src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_7306fb21c0.mp3"></audio>
+    <!-- Noir ambiance/music (REMOVED: Pixabay 403) -->
+    <audio id="bg-music" loop preload="auto" src=""></audio>
     <!-- Chatter / Murmur -->
     <audio id="chatter-sound" loop preload="auto"
         src="https://actions.google.com/sounds/v1/crowds/voices_murmuring.ogg"></audio>
@@ -668,6 +667,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Core Managers -->
+
 
     <!-- Gölge Şehir İzole Modül Dosyaları -->
     <script src="js/towns/golge_sehir/GolgeSehirConfig.js?v=815"></script>

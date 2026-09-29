@@ -142,17 +142,54 @@ public class LocalAiEngine : IAIService
             }
         }
 
+        // 0.3 DİNAMİK STRES VE KÖŞEYE SIKIŞMA (ÇOKLU DELİL KOMBİNASYONU)
+        // Eğer oyuncu tek bir cümlede hem Silah hem de Motifi beraber sorarsa (Çapraz Sorgu):
+        bool asksWeaponAndMotive = TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "satir", "bicak", "zehir", "iplik", "kanli", "silah", "ceset")
+                                && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "borc", "para", "tapu", "rusvet", "kavga", "tartisma", "neden", "husumet");
+        
+        // Veya son 3 soruda NPC sürekli sıkıştırıldıysa (History Stress Calculation):
+        int recentAggressiveQuestions = history.Count(h => h.DetectedEmotion == "Kızgın" || h.DetectedEmotion == "Panik" || h.DetectedEmotion == "Şüpheli" || h.TrustChange < 0);
+        bool isCornered = asksWeaponAndMotive || recentAggressiveQuestions >= 3;
+
+        if (isCornered)
+        {
+            if (isGuilty)
+            {
+                return new AIInteractionResponse
+                {
+                    Dialogue = $"*Terlemeye başlar, gözlerini kaçırır* N-ne demek istiyorsun amirim?! Ben... benim hiçbir şeyden haberim yok! Üstüme gelme! Çık dışarı!",
+                    Emotion = "Panik",
+                    TrustChange = -5,
+                    StressIncrease = 40
+                };
+            }
+            else
+            {
+                return new AIInteractionResponse
+                {
+                    Dialogue = $"*Sinirlenir ve ellerini masaya vurur* Yeter amirim! Beni işlemediğim bir cinayetle suçlayıp duruyorsun! Git gerçek katili bul, benimle uğraşmayı bırak!",
+                    Emotion = "Kızgın",
+                    TrustChange = -5,
+                    StressIncrease = 30
+                };
+            }
+        }
+
         // 1. Türkçe Anlamsal / Niyet Analizi (Intent & Concept Detection)
         string processedSentence = TurkishTextEngine.PreprocessSentence(normalizedAscii);
 
+        // BAŞKASININ SUÇLAMASI / ÇAPRAZ SORGU TESPİTİ (Tüm Kasabalar İçin)
+        bool isThirdPartyAccusation = TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "dedi", "diyor", "soyluyor", "sucluyor", "iddia", "soyledi", "katil", "supheli")
+            && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "kasap", "terzi", "eczaci", "muhtar", "komiser", "hasan", "selma", "kemal", "gunes", "yahya", "tahsin", "ayse", "kazim", "naciye", "sevgi", "cevdet", "fehmi", "rasim", "bakkal", "manav", "demirci", "hekim", "muallim", "kunduraci", "telgrafci", "kahveci", "sinemaci", "sahaf", "tutuncu", "coban", "tupcu", "hurdaci", "madenci", "dokumaci", "sifaci", "kurban", "maktul", "osman", "ekrem", "halil");
+
         // DOĞRUDAN SUÇLAMA TESPİTİ (Tüm devrik ve ek kombinasyonları)
-        bool isDirectAccusation = TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii,
+        bool isDirectAccusation = !isThirdPartyAccusation && (TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii,
             "katil sen", "katilsin", "suclu sen", "suclusun", "sen yaptin", "sen yapmissin", "sen oldurdun", 
             "sen kiy", "sen vurdun", "sen kestin", "sen bogdun", "sen zehirledin", "itiraf et", "itiraf eyle",
             "sen misin katil", "katil sen misin", "katil sensin", "senin parmagin var", "senin isin bu", "katil oldugunu biliyorum",
             "sen mi isledin", "sen mi yaptin", "sen mi oldurdun", "cinayeti sen mi", "zehri sen mi", "sen mi zehirledin", "sen mi kestin", "sen mi vurdun")
             || TurkishTextEngine.ContainsAnyConcept(rawTrLower, processedSentence,
-            "katil sen", "suclu sen", "sen oldur", "itiraf et", "katil sen", "sen katil", "sen isle", "sen yap");
+            "katil sen", "suclu sen", "sen oldur", "itiraf et", "katil sen", "sen katil", "sen isle", "sen yap"));
 
         // GENEL ŞÜPHELİ VE FİKİR SORGUSU (Devrik cümleler dahil)
         bool isOpinionQuery = !isDirectAccusation && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii,
@@ -193,6 +230,52 @@ public class LocalAiEngine : IAIService
                 Emotion = "Sakin",
                 TrustChange = 1,
                 StressIncrease = 0
+            };
+        }
+
+        // 1.1 DEDİKODU VE ÇAPRAZ SORGU (GOSSIP ENGINE) TÜM KASABALAR
+        string? targetNpcRole = null;
+        
+        // Gizemli Kasaba
+        if (npc.NPCId != 1 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "hasan", "kasap")) targetNpcRole = "Kasap";
+        else if (npc.NPCId != 2 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "selma", "eczaci")) targetNpcRole = "Eczacı";
+        else if (npc.NPCId != 3 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "kemal", "muhtar")) targetNpcRole = "Muhtar";
+        else if (npc.NPCId != 4 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "gunes", "komiser", "polis")) targetNpcRole = "Komiser";
+        else if (npc.NPCId != 5 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "yahya", "terzi")) targetNpcRole = "Terzi";
+
+        // Gölge Şehir
+        else if (npc.NPCId != 101 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "tahsin", "oduncu")) targetNpcRole = "Oduncu";
+        else if (npc.NPCId != 102 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "ayse", "manav")) targetNpcRole = "Manav";
+        else if (npc.NPCId != 103 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "kazim", "demirci")) targetNpcRole = "Demirci";
+        else if (npc.NPCId != 104 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "naciye", "bakkal")) targetNpcRole = "Bakkal";
+        else if (npc.NPCId != 105 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "sevgi", "hekim", "doktor")) targetNpcRole = "Hekim";
+        else if (npc.NPCId != 106 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "cevdet", "muhtar")) targetNpcRole = "Muhtar";
+        else if (npc.NPCId != 107 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "fehmi", "muallim", "ogretmen")) targetNpcRole = "Muallim";
+        else if (npc.NPCId != 108 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "rasim", "kunduraci", "ayakkabici")) targetNpcRole = "Kunduracı";
+
+        // Sisören
+        else if (npc.NPCId != 201 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "rustem", "telgrafci", "telgraf")) targetNpcRole = "Telgrafçı";
+        else if (npc.NPCId != 202 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "kahveci")) targetNpcRole = "Kahveci";
+        else if (npc.NPCId != 203 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "sinemaci")) targetNpcRole = "Sinemacı";
+        else if (npc.NPCId != 204 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "bakkal")) targetNpcRole = "Bakkal";
+        else if (npc.NPCId != 205 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "sahaf")) targetNpcRole = "Sahaf";
+        else if (npc.NPCId != 206 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "muhtar")) targetNpcRole = "Muhtar";
+        else if (npc.NPCId != 207 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "tutuncu")) targetNpcRole = "Tütüncü";
+        else if (npc.NPCId != 208 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "coban")) targetNpcRole = "Çoban";
+        else if (npc.NPCId != 209 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "tupcu")) targetNpcRole = "Tüpçü";
+        else if (npc.NPCId != 210 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "hurdaci")) targetNpcRole = "Hurdacı";
+        else if (npc.NPCId != 211 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "madenci")) targetNpcRole = "Madenci";
+        else if (npc.NPCId != 212 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "dokumaci")) targetNpcRole = "Dokumacı";
+        else if (npc.NPCId != 213 && TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "sifaci")) targetNpcRole = "Şifacı";
+
+        if (targetNpcRole != null && isThirdPartyAccusation)
+        {
+            return new AIInteractionResponse
+            {
+                Dialogue = GenerateGossipOrCrossInterrogationResponse(npc.NPCId, targetNpcRole, isGuilty),
+                Emotion = isGuilty ? "Öfkeli" : "Şüpheli",
+                TrustChange = isGuilty ? -5 : 2,
+                StressIncrease = isGuilty ? 20 : 5
             };
         }
 
@@ -391,24 +474,26 @@ public class LocalAiEngine : IAIService
         }
         else if (isOpinionQuery)
         {
-            responseText = (npc.NPCId >= 101) 
-                ? GetRandomGolgeSuspectOpinion(npc.NPCId, guiltyNpcId)
-                : GetOtherNpcOpinion(npc.NPCId, false, false, false, false, false, guiltyNpcId);
+            responseText = (npc.NPCId >= 200) 
+                ? GetSisorenFallbackContext(npc.NPCId, "local_ai_opinion", isGuilty, rawTrLower) 
+                : ((npc.NPCId >= 101) 
+                    ? GetRandomGolgeSuspectOpinion(npc.NPCId, guiltyNpcId)
+                    : GetOtherNpcOpinion(npc.NPCId, false, false, false, false, false, guiltyNpcId));
             emotion = "Düşünceli";
         }
         else if (isAlibiQuery)
         {
-            responseText = isGuilty ? GetGuiltyAlibiResponse(npc.NPCId) : GetInnocentAlibiResponse(npc.NPCId);
+            responseText = (npc.NPCId >= 200) ? GetSisorenFallbackContext(npc.NPCId, "local_ai_alibi", isGuilty, rawTrLower) : (isGuilty ? GetGuiltyAlibiResponse(npc.NPCId) : GetInnocentAlibiResponse(npc.NPCId));
             emotion = isGuilty ? "Tedirgin" : "Sakin";
         }
         else if (isWeaponQuery)
         {
-            responseText = isGuilty ? GetGuiltyWeaponResponse(npc.NPCId, rawTrLower) : GetInnocentWeaponResponse(npc.NPCId, rawTrLower);
+            responseText = (npc.NPCId >= 200) ? GetSisorenFallbackContext(npc.NPCId, "local_ai_weapon", isGuilty, rawTrLower) : (isGuilty ? GetGuiltyWeaponResponse(npc.NPCId, rawTrLower) : GetInnocentWeaponResponse(npc.NPCId, rawTrLower));
             emotion = isGuilty ? "Gergin" : "Düşünceli";
         }
         else if (isMotiveQuery)
         {
-            responseText = isGuilty ? GetGuiltyMotiveResponse(npc.NPCId) : GetInnocentMotiveResponse(npc.NPCId);
+            responseText = (npc.NPCId >= 200) ? GetSisorenFallbackContext(npc.NPCId, "local_ai_motive", isGuilty, rawTrLower) : (isGuilty ? GetGuiltyMotiveResponse(npc.NPCId) : GetInnocentMotiveResponse(npc.NPCId));
             emotion = isGuilty ? "Savunmacı" : "Sakin";
         }
         else
@@ -636,8 +721,9 @@ public class LocalAiEngine : IAIService
     /// </summary>
     private static string GenerateSmartOffTopicOrPersonaResponse(string rawTrLower, string normalizedAscii, NPC npc, bool isGuilty)
     {
-        bool isGolge = npc.NPCId >= 100;
-        string victimName = isGolge ? "Ekrem Bey" : "Osman Bey";
+        bool isSisoren = npc.NPCId >= 200;
+        bool isGolge = npc.NPCId >= 100 && npc.NPCId < 200;
+        string victimName = isSisoren ? "Halil Efendi" : (isGolge ? "Ekrem Bey" : "Osman Bey");
 
         // 1. HAVA DURUMU / YAĞMUR / FIRTINA / SOĞUK / GÜNEŞ
         if (TurkishTextEngine.ContainsAnyConcept(rawTrLower, normalizedAscii, "hava", "yagmur", "firtina", "soguk", "sicak", "ruzgar", "sis", "kar", "gunesli", "bulut"))
@@ -1538,5 +1624,73 @@ public class LocalAiEngine : IAIService
             108 => "Kunduracı Rasim'in atölyesindeki mumlu ayakkabı iplerini ve 42 numara çamurlu çizmelerini kontrol edin.",
             _ => "Gölge Şehir'de 8 şüphelinin her biri potansiyel katildir amirim. İpuçlarını birleştirin."
         };
+    }
+
+    private static string GetSisorenFallbackContext(int npcId, string intent, bool isGuilty, string userQuestion)
+    {
+        string role = npcId switch {
+            201 => "Telgrafçı", 202 => "Kahveci", 203 => "Sinemacı", 204 => "Bakkal",
+            205 => "Sahaf", 206 => "Muhtar", 207 => "Tütüncü", 208 => "Çoban",
+            209 => "Tüpçü", 210 => "Hurdacı", 211 => "Madenci", 212 => "Dokumacı", 213 => "Şifacı",
+            _ => "Kasabalı"
+        };
+        
+        if (intent == "local_ai_alibi") 
+        {
+            return isGuilty 
+                ? $"*Gerginleşir* O gece sis çok yoğundu amirim, {role} olarak kendi dükkanımdaydım... Gören olmamıştır tabi sis yüzünden! Bütün gece mallarımı sayıyordum." 
+                : $"O gece {role} olarak dükkanımı kapatıp eve çekilmiştim amirim. Sisören'in geceleri tekin olmaz, dışarı çıkmadım.";
+        }
+        if (intent == "local_ai_weapon") 
+        {
+            return isGuilty 
+                ? $"*Elleri titrer* Neden bana cinayet aletini soruyorsunuz? Ben sıradan bir {role} esnafıyım, o tür aletlerle işim olmaz!" 
+                : $"Cinayet aleti mi? Amirim bu dağlarda herkesin yanında kendini korumak için taşıdığı şeyler vardır ama cinayet işleyecek kadar gözü dönmüş biri değilim.";
+        }
+        if (intent == "local_ai_motive") 
+        {
+            return isGuilty 
+                ? $"*Panikler* Maktul ile aramızda husumet yoktu! Ben kendi işine bakan bir {role} esnafıyım, beni zan altında bırakmayın!" 
+                : $"Maktulün bu dağ kasabasında düşmanı çoktu amirim... Herkesle bir hesabı vardı.";
+        }
+        if (intent == "local_ai_opinion") 
+        {
+            return isGuilty 
+                ? $"*Düşünceli numarası yapar* Sisören'de herkesin karanlık bir sırrı vardır amirim. Katil kim bilemem ama bu dağların sisi onu saklamasına yardım ediyor." 
+                : $"Amirim, bu dağ kasabasında herkes birbirinden şüphelenir oldu. Gerçek suçluyu sadece o sisli ormanlar biliyor.";
+        }
+        
+        var words = userQuestion.Split(new[] { ' ', '.', ',', '?', '!' }, System.StringSplitOptions.RemoveEmptyEntries)
+                                .Where(w => w.Length > 3 && !w.Equals("amirim", System.StringComparison.OrdinalIgnoreCase)).ToList();
+        
+        if (words.Any())
+        {
+            return isGuilty ? $"*Tedirgin olur* {words[0]} hakkında konuşmak istemiyorum amirim... Siz gidin katili sisli dağlarda arayın!" : $"Amirim, bu Sisören'de {words[0]} hakkında pek konuşulmaz. Dağların sisi sırları iyi saklar.";
+        }
+        
+        return $"Amirim bu dağ kasabasının karanlık sırları beni aşar... Ben sadece {role} olarak kendi işime ve ekmeğime bakarım.";
+    }
+
+    private static string GenerateGossipOrCrossInterrogationResponse(int currentNpcId, string targetNpcRole, bool isGuilty)
+    {
+        string currentRole = currentNpcId switch {
+            1 => "Kasap", 2 => "Eczacı", 3 => "Muhtar", 4 => "Komiser", 5 => "Terzi",
+            101 => "Oduncu", 102 => "Manav", 103 => "Demirci", 104 => "Bakkal",
+            105 => "Hekim", 106 => "Muhtar", 107 => "Muallim", 108 => "Kunduracı",
+            201 => "Telgrafçı", 202 => "Kahveci", 203 => "Sinemacı", 204 => "Bakkal",
+            205 => "Sahaf", 206 => "Muhtar", 207 => "Tütüncü", 208 => "Çoban",
+            209 => "Tüpçü", 210 => "Hurdacı", 211 => "Madenci", 212 => "Dokumacı", 213 => "Şifacı",
+            _ => "esnaf"
+        };
+
+        if (isGuilty) return $"*Gözleri seğirir ve sinirle masaya vurur* O {targetNpcRole} yalan söylüyor amirim! Kendi kirli işlerini örtbas etmek için benim gibi dürüst bir {currentRole}a iftira atıyor! Asıl onun cinayet gecesi nerede olduğunu bir araştırın!";
+
+        if ((currentRole == "Tütüncü" && targetNpcRole == "Telgrafçı") || (currentRole == "Telgrafçı" && targetNpcRole == "Tütüncü")) return $"*Gözlerini kısar* O {targetNpcRole} ile yıllardır aramız bozuktur amirim. Bana çamur atmak için her fırsatı değerlendirir.";
+        if ((currentRole == "Şifacı" && targetNpcRole == "Madenci") || (currentRole == "Madenci" && targetNpcRole == "Şifacı")) return $"*Başını iki yana sallar* O {targetNpcRole} zehirli otların/madenlerin etkisinde kalmış herhalde! Benim cinayetle ne alakam olabilir?";
+        if ((currentRole == "Sahaf" && targetNpcRole == "Muhtar") || (currentRole == "Muhtar" && targetNpcRole == "Sahaf")) return $"*Alaycı bir gülümseme* O {targetNpcRole} hep kendi bildiğini okur amirim. Onun sözüne güvenip de beni suçlamayın.";
+
+        if (currentRole == "Muhtar" && targetNpcRole != "Muhtar") return $"*Kendinden emin bir şekilde* Ben bu kasabanın Muhtarıyım. O {targetNpcRole} kendi çapında asılsız dedikodular yayıyor olabilir, itibar etmeyin.";
+
+        return $"*Şaşırarak bakar* {targetNpcRole} benim hakkımda böyle mi konuşuyor? Doğrusu beklemezdim... O gece ben kendi halimde bir {currentRole} olarak dükkanımdaydım. Neden bana iftira atsın ki?";
     }
 }

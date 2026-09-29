@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DedektiflikRPG.Models;
 
@@ -13,4 +13,5 @@ public interface IForensicService
     void ClearFindings();
     void ClearGolgeFindings();
     void ClearGizemliFindings();
+    void ClearSisorenFindings();
 }

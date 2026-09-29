@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using DedektiflikRPG.Controllers;
 using DedektiflikRPG.Core.Interfaces;
@@ -82,13 +83,21 @@ class Program
         builder.Services.AddSingleton<IAIService>(sp => new LocalAiEngine(repository, geminiApiKey, geminiModel));
         builder.Services.AddSingleton<IForensicService, ForensicService>();
 
-        // CORS Ekle
+        // CORS — Geliştirme ortamında yalnızca localhost'a izin ver
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("AllowAll", policy =>
+            options.AddPolicy("GameCors", policy =>
             {
-                policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                policy.WithOrigins("http://localhost:5000", "http://127.0.0.1:5000")
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
             });
+        });
+
+        // JSON Serialization — Türkçe karakter desteği (ş, ç, ğ, ü, ö, ı, İ escape edilmez)
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
         });
 
         var app = builder.Build();
@@ -96,9 +105,25 @@ class Program
         // Statik Dosyaları Sun
         app.UseDefaultFiles();
         app.UseStaticFiles();
-        app.UseCors("AllowAll");
+        app.UseCors("GameCors");
+
+        // Türkçe karakter güvencesi: Tüm JSON yanıtlarına UTF-8 charset zorla
+        app.Use(async (context, next) =>
+        {
+            context.Response.OnStarting(() =>
+            {
+                var ct = context.Response.ContentType;
+                if (ct != null && ct.Contains("application/json") && !ct.Contains("charset"))
+                {
+                    context.Response.ContentType = ct + "; charset=utf-8";
+                }
+                return Task.CompletedTask;
+            });
+            await next();
+        });
 
         // Katmanlı API Endpoints Haritalaması
+        app.MapUnifiedEndpoints();
         app.MapGameEndpoints();
         GameEndpoints.MapSisorenEndpoints(app);
 

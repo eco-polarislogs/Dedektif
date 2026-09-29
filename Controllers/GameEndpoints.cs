@@ -14,7 +14,184 @@ namespace DedektiflikRPG.Controllers;
 public static class GameEndpoints
 {
     private static readonly System.Threading.SemaphoreSlim _resetSemaphore = new System.Threading.SemaphoreSlim(1, 1);
-    private static int _sisorenGuiltyNpcId = 201;
+
+    public static void MapUnifiedEndpoints(this IEndpointRouteBuilder app)
+    {
+        app.MapGet("/api/v1/towns/{townId}/npcs", async (string townId, IGameRepository repo) =>
+        {
+            try
+            {
+                var npcs = await repo.GetNPCsByTownAsync(townId);
+                return Results.Ok(npcs);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        });
+
+        app.MapGet("/api/v1/towns/{townId}/clues", async (string townId, IGameRepository repo) =>
+        {
+            try
+            {
+                var clues = await repo.GetCluesByTownAsync(townId);
+                return Results.Ok(clues);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        });
+
+        app.MapPost("/api/v1/towns/{townId}/interrogate", async (string townId, InterrogationRequest request, IGameRepository repo, IAIService aiService) =>
+        {
+            try
+            {
+                if (request == null || request.NpcId <= 0 || string.IsNullOrWhiteSpace(request.Question))
+                    return Results.BadRequest("Geçersiz sorgulama isteği.");
+
+                // townId based logic
+                NPC? npc = null;
+                var npcs = await repo.GetNPCsByTownAsync(townId);
+                var guiltyId = npcs.FirstOrDefault(n => n.IsGuilty)?.NPCId ?? 0;
+
+                if (townId == "sisoren")
+                {
+                    try { npc = await repo.GetSisorenNPCByIdAsync(request.NpcId); } catch { }
+                    npc ??= request.NpcId >= 300 ? GetFallbackSisorenExtraNPC(request.NpcId) : GetFallbackSisorenNPC(request.NpcId);
+                    if (npc == null) return Results.NotFound("Sisören şüphelisi bulunamadı.");
+                }
+                else if (townId == "golge_sehir")
+                {
+                    try { npc = await repo.GetGolgeSehirNPCByIdAsync(request.NpcId); } catch { }
+                    npc ??= GetFallbackGolgeNPC(request.NpcId);
+                    if (npc == null) return Results.NotFound("Gölge Şehir şüphelisi bulunamadı.");
+                }
+                else
+                {
+                    try { npc = await repo.GetNPCByIdAsync(request.NpcId); } catch { }
+                    npc ??= GetFallbackGizemliNPC(request.NpcId);
+                    if (npc == null) return Results.NotFound("Şüpheli bulunamadı.");
+                }
+
+                IEnumerable<Clue> cluesInBag = new List<Clue>();
+                try { cluesInBag = await repo.GetCluesInBagAsync(); } catch { }
+
+                IEnumerable<DialogLog> recentDialogs = new List<DialogLog>();
+                try { recentDialogs = await repo.GetRecentDialogLogsAsync(npc.NPCId, 5); } catch { }
+
+                var response = await aiService.GenerateResponseAsync(npc, guiltyId, request.Question, cluesInBag, recentDialogs);
+
+                try
+                {
+                    await repo.LogDialogWithCategoryAsync(npc.NPCId, request.Question, response.Dialogue, 1, $"{townId}_ai");
+                }
+                catch { }
+
+                return Results.Ok(new
+                {
+                    success = true,
+                    dialogue = response.Dialogue,
+                    emotion = response.Emotion,
+                    trustChange = response.TrustChange,
+                    stressIncrease = response.StressIncrease,
+                    npcId = npc.NPCId,
+                    town = townId
+                });
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        });
+
+        app.MapPost("/api/v1/towns/{townId}/accuse", async (string townId, AccuseRequest request, IGameRepository repo) =>
+        {
+            if (request == null || request.NpcId <= 0)
+                return Results.BadRequest("Geçersiz suçlama isteği.");
+
+            var npcs = (await repo.GetNPCsByTownAsync(townId)).ToList();
+            var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
+            int guiltyId = guiltyNpc?.NPCId ?? 0;
+
+            if (townId == "sisoren" && request.NpcId >= 300)
+            {
+                return Results.Ok(new 
+                { 
+                    success = false, 
+                    message = "Bu kişi suçlanamayacak bir kasabalı/tanıktır ve tamamen masumdur!", 
+                    accusedName = "Kasabalı / Tanık", 
+                    guiltyNpcName = GetSisorenNPCName(guiltyId), 
+                    guiltyNpcId = guiltyId 
+                });
+            }
+
+            bool isGuilty = (request.NpcId == guiltyId);
+            string accusedName = npcs.FirstOrDefault(n => n.NPCId == request.NpcId)?.Name ?? "Şüpheli";
+            string guiltyName = guiltyNpc?.Name ?? "Bilinmeyen Katil";
+
+            if (isGuilty)
+            {
+                return Results.Ok(new 
+                { 
+                    success = true, 
+                    message = $"Tebrikler! {townId} gerçek katilinin {accusedName} olduğunu kanıtladınız!", 
+                    accusedName = accusedName, 
+                    guiltyNpcName = guiltyName, 
+                    guiltyNpcId = guiltyId 
+                });
+            }
+            else
+            {
+                return Results.Ok(new 
+                { 
+                    success = false, 
+                    message = $"{accusedName} masum çıktı! {townId} gerçek katili {guiltyName} idi.", 
+                    accusedName = accusedName, 
+                    guiltyNpcName = guiltyName, 
+                    guiltyNpcId = guiltyId 
+                });
+            }
+        });
+
+        app.MapPost("/api/v1/towns/{townId}/reset", async (string townId, IGameRepository repo, IForensicService forensicService) =>
+        {
+            var rnd = new Random();
+            int guiltyId = 0;
+            
+            if (townId == "sisoren")
+            {
+                guiltyId = rnd.Next(201, 214);
+                await repo.ResetSisorenSessionAsync(guiltyId);
+                forensicService.ClearSisorenFindings();
+                await repo.ClearDialogLogsByTownAsync(200, 999);
+                await repo.ClearPlayerInventoryByTownAsync(2000, 9999);
+            }
+            else if (townId == "golge_sehir")
+            {
+                guiltyId = rnd.Next(101, 109);
+                await repo.ResetGolgeSehirSessionAsync(guiltyId);
+                forensicService.ClearGolgeFindings();
+                await repo.ClearDialogLogsByTownAsync(100, 199);
+                await repo.ClearPlayerInventoryByTownAsync(1000, 1999);
+            }
+            else
+            {
+                guiltyId = rnd.Next(1, 6);
+                await repo.CreateGameSessionAsync(guiltyId);
+                forensicService.ClearFindings();
+                await repo.ClearDialogLogsByTownAsync(1, 99);
+                await repo.ClearPlayerInventoryByTownAsync(1, 999);
+            }
+
+            return Results.Ok(new 
+            { 
+                success = true, 
+                message = $"{townId} sıfırlandı ve yeni suçlu belirlendi.", 
+                guiltyNpcId = guiltyId
+            });
+        });
+    }
 
     public static void MapGameEndpoints(this IEndpointRouteBuilder app)
     {
@@ -71,16 +248,16 @@ public static class GameEndpoints
             try
             {
                 // Gölge Şehir NPC'leri (101 - 108)
-                if (request.NpcId >= 100)
+                if (request.NpcId >= 100 && request.NpcId < 200)
                 {
                     NPC? golgeNpc = null;
                     try { golgeNpc = await repo.GetGolgeSehirNPCByIdAsync(request.NpcId); } catch { }
                     golgeNpc ??= GetFallbackGolgeNPC(request.NpcId);
                     if (golgeNpc == null) return Results.NotFound("Gölge Şehir şüphelisi bulunamadı.");
 
-                    int guiltyIdGolge = request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value >= 100
-                        ? request.GuiltyNpcId.Value
-                        : 101;
+                    // Katil ID'sini sunucu tarafında veritabanından çözümle (güvenlik)
+                    var golgeNpcList = (await repo.GetGolgeSehirNPCsAsync()).ToList();
+                    int guiltyIdGolge = golgeNpcList.FirstOrDefault(n => n.IsGuilty)?.NPCId ?? 101;
 
                     IEnumerable<Clue> cluesInBagGolge = new List<Clue>();
                     try { cluesInBagGolge = await repo.GetCluesInBagAsync(); } catch { }
@@ -110,8 +287,7 @@ public static class GameEndpoints
                         trustChange = responseGolge.TrustChange,
                         stressIncrease = responseGolge.StressIncrease,
                         revealedSecret = responseGolge.RevealedSecret ?? "",
-                        updatedNpc = golgeNpc,
-                        guiltyIdUsed = guiltyIdGolge
+                        updatedNpc = golgeNpc
                     });
                 }
 
@@ -121,9 +297,9 @@ public static class GameEndpoints
                 npc ??= GetFallbackGizemliNPC(request.NpcId);
                 if (npc == null) return Results.NotFound("Şüpheli bulunamadı.");
 
-                int guiltyId = (request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value > 0)
-                    ? request.GuiltyNpcId.Value
-                    : 1;
+                // Katil ID'sini sunucu tarafında veritabanından çözümle (güvenlik)
+                var gizemliNpcList = (await repo.GetAllNPCsAsync()).ToList();
+                int guiltyId = gizemliNpcList.FirstOrDefault(n => n.IsGuilty)?.NPCId ?? 1;
 
                 IEnumerable<Clue> cluesInBag = new List<Clue>();
                 try { cluesInBag = await repo.GetCluesInBagAsync(); } catch { }
@@ -145,17 +321,16 @@ public static class GameEndpoints
                 }
                 catch { }
 
-                return Results.Ok(new
-                {
-                    success = true,
-                    dialogue = response.Dialogue,
-                    emotion = response.Emotion,
-                    trustChange = response.TrustChange,
-                    stressIncrease = response.StressIncrease,
-                    revealedSecret = response.RevealedSecret ?? "",
-                    updatedNpc = npc,
-                    guiltyIdUsed = guiltyId
-                });
+                    return Results.Ok(new
+                    {
+                        success = true,
+                        dialogue = response.Dialogue,
+                        emotion = response.Emotion,
+                        trustChange = response.TrustChange,
+                        stressIncrease = response.StressIncrease,
+                        revealedSecret = response.RevealedSecret ?? "",
+                        updatedNpc = npc
+                    });
             }
             catch (Exception ex)
             {
@@ -177,9 +352,7 @@ public static class GameEndpoints
                     var golgeNPCs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
                     var guiltyGolge = golgeNPCs.FirstOrDefault(n => n.IsGuilty);
                     
-                    int guiltyIdGolge = request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value >= 100
-                        ? request.GuiltyNpcId.Value
-                        : (guiltyGolge?.NPCId ?? 101);
+                    int guiltyIdGolge = guiltyGolge?.NPCId ?? 101;
 
                     var actualGuiltyNpc = golgeNPCs.FirstOrDefault(n => n.NPCId == guiltyIdGolge) ?? guiltyGolge;
                     var guiltyNameGolge = actualGuiltyNpc?.Name ?? "Bilinmiyor";
@@ -203,9 +376,7 @@ public static class GameEndpoints
                 var npcs = (await repo.GetAllNPCsAsync()).ToList();
                 var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
 
-                int guiltyId = request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value > 0
-                    ? request.GuiltyNpcId.Value
-                    : (guiltyNpc?.NPCId ?? 1);
+                int guiltyId = guiltyNpc?.NPCId ?? 1;
 
                 var actualGuilty = npcs.FirstOrDefault(n => n.NPCId == guiltyId) ?? guiltyNpc;
                 var guiltyName = actualGuilty?.Name ?? "Bilinmiyor";
@@ -237,13 +408,17 @@ public static class GameEndpoints
                     return Results.Ok(new { success = true });
                 }
 
-                bool isGolge = request.ClueId >= 1000;
+                bool isSisoren = request.ClueId >= 2000;
+                bool isGolge = !isSisoren && request.ClueId >= 1000;
                 List<NPC> npcs;
                 try
                 {
-                    npcs = isGolge
-                        ? (await repo.GetGolgeSehirNPCsAsync()).ToList()
-                        : (await repo.GetAllNPCsAsync()).ToList();
+                    if (isSisoren)
+                        npcs = (await repo.GetSisorenNPCsAsync()).ToList();
+                    else if (isGolge)
+                        npcs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
+                    else
+                        npcs = (await repo.GetAllNPCsAsync()).ToList();
                 }
                 catch
                 {
@@ -251,7 +426,7 @@ public static class GameEndpoints
                 }
 
                 var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
-                int guiltyId = guiltyNpc?.NPCId ?? (isGolge ? 101 : 1);
+                int guiltyId = guiltyNpc?.NPCId ?? (isSisoren ? 201 : (isGolge ? 101 : 1));
 
                 forensicService.SubmitFinding(request.ClueId, request.ClueName ?? "", request.FindingText ?? "", npcs, guiltyId);
                 return Results.Ok(new { success = true });
@@ -268,20 +443,40 @@ public static class GameEndpoints
             try
             {
                 bool isGolge = town == "golge_sehir";
+                bool isSisoren = town == "sisoren";
                 List<NPC> npcs;
                 try
                 {
-                    npcs = isGolge
-                        ? (await repo.GetGolgeSehirNPCsAsync()).ToList()
-                        : (await repo.GetAllNPCsAsync()).ToList();
+                    if (isSisoren)
+                    {
+                        npcs = (await repo.GetSisorenNPCsAsync()).ToList();
+                        if (npcs.Count == 0) npcs = Enumerable.Range(201, 13).Select(id => GetFallbackSisorenNPC(id)).Where(n => n != null).Cast<NPC>().ToList();
+                    }
+                    else if (isGolge)
+                    {
+                        npcs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
+                    }
+                    else
+                    {
+                        npcs = (await repo.GetAllNPCsAsync()).ToList();
+                    }
                 }
                 catch
                 {
                     npcs = new List<NPC>();
                 }
 
-                var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
-                int guiltyId = guiltyNpc?.NPCId ?? (isGolge ? 101 : 1);
+                int guiltyId;
+                if (isSisoren)
+                {
+                    var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
+                    guiltyId = guiltyNpc?.NPCId ?? 201;
+                }
+                else
+                {
+                    var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
+                    guiltyId = guiltyNpc?.NPCId ?? (isGolge ? 101 : 1);
+                }
 
                 string reportHtml = await forensicService.GenerateAutopsyReportAsync(npcs, guiltyId);
                 return Results.Ok(new { success = true, report = reportHtml, guiltyId });
@@ -298,20 +493,40 @@ public static class GameEndpoints
             try
             {
                 bool isGolge = town == "golge_sehir";
+                bool isSisoren = town == "sisoren";
                 List<NPC> npcs;
                 try
                 {
-                    npcs = isGolge
-                        ? (await repo.GetGolgeSehirNPCsAsync()).ToList()
-                        : (await repo.GetAllNPCsAsync()).ToList();
+                    if (isSisoren)
+                    {
+                        npcs = (await repo.GetSisorenNPCsAsync()).ToList();
+                        if (npcs.Count == 0) npcs = Enumerable.Range(201, 13).Select(id => GetFallbackSisorenNPC(id)).Where(n => n != null).Cast<NPC>().ToList();
+                    }
+                    else if (isGolge)
+                    {
+                        npcs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
+                    }
+                    else
+                    {
+                        npcs = (await repo.GetAllNPCsAsync()).ToList();
+                    }
                 }
                 catch
                 {
                     npcs = new List<NPC>();
                 }
 
-                var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
-                int guiltyId = guiltyNpc?.NPCId ?? (isGolge ? 101 : 1);
+                int guiltyId;
+                if (isSisoren)
+                {
+                    var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
+                    guiltyId = guiltyNpc?.NPCId ?? 201;
+                }
+                else
+                {
+                    var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
+                    guiltyId = guiltyNpc?.NPCId ?? (isGolge ? 101 : 1);
+                }
 
                 var state = forensicService.GetForensicState(guiltyId);
                 return Results.Ok(state);
@@ -365,8 +580,8 @@ public static class GameEndpoints
                     await repo.UpdateNPCAsync(npc);
                 }
 
-                await repo.ClearAllDialogLogsAsync();
-                await repo.ClearPlayerInventoryAsync();
+                await repo.ClearDialogLogsByTownAsync(1, 99);
+                await repo.ClearPlayerInventoryByTownAsync(1, 999);
 
                 return Results.Ok(new { success = true, message = "Oyun durumu sıfırlandı ve yeni suçlu belirlendi.", guiltyNpcId = guiltyId });
             }
@@ -497,9 +712,10 @@ public static class GameEndpoints
             try
             {
                 var messages = (await repo.GetHelperMessagesAsync(context, building)).ToList();
-                var topMessage = messages.FirstOrDefault();
-                if (topMessage != null)
+                if (messages.Any())
                 {
+                    var rnd = new Random();
+                    var topMessage = messages[rnd.Next(messages.Count)];
                     return Results.Ok(new { success = true, message = topMessage.Message, context = topMessage.Context, priority = topMessage.Priority });
                 }
                 return Results.Ok(new { success = false, message = "", context = context, priority = 0 });
@@ -651,9 +867,7 @@ public static class GameEndpoints
                 var npcs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
                 var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
 
-                int guiltyId = (request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value > 0)
-                    ? request.GuiltyNpcId.Value
-                    : (guiltyNpc?.NPCId ?? 101);
+                int guiltyId = guiltyNpc?.NPCId ?? 101;
 
                 IEnumerable<Clue> cluesInBag = new List<Clue>();
                 try { cluesInBag = await repo.GetCluesInBagAsync(); } catch { }
@@ -683,8 +897,7 @@ public static class GameEndpoints
                     trustChange = response.TrustChange,
                     stressIncrease = response.StressIncrease,
                     revealedSecret = response.RevealedSecret ?? "",
-                    updatedNpc = npc,
-                    guiltyIdUsed = guiltyId
+                    updatedNpc = npc
                 });
             }
             catch (Exception ex)
@@ -704,9 +917,7 @@ public static class GameEndpoints
                 var npcs = (await repo.GetGolgeSehirNPCsAsync()).ToList();
                 var guiltyNpc = npcs.FirstOrDefault(n => n.IsGuilty);
                 
-                int guiltyId = request.GuiltyNpcId.HasValue && request.GuiltyNpcId.Value >= 100
-                    ? request.GuiltyNpcId.Value
-                    : (guiltyNpc?.NPCId ?? 101);
+                int guiltyId = guiltyNpc?.NPCId ?? 101;
 
                 var actualGuilty = npcs.FirstOrDefault(n => n.NPCId == guiltyId) ?? guiltyNpc;
                 var guiltyName = actualGuilty?.Name ?? "Bilinmiyor";
@@ -743,6 +954,8 @@ public static class GameEndpoints
 
                 await repo.ResetGolgeSehirSessionAsync(guiltyId);
                 forensicService.ClearGolgeFindings();
+                await repo.ClearDialogLogsByTownAsync(100, 199);
+                await repo.ClearPlayerInventoryByTownAsync(1000, 1999);
                 return Results.Ok(new { success = true, message = "Gölge Şehir sıfırlandı ve yeni suçlu belirlendi.", guiltyNpcId = guiltyId });
             }
             catch (Exception ex)
@@ -761,9 +974,10 @@ public static class GameEndpoints
             try
             {
                 var messages = (await repo.GetGolgeSehirHelperMessagesAsync(context, building)).ToList();
-                var top = messages.FirstOrDefault();
-                if (top != null)
+                if (messages.Any())
                 {
+                    var rnd = new Random();
+                    var top = messages[rnd.Next(messages.Count)];
                     return Results.Ok(new { success = true, message = top.Message, speaker = top.Speaker, context = top.Context, priority = top.Priority });
                 }
                 return Results.Ok(new { success = false, message = "", speaker = "cetin", context = context });
@@ -781,62 +995,82 @@ public static class GameEndpoints
     // ========================================================================
     public static void MapSisorenEndpoints(WebApplication app)
     {
-        app.MapPost("/api/sisoren/interrogate", async (InterrogationRequest request, IGameRepository repo) =>
+        app.MapPost("/api/sisoren/interrogate", async (InterrogationRequest request, IGameRepository repo, IAIService aiService) =>
         {
-            if (request == null || !IsSisorenNpc(request.NpcId) ||
-                string.IsNullOrWhiteSpace(request.Question))
+            try
             {
-                return Results.BadRequest("Geçersiz Sisören sorgulama isteği.");
+                if (request == null || !IsSisorenNpc(request.NpcId) ||
+                    string.IsNullOrWhiteSpace(request.Question))
+                {
+                    return Results.BadRequest("Geçersiz Sisören sorgulama isteği.");
+                }
+
+                NPC? npc = null;
+                try { npc = await repo.GetSisorenNPCByIdAsync(request.NpcId); } catch { }
+                npc ??= request.NpcId >= 300 ? GetFallbackSisorenExtraNPC(request.NpcId) : GetFallbackSisorenNPC(request.NpcId);
+                if (npc == null) return Results.NotFound("Sisören şüphelisi bulunamadı.");
+
+                var npcs = await repo.GetSisorenNPCsAsync();
+                var guiltyId = npcs.FirstOrDefault(n => n.IsGuilty)?.NPCId ?? 201;
+
+                IEnumerable<Clue> cluesInBag = new List<Clue>();
+                try { cluesInBag = (await repo.GetCluesInBagAsync()).Where(c => c.ClueId >= 2000); } catch { }
+
+                IEnumerable<DialogLog> recentDialogs = new List<DialogLog>();
+                try { recentDialogs = await repo.GetRecentDialogLogsAsync(npc.NPCId, 5); } catch { }
+
+                var response = await aiService.GenerateResponseAsync(npc, guiltyId, request.Question, cluesInBag, recentDialogs);
+
+                try
+                {
+                    await repo.LogDialogWithCategoryAsync(npc.NPCId, request.Question, response.Dialogue, 1, "sisoren_ai");
+                }
+                catch { }
+
+                return Results.Ok(new
+                {
+                    success = true,
+                    dialogue = response.Dialogue,
+                    emotion = response.Emotion,
+                    trustChange = response.TrustChange,
+                    stressIncrease = response.StressIncrease,
+                    npcId = npc.NPCId,
+                    town = "sisoren",
+                    guiltyIdUsed = guiltyId
+                });
             }
-
-            var npc = request.NpcId >= 300 ? GetFallbackSisorenExtraNPC(request.NpcId) : GetFallbackSisorenNPC(request.NpcId);
-            if (npc == null) return Results.NotFound("Sisören şüphelisi bulunamadı.");
-
-            var guiltyId = _sisorenGuiltyNpcId;
-            var pool = (await repo.GetSisorenDialoguesAsync(request.NpcId)).ToList();
-            var matched = pool.FirstOrDefault(d => string.Equals(d.PlayerText, request.Question, StringComparison.OrdinalIgnoreCase));
-            var dialogue = matched == null
-                ? $"{npc.Name} temkinli bir ifadeyle cevap veriyor: Bu konuda kesin konuşamam; olay gecesindeki ayrıntıları yeniden kontrol etmelisiniz."
-                : (npc.NPCId == guiltyId ? matched.GuiltyResponses : matched.NPCResponse);
-            if (npc.NPCId != guiltyId && IsSisorenWitness(npc.NPCId, guiltyId))
-                dialogue += $" {npc.Name}, bazı işaretlerin {GetSisorenNPCName(guiltyId)} ile aynı yöne çıktığını ima ediyor; yine de kesin bir suçlama yapmaktan kaçınıyor.";
-
-            return Results.Ok(new
+            catch (Exception ex)
             {
-                success = true,
-                dialogue,
-                emotion = npc.NPCId == guiltyId ? "nervous" : "neutral",
-                trustChange = npc.NPCId == guiltyId ? -1 : 0,
-                stressIncrease = npc.NPCId == guiltyId ? 4 : 1,
-                npcId = npc.NPCId,
-                town = "sisoren",
-                guiltyIdUsed = guiltyId
-            });
+                return Results.Problem(ex.Message);
+            }
         });
 
         // 1. Sisören Suçlama (13 Şüpheli + Ekstra NPC'ler)
-        app.MapPost("/api/sisoren/accuse", (AccuseRequest request) =>
+        app.MapPost("/api/sisoren/accuse", async (AccuseRequest request, IGameRepository repo) =>
         {
             if (request == null || request.NpcId <= 0)
             {
                 return Results.BadRequest("Geçersiz suçlama isteği.");
             }
 
+            // Katil ID'sini sunucu tarafında veritabanından çözümle (güvenlik)
+            var sisorenNpcs = (await repo.GetSisorenNPCsAsync()).ToList();
+            var guiltyNpcSis = sisorenNpcs.FirstOrDefault(n => n.IsGuilty);
+            int guiltyId = guiltyNpcSis?.NPCId ?? 201;
+
             // Ekstra veya çocuk NPC'ler (301-318) her zaman masumdur
             if (request.NpcId >= 300)
             {
-                int gId = request.GuiltyNpcId ?? 201;
                 return Results.Ok(new 
                 { 
                     success = false, 
                     message = "Bu kişi suçlanamayacak bir kasabalı/tanıktır ve tamamen masumdur!", 
                     accusedName = "Kasabalı / Tanık", 
-                    guiltyNpcName = GetSisorenNPCName(gId), 
-                    guiltyNpcId = gId 
+                    guiltyNpcName = GetSisorenNPCName(guiltyId), 
+                    guiltyNpcId = guiltyId 
                 });
             }
 
-            int guiltyId = request.GuiltyNpcId ?? 201;
             bool isGuilty = (request.NpcId == guiltyId);
             string accusedName = GetSisorenNPCName(request.NpcId);
             string guiltyName = GetSisorenNPCName(guiltyId);
@@ -866,11 +1100,14 @@ public static class GameEndpoints
         });
 
         // 2. Sisören Sıfırla (201-213 arası rastgele yeni katil belirleme)
-        app.MapPost("/api/sisoren/reset", () =>
+        app.MapPost("/api/sisoren/reset", async (IGameRepository repo, IForensicService forensicService) =>
         {
             var rnd = new Random();
             int guiltyId = rnd.Next(201, 214); // 201-213 arası şüpheli
-            _sisorenGuiltyNpcId = guiltyId;
+            await repo.ResetSisorenSessionAsync(guiltyId);
+            forensicService.ClearSisorenFindings();
+            await repo.ClearDialogLogsByTownAsync(200, 999);
+            await repo.ClearPlayerInventoryByTownAsync(2000, 9999);
             return Results.Ok(new 
             { 
                 success = true, 
@@ -881,9 +1118,20 @@ public static class GameEndpoints
         });
 
         // 3. Sisören NPC Listesi
-        app.MapGet("/api/sisoren/npcs", () =>
+        app.MapGet("/api/sisoren/npcs", async (IGameRepository repo) =>
         {
-            var npcs = new[]
+            try
+            {
+                var npcs = await repo.GetSisorenNPCsAsync();
+                if (npcs != null && npcs.Any())
+                {
+                    return Results.Ok(new { success = true, npcs = npcs.Select(n => new { npcId = n.NPCId, name = n.Name, role = n.Role, building = "" }) });
+                }
+            }
+            catch { }
+
+            // Fallback
+            var fallbackNpcs = new[]
             {
                 new { npcId = 201, name = "Telgrafçı Rüstem", role = "Telgrafçı", building = "Telgrafhane" },
                 new { npcId = 202, name = "Kahveci İrfan", role = "Kahveci", building = "Kahvehane" },
@@ -899,17 +1147,81 @@ public static class GameEndpoints
                 new { npcId = 212, name = "Hatice Nine", role = "Kasaba Büyüğü", building = "Kasabalı Evi" },
                 new { npcId = 213, name = "Emine Hanım", role = "Dağ Sakini", building = "Kasabalı Evi" }
             };
-            return Results.Ok(new { success = true, npcs = npcs });
+            return Results.Ok(new { success = true, npcs = fallbackNpcs });
         });
 
         // 4. Sisören Yardımcı Mesajları
         app.MapGet("/api/sisoren/helper/tip", (string context, string? building) =>
         {
+            var rnd = new Random();
+            string message = "Dağların sisi gerçeği saklar ama benim katırlarım her dedikoduyu duyar! Şüphelilerin anlattıklarına dikkat et.";
+            
+            if (context == "building_enter")
+            {
+                switch (building?.ToLower())
+                {
+                    case "telgrafhane":
+                        var telgraf = new[] { "Telgrafçı Rüstem o gece çok tuhaftı amirim. Mesajlarda bir şeyler saklıyor olabilir.", "Rüstem'in çektiği son telgrafları kontrol etmeliyiz amirim, yalan söylüyor olabilir." };
+                        message = telgraf[rnd.Next(telgraf.Length)]; break;
+                    case "kahvehane":
+                        var kahve = new[] { "Kahveci İrfan sürekli kulak misafiri olur. Fincanların arasına sakladığı sırlar var.", "İrfan amca çok şey bilir ama susar. Onu konuşturmanın bir yolunu bulmalıyız amirim." };
+                        message = kahve[rnd.Next(kahve.Length)]; break;
+                    case "sinema":
+                        var sinema = new[] { "Sinemacı Nejat makine dairesinde neler saklıyor bir baksanız iyi olur.", "O karanlık salonda sadece filmler dönmüyor amirim, Nejat'a dikkat et." };
+                        message = sinema[rnd.Next(sinema.Length)]; break;
+                    case "bakkal":
+                        var bakkal = new[] { "Bakkal Cemile'nin veresiye defteri hiç de masum görünmüyor amirim.", "Cemile abla güler yüzlüdür ama hesapları çok karışıktır, dikkatlice inceleyelim." };
+                        message = bakkal[rnd.Next(bakkal.Length)]; break;
+                    case "sahaf":
+                        var sahaf = new[] { "Sahaf Hikmet eski kitapların arasında zehir tarifleri okuyor, dikkat edin.", "Hikmet'in o tozlu raflarında ne sırlar gizli bir bilsen amirim..." };
+                        message = sahaf[rnd.Next(sahaf.Length)]; break;
+                    case "muhtarlık":
+                        var muhtar = new[] { "Muhtar Meliha'nın sahte mühürleri olduğunu duydum amirim. Kendisine güven olmaz.", "Meliha Hanım kasabayı demir yumrukla yönetir, onun izni olmadan burada kuş uçmaz." };
+                        message = muhtar[rnd.Next(muhtar.Length)]; break;
+                    case "tütüncü":
+                        var tutun = new[] { "Tütüncü Nermin o gece çok gerginmiş, birileriyle kavga etmiş diyorlar.", "Nermin ablanın sardığı tütünlerin arasında başka şeyler de olabilir amirim." };
+                        message = tutun[rnd.Next(tutun.Length)]; break;
+                    case "ahır":
+                        var ahir = new[] { "Çoban Durmuş dağlarda sadece koyun gütmüyor amirim, gece işleri de var.", "Durmuş'un ahırında sakladığı şeyler sadece hayvanlar değil gibi görünüyor." };
+                        message = ahir[rnd.Next(ahir.Length)]; break;
+                    case "tüpçü":
+                        var tup = new[] { "Tüpçü Şevket'in anahtarı çok ağırdır amirim. Kimseye acımaz.", "Şevket sinirlendiğinde gözü hiçbir şeyi görmez, temkinli yaklaşalım amirim." };
+                        message = tup[rnd.Next(tup.Length)]; break;
+                    case "hurdacı":
+                        var hurda = new[] { "Hurdacı Zehra kasadaki paraları nereye saklıyor sormak lazım.", "Zehra'nın hurdalığında kaybolan çok insan var derler, dikkatli olalım." };
+                        message = hurda[rnd.Next(hurda.Length)]; break;
+                    case "kasabalı evi 1":
+                        var ev1 = new[] { "Zeynep Teyze'nin maden kayıtlarında usulsüzlük var amirim.", "Zeynep Teyze'nin kapısı hep kilitlidir, içeri girmek zor olacak." };
+                        message = ev1[rnd.Next(ev1.Length)]; break;
+                    case "kasabalı evi 2":
+                        var ev2 = new[] { "Hatice Nine'nin sandığında neler gizli bir bilseniz...", "Hatice Nine kasabanın en eskilerindendir, çok şey görmüş geçirmiştir." };
+                        message = ev2[rnd.Next(ev2.Length)]; break;
+                    case "kasabalı evi 3":
+                        var ev3 = new[] { "Emine Hanım otlarla sadece şifa dağıtmıyor amirim, bazen zehir de yapıyor.", "Emine'nin demlediği çaylara dikkat et amirim, içinde ne olduğu belli olmaz." };
+                        message = ev3[rnd.Next(ev3.Length)]; break;
+                }
+            }
+            else if (context == "map_enter")
+            {
+                var mapEnter = new[] { "Sisören'e hoş geldin amirim. Buranın soğuğu da insanı da adamı dondurur. Dikkatli ol.", "Amirim, bu dağların sisi gerçekleri gizlemek için birebir. Gözünü dört aç.", "Buralarda yabancıları sevmezler amirim, adımlarımıza dikkat edelim." };
+                message = mapEnter[rnd.Next(mapEnter.Length)];
+            }
+            else if (context == "clue_found")
+            {
+                var clue = new[] { "Amirim, bu dağlarda hiçbir şey tesadüf değildir. Bulduğun şeye iyi bak!", "İşte bu delil bizi katile bir adım daha yaklaştıracak amirim!", "Bunu saklamak istemişler ama bizden kaçmaz amirim!" };
+                message = clue[rnd.Next(clue.Length)];
+            }
+            else if (context == "accuse")
+            {
+                var accuse = new[] { "Zaman geldi çattı amirim. Umarız suçluyu doğru seçersin, yoksa kan davaları başlar bu dağlarda.", "Son kararını vermeden önce tüm delilleri gözden geçir amirim, burada hata affedilmez." };
+                message = accuse[rnd.Next(accuse.Length)];
+            }
+
             return Results.Ok(new 
             { 
                 success = true, 
-                message = "Amirims, Sisören dağ kasabasında soruşturmaya devam edelim! Bu sisli dağ yamacında her taşın altında bir sır saklı!", 
-                speaker = "cetin", 
+                message = message, 
+                speaker = "ilyas", 
                 context = context 
             });
         });
@@ -996,24 +1308,24 @@ public static class GameEndpoints
     {
         return npcId switch
         {
-            301 => new NPC { NPCId = 301, Name = "Celal Amca", Role = "Emekli Ormancı" },
-            302 => new NPC { NPCId = 302, Name = "Hamdi Dayı", Role = "Emekli Madenci" },
-            303 => new NPC { NPCId = 303, Name = "Kahveci Çırağı Salih", Role = "Kahveci Çırağı" },
-            304 => new NPC { NPCId = 304, Name = "Şerife Teyze", Role = "Kasabalı" },
-            305 => new NPC { NPCId = 305, Name = "Oduncu Çırağı Cemal", Role = "Oduncu Çırağı" },
-            306 => new NPC { NPCId = 306, Name = "Postacı Nuri Efendi", Role = "Postacı" },
-            307 => new NPC { NPCId = 307, Name = "Telgraf Çırağı Yusuf", Role = "Telgraf Çırağı" },
-            308 => new NPC { NPCId = 308, Name = "Biletçi Fatma", Role = "Biletçi" },
-            309 => new NPC { NPCId = 309, Name = "Kâtip Sami Efendi", Role = "Kâtip" },
-            310 => new NPC { NPCId = 310, Name = "Tütün Tiryakisi Osman", Role = "Kasabalı" },
-            311 => new NPC { NPCId = 311, Name = "Hurda Toplayan Ali", Role = "Çocuk Tanık" },
-            312 => new NPC { NPCId = 312, Name = "Tüp Dağıtıcısı Mehmet", Role = "Dağıtıcı" },
-            313 => new NPC { NPCId = 313, Name = "Küçük Ayşe", Role = "Çocuk Tanık" },
-            314 => new NPC { NPCId = 314, Name = "Gece Bekçisi Recep", Role = "Gece Bekçisi" },
-            315 => new NPC { NPCId = 315, Name = "Küçük Elif", Role = "Çocuk Tanık" },
-            316 => new NPC { NPCId = 316, Name = "Can", Role = "Çocuk Tanık" },
-            317 => new NPC { NPCId = 317, Name = "Selin", Role = "Çocuk Tanık" },
-            318 => new NPC { NPCId = 318, Name = "Kerem", Role = "Çocuk Tanık" },
+            301 => new NPC { NPCId = 301, Name = "Celal Amca", Role = "senior" },
+            302 => new NPC { NPCId = 302, Name = "Hamdi Dayı", Role = "senior" },
+            303 => new NPC { NPCId = 303, Name = "Kahveci Çırağı Salih", Role = "young" },
+            304 => new NPC { NPCId = 304, Name = "Şerife Teyze", Role = "senior" },
+            305 => new NPC { NPCId = 305, Name = "Oduncu Çırağı Cemal", Role = "young" },
+            306 => new NPC { NPCId = 306, Name = "Postacı Nuri Efendi", Role = "adult" },
+            307 => new NPC { NPCId = 307, Name = "Telgraf Çırağı Yusuf", Role = "young" },
+            308 => new NPC { NPCId = 308, Name = "Biletçi Fatma", Role = "adult" },
+            309 => new NPC { NPCId = 309, Name = "Kâtip Sami Efendi", Role = "adult" },
+            310 => new NPC { NPCId = 310, Name = "Tütün Tiryakisi Osman", Role = "adult" },
+            311 => new NPC { NPCId = 311, Name = "Hurda Toplayan Ali", Role = "child" },
+            312 => new NPC { NPCId = 312, Name = "Tüp Dağıtıcısı Mehmet", Role = "adult" },
+            313 => new NPC { NPCId = 313, Name = "Küçük Ayşe", Role = "child" },
+            314 => new NPC { NPCId = 314, Name = "Gece Bekçisi Recep", Role = "adult" },
+            315 => new NPC { NPCId = 315, Name = "Küçük Elif", Role = "child" },
+            316 => new NPC { NPCId = 316, Name = "Can", Role = "child" },
+            317 => new NPC { NPCId = 317, Name = "Selin", Role = "child" },
+            318 => new NPC { NPCId = 318, Name = "Kerem", Role = "child" },
             _ => null
         };
     }

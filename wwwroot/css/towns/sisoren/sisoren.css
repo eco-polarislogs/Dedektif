@@ -126,7 +126,6 @@ body.sisoren-theme .map-building[class*="building-sisoren-"] .building-hover-tag
     color: #6ee7b7 !important;
     padding: 5px 14px !important;
     border-radius: 6px !important;
-    font-family: 'Cinzel', 'Trajan Pro', serif !important;
     font-size: 0.85rem !important;
     font-weight: 700 !important;
     letter-spacing: 1.5px !important;
@@ -178,7 +177,6 @@ body.sisoren-theme .map-building.building-sisoren-ahir .building-hover-tag {
     background: linear-gradient(135deg, #382012 0%, #1c1009 100%) !important;
     border: 1.5px solid #d97706 !important;
     color: #fef3c7 !important;
-    font-family: 'Cinzel', serif !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.95), 0 0 16px rgba(217, 119, 6, 0.6) !important;
     text-shadow: 0 0 8px rgba(245, 158, 11, 0.8) !important;
 }
@@ -231,9 +229,9 @@ body.sisoren-theme .found-btn,
 #town-map-screen.sisoren-active #found-btn {
     position: fixed !important;
     bottom: 30px !important;
-    right: 30px !important;
-    left: auto !important;
-    transform: none !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
     top: auto !important;
     z-index: 9999 !important;
     display: flex !important;
@@ -249,12 +247,62 @@ body.sisoren-theme .found-btn,
     padding: 14px 36px !important;
     border-radius: 28px !important;
     font-weight: 700 !important;
-    font-family: 'Cinzel', serif !important;
     letter-spacing: 2.5px !important;
     font-size: 1.2rem !important;
     cursor: pointer !important;
     pointer-events: auto !important;
     animation: sisorenFoundPulse 2s infinite !important;
+}
+
+/* Tüccar İlyas Widget — Bekçi Rıfat Stili (Sağ Alt Köşe) */
+#tuccar-quick-tip-btn.sisoren-tuccar-widget {
+    display: none;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 25px !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 120 !important;
+    width: 170px !important;
+    height: 220px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+body.sisoren-theme #tuccar-quick-tip-btn.sisoren-tuccar-widget {
+    display: flex !important;
+}
+
+#tuccar-quick-tip-btn.sisoren-tuccar-widget:hover {
+    transform: scale(1.12) translateY(-8px) !important;
+}
+
+#tuccar-quick-tip-btn.sisoren-tuccar-widget .helper-detective-img {
+    width: 155px;
+    height: 190px;
+    object-fit: contain;
+    filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 20px rgba(16, 185, 129, 0.65));
+}
+
+#tuccar-quick-tip-btn.sisoren-tuccar-widget .helper-detective-badge {
+    background: rgba(4, 30, 22, 0.98);
+    color: #6ee7b7;
+    border: 2px solid #10b981;
+    padding: 5px 14px;
+    border-radius: 14px;
+    font-family: 'Cinzel', serif;
+    font-weight: 800;
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    margin-top: -15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.9), 0 0 15px rgba(16, 185, 129, 0.5);
+    z-index: 2;
 }
 
 @keyframes sisorenFoundPulse {
@@ -267,7 +315,7 @@ body.sisoren-theme .found-btn,
 
     50% {
         box-shadow: 0 0 40px rgba(52, 211, 153, 0.95), 0 6px 22px rgba(0, 0, 0, 0.8);
-        transform: scale(1.04);
+        transform: translateX(-50%) scale(1.04);
     }
 }
 
@@ -277,7 +325,7 @@ body.sisoren-theme .found-btn:hover,
 #town-map-screen.sisoren-active #found-btn:hover {
     background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%) !important;
     box-shadow: 0 0 45px rgba(16, 185, 129, 0.98), 0 6px 20px rgba(0, 0, 0, 0.7) !important;
-    transform: scale(1.08) !important;
+    transform: translateX(-50%) scale(1.08) !important;
 }
 
 /* Sisören Buldum Ekranı Video Overlay Yeşil Ton */
@@ -300,71 +348,14 @@ body.sisoren-theme .found-header p {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
     gap: 16px !important;
-    max-width: 1200px !important;
+    max-width: 1000px !important;
     margin: 0 auto !important;
     padding: 20px !important;
     max-height: 68vh !important;
     overflow-y: auto !important;
 }
 
-/* Sisören NPC Kartları — Yeşil Tema */
-body.sisoren-theme .found-npc-card,
-.found-npc-card.sisoren-card {
-    border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
-    background: rgba(6, 32, 24, 0.9) !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 12px rgba(16, 185, 129, 0.2) !important;
-    transition: all 0.25s ease !important;
-}
 
-body.sisoren-theme .found-npc-card:hover,
-.found-npc-card.sisoren-card:hover {
-    border-color: #34d399 !important;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 25px rgba(16, 185, 129, 0.5) !important;
-    transform: translateY(-3px) !important;
-}
-
-body.sisoren-theme .found-npc-name {
-    color: #34d399 !important;
-}
-
-/* Sisören NPC Fotoğraf Placeholder & Boş İsim */
-.sisoren-placeholder-photo {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: 140px !important;
-    background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(2, 20, 15, 0.6) 100%) !important;
-    border: 1.5px dashed rgba(52, 211, 153, 0.4) !important;
-    border-radius: 8px !important;
-    margin: 8px auto !important;
-    cursor: pointer;
-}
-
-.sisoren-placeholder-icon {
-    font-size: 2.4rem !important;
-    color: rgba(52, 211, 153, 0.6) !important;
-    margin-bottom: 6px !important;
-}
-
-.sisoren-placeholder-text {
-    font-family: 'Cinzel', serif !important;
-    font-size: 0.75rem !important;
-    letter-spacing: 1.5px !important;
-    color: #6ee7b7 !important;
-    font-weight: 700 !important;
-}
-
-.sisoren-empty-name {
-    color: #6ee7b7 !important;
-    letter-spacing: 3px !important;
-    font-style: italic;
-    opacity: 0.7;
-}
-
-body.sisoren-theme .found-npc-role {
-    color: #a7f3d0 !important;
-}
 
 /* Sisören Otopsi Badge Yeşil Tema */
 body.sisoren-theme .autopsy-timer-container.pending {
@@ -615,7 +606,6 @@ body.sisoren-theme #npc-talk-modal .npc-talk-btn {
     color: #6ee7b7;
     padding: 4px 12px;
     border-radius: 6px;
-    font-family: 'Cinzel', serif;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.8px;
@@ -633,18 +623,139 @@ body.sisoren-theme #npc-talk-modal .npc-talk-btn {
 }
 
 /* ========================================
+   SUÇLAMA EKRANI - GRID & KART STİLLERİ
+   ======================================== */
+
+/* Sisören Grid: 4 sütunlu, Gölge Şehir ile aynı yapı */
+body.sisoren-theme #found-npc-cards,
+.sisoren-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 18px !important;
+    justify-content: center !important;
+    padding: 10px !important;
+    width: 100% !important;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Kart şekilleri: Gölge Şehir polaroid tarzı, Sisören temasıyla */
+body.sisoren-theme .found-npc-card,
+.found-npc-card.sisoren-card {
+    background: #fdfdfd !important;
+    padding: 10px 10px 20px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    border-radius: 2px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    position: relative !important;
+    filter: grayscale(40%) sepia(20%) !important;
+}
+
+/* Bant efekti (üstteki şeffaf bant) */
+body.sisoren-theme .found-npc-card::after,
+.found-npc-card.sisoren-card::after {
+    content: '' !important;
+    position: absolute !important;
+    top: -15px !important;
+    left: 50% !important;
+    transform: translateX(-50%) rotate(-3deg) !important;
+    width: 60px !important;
+    height: 25px !important;
+    background: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+    z-index: 5 !important;
+}
+
+/* Hover efekti */
+body.sisoren-theme .found-npc-card:hover,
+.found-npc-card.sisoren-card:hover {
+    transform: scale(1.08) rotate(0deg) translateY(-8px) !important;
+    filter: grayscale(0%) sepia(0%) !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(16, 185, 129, 0.4) !important;
+    z-index: 20 !important;
+}
+
+/* NPC isim yazısı - koyu renk (polaroid üzerine) */
+body.sisoren-theme .found-npc-card .found-npc-name {
+    font-family: var(--font-typewriter) !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    color: #111 !important;
+    margin-bottom: 4px !important;
+    text-transform: uppercase !important;
+}
+
+/* NPC rol yazısı */
+body.sisoren-theme .found-npc-card .found-npc-role {
+    font-size: 0.8rem !important;
+    color: #444 !important;
+    margin-bottom: 10px !important;
+    font-style: italic !important;
+}
+
+/* Fotoğraf stili */
+body.sisoren-theme .found-npc-card .found-npc-img {
+    width: 100% !important;
+    aspect-ratio: 1 !important;
+    object-fit: cover !important;
+    border: 1px solid #ddd !important;
+    margin-bottom: 12px !important;
+    cursor: pointer !important;
+    background: #222 !important;
+}
+
+/* Buton stilleri */
+body.sisoren-theme .found-npc-card .found-npc-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 15px !important;
+}
+
+body.sisoren-theme .found-npc-card .found-npc-actions button {
+    flex: 1 !important;
+    padding: 8px !important;
+    font-size: 0.8rem !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Masum işaretli kart */
+body.sisoren-theme .found-npc-card.innocent-marked {
+    opacity: 0.65 !important;
+    filter: grayscale(80%) sepia(10%) contrast(0.9) !important;
+    border: 2px solid #16a34a !important;
+    background: #f0fdf4 !important;
+}
+
+body.sisoren-theme .found-npc-card.innocent-marked .innocent-stamp {
+    background: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* Found başlık yeşil glow */
+body.sisoren-theme .found-header.cinematic-header h2 {
+    text-shadow: 0 4px 20px rgba(16, 185, 129, 0.6) !important;
+}
+
+/* Notlar butonu Sisören teması */
+body.sisoren-theme .found-npc-card .found-npc-actions .btn.btn-outline {
+    background-color: rgba(4, 30, 22, 0.85) !important;
+    border: 2px solid rgba(52, 211, 153, 0.6) !important;
+    color: #a7f3d0 !important;
+}
+
+body.sisoren-theme .found-npc-card .found-npc-actions .btn.btn-outline:hover {
+    background: rgba(16, 185, 129, 0.25) !important;
+    border-color: #34d399 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(52, 211, 153, 0.4) !important;
+}
+
+/* ========================================
    EKSTRA NPC KART STİLLERİ (Suçlama Ekranı)
    ======================================== */
-.sisoren-extra-card {
-    border-color: #059669 !important;
-    background: linear-gradient(135deg, rgba(6, 78, 59, 0.25), rgba(4, 120, 87, 0.15)) !important;
-}
-
-.sisoren-extra-card .sisoren-extra-photo {
-    background: linear-gradient(135deg, rgba(6, 95, 70, 0.5), rgba(5, 150, 105, 0.3)) !important;
-    border-color: #34d399 !important;
-}
-
-.sisoren-extra-card .found-npc-name {
-    color: #6ee7b7 !important;
-}

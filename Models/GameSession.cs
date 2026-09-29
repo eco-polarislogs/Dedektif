@@ -1,4 +1,4 @@
-namespace DedektiflikRPG.Models;
+﻿namespace DedektiflikRPG.Models;
 
 /// <summary>
 /// Oyun oturumunu temsil eder.

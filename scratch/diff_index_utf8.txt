@@ -1,0 +1,37 @@
+﻿diff --git a/wwwroot/index.html b/wwwroot/index.html
+index b8adfc7..9ae6e3c 100644
+--- a/wwwroot/index.html
++++ b/wwwroot/index.html
+@@ -54,18 +54,18 @@
+             </div>
+ 
+             <div class="region-town town-locked" style="top: 18%; left: 10%; width: 20%; height: 20%;"
+-                data-town-name="G├Âlge┼şehir">
++                data-town-id="golge_sehir" data-town-name="G├Âlge┼şehir">
+                 <div class="region-town-tag tag-locked">
+                     <i class="fa-solid fa-lock"></i> G├ûLGE┼ŞEH─░R
+                     <span class="status-badge status-locked">Kilitli B├Âlge</span>
+                 </div>
+             </div>
+ 
+-            <div class="region-town town-locked town-sisoren-btn" style="top: 9%; left: 42%; width: 20%; height: 18%;"
++            <div class="region-town town-active" style="top: 9%; left: 42%; width: 20%; height: 18%;"
+                 data-town-id="sisoren" data-town-name="Sis├Âren">
+-                <div class="region-town-tag tag-locked tag-sisoren">
+-                    <i class="fa-solid fa-lock"></i> S─░S├ûREN
+-                    <span class="status-badge status-locked">Kilitli B├Âlge</span>
++                <div class="region-town-tag tag-active">
++                    <i class="fa-solid fa-magnifying-glass"></i> S─░S├ûREN
++                    <span class="status-badge status-open status-open-sisoren">Soru┼şturmaya A├ğ─▒k</span>
+                 </div>
+             </div>
+ 
+@@ -622,7 +622,7 @@
+     <!-- AUDIO ELEMENTS -->
+     <!-- Noir ambiance/music (CHANGED TO DARK AMBIENT CITY) -->
+     <audio id="bg-music" loop preload="auto"
+-        src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_7306fb21c0.mp3"></audio>
++        src=""></audio>
+     <!-- Chatter / Murmur -->
+     <audio id="chatter-sound" loop preload="auto"
+         src="https://actions.google.com/sounds/v1/crowds/voices_murmuring.ogg"></audio>

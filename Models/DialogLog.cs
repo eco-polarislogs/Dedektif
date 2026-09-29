@@ -1,4 +1,4 @@
-namespace DedektiflikRPG.Models;
+﻿namespace DedektiflikRPG.Models;
 
 /// <summary>
 /// Oyuncu ile NPC arasındaki diyalog kaydını temsil eder.

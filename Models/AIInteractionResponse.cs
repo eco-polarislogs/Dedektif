@@ -1,4 +1,4 @@
-namespace DedektiflikRPG.Models;
+﻿namespace DedektiflikRPG.Models;
 
 /// <summary>
 /// AI servisinden dönen yanıtı temsil eder.

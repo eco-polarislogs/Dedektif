@@ -93,6 +93,20 @@ public static class TurkishTextEngine
     {
         return word switch
         {
+            // Gölge Şehir (Eski İstanbul Argosu)
+            "matiz" or "kandilli" or "zurna" => "sarhos",
+            "zoka" or "tuzak" or "kumpas" => "oyun",
+            "zaptiye" or "aynasiz" => "polis",
+            "keriz" or "sazan" => "kurban",
+
+            // Sisören (Karadeniz / Doğu Yöresel Şivesi)
+            "uyy" or "hacan" or "yengem" or "usak" or "ula" or "oyy" => "hitap",
+            "finduk" or "yaylasi" => "doga",
+            "ha" or "valla" or "billa" => "yemin",
+            "habu" or "hasu" or "hoyle" => "bu",
+            "gidecesin" or "edecesin" => "gideceksin",
+            "da" or "de" => "da",
+
             "kanki" or "kral" or "abi" or "dayi" or "usta" or "aga" or "haci" or "bilader" or "sef" or "toprak" or "hocam" or "baskan" or "baskanim" or "kardes" or "kardesim" or "komutan" or "komutanim" => "amirim",
             "sikti" or "kesti" or "deldi" or "cizdi" or "vurdu" or "indirdi" or "desti" or "kiydi" or "gebertti" or "boctu" or "oldurdu" or "yapti" or "ett" or "bogdu" or "katletti" or "gecmis" => "oldur",
             "para" or "mangir" or "sakal" or "avanta" or "cukka" or "veresiye" or "alacak" or "senet" or "borcu" or "nakit" or "metelik" or "servet" => "borc",
@@ -165,7 +179,12 @@ public static class TurkishTextEngine
                     foreach (var cTok in conceptTokens)
                     {
                         if (cTok.Length < 3) continue;
-                        int maxTypos = (cTok.Length >= 6) ? 2 : 1;
+                        
+                        // Hata toleransını (maxTypos) kelime uzunluğuna göre daha katı yap
+                        int maxTypos = 0;
+                        if (cTok.Length >= 10) maxTypos = 2;
+                        else if (cTok.Length >= 5) maxTypos = 1;
+                        
                         if (Math.Abs(inTok.Length - cTok.Length) <= maxTypos)
                         {
                             int dist = LevenshteinDistance(inTok, cTok);
@@ -174,9 +193,9 @@ public static class TurkishTextEngine
                     }
                 }
 
-                if (noSpaceConcept.Length >= 6)
+                if (noSpaceConcept.Length >= 8)
                 {
-                    int maxOverallTypos = Math.Max(1, noSpaceConcept.Length / 4);
+                    int maxOverallTypos = Math.Max(1, noSpaceConcept.Length / 5);
                     if (Math.Abs(noSpaceInput.Length - noSpaceConcept.Length) <= maxOverallTypos + 2)
                     {
                         int dist = LevenshteinDistance(noSpaceInput, noSpaceConcept);

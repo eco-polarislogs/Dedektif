@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Dedektif — Karanlık Kasabanın Sırrı</title>
+    <meta name="description" content="Yağmurlu bir gecede işlenen cinayeti çöz! 5 şüpheli, 5 bina, sayısız sır.">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Special+Elite&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=503">
+    <!-- Gölge Şehir İzole Stil Dosyası -->
+    <link rel="stylesheet" href="css/towns/golge_sehir/golge_sehir.css?v=602">
+    <!-- Sisören İzole Stil Dosyası -->
+    <link rel="stylesheet" href="css/towns/sisoren/sisoren.css?v=509">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kalam:wght@400;700&family=Sedgwick+Ave&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="noir-theme">
+
+    <!-- 1. SPLASH SCREEN -->
+    <div id="splash-screen" class="splash-container">
+        <div class="splash-glass">
+            <h1 class="game-title">D E D E K T İ F</h1>
+            <h3 class="game-subtitle">KARANLIK KASABANIN SIRRI</h3>
+            <button id="start-btn" class="btn btn-primary btn-glow"
+                style="margin-top:20px; font-size:1.5rem; padding:15px 30px;">
+                <i class="fa-solid fa-folder-open"></i> DOSYAYI AÇ VE BAŞLA
+            </button>
+        </div>
+    </div>
+
+    <!-- 2.5 BÖLGE HARİTASI (5 KASABA SEÇİMİ) -->
+    <div id="world-map-screen" class="full-screen-world-map hidden">
+        <div id="world-map-stage" class="map-stage-canvas world-map-stage-bg">
+            <div class="world-map-header">
+                <h2><i class="fa-solid fa-map-location-dot"></i> BÖLGE HARİTASI</h2>
+                <p>Soruşturma yürütmek istediğiniz kasabayı seçin</p>
+            </div>
+
+            <!-- 5 Kasaba Seçim Alanları -->
+            <div class="region-town town-active" style="top: 44%; left: 36%; width: 25%; height: 25%;"
+                data-town-id="gizemli">
+                <div class="region-town-tag tag-active">
+                    <i class="fa-solid fa-magnifying-glass"></i> GİZEMLİ KASABA
+                    <span class="status-badge status-open status-open-gizemli">Soruşturmaya Açık</span>
+                </div>
+            </div>
+
+            <div class="region-town town-active" style="top: 18%; left: 10%; width: 20%; height: 20%;"
+                data-town-id="golge_sehir" data-town-name="Gölgeşehir">
+                <div class="region-town-tag tag-locked">
+                    <i class="fa-solid fa-magnifying-glass"></i> GÖLGEŞEHİR
+                    <span class="status-badge status-open" style="background:#f59e0b; color:#111;">Soruşturmaya Açık</span>
+                </div>
+            </div>
+
+            <div class="region-town town-active town-sisoren-active" style="top: 9%; left: 42%; width: 20%; height: 18%;"
+                data-town-id="sisoren" data-town-name="Sisören">
+                <div class="region-town-tag tag-locked tag-sisoren">
+                    <i class="fa-solid fa-magnifying-glass"></i> SİSÖREN
+                    <span class="status-badge status-open" style="background:#f59e0b; color:#111;">Soruşturmaya Açık</span>
+                </div>
+            </div>
+
+            <div class="region-town town-locked" style="top: 18%; left: 70%; width: 22%; height: 20%;"
+                data-town-name="Yıkıkköy">
+                <div class="region-town-tag tag-locked">
+                    <i class="fa-solid fa-lock"></i> YIKIKKÖY
+                    <span class="status-badge status-locked">Kilitli Bölge</span>
+                </div>
+            </div>
+
+            <div class="region-town town-locked" style="top: 68%; left: 70%; width: 22%; height: 23%;"
+                data-town-name="Karaorman">
+                <div class="region-town-tag tag-locked">
+                    <i class="fa-solid fa-lock"></i> KARAORMAN
+                    <span class="status-badge status-locked">Kilitli Bölge</span>
+                </div>
+            </div>
+        </div>
+
+        <button id="world-back-btn" class="global-exit-btn" style="top: 25px; left: 25px;"><i
+                class="fa-solid fa-arrow-left"></i> Ana Menü</button>
+    </div>
+
+    <!-- 2. HİKAYE ANLATIMI EKRANI -->
+    <div id="story-intro-screen" class="story-intro-screen hidden">
+        <div class="story-bg-blur"></div>
+        <div class="story-content">
+            <div class="story-badge"><i class="fa-solid fa-scroll"></i> VAKA DOSYASI #104</div>
+            <div class="story-text-box">
+                <div id="typewriter-text" class="typewriter-text"></div>
+                <div class="story-cursor">|</div>
+            </div>
+            <div style="display:flex; gap:15px; margin-top:25px; align-items:center;">
+                <button id="skip-story-btn" class="btn btn-secondary"
+                    style="font-size:1.05rem; padding:12px 24px; border-color: rgba(255,255,255,0.4);">
+                    <i class="fa-solid fa-forward-step"></i> Hikayeyi Geç
+                </button>
+                <button id="story-continue-btn" class="btn btn-primary btn-glow hidden"
+                    style="font-size:1.2rem; padding:12px 40px;">
+                    <i class="fa-solid fa-magnifying-glass"></i> SORUŞTURMAYI BAŞLAT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. FULL SCREEN TOWN MAP -->
+    <div id="town-map-screen" class="full-screen-map hidden">
+        <div id="town-map-stage" class="map-stage-canvas town-map-stage-bg">
+            <!-- OTOPSİ RAPORU BUTONU -->
+            <div id="autopsy-timer-container" class="autopsy-timer-container locked">
+                <i class="fa-solid fa-clock"></i> <span id="autopsy-status-text">Otopsi Raporu Hazırlanıyor...</span>
+            </div>
+
+            <button id="found-btn" class="found-btn"><i class="fa-solid fa-gavel"></i> BULDUM!</button>
+
+            <!-- Haritadaki Tıklanabilir Binalar -->
+            <div class="map-building building-eczane" style="top: 34%; left: 17%; width: 14.5%; height: 20%;"
+                data-npc-id="2" title="Eczane">
+                <div class="building-hover-tag"><i class="fa-solid fa-prescription-bottle-medical"></i> ECZANE</div>
+            </div>
+            <div class="map-building building-kasap" style="top: 26%; left: 32%; width: 15%; height: 21%;"
+                data-npc-id="1" title="Kasap">
+                <div class="building-hover-tag"><i class="fa-solid fa-drumstick-bite"></i> KASAP</div>
+            </div>
+            <div class="map-building building-terzi" style="top: 27%; left: 54%; width: 14%; height: 21%;"
+                data-npc-id="5" title="Terzi">
+                <div class="building-hover-tag"><i class="fa-solid fa-scissors"></i> TERZİ</div>
+            </div>
+            <div class="map-building building-muhtarlik" style="top: 33%; left: 68.5%; width: 15%; height: 19%;"
+                data-npc-id="3" title="Muhtarlık">
+                <div class="building-hover-tag"><i class="fa-solid fa-building-flag"></i> MUHTARLIK</div>
+            </div>
+            <div class="map-building building-karakol" style="top: 50%; left: 66%; width: 20%; height: 24%;"
+                data-npc-id="4" title="Karakol">
+                <div class="building-hover-tag"><i class="fa-solid fa-building-shield"></i> KARAKOL</div>
+            </div>
+            <!-- YARDIMCI DEDEKTİF AVATARI (HARİTA) -->
+            <div id="town-helper-btn" class="helper-detective-widget" title="Yardımcı Dedektif Çetin'den İpucu Al">
+                <img src="images/dedektif_helper.png" alt="Yardımcı Dedektif" class="helper-detective-img">
+                <div class="helper-detective-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
+            </div>
+        </div>
+
+        <button id="exit-game-btn" class="global-exit-btn"><i class="fa-solid fa-door-open"></i> Ana Menü</button>
+        <div id="forensic-pending-badge" class="forensic-status-badge badge-pending" title="Adli Lab Gönderim Durumu">
+            <i class="fa-solid fa-vial"></i> <span id="forensic-badge-text">0/1 LAB GEREKLİ</span>
+        </div>
+        <button id="open-bag-btn" class="global-bag-btn"><i class="fa-solid fa-briefcase"></i> Çanta</button>
+    </div>
+
+    <!-- 4. BUILDING INTERIOR SCREEN -->
+    <div id="interior-screen" class="full-screen-interior hidden">
+        <!-- Sol ve Sağ Dükkan Devamı Panelleri -->
+        <div id="interior-side-left" class="interior-side-left"></div>
+        <div id="interior-side-right" class="interior-side-right"></div>
+
+        <div id="interior-stage-canvas" class="interior-stage-canvas">
+            <div class="rain-overlay"></div>
+
+            <!-- Sağ Alt Köşe Konuş Butonu -->
+            <button id="talk-npc-btn" class="talk-corner-btn">
+                <i class="fa-solid fa-comments"></i> <span id="talk-npc-name">Karakter İle Konuş</span>
+            </button>
+
+            <!-- Hotspots for Objects -->
+            <div id="hotspots-container"></div>
+
+            <!-- YARDIMCI DEDEKTİF AVATARI (BİNA İÇİ) -->
+            <div id="interior-helper-btn" class="helper-detective-widget" title="Yardımcı Dedektif Çetin'den İpucu Al">
+                <img src="images/dedektif_helper.png?v=10" alt="Yardımcı Dedektif" class="helper-detective-img">
+                <div class="helper-detective-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
+            </div>
+        </div>
+
+        <button id="leave-building-btn" class="global-exit-btn" style="top: 20px; left: 20px;">
+            <i class="fa-solid fa-person-walking-arrow-right"></i> Haritaya Dön
+        </button>
+        <button id="interior-bag-btn" class="global-bag-btn"><i class="fa-solid fa-briefcase"></i> Çanta</button>
+    </div>
+
+    <!-- YARDIMCI DEDEKTİF MODALI / İPUCU BALONCUÄU -->
+    <div id="helper-modal" class="modal-backdrop hidden" style="z-index: 5000;">
+        <div class="helper-modal-container">
+            <div class="helper-modal-header">
+                <div class="helper-portrait-circle">
+                    <img src="images/dedektif_helper.png?v=10" alt="Yardımcı Dedektif Çetin">
+                </div>
+                <div>
+                    <h2>YARDIMCI DEDEKTİF ÇETİN</h2>
+                    <p class="helper-subtitle">"Soruşturmada Size Yardımcı Olmak İçin Buradayım Amirims!"</p>
+                </div>
+                <button id="close-helper-btn" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="helper-modal-body">
+                <div class="helper-speech-bubble">
+                    <i class="fa-solid fa-quote-left helper-quote-icon"></i>
+                    <p id="helper-advice-text">Amirim, kasabadaki 5 binanın tamamını incelemeli, delilleri toplamalı ve
+                        şüphelileri sorgulamalısınız. Adli Tıp otopsi raporu hazır olduğunda harita ekranından hemen
+                        inceleyin!</p>
+                </div>
+                <div class="helper-quick-actions">
+                    <button id="helper-tip-btn" class="btn btn-primary"><i class="fa-solid fa-lightbulb"></i> Yeni İpucu
+                        İste</button>
+                    <button id="helper-analyze-btn" class="btn btn-accent"><i class="fa-solid fa-microscope"></i>
+                        Deliller Hakkında Ne Düşünüyorsun?</button>
+                    <button id="helper-open-bag-btn" class="btn btn-outline"><i class="fa-solid fa-briefcase"></i>
+                        Çantayı İncele</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. CINEMATIC HELPER DIALOG BOX (AUTO-TRIGGER) -->
+    <div id="cinematic-helper-box" class="cinematic-helper-box hidden">
+        <div class="cinematic-helper-filmstrip"></div>
+        <div class="cinematic-helper-content">
+            <div class="cinematic-helper-avatar">
+                <div class="cinematic-avatar-glow"></div>
+                <img src="images/dedektif_helper.png?v=13" alt="Çetin">
+            </div>
+            <div class="cinematic-helper-text-area">
+                <div class="cinematic-helper-name">YARDIMCI DEDEKTİF ÇETİN</div>
+                <!-- Daktilo efekti için boş p -->
+                <p id="cinematic-helper-text" class="cinematic-helper-msg"></p>
+                <!-- NEW: Buttons directly under the speech bubble -->
+                <div class="cinematic-helper-actions">
+                    <button id="cinematic-prev-btn" class="btn btn-accent" style="display:none;"><i
+                            class="fa-solid fa-backward-step"></i> Önceki</button>
+                    <button id="cinematic-analyze-btn" class="btn btn-accent"><i
+                            class="fa-solid fa-magnifying-glass-chart"></i> Delilleri İncele</button>
+                    <button id="cinematic-tip-btn" class="btn btn-accent"><i class="fa-solid fa-forward-step"></i> Başka
+                        İpucu Söyle</button>
+                    <button id="cinematic-skip-btn" class="btn btn-accent"><i class="fa-solid fa-forward"></i>
+                        Geç</button>
+                </div>
+            </div>
+            <button id="cinematic-helper-close" class="cinematic-helper-close-btn">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="cinematic-helper-filmstrip bottom"></div>
+    </div>
+
+    <!-- 4.5 BİNA İÇİ KÜÇÜK İNCELEME MODALI (SCENE OBJECT INSPECTION) -->
+    <div id="building-clue-modal" class="modal-backdrop hidden" style="z-index: 2800;">
+        <div class="building-clue-card">
+            <button id="building-clue-close-btn" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            <div class="building-clue-body">
+                <!-- Sol: Bilgisi -->
+                <div class="building-clue-info-col">
+                    <span class="building-clue-badge"><i class="fa-solid fa-eye"></i> OLAY YERİ İNCELEME</span>
+                    <h3 id="building-clue-title">Nesne Adı</h3>
+                    <p id="building-clue-desc">Nesne açıklaması...</p>
+                </div>
+                <!-- Sağ: Küçük Resmi -->
+                <div class="building-clue-img-col">
+                    <img id="building-clue-img" src="" alt="Küçük Delil Görseli">
+                </div>
+            </div>
+            <!-- Altta Butonları -->
+            <div class="building-clue-actions">
+                <button id="building-clue-take-btn" class="btn btn-primary">
+                    <i class="fa-solid fa-briefcase"></i> Çantaya Al
+                </button>
+                <button id="building-clue-leave-btn" class="btn btn-outline">
+                    <i class="fa-solid fa-xmark"></i> Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. CLUE INSPECTION MODAL (REDESIGNED FULL-SIZE FORENSIC LAB) -->
+    <div id="clue-inspect-modal" class="modal-backdrop hidden">
+        <div class="clue-inspect-container">
+            <!-- Sol Taraf: Bilgi -->
+            <div class="clue-inspect-info">
+                <div class="clue-inspect-badge"><i class="fa-solid fa-magnifying-glass"></i> ADLİ LABORATUVAR İNCELEME
+                </div>
+                <h2 id="clue-inspect-title" class="clue-inspect-name">Nesne Adı</h2>
+                <div class="clue-inspect-divider"></div>
+                <p id="clue-inspect-desc" class="clue-inspect-description">Nesne açıklaması...</p>
+
+                <!-- Yeşil İpucu Mesaj Kutusu ve Ayrı Ayrı Adli Tıbba Gönder Butonları -->
+                <div id="forensic-finding-box" class="forensic-finding-box hidden">
+                    <div id="forensic-blood-item" class="forensic-finding-item hidden">
+                        <div id="forensic-blood-text" class="forensic-item-text"><i
+                                class="fa-solid fa-droplet text-red"></i> KAN LEKESİ BULUNDU</div>
+                        <button id="send-blood-btn" class="btn btn-send-forensics btn-blood">
+                            <i class="fa-solid fa-paper-plane"></i> KAN LEKESİNİ ADLİ TIBBA GÖNDER
+                        </button>
+                    </div>
+                    <div id="forensic-fingerprint-item" class="forensic-finding-item hidden" style="margin-top: 10px;">
+                        <div id="forensic-fingerprint-text" class="forensic-item-text"><i
+                                class="fa-solid fa-fingerprint text-cyan"></i> PARMAK İZİ BULUNDU</div>
+                        <button id="send-fingerprint-btn" class="btn btn-send-forensics btn-fingerprint">
+                            <i class="fa-solid fa-paper-plane"></i> PARMAK İZİNİ ADLİ TIBBA GÖNDER
+                        </button>
+                    </div>
+                </div>
+
+                <div class="clue-inspect-actions" style="margin-top: auto;">
+                    <button id="clue-read-btn" class="btn btn-secondary btn-full hidden"
+                        style="margin-bottom: 10px; background: rgba(69, 243, 255, 0.2); border-color: var(--accent); color: var(--accent);">
+                        <i class="fa-solid fa-book-open"></i> İçeriği Oku / İncele
+                    </button>
+                    <button id="clue-take-btn" class="btn btn-primary btn-full">
+                        <i class="fa-solid fa-briefcase"></i> Çantaya Al
+                    </button>
+                    <button id="clue-leave-btn" class="btn btn-outline btn-full">
+                        <i class="fa-solid fa-xmark"></i> Kapat
+                    </button>
+                </div>
+            </div>
+            <!-- Sağ Taraf: Görsel (NPC arka plan buhulu + ipucu büyük) -->
+            <div class="clue-inspect-visual" id="clue-inspect-visual">
+                <div id="clue-inspect-bg" class="clue-inspect-bg-blur"></div>
+                <div class="clue-3d-wrapper" id="clue-3d-wrapper">
+                    <img id="clue-inspect-img" class="clue-inspect-item-img" src="" alt="İpucu Görseli">
+                    <canvas id="clue-uv-canvas" class="clue-canvas-overlay hidden"></canvas>
+                    <canvas id="clue-dust-canvas" class="clue-canvas-overlay hidden"></canvas>
+                    <div id="magnifier-lens" class="magnifier-lens"></div>
+                </div>
+
+                <!-- Okuma Modu Katmanı -->
+                <div id="document-reader-overlay" class="document-reader-overlay hidden">
+                    <div class="document-reader-header">
+                        <button id="document-reader-close" class="btn btn-outline document-reader-close"><i
+                                class="fa-solid fa-xmark"></i> İncelemeyi Bitir</button>
+                    </div>
+                    <div id="document-reader-content" class="document-reader-content"></div>
+                </div>
+
+                <!-- 4D Döndürme Kontrolleri (Thumbnails) -->
+                <div class="clue-thumbnails hidden" id="clue-thumbnails">
+                    <!-- Javascript ile doldurulacak -->
+                </div>
+                <!-- Adli Araçlar -->
+                <div class="forensic-tools">
+                    <button id="tool-uv-btn" class="forensic-tool-btn" title="UV Işığı (Kan Lekelerini gösterir)"><i
+                            class="fa-solid fa-lightbulb"></i></button>
+                    <button id="tool-dust-btn" class="forensic-tool-btn" title="Tozlama Fırçası (Parmak izi arar)"><i
+                            class="fa-solid fa-paintbrush"></i></button>
+                    <button id="tool-mag-btn" class="forensic-tool-btn" title="Büyüteç (Detaylı inceleme)"><i
+                            class="fa-solid fa-magnifying-glass-plus"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. NPC TALK FULLSCREEN -->
+    <div id="npc-talk-modal" class="modal-backdrop hidden">
+        <div class="npc-talk-container">
+            <!-- Sadece karakterin olduğu bölgeyi kesmek için ikinci katman (clip-path için) -->
+            <div id="npc-talk-character-layer" class="npc-talk-character-layer"></div>
+            <!-- Dark overlay for readability -->
+            <div class="npc-talk-overlay"></div>
+
+            <!-- Back button -->
+            <button id="npc-talk-close" class="npc-talk-back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Geri Dön
+            </button>
+
+            <!-- Remaining questions indicator -->
+            <div id="npc-talk-stage" class="npc-talk-stage-indicator">Kalan: 5 soru</div>
+
+            <!-- STRESS & VITALS MONITOR (EKG / NABIZ / SEMPTOM PANELİ) -->
+            <div class="npc-stress-container" id="npc-vitals-monitor" title="Şüpheli Fiziksel Stres ve Nabız Monitörü">
+                <div class="vitals-header">
+                    <div class="vitals-bpm-box">
+                        <i class="fa-solid fa-heart-pulse vitals-heart-icon"></i>
+                        <span id="npc-bpm-val" class="vitals-bpm-val">72</span> <span class="vitals-bpm-unit">BPM</span>
+                    </div>
+                    <div class="vitals-symptom-tag" id="npc-symptom-tag">
+                        <i class="fa-solid fa-face-meh"></i> <span>Sakin</span>
+                    </div>
+                    <div class="npc-stress-label">STRES: <span id="npc-stress-pct">0%</span></div>
+                </div>
+                <!-- EKG Monitör Dalgası -->
+                <div class="vitals-ecg-canvas-wrapper">
+                    <svg class="vitals-ecg-svg" viewBox="0 0 200 30">
+                        <path class="vitals-ecg-line"
+                            d="M0 15 L30 15 L35 8 L40 22 L45 2 L50 28 L55 15 L90 15 L95 8 L100 22 L105 2 L110 28 L115 15 L150 15 L155 8 L160 22 L165 2 L170 28 L175 15 L200 15" />
+                    </svg>
+                </div>
+                <div class="npc-stress-track">
+                    <div id="npc-stress-fill" class="npc-stress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Chat area (left side) -->
+            <div id="npc-talk-chat" class="npc-talk-chat-area">
+                <!-- Messages will be dynamically added -->
+            </div>
+
+            <!-- Bottom: 4 question buttons & Free AI Question Input -->
+            <div class="npc-talk-buttons-area">
+                <div id="npc-talk-buttons" class="npc-talk-buttons-grid">
+                    <!-- 4 buttons dynamically loaded -->
+                </div>
+                <div class="npc-ai-input-container">
+                    <input type="text" id="npc-ai-input" class="npc-ai-input"
+                        placeholder="Şüpheliyi Türkçe sorgula... (Örn: Şüpheli hareketlerinin sebebi ne? Cinayeti sen mi işledin?)"
+                        maxlength="150" autocomplete="off">
+                    <button id="npc-ai-send-btn" class="btn btn-primary npc-ai-send-btn">
+                        <i class="fa-solid fa-paper-plane"></i> SOR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- 7. INVENTORY (BAG) MODAL -->
+    <div id="bag-modal" class="modal hidden">
+        <div class="modal-content bag-content" style="position: relative;">
+            <button id="close-bag-x-btn" class="close-modal-btn" style="top: 15px; right: 20px;"
+                title="Çantayı Kapat"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title"><i class="fa-solid fa-suitcase"></i> Dedektif Çantası</h2>
+            <div class="bag-grid">
+                <div class="bag-items-section">
+                    <h3>Toplanan İpuçları</h3>
+                    <div id="bag-items-list" class="bag-items-list">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+                <div class="bag-notes-section">
+                    <h3>Dedektif Notları</h3>
+                    <textarea id="detective-notes"
+                        placeholder="Şüphelilerin söylediklerini ve ipuçlarını buraya not et..."></textarea>
+                </div>
+            </div>
+            <button id="close-bag-btn" class="btn btn-outline" style="margin-top:20px; width:100%;">Çantayı
+                Kapat</button>
+        </div>
+    </div>
+
+    <!-- DETAILED CLUE MODAL (Forensic Lab) -->
+    <div id="detailed-clue-modal" class="detailed-clue-modal hidden">
+        <button id="close-detailed-clue-btn" class="detailed-clue-close"><i class="fa-solid fa-xmark"></i></button>
+        <div class="detailed-clue-content">
+            <div class="detailed-clue-img-wrapper" id="detailed-clue-img-wrapper">
+                <img id="detailed-clue-img" src="" alt="Detaylı Görsel">
+                <div id="detailed-clue-overlay" class="detailed-clue-overlay"></div>
+                <div id="detailed-clue-letter-text" class="detailed-clue-letter-text hidden"></div>
+            </div>
+            <div class="detailed-clue-text-wrapper">
+                <div id="detailed-clue-title" class="detailed-clue-title"></div>
+                <div id="detailed-clue-text"></div>
+
+                <!-- Adli Tıp Araçları (Ad-hoc butonlar eklenecek) -->
+                <div id="detailed-clue-actions" class="detailed-clue-actions"></div>
+
+                <!-- İşlem Sonucu Ekranı -->
+                <div id="detailed-clue-result" class="detailed-clue-result hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. FOUND / ACCUSATION SCREEN (REDESIGNED WITH CINEMATIC VIDEO) -->
+    <div id="found-modal" class="modal-backdrop hidden" style="background: #000;">
+        <video id="found-bg-video" class="found-bg-video" src="images/Karanlık_ve_dedektif_havasında.mp4" autoplay loop
+            muted playsinline></video>
+        <div class="found-video-overlay"></div>
+        <div class="found-container cinematic-desk-container">
+            <div class="found-header cinematic-header">
+                <h2><i class="fa-solid fa-gavel"></i> KİMİ SUÇLAYACAKSIN AMİRİMS?</h2>
+                <p>Dosyayı kapatma vakti geldi. Hangi fotoğrafa çarpı atalım?</p>
+                <button id="found-close-btn" class="close-modal-btn cinematic-close"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="found-npc-cards" class="found-npc-grid desk-photos-grid">
+                <!-- NPC cards dynamically rendered -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. NPC CONVERSATION HISTORY MODAL -->
+    <div id="npc-history-modal" class="modal-backdrop hidden">
+        <div class="npc-history-card">
+            <button id="npc-history-close" class="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="npc-history-title"><i class="fa-solid fa-comments"></i> Konuşma Geçmişi</h2>
+            <div id="npc-history-content" class="npc-history-content">
+                <!-- History messages -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. JAIL ANIMATION OVERLAY — YENİ TASARIM -->
+    <div id="jail-overlay" class="jail-overlay hidden">
+        <div class="jail-scene">
+            <div class="jail-cell-bg"></div>
+            <img id="jail-npc-full" class="jail-npc-full" src="" alt="">
+            <div id="jail-npc-name" class="jail-npc-name"></div>
+            <div id="jail-arrested-text" class="jail-arrested-text">TUTUKLANDIN</div>
+        </div>
+    </div>
+
+    <!-- 11. GAME RESULT MODAL -->
+    <div id="result-modal" class="modal-backdrop hidden">
+        <div class="result-card">
+            <div id="result-icon" class="result-icon"></div>
+            <h2 id="result-title"></h2>
+            <p id="result-message" class="result-message"></p>
+            <button id="result-retry-btn" class="btn btn-primary btn-full hidden" style="margin-top:20px;">
+                <i class="fa-solid fa-rotate-right"></i> Tekrar Oyna
+            </button>
+        </div>
+    </div>
+
+    <!-- 12. BUILDING EXIT WARNING MODAL -->
+    <div id="exit-warning-modal" class="modal-backdrop hidden" style="z-index: 3000;">
+        <div class="exit-warning-card">
+            <div class="exit-warning-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h3>Binadan Ayrılmak İstediğinize Emin Misiniz?</h3>
+            <p>Bu binaya tekrar giremezsiniz! Tüm ipuçlarını topladığınızdan ve NPC ile konuştuğunuzdan emin olun.</p>
+            <div class="exit-warning-actions">
+                <button id="exit-confirm-btn" class="btn btn-danger"><i class="fa-solid fa-door-open"></i> Evet,
+                    Ayrıl</button>
+                <button id="exit-cancel-btn" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> Hayır,
+                    Kal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. GLOBAL NOTIFICATION & CONFIRMATION MESSAGE BOX MODAL -->
+    <div id="global-notification-modal" class="modal-backdrop hidden" style="z-index: 9999;">
+        <div class="notification-card" id="game-messagebox-card">
+            <div class="notification-icon pulse-anim" id="game-messagebox-icon"><i
+                    class="fa-solid fa-envelope-open-text"></i></div>
+            <h3 id="global-notification-title">YENİ BİLGİ!</h3>
+            <p id="global-notification-text">Adli Tıp Merkezi'nden Otopsi Raporu geldi! Harita ekranındaki rapora
+                tıklayarak inceleyebilirsiniz.</p>
+            <div id="game-messagebox-actions" style="display:flex; gap:12px; justify-content:center; margin-top:20px;">
+                <button id="messagebox-cancel-btn" class="btn btn-outline hidden" style="flex:1;"><i
+                        class="fa-solid fa-xmark"></i> Hayır / İptal</button>
+                <button id="notification-ok-btn" class="btn btn-primary btn-full" style="flex:1;"><i
+                        class="fa-solid fa-check"></i> Anladım</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13.5 KASABALI EVİ (FEHMİ BEY) ÖZEL KAPI VİDEOSU SAHNESİ (GENİŞ SİNEMATİK ÇERÇEVE) -->
+    <div id="fehmi-door-animation-modal" class="modal-backdrop hidden"
+        style="z-index: 9500; background: rgba(5,6,8,0.96); backdrop-filter: blur(8px);">
+        <div class="fehmi-door-stage"
+            style="position:relative; width:1020px; height:820px; max-width:96vw; max-height:92vh; border:4px solid #f59e0b; border-radius:18px; overflow:hidden; box-shadow:0 0 70px rgba(245,158,11,0.6), 0 30px 90px rgba(0,0,0,0.98); background:#000;">
+            <!-- Bunu Video Haline Getir MP4 Dosyası -->
+            <video id="fehmi-door-video" playsinline preload="auto"
+                style="width:100%; height:100%; object-fit:contain; background:#000; display:block;"
+                src="images/towns/golge_sehir/bunu_video_haline_getir.mp4"></video>
+        </div>
+    </div>
+
+    <!-- 14. TOWN LOCKED WARNING MODAL -->
+    <div id="town-locked-modal" class="modal-backdrop hidden" style="z-index: 9999;">
+        <div class="notification-card" style="max-width: 450px;">
+            <div class="notification-icon" style="color: #ff4a4a; font-size: 2.8rem; margin-bottom: 12px;"><i
+                    class="fa-solid fa-lock"></i></div>
+            <h3 id="locked-town-title" style="color: #fff; font-family: var(--font-heading); margin-bottom: 10px;">
+                KİLİTLİ BÖLGE</h3>
+            <p id="locked-town-desc" style="color: #ccc; font-size: 0.92rem; line-height: 1.6; margin-bottom: 20px;">
+                Bu kasabadaki soruşturma henüz kilitli. Önce Gizemli Kasaba cinayet vakasını çözmelisiniz!
+            </p>
+            <button id="close-locked-modal-btn" class="btn btn-primary btn-full"><i class="fa-solid fa-check"></i>
+                Anladım</button>
+        </div>
+    </div>
+
+    <!-- 15. FIRST-PERSON CINEMATIC VIDEO DOOR ENTRY TRANSITION -->
+    <div id="building-entry-modal" class="full-screen-door-entry hidden">
+        <div id="door-bg-image" class="door-bg-image"></div>
+        <div class="door-stage-canvas">
+            <!-- Building-specific Neon Ambient Glow -->
+            <div id="door-ambient-glow" class="door-ambient-glow"></div>
+
+            <!-- Widescreen Video Player (Sesli Video Oynatıcı) -->
+            <video id="building-transition-video" class="building-transition-video" playsinline preload="auto"></video>
+
+            <!-- Rainy Vignette & Fog Overlay -->
+            <div class="door-rain-overlay"></div>
+
+            <!-- Interactive Click Target Frame -->
+            <div id="door-interactive-frame" class="door-viewport-frame">
+                <!-- Floating Header & Neon Sign -->
+                <div class="door-top-header">
+                    <span id="door-building-badge" class="door-building-badge"><i id="door-neon-icon"
+                            class="fa-solid fa-prescription-bottle-medical"></i> BİNA GİRİŞİ</span>
+                    <h2 id="door-building-title">ECZANE</h2>
+                    <p id="door-building-desc">İçeri girmek için kapıyı tıklayın</p>
+                </div>
+
+                <!-- Floating Interactive Prompt -->
+                <div id="door-handle-prompt" class="door-handle-prompt-full">
+                    <i class="fa-solid fa-hand-pointer"></i> KAPIYI ÇAL / İÇERİ GİR
+                </div>
+            </div>
+        </div>
+
+        <button id="cancel-entry-btn" class="global-exit-btn door-cancel-btn">
+            <i class="fa-solid fa-arrow-left"></i> Haritaya Dön
+        </button>
+    </div>
+
+    <!-- TRANSITION OVERLAY -->
+    <div id="transition-overlay" class="transition-overlay"></div>
+
+    <!-- SES KAPATMA BUTONU (GLOBAL) -->
+    <button id="mute-toggle-btn" class="mute-toggle-btn" title="Ses Aç/Kapat">
+        <i class="fa-solid fa-volume-high"></i>
+    </button>
+
+    <!-- AUDIO ELEMENTS -->
+    <!-- Noir ambiance/music (CHANGED TO DARK AMBIENT CITY) -->
+    <audio id="bg-music" loop preload="auto"
+        src="https://cdn.pixabay.com/download/audio/2022/11/22/audio_7306fb21c0.mp3"></audio>
+    <!-- Chatter / Murmur -->
+    <audio id="chatter-sound" loop preload="auto"
+        src="https://actions.google.com/sounds/v1/crowds/voices_murmuring.ogg"></audio>
+    <!-- Heavy Rain -->
+    <audio id="rain-sound" loop preload="auto"
+        src="https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg"></audio>
+    <!-- Thunder -->
+    <audio id="thunder-sound" preload="auto"
+        src="https://actions.google.com/sounds/v1/weather/thunder_crack.ogg"></audio>
+    <!-- Door Knock -->
+    <audio id="door-knock" preload="auto" src="https://actions.google.com/sounds/v1/doors/door_knock.ogg"></audio>
+    <!-- Door Creak (Open) -->
+    <audio id="door-creak" preload="auto"
+        src="https://actions.google.com/sounds/v1/doors/wood_door_open_creak.ogg"></audio>
+    <!-- Door Close -->
+    <audio id="door-close" preload="auto" src="https://actions.google.com/sounds/v1/doors/wood_door_close.ogg"></audio>
+
+    <!-- Male Mumble -->
+    <audio id="mumble-male" preload="auto" src="https://actions.google.com/sounds/v1/foley/shoe_step_wood.ogg"></audio>
+    <!-- Female Mumble (Gerçekçi Fısıltı / Mırıltı) -->
+    <audio id="mumble-female" preload="auto"
+        src="https://actions.google.com/sounds/v1/foley/cloth_movement.ogg"></audio>
+
+    <!-- Judge Gavel Strike (Hakim Tokmak Sesi) -->
+    <audio id="gavel-sound" preload="auto" src="https://actions.google.com/sounds/v1/foley/wood_hit_heavy.ogg"></audio>
+
+    <!-- Typewriter Key -->
+    <audio id="typewriter-sound" preload="auto"
+        src="https://actions.google.com/sounds/v1/foley/typing_on_typewriter.ogg"></audio>
+
+    <!-- OTOPSİ MODALI (SÜRÜKLEYİCİ NOİR ADLİ TIP DOSYASI) -->
+    <div id="autopsy-modal" class="modal hidden">
+        <div class="autopsy-content">
+            <div class="autopsy-clip"></div>
+            <div class="autopsy-header">
+                <h2><i class="fa-solid fa-folder-closed"></i> ADLİ TIP OTOPSİ VAKA DOSYASI</h2>
+                <button id="close-autopsy" class="close-btn" title="Kapat"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="autopsy-body">
+                <div class="autopsy-stamp">GİZLİ</div>
+                <div class="autopsy-stamp-secondary">SORGULAMA ONAYLI</div>
+                <div id="autopsy-text" class="autopsy-text"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gölge Şehir İzole Modül Dosyaları -->
+    <script src="js/towns/golge_sehir/GolgeSehirConfig.js?v=815"></script>
+    <script src="js/towns/golge_sehir/GolgeSehirEngine.js?v=815"></script>
+    <!-- Sisören Modül Dosyaları -->
+    <script src="js/towns/sisoren/SisorenConfig.js?v=828"></script>
+    <script src="js/towns/sisoren/SisorenEngine.js?v=828"></script>
+    <script src="js/app.js?v=828"></script>
+</body>
+
+</html>

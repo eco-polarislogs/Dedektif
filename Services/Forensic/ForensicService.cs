@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,11 +12,13 @@ public class ForensicService : IForensicService
     // Kasabaya özel adli bulgular listeleri (izole)
     private readonly List<string> _gizemliFindings = new();
     private readonly List<string> _golgeFindings = new();
+    private readonly List<string> _sisorenFindings = new();
 
     public void ClearFindings()
     {
         lock (_gizemliFindings) { _gizemliFindings.Clear(); }
         lock (_golgeFindings) { _golgeFindings.Clear(); }
+        lock (_sisorenFindings) { _sisorenFindings.Clear(); }
     }
 
     public void ClearGolgeFindings()
@@ -29,17 +31,23 @@ public class ForensicService : IForensicService
         lock (_gizemliFindings) { _gizemliFindings.Clear(); }
     }
 
+    public void ClearSisorenFindings()
+    {
+        lock (_sisorenFindings) { _sisorenFindings.Clear(); }
+    }
+
     public void SubmitFinding(int clueId, string clueName, string findingText, List<NPC> npcs, int guiltyId)
     {
         if (string.IsNullOrWhiteSpace(findingText)) return;
 
-        bool isGolge = (clueId >= 1000);
-        int ownerNpcId = isGolge ? (clueId / 10) : Math.Clamp((clueId - 1) / 3 + 1, 1, 5);
+        bool isSisoren = (clueId >= 2000);
+        bool isGolge = (!isSisoren && clueId >= 1000);
+        int ownerNpcId = isSisoren ? (clueId / 10) : (isGolge ? (clueId / 10) : Math.Clamp((clueId - 1) / 3 + 1, 1, 5));
         bool isGuiltyClue = (ownerNpcId == guiltyId);
         bool isFingerprint = findingText.Contains("PARMAK İZİ", StringComparison.OrdinalIgnoreCase);
         bool isBlood = findingText.Contains("KAN LEKESİ", StringComparison.OrdinalIgnoreCase);
 
-        string sampleCode = isGolge ? $"NUMUNE #{clueId} ({clueName})" : (clueId switch
+        string sampleCode = (isGolge || isSisoren) ? $"NUMUNE #{clueId} ({clueName})" : (clueId switch
         {
             1 => "NUMUNE #01 (Masif Çelik Kesici Alet)",
             2 => "NUMUNE #02 (Veresiye Belgesi / Defter)",
@@ -76,7 +84,7 @@ public class ForensicService : IForensicService
         {
             if (isGuiltyClue)
             {
-                string victimName = isGolge ? "Ekrem Bey" : "Osman Bey";
+                string victimName = isSisoren ? "Halil Efendi" : (isGolge ? "Ekrem Bey" : "Osman Bey");
                 entry = $"[🧬 SEROLOJİK DNA ANALİZİ - {sampleCode}]: Numunedeki kan lekesi ve DNA serotipi, kurban {victimName}'in kan profili ile TAM EŞLEŞTİ. (Cinayet anı arbede/temas lekesi kesinleşmiştir).";
             }
             else
@@ -90,7 +98,7 @@ public class ForensicService : IForensicService
         }
 
         // Kasabaya göre doğru listeye ekle
-        var targetList = isGolge ? _golgeFindings : _gizemliFindings;
+        var targetList = isSisoren ? _sisorenFindings : (isGolge ? _golgeFindings : _gizemliFindings);
         lock (targetList)
         {
             if (!targetList.Contains(entry))
@@ -104,10 +112,11 @@ public class ForensicService : IForensicService
     {
         var guiltyNpc = npcs.FirstOrDefault(n => n.NPCId == guiltyId);
         string guiltyName = guiltyNpc?.Name ?? "Bilinmiyor";
-        bool isGolge = (guiltyId >= 100);
+        bool isSisoren = (guiltyId >= 200 && guiltyId < 300);
+        bool isGolge = (!isSisoren && guiltyId >= 100);
 
-        string victimName = isGolge ? "Ekrem Bey (62, Erkek)" : "Osman Bey (58, Erkek)";
-        string deathTime = isGolge ? "02:00 - 02:30 (Çam Ormanı Yolu / Göl Kenarı)" : "23:45 - 00:30 (Mantarlaşma & Rigor Mortis)";
+        string victimName = isSisoren ? "Madenci Halil Efendi (52, Erkek)" : (isGolge ? "Ekrem Bey (62, Erkek)" : "Osman Bey (58, Erkek)");
+        string deathTime = isSisoren ? "02:00 - 02:30 (Yoğun Sis - Maden Yolu)" : (isGolge ? "02:00 - 02:30 (Çam Ormanı Yolu / Göl Kenarı)" : "23:45 - 00:30 (Mantarlaşma & Rigor Mortis)");
 
         string reportHtml = $@"
         <div class='autopsy-dossier'>
@@ -115,7 +124,7 @@ public class ForensicService : IForensicService
                 <div class='autopsy-official-seal'>
                     <i class='fa-solid fa-scale-balanced'></i> T.C. ADLİ TIP KURUMU OTOPSİ VE ADLİ BİLİMLER BAŞKANLIĞI
                 </div>
-                <div class='autopsy-dossier-no'>RESMİ OTOPSİ PROTOKOL DOSYASI #{(isGolge ? "208-G" : "104-B")}</div>
+                <div class='autopsy-dossier-no'>RESMİ OTOPSİ PROTOKOL DOSYASI #{(isSisoren ? "301-S" : (isGolge ? "208-G" : "104-B"))}</div>
             </div>
             
             <div class='autopsy-meta-grid'>
@@ -130,7 +139,94 @@ public class ForensicService : IForensicService
             <div class='autopsy-sec-title'><i class='fa-solid fa-microscope'></i> OTOPSİ & ADLİ PATOLOJİ BULGULARI</div>
             <div class='autopsy-main-finding'>";
 
-        if (isGolge)
+        if (isSisoren)
+        {
+            switch (guiltyId)
+            {
+                case 201: // Telgrafçı
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[ASFİKSİ ANOMALİSİ]</span> Kurbanın boyun çevresinde kalın, plastik dokulu bir kabloyla oluşan derin strangülasyon (boğulma) izi saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[TRAVMA ANALİZİ]</span> Boğulmadan önce kafa arkasına ağır ve künt bir cisimle vurularak kurbanın sersemletildiği tespit edilmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[KİMYASAL İZ]</span> Kurbanın yaka kısmında telgraf mürekkebi pigmentleri ve failin kanlı eldivensiz parmak izleri izole edilmiştir.</div>";
+                    break;
+                case 202: // Kahveci
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[PENETRASYON TRAVMASI]</span> Göğüs kafesi sol anterior bölgesinde yakın mesafeden ateşlenmiş kurşun giriş yarası saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[KİMYASAL ANOMALİ]</span> Yaranın etrafındaki barut yanıklarının içinde yoğun kahve telvesi ve demlenmiş çay yaprağı kalıntıları bulunmuştur.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[MİKROSKOBİK TESPİT]</span> Olay yerinden elde edilen koku numunelerinde yanmış yün ve kumaş (kasket) dokusuna rastlanmıştır.</div>";
+                    break;
+                case 203: // Sinemacı
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[MEKANİK TRAVMA]</span> Kafatasının arka kısmında çok ağır ve çelik bir silindir (bobin) ile tek seferde vurulmaya bağlı masif kırıklar tespit edilmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[FİZİKSEL BULGU]</span> Kurbanın boynunda selüloit film şeridinin sürtünmesinden kaynaklı kesikler izole edilmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[DOKU ANALİZİ]</span> Kurbanın tırnak aralarında faile ait pahalı deri eldiven dokusu bulunmuştur.</div>";
+                    break;
+                case 204: // Bakkal
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[TOKSİKOLOJİK ROL]</span> Mide ve bağırsak sisteminde yüksek dozda arsenik (ağır endüstriyel fare zehri) kalıntısı saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[POZOLOJİK UYGULAMA]</span> Zehrin kurbana doğrudan verilmediği, maktulün düzenli kullandığı vitamin kapsüllerinin içine ustalıkla yerleştirildiği belirlenmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[İZ ANALİZİ]</span> Kurbanın evinde bulunan borç senetlerinin üzerinde faile ait deri döküntüleri ve ter izleri bulunmuştur.</div>";
+                    break;
+                case 205: // Sahaf
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[POSTÜRAL TRAVMA]</span> Başın parietal kemiğinde, içi oyulmuş kalın bir kitapla (içinde ağır bir nesne barındıran) vurulmaya bağlı çökme kırığı saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[EPİDERMAL MİKROSKOBİ]</span> Yaranın içinde yüzlerce yıllık eski kağıt tozu, selüloz ve deri cilt kalıntıları izole edilmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[KİMYASAL İZ]</span> Olay yerinde bulunan kırık cep saatinin kapağında faile ait DNA örneği içeren kurumuş kan damlası tespit edilmiştir.</div>";
+                    break;
+                case 206: // Muhtar
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[TRAVMA & PENETRASYON]</span> Kurbanın önce şakağına ağır pirinç bir nesne (mühür) ile vurulduğu, ardından yakın mesafeden tek el ateş edilerek öldürüldüğü saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[KİMYASAL ANOMALİ]</span> Baş bölgesindeki künt yaranın etrafında kırılmış resmi mühürden dökülen pirinç parçacıkları ve ıslak mürekkep izole edilmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[BALİSTİK İNCELEME]</span> Olay yerindeki süpürgeliğin dibinde bulunan boş kovanın balistik izleri failin silahıyla tam eşleşmektedir.</div>";
+                    break;
+                case 207: // Tütüncü
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[SOLUNUM PARALİZİ]</span> Post-mortem analizde kurbanın akciğerlerinde şiddetli solunum felcine yol açan toksik sıvı buharı kalıntısı saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[POZOLOJİK UYGULAMA]</span> Toksik sıvının kurbanın puro tütününe emdirildiği ve puro yakıldığında ısı ile birlikte ölümcül bir gaza dönüştüğü anlaşılmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[FİZİKSEL BULGU]</span> Ölüm öncesi yaşanan kısa arbedede kurbanın failin gümüş tütün tabakasına vurarak onu yaraladığı ve tabakada kan izi bıraktığı saptanmıştır.</div>";
+                    break;
+                case 208: // Çoban
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[HEMORAJİK ŞOK]</span> Kurbanın şah damarına saplanan çok keskin ve uzun, paslı bir metal (nalbant çivisi) nedeniyle anında kan kaybından öldüğü saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[FİZİKSEL BULGU]</span> Maktulün at eyerinin kasten yarıya kadar kesildiği, atın düşürülmesi sonrası failin çiviyi eliyle doğrudan sapladığı belirlenmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[İZ ANALİZİ]</span> Olay yeri incelemesinde çevreye atılmış saplı bir çakının kabzasında faile ait deri DNA'sı bulunmuştur.</div>";
+                    break;
+                case 209: // Tüpçü
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[KÜNT TRAVMA & KARBONMONOKSİT]</span> Kurbanın önce ağır bir İngiliz anahtarıyla kafasına vurularak bayıltıldığı, sonrasında ortama sızan propan gazı zehirlenmesinden hayatını kaybettiği tespit edilmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[KİMYASAL ANOMALİ]</span> Yaranın iç dokularında pas ve ağır makine yağı izole edilmiştir. Kurbanın ciğerlerinde yüksek konsantrasyonda ev tipi gaz bulunmuştur.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[EPİDERMAL KANIT]</span> Olay yerinde gaz vanasının yanında failin ceketinden koptuğu anlaşılan özel bir düğme tespit edilmiştir.</div>";
+                    break;
+                case 210: // Hurdacı
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[MASİF PENETRASYON]</span> Göğüs bölgesinde yakın mesafeden ateşlenmiş, namlusu kesilmiş ve saçma ile doldurulmuş (seri numarası silinmiş) tüfek yarası saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[DOKU SPEKTROSKOBİSİ]</span> Yaranın etrafındaki dokularda endüstriyel metal tozu, paslı demir oksit ve vagon gresi kalıntıları izole edilmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[İZ ANALİZİ]</span> Olay yerinde bulunan ve kurbanın kanının damladığı hurdacı tartım fişi üzerinde failin ter dokusu tespit edilmiştir.</div>";
+                    break;
+                case 211: // Zeynep
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[KÜNT KAFA TRAVMASI]</span> Başın arka kısmında, çok ağır ve sivri uçlu tarihi bir demir madenci çekiciyle indirilmiş ölümcül bir darbe saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[MEKANİK ANALİZ]</span> Darbenin bir anlık öfke patlamasıyla doğrudan kafatasına indirildiği anlaşılmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[EPİDERMAL MİKROSKOBİ]</span> Kurbanın kıyafetleri üzerinde faile ait uzun, beyaz/gri kadın saç telleri izole edilmiştir.</div>";
+                    break;
+                case 212: // Hatice
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[KARDİYAK PENETRASYON]</span> Kurbanın boyun ve göğüs kafesi arasına giren, son derece ince ve uzun (baston içine gizlenmiş) bir bıçakla öldürüldüğü saptanmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[MİKROSKOBİK TESPİT]</span> Yaranın kenarlarında ahşap yuvanın (baston) ufalanmış çok ince ahşap kıymıkları ve cila kalıntıları bulunmuştur.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[EL YAZISI ANALİZİ]</span> Olay yerinde bulunan randevu notunun failin titrek ama kararlı el yazısıyla yazıldığı kanıtlanmıştır.</div>";
+                    break;
+                case 213: // Emine
+                    reportHtml += @"
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[FİTOTOKSİK PARALİZİ]</span> Kurbanın kanında hızla yayılarak tam solunum durmasına neden olan çok güçlü bir zehir (Baldıran otu özütü) tespit edilmiştir.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[POZOLOJİK UYGULAMA]</span> Zehrin, zararsız görünen sıcak bir dağ çayının içine karıştırılarak kurbana içirildiği, midedeki bitki tortularından anlaşılmıştır.</div>
+                    <div class='autopsy-bullet'><span class='bullet-tag'>[LİF PATOLOJİSİ]</span> Olay yerinde kapı eşiğine takılıp kopmuş, kırmızı-yeşil renkli el dokuması yün atkı lifleri izole edilmiştir.</div>";
+                    break;
+                default:
+                    reportHtml += "<div class='autopsy-bullet'>• Otopsi ve laboratuvar analizleri devam ediyor.</div>";
+                    break;
+            }
+        }
+        else if (isGolge)
         {
             switch (guiltyId)
             {
@@ -230,7 +326,7 @@ public class ForensicService : IForensicService
         reportHtml += "</div>";
 
         // Kasabaya göre doğru bulgu listesini kullan
-        var targetList = isGolge ? _golgeFindings : _gizemliFindings;
+        var targetList = isSisoren ? _sisorenFindings : (isGolge ? _golgeFindings : _gizemliFindings);
         List<string> currentFindings;
         lock (targetList)
         {
@@ -311,7 +407,26 @@ public class ForensicService : IForensicService
         int weaponId = 0;
         int fingerprintId = 0;
 
-        if (guiltyId >= 100)
+        if (guiltyId >= 200)
+        {
+            switch (guiltyId)
+            {
+                case 201: weaponId = 2014; fingerprintId = 2012; break; // Rüstem
+                case 202: weaponId = 2025; fingerprintId = 2024; break; // İrfan
+                case 203: weaponId = 2031; fingerprintId = 2034; break; // Nejat
+                case 204: weaponId = 2041; fingerprintId = 2045; break; // Cemile
+                case 205: weaponId = 2051; fingerprintId = 2053; break; // Hikmet
+                case 206: weaponId = 2064; fingerprintId = 2062; break; // Meliha
+                case 207: weaponId = 2075; fingerprintId = 2074; break; // Nermin
+                case 208: weaponId = 2082; fingerprintId = 2085; break; // Durmuş
+                case 209: weaponId = 2092; fingerprintId = 2095; break; // Şevket
+                case 210: weaponId = 2103; fingerprintId = 2104; break; // Zehra
+                case 211: weaponId = 2112; fingerprintId = 2115; break; // Zeynep
+                case 212: weaponId = 2122; fingerprintId = 2123; break; // Hatice
+                case 213: weaponId = 2132; fingerprintId = 2133; break; // Emine
+            }
+        }
+        else if (guiltyId >= 100)
         {
             switch (guiltyId)
             {
@@ -400,6 +515,84 @@ public class ForensicService : IForensicService
             1082 => "Mumlu dayanıklı ayakkabı ipi yumağı... " + (guiltyId == 108 ? "Ekrem Bey'in boynundaki 0.4mm strangülasyon izi bu mumlu iple birebir eşleşiyor." : "Deri dikiminde kullanılan standart mumlu ip."),
             1083 => "Eğri deri kesme bıçağı... " + (guiltyId == 108 ? "Bıçağın kabzasındaki parmak izi Rasim'in cinayet gecesi olay yerinde olduğunu kanıtlıyor." : "Deri traşlamada kullanılan usta aleti."),
             1084 => "Ahşap ayakkabı kalıbı... " + (guiltyId == 108 ? "Kalıbın taban numarası ile kurbanın göğsündeki darbe izi eşleşti." : "Ayakkabı şekillendirme kalıbı."),
+
+            2011 => "Yırtık telgraf şeridi... " + (guiltyId == 201 ? "Rüstem, sırrının açığa çıkmasından korkarak şeridi çöpe attı." : "Sadece atılmış eski bir mesaj."),
+            2012 => "Mors tuşu altında kanlı parmak izi... " + (guiltyId == 201 ? "Rüstem'in kurbanı öldürdükten sonra ellerindeki kanı silmeyi unuttuğu bariz." : "İz, kurbanın son çırpınışlarına ait olabilir."),
+            2013 => "Çekmecedeki rüşvet kesesi... " + (guiltyId == 201 ? "Bu rüşveti saklamak Rüstem için kurbanı öldürmeye yetti." : "Telgrafçının şüpheli gelir kaynakları."),
+            2014 => "Arka odada kasten kesilmiş yedek hat kablosu... " + (guiltyId == 201 ? "Rüstem bu kabloyla kurbanı boğarak öldürdü." : "Kablolar sadece sabotaj amaçlı kesilmiş."),
+            2015 => "Karalanmış tehdit mesajı taslağı... " + (guiltyId == 201 ? "Taslağın el yazısı açıkça Rüstem'e ait." : "Kimliği belirsiz bir tehdit."),
+            
+            2021 => "Altına buluşma saati kazınmış fincan... " + (guiltyId == 202 ? "İrfan kurbanı kahvehanenin arka odasına bu işaretle çekti." : "Müşterilerin bıraktığı sıradan bir iz."),
+            2022 => "Örgüt sembolü kazınmış okey taşı... " + (guiltyId == 202 ? "İrfan'ın derin bağlarını gösteren bu taş cinayetin asıl motifi." : "Kahvehanede unutulmuş işaretli taş."),
+            2023 => "Yırtık borç listesi... " + (guiltyId == 202 ? "Kırmızıyla çizilmiş isimler İrfan'ın infaz listesi gibi." : "Sıradan alacak-verecek kaydı."),
+            2024 => "Sobada tam yanmamış kanlı kasket... " + (guiltyId == 202 ? "İrfan olay anında kasketine sıçrayan kanı yok etmek için onu ateşe atmış." : "Kazara düşüp yanmış bir şapka."),
+            2025 => "Zulalanmış, bir mermisi eksik ruhsatsız altıpatlar... " + (guiltyId == 202 ? "Silahın balistik incelemesi kurbanın göğsündeki kurşunla tam eşleşti." : "Kahvecinin kendini korumak için sakladığı silah."),
+
+            2031 => "Kasten kesilmiş film bobini... " + (guiltyId == 203 ? "Nejat, kurbanın kafasını ezmek için bu ağır çelik bobini kullandı." : "Makinede kopmuş sıradan bir bobin."),
+            2032 => "Çekmecede şantajlı eski film afişi... " + (guiltyId == 203 ? "Nejat, şantaja boyun eğmemek için kurbanı ortadan kaldırdı." : "Sadece geçmişe ait karanlık bir not."),
+            2033 => "Cinayet saatine ait düşmüş bilet koçanı... " + (guiltyId == 203 ? "Nejat'ın alibisi çöktü, bilet cinayet anında kesilmişti." : "Müşterinin düşürdüğü bilet."),
+            2034 => "Perde arkasında kanlı deri eldiven... " + (guiltyId == 203 ? "Pahalı domuz derisi eldiven sadece Nejat gibi gösterişli birine ait olabilir." : "Olay yerine bırakılmış yanıltıcı bir eşya."),
+            2035 => "Aynaya rujla yazılmış rıhtım adresi... " + (guiltyId == 203 ? "Bu adres Nejat'ın cinayet sonrası kaçış planıydı." : "Eski bir aktrisin bıraktığı not."),
+
+            2041 => "Tezgâh arkasında ezilmiş fare zehri (arsenik)... " + (guiltyId == 204 ? "Cemile kurbanı zehirlemek için bu kutudaki arseniği kullandı." : "Dükkanda zararlılar için bulundurulan zehir."),
+            2042 => "Veresiye defterinde kopuk sayfa... " + (guiltyId == 204 ? "Cemile cinayet gecesi nerede olduğunu saklamak için sayfayı koparmış." : "Müşteri borcunu ödeyince sayfa yırtılmış."),
+            2043 => "Kasa yanına düşmüş yabancı gümüş sikke... " + (guiltyId == 204 ? "Cemile'nin dışarıdan tuttuğu bir tetikçiden seken para." : "Koleksiyonluk eski bir para."),
+            2044 => "Zulalanmış faturasız kaçak tütün... " + (guiltyId == 204 ? "Cemile kaçakçılık sırrını korumak için cinayet işledi." : "Sadece bakkalın yasadışı ticareti."),
+            2045 => "Yerdeki buruşuk isimli borç senedi... " + (guiltyId == 204 ? "Senedin üzerindeki deri döküntüleri Cemile'yi cinayet anına bağlıyor." : "Ödenmemiş bir borç kâğıdı."),
+
+            2051 => "İçi oyulmuş kalın ansiklopedi... " + (guiltyId == 205 ? "Hikmet bu ağır kitabı ve içindeki metal bloku kurbanın kafasına vurdu." : "Sadece değerli eşyaları saklamak için oyulmuş."),
+            2052 => "Kırmızı mürekkepli şifreli kenar notları... " + (guiltyId == 205 ? "Bu şifreler Hikmet'in kurbanla olan gizli hesaplaşmasını gösteriyor." : "Eski bir okuyucunun notları."),
+            2053 => "Kırık cep saati kapağında kurumuş kan... " + (guiltyId == 205 ? "DNA testi kanın kurbana değil, arbedede yaralanan Hikmet'e ait olduğunu kanıtladı." : "Saat tamircisinden kalan eski bir leke."),
+            2054 => "Yerde çekilmiş ağır kasa izi... " + (guiltyId == 205 ? "Hikmet cinayetten sonra cesedi gizlemek için kasayı sürüklemiş." : "Dükkan temizliğinde yeri değiştirilen kasa."),
+            2055 => "Sahte vasiyetname taslağı... " + (guiltyId == 205 ? "Hikmet sahte vasiyetnameden pay almak için gerçeği bilen kurbanı susturdu." : "Sadece taslak halinde bir sahtekarlık."),
+
+            2061 => "Asitle silinmiş nüfus kütük sayfası... " + (guiltyId == 206 ? "Meliha Hanım kurbanın geçmişini ve haklarını yok etmek için sahtecilik yaptı." : "Belge kazara tahrip olmuş."),
+            2062 => "Kenarı çatlamış resmi kasaba damgası (mühür)... " + (guiltyId == 206 ? "Meliha Hanım ateş etmeden önce mühürle kurbanın kafasına şiddetle vurdu." : "Sert basıldığı için kırılmış eski mühür."),
+            2063 => "Gizli orman tapusu... " + (guiltyId == 206 ? "Meliha bu tapuların sırrını korumak için kurbanı harcadı." : "Arşive kaldırılmış eski bir arazi haritası."),
+            2064 => "Süpürgelikteki boş mermi kovanı... " + (guiltyId == 206 ? "Balistik inceleme, bu kovanın Meliha'nın tabancasından çıktığını kanıtladı." : "Daha önceden kalma bir yorgun mermi kovanı."),
+            2065 => "Çöpteki parçalanmış resmi uyarı mektubu... " + (guiltyId == 206 ? "Meliha görevden alınacağını öğrenince kurbanı suçlamak için panikledi." : "Önemsiz bir bürokratik yazışma."),
+
+            2071 => "İthal yarım içilmiş puro izmariti... " + (guiltyId == 207 ? "Nermin, kurbana lüks bir puro ikram edip içine toksin enjekte etmiş." : "Zengin bir müşterinin izmariti."),
+            2072 => "Şifreli sigara sarma kâğıdı... " + (guiltyId == 207 ? "Isıtıldığında Nermin'in kurbanı tuzağa düşürdüğü adres listesi ortaya çıktı." : "Kâğıt üzerinde anlamsız lekeler."),
+            2073 => "İçi boşaltılıp temizlenmiş lüle taşı pipo... " + (guiltyId == 207 ? "Nermin, piponun içindeki zehir kalıntılarını yok etmeye çalışmış." : "Sadece temizlenmiş eski bir pipo."),
+            2074 => "Temizlenmeye çalışılmış kanlı gümüş tabaka... " + (guiltyId == 207 ? "Arbede sırasında kurban Nermin'in tabakasına çarparak kanını bulaştırdı." : "Tabaka üzerindeki pas lekesi."),
+            2075 => "Tütün kokulu zehirli sıvı şişesi... " + (guiltyId == 207 ? "Nermin'in kurbanın purosunu felç edici bir toksinle doldurduğu kanıtlandı." : "Sıradan bir aromatik yağ şişesi."),
+
+            2081 => "Kasten yarıya kadar kesilmiş at eyeri kayışı... " + (guiltyId == 208 ? "Durmuş, kurbanın uçurumdan düşmesi için eyeri kurnazca kesti." : "Kayış sadece aşınmış."),
+            2082 => "Samanlarda bulunan kanlı at nalı çivisi... " + (guiltyId == 208 ? "Durmuş, eyer planı işlemeyince kurbanın şah damarına bu çiviyi sapladı." : "Hayvan yaralanmasından kalma kanlı çivi."),
+            2083 => "Kopuk altın cep saati zinciri... " + (guiltyId == 208 ? "Durmuş cinayet anında kurbanın değerli saatini çekip kopardı." : "Su yalağına düşmüş sıradan zincir."),
+            2084 => "Yabancı sivri burunlu bot izi... " + (guiltyId == 208 ? "Durmuş cinayeti başka birine atmak için bu bot izini kasten yaptı." : "Ahıra izinsiz giren birinin izi."),
+            2085 => "Direğe saplı paslı çakı... " + (guiltyId == 208 ? "Kabzasındaki DNA, Durmuş'un bu çakıyı olay yerinde bıraktığını kanıtlıyor." : "Hayvan bağlamak için saplanmış çakı."),
+
+            2091 => "Valfi kasten bozulmuş küçük piknik tüpü... " + (guiltyId == 209 ? "Şevket, gaz sızıntısı yaratarak olaya kaza süsü vermek istedi." : "Sadece arızalı eski bir valf."),
+            2092 => "İngiliz anahtarı üzerindeki kurumuş kan... " + (guiltyId == 209 ? "Şevket, kurbanı gazla zehirlemeden önce bu ağır anahtarla kafasına vurdu." : "Anahtardaki pas ve makine yağı izi."),
+            2093 => "Sahte teslimat müşteri kaydı... " + (guiltyId == 209 ? "Şevket, kurbanın evine gece gitmesini açıklamak için defterde sahtecilik yaptı." : "Sadece hatalı tutulmuş bir kayıt."),
+            2094 => "Boş tüpün içine zulalanmış çalıntı kolye... " + (guiltyId == 209 ? "Şevket'in borç batağından kurtulmak için kurbanı soyduğu ortada." : "Gizlenmiş, kime ait olduğu belirsiz mücevher."),
+            2095 => "Kopuk özel ceket düğmesi... " + (guiltyId == 209 ? "Arbede sırasında Şevket'in ceketinden kopan bu düğme onu olay yerine bağlıyor." : "Sıradan bir plastik düğme."),
+
+            2101 => "Preslenmek üzere olan çalıntı çelik kasa... " + (guiltyId == 210 ? "Zehra, kurbanın evinden çaldığı kasayı hurdada yok etmeye çalıştı." : "Eski bir hurda yığını."),
+            2102 => "Üzeri zımparalanmış yeni araç plakası... " + (guiltyId == 210 ? "Zehra'nın yasadışı işlerini gizlemek için kestiği çalıntı plaka." : "Metal geri dönüşümü için hazırlanmış plaka."),
+            2103 => "Seri numarası silinmiş, namlusu kesik tüfek... " + (guiltyId == 210 ? "Zehra, kurbanın göğsüne yakın mesafeden bu silahla ateş etti." : "Hurdaya atılmış bozuk bir silah."),
+            2104 => "Kanlı tartım fişi... " + (guiltyId == 210 ? "Kurban kan revan içinde kantarın üzerine düştüğünde fişe kan sıçramış." : "Dikkatsizce damlatılmış kırmızı boya."),
+            2105 => "Eritilecek teller içindeki kurbana ait yüzük... " + (guiltyId == 210 ? "Zehra cinayet delilini bakır tellerle birlikte eritmeye çalıştı." : "Hurda bakırların içine düşmüş yüzük."),
+
+            2111 => "Tozlu eski maden kayıtları belgeleri... " + (guiltyId == 211 ? "Zeynep Teyze, kocasının intikamını bu belgelerdeki sır yüzünden aldı." : "Tarihi geçmiş tozlu evraklar."),
+            2112 => "Paslı ağır demir madenci çekici... " + (guiltyId == 211 ? "Çekiç sapındaki lekenin kurbanın kanı olduğu anlaşıldı. Zeynep kurbanın başına bununla vurdu." : "Sıradan eski bir maden aleti."),
+            2113 => "Kasten kırılmış eski sandık asma kilidi... " + (guiltyId == 211 ? "Kurban belgeleri çalmak için sandığı kırınca Zeynep onu suçüstü yakaladı." : "Sadece paslandığı için kırılmış kilit."),
+            2114 => "Bekçi Recep'in tuttuğu gölge raporu... " + (guiltyId == 211 ? "O gece dışarı çıkan gölge bizzat Zeynep Teyzeydi." : "Bekçi sisli havada yanılmış olabilir."),
+            2115 => "Olay yerindeki uzun beyaz/gri kadın saç teli... " + (guiltyId == 211 ? "Zeynep cinayet anında saç telini olay yerinde düşürdü." : "Kurbanın yaşlı bir akrabasına ait olabilir."),
+
+            2121 => "30 yıl önceki maden kazasını gösteren albüm... " + (guiltyId == 212 ? "Hatice Nine bu fotoğraflarla kurbana şantaj yapan sırrı koruyordu." : "Eski hatıra fotoğrafları."),
+            2122 => "İçinden bıçak çıkan ahşap baston... " + (guiltyId == 212 ? "Hatice Nine kurbanın boynuna kocasının yadigarı olan bu gizli bıçağı sapladı." : "Sadece antika bir savunma aleti."),
+            2123 => "Titrek el yazılı randevu notu... " + (guiltyId == 212 ? "Hatice Nine'nin el yazısı incelemesinde notu kendisinin yazdığı kesinleşti." : "Sıradan bir buluşma notu."),
+            2124 => "Siyah kolye boncuğu... " + (guiltyId == 212 ? "Hatice Nine'nin boynundaki siyah tespihten/kolyeden koptuğu belirlendi." : "Eski halı desenlerine karışmış sıradan boncuk."),
+            2125 => "Dağ çamuru bulaşmış el örgüsü yün şal... " + (guiltyId == 212 ? "Hatice Nine kurbanın evinden çıkarken şalını kapıya taktı." : "Yoldan geçen birine ait yırtık parça."),
+
+            2131 => "Kavanoza gizlenmiş baldıran otu... " + (guiltyId == 213 ? "Emine Hanım'ın kurbanı felç edip öldürmek için hazırladığı ölümcül zehir." : "Sadece kurumuş şifalı ot."),
+            2132 => "Dibinde bitki tortusu olan zehirli çay fincanı... " + (guiltyId == 213 ? "Emine Hanım kurbana barış çayı bahanesiyle baldıran özütünü içirdi." : "Sıradan bir dağ çayı tortusu."),
+            2133 => "Kırmızı-yeşil yün atkı püskülü... " + (guiltyId == 213 ? "Olay yerindeki bu atkı parçası Emine Hanım'ın tezgâhındaki iplerle %100 aynı." : "Kopmuş sıradan bir yün parçası."),
+            2134 => "Zehirli bitkiler bölümü çizilmiş kitap... " + (guiltyId == 213 ? "Emine cinayet planını adım adım bu kitaptan öğrenerek kurguladı." : "Sıradan bir botanik kitabı."),
+            2135 => "Yamaç toprağına ait çamur izi... " + (guiltyId == 213 ? "Emine kurbanın evine pencereden girerken dağ çamurunu oraya taşıdı." : "Herhangi bir çiftçinin ayakkabısındaki çamur."),
 
             _ => "Bu nesne karanlık sırlar barındırıyor..."
         };

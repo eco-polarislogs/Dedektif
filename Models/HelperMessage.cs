@@ -1,4 +1,4 @@
-namespace DedektiflikRPG.Models;
+﻿namespace DedektiflikRPG.Models;
 
 /// <summary>
 /// Yardımcı Dedektif Çetin'in bağlam-tabanlı mesajlarını temsil eder.

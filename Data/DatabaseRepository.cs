@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Npgsql;
 using System.Data;
 using System.IO;
+using System.Text.Json;
 
 namespace DedektiflikRPG.Data;
 
@@ -133,7 +134,7 @@ public class DatabaseRepository : IGameRepository
     public async Task UpdateNPCTrustAsync(int npcId, int trustChange)
     {
         using var db = CreateConnection();
-        string tableName = (npcId >= 100) ? "GolgeSehirNPCs" : "NPCs";
+        string tableName = (npcId >= 200) ? "SisorenNPCs" : ((npcId >= 100) ? "GolgeSehirNPCs" : "NPCs");
         await db.ExecuteAsync($@"
             UPDATE {tableName} 
             SET TrustLevel = 
@@ -175,21 +176,20 @@ public class DatabaseRepository : IGameRepository
     public async Task<IEnumerable<Clue>> GetCluesInBagAsync()
     {
         using var db = CreateConnection();
-        try
-        {
-            return await db.QueryAsync<Clue>("SELECT * FROM Clues WHERE Status = 'KeptInBag' ORDER BY ClueId");
-        }
-        catch
-        {
-            return Enumerable.Empty<Clue>();
-        }
+        var allClues = new List<Clue>();
+        
+        try { allClues.AddRange(await db.QueryAsync<Clue>("SELECT * FROM Clues WHERE Status = 'KeptInBag'")); } catch {}
+        try { allClues.AddRange(await db.QueryAsync<Clue>("SELECT * FROM GolgeSehirClues WHERE Status = 'KeptInBag'")); } catch {}
+        try { allClues.AddRange(await db.QueryAsync<Clue>("SELECT * FROM SisorenClues WHERE Status = 'KeptInBag'")); } catch {}
+
+        return allClues.OrderBy(c => c.ClueId);
     }
     public async Task UpdateNPCAsync(NPC npc)
     {
         using var db = CreateConnection();
         await db.ExecuteAsync(@"
             UPDATE NPCs 
-            SET TrustLevel = @TrustLevel, FearLevel = @FearLevel, IsGuilty = @IsGuilty 
+            SET TrustLevel = @TrustLevel, FearLevel = @FearLevel, IsGuilty = @IsGuilty, StressLevel = @StressLevel 
             WHERE NPCId = @NPCId", 
             npc);
     }
@@ -199,7 +199,11 @@ public class DatabaseRepository : IGameRepository
         using var db = CreateConnection();
         try
         {
-            await db.ExecuteAsync("UPDATE Clues SET Status = @Status WHERE ClueId = @ClueId", new { ClueId = clueId, Status = status });
+            string table = "Clues";
+            if (clueId >= 2000) table = "SisorenClues";
+            else if (clueId >= 1000) table = "GolgeSehirClues";
+
+            await db.ExecuteAsync($"UPDATE {table} SET Status = @Status WHERE ClueId = @ClueId", new { ClueId = clueId, Status = status });
         }
         catch { }
     }
@@ -246,10 +250,36 @@ public class DatabaseRepository : IGameRepository
         await db.ExecuteAsync("DELETE FROM DialogLogs");
     }
 
+    public async Task ClearDialogLogsByTownAsync(int minNpcId, int maxNpcId)
+    {
+        using var db = CreateConnection();
+        await db.ExecuteAsync("DELETE FROM DialogLogs WHERE NPCId >= @Min AND NPCId <= @Max", new { Min = minNpcId, Max = maxNpcId });
+    }
+
     public async Task ClearPlayerInventoryAsync()
     {
         using var db = CreateConnection();
         await db.ExecuteAsync("DELETE FROM PlayerInventory");
+    }
+
+    public async Task ClearPlayerInventoryByTownAsync(int minClueId, int maxClueId)
+    {
+        using var db = CreateConnection();
+        await db.ExecuteAsync("DELETE FROM PlayerInventory WHERE ClueId >= @Min AND ClueId <= @Max", new { Min = minClueId, Max = maxClueId });
+    }
+
+    public async Task ResetSisorenSessionAsync(int guiltyNpcId)
+    {
+        using var db = CreateConnection();
+        try
+        {
+            await db.ExecuteAsync("UPDATE SisorenNPCs SET IsGuilty = 0");
+            await db.ExecuteAsync("UPDATE SisorenNPCs SET IsGuilty = 1 WHERE NPCId = @NPCId", new { NPCId = guiltyNpcId });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"  ⚠️ ResetSisorenSessionAsync hatası: {ex.Message}");
+        }
     }
 
     public async Task<IEnumerable<DialogLog>> GetRecentDialogLogsAsync(int npcId, int count = 10)
@@ -303,19 +333,10 @@ public class DatabaseRepository : IGameRepository
             }
 
             // schema.sql varsa çalıştır (Eğer tablo yoksa vs.)
-            var schemaPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "schema.sql");
+            var schemaPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", _isPostgres ? "schema_postgres.sql" : "schema.sql");
             if (File.Exists(schemaPath) && npcCount < 5)
             {
                 var sql = File.ReadAllText(schemaPath);
-                if (_isPostgres)
-                {
-                    sql = sql.Replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
-                             .Replace("datetime('now')", "CURRENT_TIMESTAMP")
-                             .Replace("IsAccusatory INTEGER", "IsAccusatory BOOLEAN")
-                             .Replace("IsActive    INTEGER", "IsActive    BOOLEAN")
-                             .Replace("IsGuilty    INTEGER", "IsGuilty    BOOLEAN")
-                             .Replace("IsDiscovered INTEGER", "IsDiscovered BOOLEAN");
-                }
                 await db.ExecuteAsync(sql);
             }
 
@@ -325,6 +346,7 @@ public class DatabaseRepository : IGameRepository
 
             // Gölge Şehir Tablolarını ve Verilerini Yükle
             await EnsureGolgeSehirTablesAsync();
+            await EnsureSisorenTablesAsync();
         }
         catch (Exception ex)
         {
@@ -701,7 +723,7 @@ public class DatabaseRepository : IGameRepository
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"  ⚠️ EnsureGolgeSehirTablesAsync hatası: {ex.Message}");
+            if (!ex.Message.Contains("23505")) Console.WriteLine($"  ⚠️ EnsureGolgeSehirTablesAsync hatası: {ex.Message}");
         }
     }
 
@@ -759,29 +781,29 @@ public class DatabaseRepository : IGameRepository
         {
             if (string.IsNullOrEmpty(category))
             {
-                var rows = await db.QueryAsync<dynamic>("SELECT * FROM GolgeSehirNPCDialogues WHERE NPCId = @NPCId", new { NPCId = npcId });
+                var rows = await db.QueryAsync<dynamic>("SELECT DialogueId as \"DialogueId\", NPCId as \"NPCId\", QuestionText as \"QuestionText\", ResponseText as \"ResponseText\", GuiltyResponseText as \"GuiltyResponseText\", Difficulty as \"Difficulty\", Category as \"Category\" FROM GolgeSehirNPCDialogues WHERE NPCId = @NPCId", new { NPCId = npcId });
                 return rows.Select(r => new NPCDialogue
                 {
                     DialogueId = (int)r.DialogueId,
                     NPCId = (int)r.NPCId,
-                    PlayerText = (string)r.QuestionText,
-                    NPCResponse = (string)r.ResponseText,
-                    GuiltyResponses = (string)r.GuiltyResponseText,
+                    PlayerText = (string)(r.QuestionText ?? ""),
+                    NPCResponse = (string)(r.ResponseText ?? ""),
+                    GuiltyResponses = (string)(r.GuiltyResponseText ?? ""),
                     Difficulty = (int)(r.Difficulty ?? 1),
                     Category = (string)(r.Category ?? "tanisma")
                 });
             }
-
             else
             {
-                var rows = await db.QueryAsync<dynamic>("SELECT * FROM GolgeSehirNPCDialogues WHERE NPCId = @NPCId AND Category = @Category", new { NPCId = npcId, Category = category });
+                var rows = await db.QueryAsync<dynamic>("SELECT DialogueId as \"DialogueId\", NPCId as \"NPCId\", QuestionText as \"QuestionText\", ResponseText as \"ResponseText\", GuiltyResponseText as \"GuiltyResponseText\", Difficulty as \"Difficulty\", Category as \"Category\" FROM GolgeSehirNPCDialogues WHERE NPCId = @NPCId AND Category = @Category ORDER BY Stage, ButtonIndex",
+                    new { NPCId = npcId, Category = category });
                 return rows.Select(r => new NPCDialogue
                 {
                     DialogueId = (int)r.DialogueId,
                     NPCId = (int)r.NPCId,
-                    PlayerText = (string)r.QuestionText,
-                    NPCResponse = (string)r.ResponseText,
-                    GuiltyResponses = (string)r.GuiltyResponseText,
+                    PlayerText = (string)(r.QuestionText ?? ""),
+                    NPCResponse = (string)(r.ResponseText ?? ""),
+                    GuiltyResponses = (string)(r.GuiltyResponseText ?? ""),
                     Difficulty = (int)(r.Difficulty ?? 1),
                     Category = (string)(r.Category ?? "tanisma")
                 });
@@ -801,7 +823,8 @@ public class DatabaseRepository : IGameRepository
               CREATE TABLE IF NOT EXISTS SisorenNPCs (
                   NPCId INTEGER PRIMARY KEY, Name TEXT NOT NULL, Role TEXT NOT NULL,
                   BuildingId TEXT NOT NULL, IsExtra BOOLEAN NOT NULL DEFAULT FALSE,
-                  IsChild BOOLEAN NOT NULL DEFAULT FALSE, Portrait TEXT NOT NULL DEFAULT ''
+                  IsChild BOOLEAN NOT NULL DEFAULT FALSE, Portrait TEXT NOT NULL DEFAULT '',
+                  IsGuilty BOOLEAN NOT NULL DEFAULT FALSE, TrustLevel INTEGER NOT NULL DEFAULT 50, StressLevel INTEGER NOT NULL DEFAULT 30
               );
               CREATE TABLE IF NOT EXISTS SisorenBuildings (
                   BuildingId TEXT PRIMARY KEY, Title TEXT NOT NULL, InteriorFile TEXT NOT NULL,
@@ -820,7 +843,8 @@ public class DatabaseRepository : IGameRepository
               CREATE TABLE IF NOT EXISTS SisorenNPCs (
                   NPCId INTEGER PRIMARY KEY, Name TEXT NOT NULL, Role TEXT NOT NULL,
                   BuildingId TEXT NOT NULL, IsExtra INTEGER NOT NULL DEFAULT 0,
-                  IsChild INTEGER NOT NULL DEFAULT 0, Portrait TEXT NOT NULL DEFAULT ''
+                  IsChild INTEGER NOT NULL DEFAULT 0, Portrait TEXT NOT NULL DEFAULT '',
+                  IsGuilty INTEGER NOT NULL DEFAULT 0, TrustLevel INTEGER NOT NULL DEFAULT 50, StressLevel INTEGER NOT NULL DEFAULT 30
               );
               CREATE TABLE IF NOT EXISTS SisorenBuildings (
                   BuildingId TEXT PRIMARY KEY, Title TEXT NOT NULL, InteriorFile TEXT NOT NULL,
@@ -837,6 +861,20 @@ public class DatabaseRepository : IGameRepository
               """;
         await db.ExecuteAsync(sql);
 
+        try
+        {
+            var schemaPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "schema_sisoren_clues.sql");
+            if (File.Exists(schemaPath))
+            {
+                var clueSql = await File.ReadAllTextAsync(schemaPath);
+                await db.ExecuteAsync(clueSql);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (!ex.Message.Contains("23505")) Console.WriteLine($"  ⚠️ SisorenClues hatası: {ex.Message}");
+        }
+
         var names = new Dictionary<int, (string Name, string Tone)>
         {
             [201] = ("Telgrafçı Rüstem", "adult"), [202] = ("Kahveci İrfan", "adult"), [203] = ("Sinemacı Nejat", "adult"),
@@ -844,17 +882,14 @@ public class DatabaseRepository : IGameRepository
             [207] = ("Tütüncü Nermin", "adult"), [208] = ("Çoban Durmuş", "adult"), [209] = ("Tüpçü Şevket", "adult"),
             [210] = ("Hurdacı Zehra", "adult"), [211] = ("Zeynep Teyze", "senior"), [212] = ("Hatice Nine", "senior"), [213] = ("Emine Hanım", "adult"),
             [301] = ("Celal Amca", "senior"), [302] = ("Hamdi Dayı", "senior"), [303] = ("Kahveci Çırağı Salih", "young"),
-            [304] = ("Şerife Teyze", "senior"), [305] = ("Oduncu Çırağı Cemal", "young"), [306] = ("Postacı Nuri Efendi", "adult"),
-            [307] = ("Telgraf Çırağı Yusuf", "young"), [308] = ("Biletçi Fatma", "adult"), [309] = ("Kâtip Sami Efendi", "adult"),
-            [310] = ("Tütün Tiryakisi Osman", "adult"), [311] = ("Hurda Toplayan Ali", "child"), [312] = ("Tüp Dağıtıcısı Mehmet", "adult"),
-            [313] = ("Küçük Ayşe", "child"), [314] = ("Gece Bekçisi Recep", "senior"),
-            [315] = ("Küçük Elif", "child"), [316] = ("Can", "child"), [317] = ("Selin", "child"), [318] = ("Kerem", "child")
+            [306] = ("Postacı Nuri Efendi", "adult")
         };
+        await db.ExecuteAsync("DELETE FROM SisorenNPCs WHERE NPCId >= 300");
         foreach (var npc in names)
         {
             await db.ExecuteAsync(_isPostgres
                 ? "INSERT INTO SisorenNPCs (NPCId,Name,Role,BuildingId,IsExtra,IsChild) VALUES (@NPCId,@Name,@Role,@BuildingId,@IsExtra,@IsChild) ON CONFLICT (NPCId) DO UPDATE SET Name=EXCLUDED.Name,Role=EXCLUDED.Role"
-                : "INSERT OR REPLACE INTO SisorenNPCs (NPCId,Name,Role,BuildingId,IsExtra,IsChild) VALUES (@NPCId,@Name,@Role,@BuildingId,@IsExtra,@IsChild)",
+                : "INSERT INTO SisorenNPCs (NPCId,Name,Role,BuildingId,IsExtra,IsChild) VALUES (@NPCId,@Name,@Role,@BuildingId,@IsExtra,@IsChild) ON CONFLICT (NPCId) DO UPDATE SET Name=excluded.Name,Role=excluded.Role",
                 new { NPCId = npc.Key, Name = npc.Value.Name, Role = npc.Value.Tone, BuildingId = npc.Key >= 300 ? "sisoren_extra" : "sisoren_building", IsExtra = npc.Key >= 300, IsChild = npc.Value.Tone == "child" });
         }
         var buildings = new[]
@@ -880,60 +915,52 @@ public class DatabaseRepository : IGameRepository
                 : "INSERT OR REPLACE INTO SisorenBuildings (BuildingId,Title,InteriorFile,MapTop,MapLeft) VALUES (@BuildingId,@Title,@InteriorFile,'0%','0%')",
                 new { BuildingId = building.Item1, Title = building.Item2, InteriorFile = building.Item3 });
         }
-        var questions = new[] { "Cinayet gecesi binanda kim vardı?", "O gece saat iki civarında ne gördün?", "Bu olayla ilgili sakladığın belge ya da eşya nedir?", "Başka hangi kasabalı bu ayrıntıyı doğrulayabilir?" };
-        var categories = new[] { "tanisma", "derinlesme", "yuzlestirme", "baski", "son" };
-        foreach (var npc in names)
-        for (var stage = 0; stage < 5; stage++)
-        for (var button = 0; button < 4; button++)
+        var dialoguesPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "sisoren_dialogues.json");
+        if (File.Exists(dialoguesPath))
         {
-            var parameters = new
+            var jsonStr = await File.ReadAllTextAsync(dialoguesPath);
+            var dialogues = JsonSerializer.Deserialize<List<SisorenDialogueSeed>>(jsonStr);
+            if (dialogues != null)
             {
-                NPCId = npc.Key,
-                QuestionText = $"{questions[button]} (Soru {stage * 4 + button + 1})",
-                ResponseText = BuildSisorenSeedResponse(npc.Value.Name, npc.Value.Tone, stage, button),
-                GuiltyResponseText = BuildSisorenGuiltyResponse(npc.Value.Name, npc.Value.Tone, stage, button),
-                Stage = stage, ButtonIndex = button, Difficulty = Math.Min(5, stage + 1), Category = categories[stage]
-            };
-            await db.ExecuteAsync(_isPostgres
-                ? "INSERT INTO SisorenNPCDialogues (NPCId,QuestionText,ResponseText,GuiltyResponseText,Stage,ButtonIndex,Difficulty,Category) VALUES (@NPCId,@QuestionText,@ResponseText,@GuiltyResponseText,@Stage,@ButtonIndex,@Difficulty,@Category) ON CONFLICT (NPCId,Stage,ButtonIndex) DO UPDATE SET QuestionText=EXCLUDED.QuestionText,ResponseText=EXCLUDED.ResponseText,GuiltyResponseText=EXCLUDED.GuiltyResponseText"
-                : "INSERT OR REPLACE INTO SisorenNPCDialogues (NPCId,QuestionText,ResponseText,GuiltyResponseText,Stage,ButtonIndex,Difficulty,Category) VALUES (@NPCId,@QuestionText,@ResponseText,@GuiltyResponseText,@Stage,@ButtonIndex,@Difficulty,@Category)", parameters);
+                foreach (var d in dialogues)
+                {
+                    await db.ExecuteAsync(_isPostgres
+                        ? "INSERT INTO SisorenNPCDialogues (NPCId,QuestionText,ResponseText,GuiltyResponseText,Stage,ButtonIndex,Difficulty,Category) VALUES (@NPCId,@QuestionText,@ResponseText,@GuiltyResponseText,@Stage,@ButtonIndex,@Difficulty,@Category) ON CONFLICT (NPCId,Stage,ButtonIndex) DO UPDATE SET QuestionText=EXCLUDED.QuestionText,ResponseText=EXCLUDED.ResponseText,GuiltyResponseText=EXCLUDED.GuiltyResponseText"
+                        : "INSERT OR REPLACE INTO SisorenNPCDialogues (NPCId,QuestionText,ResponseText,GuiltyResponseText,Stage,ButtonIndex,Difficulty,Category) VALUES (@NPCId,@QuestionText,@ResponseText,@GuiltyResponseText,@Stage,@ButtonIndex,@Difficulty,@Category)", 
+                        d);
+                }
+            }
         }
     }
 
-    private static string BuildSisorenSeedResponse(string name, string tone, int stage, int button)
+    public class SisorenDialogueSeed
     {
-        if (tone == "child")
-            return $"{name} heyecanla anlatıyor: Ben sadece gördüğümü biliyorum; sisin içinde bir ışık vardı ve biri hızlı hızlı yürüyordu. Belki başka bir büyüğe de soralım.";
-        if (tone == "young")
-            return $"{name} biraz çekinerek anlatıyor: O gece bir hareketlilik fark ettim ama her şeyi net göremedim. Duyduğum sesin hangi binadan geldiğini araştırmanız daha doğru olur.";
-        if (tone == "senior")
-            return $"{name} ağır ağır konuşuyor: Bu dağda yıllar içinde çok şey gördüm evladım. O geceki izler bana eski maden yolunu hatırlattı; kesin hüküm vermeden önce başka tanıkları da dinleyin.";
-        return $"{name} temkinli konuşuyor: Bu ayrıntıyı doğrudan doğrulayamam; olay gecesinde bina çevresindeki izler dağ yoluna yöneliyordu. Başka bir tanığın kaydı bunu açıklayabilir.";
-    }
-
-    private static string BuildSisorenGuiltyResponse(string name, string tone, int stage, int button)
-    {
-        if (tone == "child")
-            return $"{name} ürkekçe başını sallıyor: Ben kötü bir şey görmedim, sadece sisin içinde bir gölge gördüm. Daha fazla konuşmak istemiyorum.";
-        if (tone == "young")
-            return $"{name} gözlerini kaçırıyor: O geceyi tam hatırlamıyorum. Yanlış bir şey söyleyip birini suçlamak istemem; bildiğim kadarıyla izler dağ tarafına gidiyordu.";
-        if (tone == "senior")
-            return $"{name} iç çekiyor: Bazı gerçekler aceleyle söylenmez evladım. Beni bu işin içine çekmeyin; gördüğüm izleri ancak kanıtla birlikte değerlendirin.";
-        return $"{name} sakin görünmeye çalışıyor: Bu konuda kesin konuşamam. O geceyi anlatırsam başka birinin başı derde girebilir; önce delilleri karşılaştırmanız gerekir.";
+        public int NPCId { get; set; }
+        public string QuestionText { get; set; } = "";
+        public string ResponseText { get; set; } = "";
+        public string GuiltyResponseText { get; set; } = "";
+        public int Stage { get; set; }
+        public int ButtonIndex { get; set; }
+        public int Difficulty { get; set; }
+        public string Category { get; set; } = "";
     }
 
     public async Task<IEnumerable<NPCDialogue>> GetSisorenDialoguesAsync(int npcId, string? category = null)
     {
         using var db = CreateConnection();
         var rows = await db.QueryAsync<dynamic>(
-            "SELECT DialogueId,NPCId,QuestionText,ResponseText,GuiltyResponseText,Difficulty,Category FROM SisorenNPCDialogues WHERE NPCId=@NPCId " +
+            "SELECT DialogueId as \"DialogueId\", NPCId as \"NPCId\", QuestionText as \"QuestionText\", ResponseText as \"ResponseText\", GuiltyResponseText as \"GuiltyResponseText\", Difficulty as \"Difficulty\", Category as \"Category\" FROM SisorenNPCDialogues WHERE NPCId=@NPCId " +
             (string.IsNullOrWhiteSpace(category) ? "" : "AND Category=@Category ") + "ORDER BY Stage,ButtonIndex",
             new { NPCId = npcId, Category = category });
         return rows.Select(r => new NPCDialogue
         {
-            DialogueId = (int)r.DialogueId, NPCId = (int)r.NPCId, PlayerText = (string)r.QuestionText,
-            NPCResponse = (string)r.ResponseText, GuiltyResponses = (string)r.GuiltyResponseText,
-            Difficulty = (int)r.Difficulty, Category = (string)r.Category
+            DialogueId = Convert.ToInt32(r.DialogueId ?? 0), 
+            NPCId = Convert.ToInt32(r.NPCId ?? 0), 
+            PlayerText = (string)(r.QuestionText ?? ""),
+            NPCResponse = (string)(r.ResponseText ?? ""), 
+            GuiltyResponses = (string)(r.GuiltyResponseText ?? ""),
+            Difficulty = Convert.ToInt32(r.Difficulty ?? 1), 
+            Category = (string)(r.Category ?? "tanisma")
         });
     }
 
@@ -977,5 +1004,59 @@ public class DatabaseRepository : IGameRepository
             Console.WriteLine($"  ⚠️ ResetGolgeSehirSessionAsync hatası: {ex.Message}");
         }
     }
+    public async Task<IEnumerable<NPC>> GetSisorenNPCsAsync()
+    {
+        using var db = CreateConnection();
+        try
+        {
+            return await db.QueryAsync<NPC>("SELECT * FROM SisorenNPCs ORDER BY NPCId");
+        }
+        catch
+        {
+            return Enumerable.Empty<NPC>();
+        }
+    }
 
+    public async Task<NPC?> GetSisorenNPCByIdAsync(int npcId)
+    {
+        using var db = CreateConnection();
+        try
+        {
+            return await db.QueryFirstOrDefaultAsync<NPC>(
+                "SELECT * FROM SisorenNPCs WHERE NPCId = @NPCId",
+                new { NPCId = npcId });
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<IEnumerable<Clue>> GetSisorenCluesAsync()
+    {
+        using var db = CreateConnection();
+        try
+        {
+            return await db.QueryAsync<Clue>("SELECT * FROM SisorenClues ORDER BY ClueId");
+        }
+        catch
+        {
+            return Enumerable.Empty<Clue>();
+        }
+    }
+
+
+    public async Task<IEnumerable<NPC>> GetNPCsByTownAsync(string townId)
+    {
+        if (townId == "sisoren") return await GetSisorenNPCsAsync();
+        if (townId == "golge_sehir") return await GetGolgeSehirNPCsAsync();
+        return await GetAllNPCsAsync();
+    }
+
+    public async Task<IEnumerable<Clue>> GetCluesByTownAsync(string townId)
+    {
+        if (townId == "sisoren") return await GetSisorenCluesAsync();
+        if (townId == "golge_sehir") return await GetGolgeSehirCluesAsync();
+        return await GetAllCluesAsync();
+    }
 }

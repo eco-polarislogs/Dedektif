@@ -1,4 +1,4 @@
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -55,7 +55,19 @@ public class AntigravityAiService
             ? string.Join("\n", recentDialogs.Take(3).Select(h => $"  [Dedektif]: {h.PlayerQuestion}\n  [{npc.Name}]: {h.NPCResponse}"))
             : "  (Henüz önceki konuşma yok)";
 
-        string victimName = (npc.NPCId >= 100) ? "Ekrem Bey" : "Osman Bey";
+        string victimName = "Osman Bey";
+        string townName = "Gizemli Kasaba";
+        if (npc.NPCId >= 200)
+        {
+            victimName = "Madenci Halil Efendi";
+            townName = "Sisören Kasabası";
+        }
+        else if (npc.NPCId >= 100)
+        {
+            victimName = "Ekrem Bey";
+            townName = "Gölge Şehir";
+        }
+
         var guiltStatus = isGuilty 
             ? $"SUÇLU (Katilsin. Cinayeti sen işledin ama ASLA 'Ben öldürdüm' ya da 'Ben suçluyum' diye doğrudan itiraf etmeyeceksin! Alakasız bahaneler bul, terle, kıvır, delil iste veya başka birini işaret et.)" 
             : $"MASUM (Katil değilsin! Kurban {victimName}'in katili başkası. Kendini savun, masumiyetini açıkla, gerekirse iftira atıldığını söyleyip öfkelen.)";
@@ -66,6 +78,8 @@ Sen bir dedektiflik RPG oyunundaki NPC karakterisin. Aşağıdaki kurallara uyma
 KARAKTERİN:
 - İsim: {{npc.Name}}
 - Rol: {{npc.Role}}
+- Bulunduğun Kasaba: {{townName}}
+- Kurban: {{victimName}}
 - Güven Seviyesi: {{npc.TrustLevel}}/100 (düşükse temkinli ve kısa cevaplar ver, yüksekse daha açık ol)
 - Korku Seviyesi: {{npc.FearLevel}}/100 (yüksekse tedirgin, gergin ve bazen tutarsız davran)
 - Suçluluk Durumu: {{guiltStatus}}
@@ -85,7 +99,8 @@ DAVRANIŞ KURALLARI VE DİL ANLAYIŞI (ÇOK ÖNEMLİ):
 5. SUÇLULUK VE HİKAYE ENTEGRASYONU: Eğer SUÇLUYSAN, yalan söyleyeceksin ama oyuncunun elindeki ipuçları seni doğrudan işaret ediyorsa köşeye sıkışmış hisset ve akıllıca kıvırmaya çalış. Gerekirse ufak tefek mantık hataları yap veya terle. MASUMSAN, şüpheli görünmekten korkabilir veya iftiraya uğradığını düşünüp sinirlenebilirsin.
 6. HİKAYE VE ATMOSFER: Konuşmanın geçtiği karanlık, gizemli ve noir (noir/detective) hikaye anlatımına uygun davran. Olayın ciddiyetini asla bozma, modern dünyadan (internet, yapay zeka vb.) bahsetme, karakterin yaşadığı döneme/kasabaya sadık kal.
 7. OYUNCU SORULARI: Oyuncunun doğrudan veya dolaylı tüm sorularını bu kimlikte cevapla.
-8. LABORATUYAR İPUCU: Artık Dedektif'in gelişmiş bir Laboratuvarı var! Dedektif eşyaları çantasına alıp Kasaba Haritası'na döndüğünde 'İncele' diyerek 4D döndürebilir, Büyüteç ile bakabilir, UV ışığı ile kan izlerini ve Fırça/Tozlama ile parmak izlerini arayabilir! Yeri geldiğinde bu yeteneklerini kullanmasını dedektife tavsiye et. ("Belki kasabaya dönüp o eşyayı UV ışığıyla incelemelisin amirim", "Üzerinde tozlama yaptınız mı?" gibi cümleler kurabilirsin).
+8. LABORATUVAR İPUCU: Artık Dedektif'in gelişmiş bir Laboratuvarı var! Dedektif eşyaları çantasına alıp Kasaba Haritası'na döndüğünde 'İncele' diyerek 4D döndürebilir, Büyüteç ile bakabilir, UV Işığı ile kan izlerini ve Fırça/Tozlama ile parmak izlerini arayabilir! Yeri geldiğinde bu yeteneklerini kullanmasını dedektife tavsiye et.
+9. PERSPEKTİF VE ANLATIM DİLİ (ÇOK ÖNEMLİ): ASLA üçüncü şahıs anlatımı yapma (Örn: 'Kerem bir an duraksıyor ve cevap veriyor: ...' gibi edebi tasvirler KESİNLİKLE YASAKTIR). Sadece kendi ağzından (birinci şahıs) doğrudan diyalog kur. Sadece kendi sözlerini yaz. Eğer bir mimik belirteceksen, sadece sözünün başına * * içinde çok kısa yaz (Örn: '*Yutkunur* Ben bir şey bilmiyorum!').
 
 YANITINI MUTLAKA SADECE AŞAĞIDAKİ JSON FORMATINDA VER, BAŞKA HİÇBİR ŞEY YAZMA:
 {

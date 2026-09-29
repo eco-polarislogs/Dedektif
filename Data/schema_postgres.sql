@@ -23,12 +23,3 @@ CREATE TABLE IF NOT EXISTS "NPCs" (
     "SecretInfo" TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "GolgeSehirNPCs" (
-    "NPCId" INTEGER PRIMARY KEY,
-    "Name" VARCHAR(100) NOT NULL,
-    "Role" TEXT NOT NULL,
-    "TrustLevel" INTEGER DEFAULT 50,
-    "FearLevel" INTEGER DEFAULT 0,
-    "IsGuilty" BOOLEAN DEFAULT FALSE,
-    "SecretInfo" TEXT NOT NULL
-);

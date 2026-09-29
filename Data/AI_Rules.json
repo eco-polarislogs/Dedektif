@@ -1,0 +1,928 @@
+﻿{
+  "NPCs": {
+    "1": {
+      "UnknownMethodGuilty": [
+        "*Satırı elinde sıkarak huzursuzca kıpırdanır* Osman Bey dükkânımın sürekli müşterisiydi... Et alırdı, veresiye yazdırırdı. Aramızda ufak tefek borç meseleleri dışında bir şey yoktu diyorum amirim!"
+      ],
+      "UnknownMethodInnocent": [
+        "Osman Bey'i yıllardır tanırım amirim. Kasabamızın tanınmış simalarındandı. Haftada iki gün et almaya uğrar, kasaba dedikodularından konuşurduk. Mekânı cennet olsun."
+      ],
+      "GenerateDynamicGreeting": [
+        "Hamdolsun amirim, et doğrayıp müşterilere yetiştirmeye çalışıyoruz. Bu cinayet olayı kasabayı gerdi tabii, keyfimiz kaçık.",
+        "Aleykümselam amirim, kasap dükkânıma hoş geldiniz. Buyurun, cinayet soruşturmasında size nasıl yardımcı olabilirim?",
+        "Selamlar dedektif. Tezgâhın başındayım, buyurun sorunuzu dinliyorum.",
+        "Hoş geldiniz amirim. Etleri doğrarken kulaklarım sizde, ne sormak istiyorsanız çekinmeden sorun.",
+        "Kolay gelsin amirim, buyurun kasap dükkânım emrinizde.",
+        "Selamınızı aldım amirim. Cinayetle ilgili sorunuza geçebiliriz."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "*Bıçağını biler* Ben kasabım amirim, dükkânda taze dana ve kuzu eti bulunur. Bir pirzola pişireyim desem aklımız cinayette, boğazımızdan lokma geçmiyor!",
+        "Benim çoluk çocuğumun rızkı bu kasap tezgâhından çıkar amirim. Ailemin başını öne eğdirecek hiçbir kanlı işe bulaşmam ben!",
+        "45 yaşındayım amirim, 25 yıldır da bu satırı sallıyorum."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Satırın sapını sıkarak kaşlarını çatar* Amirim, ben kasap dükkânımda et doğruyorum! Bu konuştuklarımızla Osman cinayetinin ne ilgisi var?! Ne soracaksanız açıkça sorun!",
+        "*Gözlerini kaçırır* Yalnızdım amirim... Çırak erkenden çıkmıştı. Fırtına vardı zaten sokakta in cin top oynuyordu.",
+        "*Terler* Gece 23:45 gibiydi sanırım... Belki biraz daha geçti. Yağmur şiddetlenince fazla oyalanmadan döndüm!",
+        "*Dişlerini sıkar* Bana olan 50 bin liralık et borcunu inkâr etti! 'Bir kuruş bile alamazsın' dedi yüzüme! Gözüm döndü amirim... yani bağırdım çıktım!",
+        "*Gözlerini kaçırır* Sonra mı? Dükkânın kepenklerini indirdim... Yağmur çok şiddetliydi, arka sokaktan doğruca evime geçtim diyorum!",
+        "*Satıra korkuyla bakar* O satırdaki kan... dana kanı diyorum! Adli Tıbba gönderin de görün! *terler*",
+        "*Satırın sapını sıkar* Dana karkası doğruyordum dedim ya amirim! Ama aklım Osman'ın bana borcunu ödemeyeceğini söyleyişindeydi... Satır elimde donup kalmıştı!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Satırı tezgaha bırakır* Kasap Hasan olarak dediğinizi anlıyorum amirim. Ama kasabamızda bir cinayet varken aklımız fikrimiz bu soruşturmada, buyurun dinliyorum.",
+        "Dükkanda tektim ama fırıncı Ahmet usta kepenkleri kapatırken dükkânın ışığını gördüğünü söyleyebilir.",
+        "Gece 22:30'da kepenkleri indirdim, 23:00'te de evde yatağımdaydım amirim.",
+        "Veresiye defterindeki et parasını konuştuk. 'Haftaya hallederiz Hasan usta' dedi, tatlıya bağladık. Öldürecek bir durum yoktu.",
+        "Sonrasında dükkânı kilitleyip evime gittim amirim. Sıcak çorbamı içip erkenden uyudum.",
+        "Ben kasabım amirim, dükkânda 10 tane satır var. Her birinin faturası da yeri de bellidir.",
+        "Ertesi gün köye gidecek dana karkasını satırla parçalara ayırıyor, veresiye defterine de teslimat notu düşüyordum amirim."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Satırı tezgaha vurur* Sen ne diyorsun amirim?! O gece dükkândaydım diyorum! Kurbanla sorunumuz vardı ama katillik başka şey! Elinizde ne kanıt var ki beni suçluyorsunuz?!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Ha! Kim söylemiş benim katil olduğumu?! Benim alacağım vardı Osman'dan, canlısı işime yarardı! Boş iddialarla dükkânımı meşgul etmeyin!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Beni katillikle mi suçluyorsun amirim?! Saçmalama! Ben rızkında bir kasabım. Müşterimi niye öldüreyim? Alacağımı kim ödeyecek o zaman?!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Dükkândaydım diyorum! Et doğruyordum... *gözlerini kaçırır* Yağmur bardaktan boşalıyordu. Yani Osman'ın evine sadece borç konuşmaya gittim, o kadar!"
+      ],
+      "GetInnocentAlibiResponse": [
+        "O gece dükkânımı geç kapattım amirim. Tezgâhta dana karkası doğruyor ve veresiye defterini kontrol ediyordum. Dışarıdaki yağmurdan başka ses duymadım."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Tezgahtaki satıra bakıp terler* O satır... dükkânımdan çalınmıştı diyorum size! Birisi benim satırımı alıp Osman'a vurmuş, beni yakmak istiyorlar!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "O delil şüpheli görünüyor ama benim dükkânımla ilgisi yok. Kasabada herkes et yer, herkes bıçak kullanır."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Osman bana 50.000 TL borçluydu! Yıllardır emeğimi sömürdü! 'Yarın öderim' deyip dalga geçti! Hangi insan dayanabilir buna?!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Aramızda ticaret vardı, veresiye borcu vardı evet. Ama borçlu adam öldürülür mü amirim? Öldürürsem param hepten batar!"
+      ],
+      "GetRandomSuspectOpinion": [
+        "Kasap Hasan'a dikkat et amirim. O satırı sadece et kesmek için kullanmıyor. Öfke kontrolü sıfırdır."
+      ],
+      "GenerateGossipOrCrossInterrogationResponse": [
+        "Kasap"
+      ]
+    },
+    "2": {
+      "UnknownMethodGuilty": [
+        "*Gözlerini ilaç şişelerine kaçırır, sesi titrer* Osman Bey mi? Kalp ve tansiyon ilaçlarını benden alırdı... Son zamanlarda sık sık eczaneye gelip özel karışımlar soruyordu. Başka da bir hukukumuz yoktu!"
+      ],
+      "UnknownMethodInnocent": [
+        "Osman Bey düzenli olarak tansiyon ve kalp damar ilaçlarını eczanemden temin ederdi amirim. Saygılı bir beyefendiydi, son zamanlarda biraz dalgın ve stresli görünüyordu."
+      ],
+      "GenerateDynamicGreeting": [
+        "Nasıl olalım amirim... Reçeteleri hazırlıyor, kasabanın tansiyonunu yatıştırmaya çalışıyorum. Bu cinayet hepimizin huzurunu kaçırdı.",
+        "Merhaba amirim, şifa dükkânıma hoş geldiniz. İnşallah bu acı olayı kısa sürede aydınlatırsınız. Dinliyorum amirim.",
+        "Merhaba dedektif bey. Eczanede her şey emrinizde, nasıl yardımcı olabilirim?",
+        "Size de hayırlı günler amirim. İlaç şişelerini düzenliyorum, buyurun sizi dinliyorum.",
+        "Selamlar dedektif. Reçetelere bakıyordum, buyurun sizi dinliyorum.",
+        "Hoş geldiniz amirim. Şifalı bitkilerimiz gibi soruşturmanız da ferahlık getirsin kasabaya."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Ben şifalı adaçayı ve ıhlamur kaynatırım amirim. Midem kazındı ama bu gerginlikte insanın canı ne çay ne yemek istiyor.",
+        "Yalnız yaşayan bir kadınım amirim... Eczanem benim yuvam, ilaçlarım da evlatlarım gibi oldu. Kimsem yok bu kasabada.",
+        "38 yaşındayım dedektif. Eczacılık fakültesinden mezun olduğumdan beri bu kasabadayım."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*İlaç şişelerini telaşla düzeltir* Ben bir eczacıyım amirim... Bu bahsettiğiniz konuyla Osman Bey'in zehirlenmesi arasında nasıl bir bağ kuruyorsunuz anlamadım!",
+        "*Elleri titrer* Nöbetçi bendim ama... gece yarısı kimse gelmedi işte! Şahidim yok diye suçlu mu oldum?!",
+        "*Yutkunur* Gece tam 00:15 gibiydi... Sadece 15-20 dakika dışarı çıktım, hemen döndüm!",
+        "*Ağlamaklı olur* Eczanemin ruhsatıyla tehdit etti beni! 'Elimdeki belgeleri savcıya veririm' dedi! Beni mahvedecekti!",
+        "*Ellerini ovuşturur* Sonra tezgahı toplayıp üst kata çıktım... Gece pencereden sokak lambasına baktım ama dışarı çıkmadım!",
+        "*Zehir şişesini saklar* O şişeyi ben hazırlamadım diyorum! Biri tezgahımdan çalmış olmalı!",
+        "*Gözlerini kırpıştırarak fısıldar* Tezgahta eski bir farmakoloji ve toksikoloji (zehir bilim) rehberini okuyordum amirim... Kalp yetmezliği olanlarda ölümcül dozun ne kadar olduğunu inceliyordum... Yani sadece mesleki merak!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Gözlüğünü düzeltir* Eczanemdeyim amirim. İnsan sağlığı ve ilaçlarla ilgili merak ettiğiniz bir şey varsa veya cinayet dosyasını soracaksanız yanıtlayayım.",
+        "Nöbetçi bendim amirim, gece 23:30 sularında bekçi Rıza amca tansiyon ilacı almaya uğramıştı, kayıt defterinde de var.",
+        "Eczaneyi nöbet bittiğinde, yani tam 01:00'de kilitledim ve doğruca üst kattaki evime çıktım.",
+        "Kalp ilaçlarının dozu hakkında konuştuk amirim. Fazla doz almaması konusunda onu uyardım.",
+        "Ardından eczaneyi kilitledim amirim. Üst kattaki daireme çıkıp tıp dergimi okumaya devam ettim.",
+        "Eczanedeki tüm zehirli bileşenler kilitli dolaptadır ve Sağlık Bakanlığı envanterine kayıtlıdır.",
+        "Tezgahta şifalı bitkiler ve farmakoloji ansiklopedisini okuyordum amirim. Kalp hastalarına verilen dijitalis ve nane özü karışımlarının dozajlarını inceliyordum."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Gözlerini kaçırır* Ben bir eczacıyım amirim! Kurbanın ilacındaki sorunla benim ne ilgim olabilir? Başka birinin dükkânıma girip girmediğini araştırmalısınız!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Bana katil demeden önce bir durun amirim! Elimde ne bir kanıt var ne bir şahit. Ben insan iyileştiririm, can almam!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Bana bu iftirayı atamazsınız! Yıllardır bu kasabada şifa dağıtıyorum. Katil arıyorsanız gidin Muhtarın kasasına bakın!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Eczanede envanter sayıyordum. Dışarı çıkmadım... *titrer* Şey, gece yarısı sadece hava almak için Osman'ın sokağına doğru yürümüş olabilirim."
+      ],
+      "GetInnocentAlibiResponse": [
+        "Gece yarısına kadar dükkânım açıktı amirim. Nöbetçi eczaneydim ama hava yağmurlu olduğu için kimse gelmedi. Tezgah arkasında oturmuş şifalı bitkiler ve farmakoloji kitabı okuyordum."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Zehirli şişeyi görünce elleri titrer* O ilaç reçeteliydi! Şişenin boş olması kurbanın ilacı aşırı dozda içtiğini gösterir, benim suçum ne?!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Tıbbi malzemeler ve bitkiler uzmanlık alanımdır. Eğer zehirlenme varsa kurbanın ne içtiğini adli tıp raporu açıklar."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Osman beni geçmişimle tehdit ediyordu! Her ay benden şantajla para alıyordu... Artık dayanacak gücüm kalmamıştı!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Osman Bey müşterimdi. Aramızda husumet yoktu. Sağlık sorunları dışında kendisiyle özel bir diyalogum olmadı."
+      ],
+      "GetRandomSuspectOpinion": [
+        "Eczacı Selma'nın tezgahının altındaki şişeleri incelediniz mi? Çok sessiz bir kadındır ama sessiz sudan korkacaksın."
+      ]
+    },
+    "3": {
+      "UnknownMethodGuilty": [
+        "*Evrakları sertçe kapatır, terini siler* Osman Bey kasabanın zenginlerindendi. Belediye arazileri ve imar işleri için sık sık makamıma gelirdi... Aramızda resmi işlemler dışında hiçbir husumet yoktu!"
+      ],
+      "UnknownMethodInnocent": [
+        "Osman Bey kasabamızın köklü ailelerindendi. Muhtarlıkta arazi tescil ve vergi işlerini yürütürdük. Kasaba halkı için acı bir kayıp oldu."
+      ],
+      "GenerateDynamicGreeting": [
+        "Görev başındayız dedektif. Kasaba meclisi, belediye evrakları derken başımızı kaşıyacak vakit yok. Siz nasılsınız?",
+        "Selamlar amirim, muhtarlık makamımıza safalar getirdiniz. Kasabamızın huzuru için ne gerekiyorsa sormaktan çekinmeyin.",
+        "Aleykümselam dedektif. Kasabanın muhtarı olarak her türlü sorunuza açığım.",
+        "Yine merhaba amirim. Kasaba meydanındaki sükuneti sağlamaya çalışıyoruz, buyurun.",
+        "Hayırlı günler amirim. Resmi makamımızda sizi dinliyorum.",
+        "Hoş geldiniz dedektif bey. Kasabanın selameti için buyurun sorun."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Muhtarlık olarak kasabanın drenaj kanallarını kontrol ettiriyorum. Cinayet gecesi yağan yağmur kasabanın sokaklarını çamur deryasına çevirmişti.",
+        "Muhtarlıkta her zaman taze demli Rize çayımız bulunur dedektif. Buyurun bir bardak doldurayım, bu cinayet meselesi herkesin iştahını kapattı.",
+        "Geniş bir ailemiz var, köklerimiz üç nesildir bu kasabada. Ailemin adını lekeleyecek bir şey yapmam.",
+        "52 yaşındayım. Kasabanın yarım asırlık tarihine şahidim."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Masadaki evrakları kapatır* Ben bu kasabanın muhtarıyım! Soruşturmayı başka konulara çekmeyin, Osman vakası hakkında ne öğrenmek istiyorsanız onu sorun!",
+        "*Sinirle masayı tıkırdatır* Muhtarlık binasında gece vakti kim olacak amirim? Yalnızdım tabii ki!",
+        "*Kaşlarını çatar* Saat 23:30 ile 00:30 arası belediye evraklarıyla uğraştım, sonra çıktım!",
+        "*Yumruğunu sıkar* Belediye arazisini ucuza kapatıp zengin olacaktı! 'Kasabayı sana dar ederim' dedi bana!",
+        "*Evrakları düzeltir* Sonrasında muhtarlık kapısını kilitledim, gece bekçisine iyi geceler dileyip eve geçtim.",
+        "*Evrakları telaşla kapatır* Kasaba tapu kütüğünü ve Osman'ın üzerindeki hacizli arazilerin listesini inceliyordum! O araziler belediyeye kalacaktı!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Resmi bir ciddiyetle bakar* Muhtarlık makamındayız dedektif. Kasabanın huzuru ve Osman Bey vakası için ne gerekiyorsa açıkça konuşabiliriz.",
+        "Makamda evrak inceliyordum, çaycı Remzi çıkarken bana çay tazeleyip çıktı. Sorabilirsiniz.",
+        "Gece yarısı saat 00:00'da belediye binasını kilitledim, nöbetçi bekçi saatimi not etti.",
+        "Meydandaki arsa imarı hakkında konuştuk. Kanunlara uygun olarak dilekçesini aldım, hepsi bu.",
+        "İşlerimi bitirince lambayı söndürüp çıktım. Gece boyu evimde dinlendim.",
+        "Gelecek ayın belediye bütçe taslağını ve kasaba çeşmesinin onarım ihale evraklarını inceliyordum amirim. Hepsi resmi kayıtlıdır."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Masayı yumruklar* Beni katillikle mi itham ediyorsunuz?! Arazi anlaşmazlığımız vardı diye cinayeti bana yıkamazsınız! Kanıtınız yoksa muhtarlıktan çıkın!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Dedektif efendi, muhtarınızla doğru konuşun! Siyasi rakiplerimin uydurmasıyla karşıma çıkıp beni suçlayamazsınız!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Haddinizi bilin amirim! Ben bu kasabanın seçilmiş muhtarıyım! Elinizde hiçbir kanıt yokken bana çamur atamazsınız!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Evimdeydim, evrak inceliyordum! ...Gece saat 11 gibi yürüyüşe çıktım. Kurbanın evinin önünden geçtim ama içeri girmedim diyorum!"
+      ],
+      "GetInnocentAlibiResponse": [
+        "Muhtarlık binasındaydım, belediye bütçe evraklarını ve arazi kayıtlarını inceliyordum. Cinayet saatinde kasaba meydanı tamamen sakindi."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Gözlük ve tapuları görünce kızarır* Sahte tapular bir projedir! Kırık gözlük ise kurban bana saldırınca düştü!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Resmi belgeler ve tapular belediye arşivindedir. Delil dedikleriniz sahtekârların işi olabilir."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "O arsa belediyenin geleceğiydi! Osman bencillik yapıp vermiyordu. Kasabanın kalkınmasını engelliyordu!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Siyasette herkesle anlaşamazsınız. Osman'la fikir ayrılıklarımız oldu ama ben kanunlara inanan bir muhtarım."
+      ],
+      "GetRandomSuspectOpinion": [
+        "Muhtar Kemal... Kasabada her taşın altından o çıkar. Siyasi gücünü kullanarak herkesi eziyor."
+      ]
+    },
+    "4": {
+      "UnknownMethodGuilty": [
+        "*Elini telsizine götürür, sert bir tavır takınır* Osman Bey'i karakola yaptığı resmi başvurulardan tanırım. Kasabadaki bazı esnafla husumeti vardı, bizden koruma talep etmişti... Hepsi bu kadar!"
+      ],
+      "UnknownMethodInnocent": [
+        "Osman Bey karakolumuza sık sık uğrar, kasaba asayişi hakkında görüş bildirirdi. Vefatından önce tedirgin olduğunu fark etmiştim."
+      ],
+      "GenerateDynamicGreeting": [
+        "Görevin başındayız meslektaşım. Asayiş berkemal görünse de bu cinayet varken rahat nefes alamıyoruz. Soruşturma nasıl gidiyor?",
+        "Merhaba amirim, kolay gelsin. Karakolumuz ve tüm imkânlarımız emrinizdedir, buyurun.",
+        "Selamlar meslektaşım. Karakol arşivimiz ve tüm tutanaklar hazır, ne öğrenmek istiyorsunuz?",
+        "Merhaba amirim. Nöbetçi polislerimiz teyakkuzda, buyurun dinliyorum.",
+        "Hayırlı görevler meslektaşım. Soruşturmanın detaylarını konuşalım.",
+        "Selamlar amirim. Tutanakları masaya koydum, dinliyorum."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Hava koşulları devriye görevini zorlaştırıyor meslektaşım. O geceki yoğun sis ve yağmur görüş mesafesini sıfıra indirmişti.",
+        "Karakol nöbetinde demli çay ve simit bizim vazgeçilmezimizdir meslektaşım. Ama Osman Bey dosyasını çözmeden boğazımızdan bir şey geçmez.",
+        "Polis ailesi olmak zordur meslektaşım. Eşim ve çocuklarım her gece sağ salim eve dönmem için dua eder.",
+        "40 yaşındayım amirim, 18 yılım emniyet teşkilatında geçti."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Elini beylik tabancasına götürür* Komiser Güneş olarak buradayım amirim! Konuyu dağıtmayalım, cinayet soruşturmasına odaklanalım!",
+        "*Ciddileşmeye çalışır* Karakolda nöbetçi bendim... devriye turuna yalnız çıktım. Bu bir prosedür amirim!",
+        "*Sertçe yutkunur* Devriye turum 00:00 ile 01:00 arasındaydı... Olay yerine kaçta vardığımı hatırlamıyorum!",
+        "*Terler* Eski bir rüşvet kasetini savcılığa vermekle tehdit etti! Meslek hayatımı bitirecekti!",
+        "*Telsizini kemerine takar* Devriye turunu tamamlayıp karakol nöbet odasına döndüm meslektaşım.",
+        "*Nöbet defterini kapatır* Karakolun eski rüşvet soruşturması tutanaklarını ve Osman'ın bana yaptığı tehdit mektuplarını inceliyordum amirim!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Rozetini gösterir* Meslektaşım, karakol tutanaklarımız ve deliller meydanda. Soruşturmanın selameti için net sorularınızı bekliyorum.",
+        "Nöbetçi polis memurları karakol giriş çıkış defterine saatimi kaydettiler amirim.",
+        "Karakol telsiz kayıtlarında mevcuttur; 23:45 devriye başlangıcı, 00:45 dönüş saatimdir.",
+        "Karakola gelip çevre esnafı hakkında şikayette bulunmuştu. Tutanak tuttuk ve gönderdik.",
+        "Devriyeden sonra karakola döndüm, gece raporumu imzalayıp masama geçtim.",
+        "O geceki devriye nöbet çizelgesini ve kasaba giriş-çıkış kontrol tutanaklarını inceliyordum meslektaşım."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Resmi tavrını takınmaya çalışır ama sesi hafif titrer* Ben bu kasabanın komiseriyim amirim! Kanıtınız olmadan bir polise iftira atamazsınız!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Bu resmi bir soruşturma mı yoksa şahsi bir itham mı? Kanıtın varsa getir, yoksa karakolumdan dışarı çık!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Bir polise katil demek ağır bir iddiadır amirim! Kanıtın olmadan konuşma, resmi soruşturmayı engellemekten hakkında işlem yaparım!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Karakoldaydım nöbette! ...Olay yerine ihbardan ÖNCE gittiğim yalan! Ben sadece devriye turundaydım!"
+      ],
+      "GetInnocentAlibiResponse": [
+        "Devriye gezisindeydim meslektaşım. Nöbet tutanağını doldurup sokak kontrollerine çıktım, karakoldaki nöbetçi memurlar da saatimi onaylar."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Kopan polis rozetine bakar* O rozet karakoldan çalınmıştı! Olay yerine ben düşürmedim, beni tuzağa düşürüyorlar!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Polis delil toplar, karartmaz. O nesne adli laboratuvara gönderilmeli."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Beni rüşvet almakla suçlayıp savcılığa gidecekti. Şantaj yapıyordu bana! 15 yıllık şerefimi karartacaktı!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Polis ile vatandaş arasındaki ilişki neyse bizimki de oydu. Görevimi yaptım, husumetim yoktu."
+      ],
+      "GetRandomSuspectOpinion": [
+        "Komiser Güneş'in üniformasına güvenmeyin amirim. Kendi karakolunda karanlık işler çeviriyor."
+      ]
+    },
+    "5": {
+      "UnknownMethodGuilty": [
+        "*İğneyi telaşla parmağına batırır* Osman Bey benden takım elbiseler diktirirdi... En son ceketinin astarlarına kadar özenle dikmiştim. Benim gibi yaşlı bir terzinin onunla ne hesabı olabilir ki?!"
+      ],
+      "UnknownMethodInnocent": [
+        "Osman Bey ceketlerini ve kışlık paltolarını bana diktirirdi amirim. Kumaş seçiminde çok titizdi, nur içinde yatsın."
+      ],
+      "GenerateDynamicGreeting": [
+        "İhtiyarlık işte amirim... Gözler zor seçiyor ama iğne ipliği bırakmıyoruz. Kasabada böyle bir felaket varken nasıl iyi olalım?",
+        "Hoş geldiniz amirim, sefalar getirdiniz. Şöyle oturun, bir sıcak çayımı için... Sorularınızı dinliyorum.",
+        "Aleykümselam amirim. Terzi dükkanımda çayım her zaman sıcaktır, buyurun.",
+        "Merhaba evladım. İğne ipliği bıraktım, sizi dinliyorum.",
+        "Selamlar dedektif bey. Kumaşları kenara çektim, buyurun.",
+        "Hayırlı işler evladım, yaşlı terzinin kapısı her zaman açıktır."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Hava buz kesti evladım... İhtiyar kemiklerim sızlıyor. Cinayet gecesi de rüzgâr terzi dükkânımın pencerelerini zangır zangır titretiyordu.",
+        "Sobanın üstünde güğümüm her daim kaynar evladım. Bir bardak sıcak çayımı iç, yanında da kuru çörek ikram edeyim.",
+        "Hanımı yıllar önce toprağa verdim evladım... Bir başıma bu dikiş makinesinin başında ömrümü tüketiyorum.",
+        "72 yaşıma bastım evladım... Dikiş dikmekten gözlerimin feri söndü."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*İğneyi kumaşa sertçe batırır* Yaşlı bir terziyim amirim, dikişimin başında kafamı bulandırmayın! Osman'ın ölümüyle ilgili sorunuz varsa söyleyin!",
+        "*İğneyi kumaşa batırır* Yaşlı bir terziyim amirim, yanımda kim olsun? Yalnız başıma kumaş biçiyordum.",
+        "*Gözlüğünü çıkarır* Gece saat 00:30 gibiydi... İplik bitince hava almak için çıktım.",
+        "*Gözlerini ovalar* Diktiğim ceketteki gizli USB belleği istedi! İçinde ortaklık paralarımız vardı!",
+        "*İpliği makaraya sarar* Sonra dikiş makinesini örtüp atölyemi kapattım. Doğruca evime gittim.",
+        "*İpliği parmağına dolar* Osman Bey'in sipariş ettiği paltonun iç astarını dikiyordum... Astarın içine o gizli cebi yerleştiriyordum amirim!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Gözlüğünün üstünden bakar* Terzi Yahya olarak dükkânımdayım amirim. Cinayet gecesi kumaşlarım veya şüpheliler hakkında ne bilmek istiyorsanız çekinmeden sorun.",
+        "Karşı bakkal dükkânının ışığını söndürürken benim dikiş makinesinin tıkırtısını duyduğunu sabah söyledi.",
+        "Dükkânımın lambasını saat 22:00'de söndürdüm ve uyudum.",
+        "Yeni diktiğim kabanın provasını yaptık. Gayet memnundu, teşekkür edip gitti.",
+        "Paltoları askıya asıp dükkânımı kilitledim. Evime çekilip dinlendim.",
+        "Kış için sipariş edilen kaşe paltonun kol astarını teyelliyordum amirim. Dikiş makinesinin başında sabahladım."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Gözlüklerini siler gibi yapar* Ben dikiş diken yaşlı bir terziyim amirim... Osman ile gizli işlerimiz vardı ama onu öldürmek benim harcım değil!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Ceket dikmekten başka bir şey yapmadım ben. Yaşlı adama iftira atmak kolay tabii..."
+      ],
+      "GetInnocentAccusationResponse": [
+        "Ben 70 yaşında dikiş diken bir adamım... Kıymayın bana amirim, günahımı almayın!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Atölyemde dikiş dikiyordum. Makine sesi vardı... Bir anlığına sigara içmeye çıktım ama kurbanın evine kadar gitmedim!"
+      ],
+      "GetInnocentAlibiResponse": [
+        "Dükkânımda kışlık paltonun astarlarını dikiyordum. İpliğim bitene kadar dikiş makinesinin başındaydım, sonra lambayı söndürüp dinlendim."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*İplik makarasını cebine saklar* O iplik sağlamdır evet... Ben terziyim amirim, dükkânımda bin tane makara var!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "O dikiş malzemesi her terzinin tezgahında bulunur. Önemli olan o malzemeyi kimin kullandığıdır."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "O gizli cebe koyduğu USB bellekte tüm ortaklık sırları vardı. Osman beni saf dışı bırakıp servetime el koyacaktı!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Osman iyi bir müşterimdi. Diktirdiğim kıyafetlerin parasını zamanında öderdi. Neden ona kıyayım?"
+      ],
+      "GetRandomSuspectOpinion": [
+        "Terzi Yahya... İhtiyar göründüğüne bakmayın, o terzi dükkanı kasabanın tüm dedikodularının merkezidir."
+      ]
+    },
+    "101": {
+      "UnknownMethodGuilty": [
+        "*Baltanın sapını sıkar* Ekrem Bey orman arazilerinden kereste alırdı. Sürekli fiyat kırıp beni zarara sokmaya çalışırdı ama öldürecek değildim ya!"
+      ],
+      "UnknownMethodInnocent": [
+        "Ekrem Bey orman kütüklerini toptan alıp şehre satardı. Ticari bir ilişkimiz vardı, dürüst bir tüccardı."
+      ],
+      "GenerateDynamicGreeting": [
+        "Ormanın ayazı çarptı biraz ama iyiyiz çok şükür. Odunları yarıp ocağı yakıyoruz amirim.",
+        "Ormandan gelen taze çam kokusu gibisi yoktur amirim... Ama bu gece orman bir garip sesler çıkarıyordu. Buyurun, ne sormak istiyorsanız sorun.",
+        "Selam dedektif! Odunları yarmayı bitirdim, Ekrem Bey cinayeti hakkında ne bilmek istiyorsunuz?",
+        "Aleykümselam amirim. Baltam tezgâhta durur, orman hakkında istediğinizi sorun.",
+        "Hayırlı günler dedektif. Ormanın sesini dinliyordum, buyurun.",
+        "Selamlar amirim. Oduncu Tahsin dinliyor sizi."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Kulübede közde demlenen çay ve kuru ekmek-peynir bana yeter amirim. Orman adamı lüks yemek bilmez.",
+        "Orman kulübesinde tek başımayım amirim. Kurtlar, kuşlar ve ağaçlar dışında bir ailem yok.",
+        "48 yaşındayım. Ormanda geçen ömür insanı çabuk yıpratır ama çam gibi dimdik tutar."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Baltasını tezgaha dayar* Ormanın bekçisiyim amirim, boş lakırdıyı sevmem! Ekrem'in cinayetiyle ilgili ne soracaksanız çabuk sorun!",
+        "*Baltanın sapını sıkar* Orman kulübesinde tek başımaydım amirim... Kurtlardan başka şahidim mi olacak?!",
+        "*Reçine bulaşık ellerini ovuşturur* Gece 02:00 sularıydı... Orman yoluna çıktım ama 02:30'da kulübedeydim!",
+        "*Baltasını yere vurur* Kaçak kestiğim meşe ağaçlarını orman müdürlüğüne ihbar edecekti! Ekmeğimle oynuyordu!",
+        "*Baltasını siler* Sonra kulübeme döndüm, ateşi tazeleyip yattım. Dışarıda ne olduysa ben uyurken olmuş!",
+        "*Baltayı saklar* Baltamdaki koyu leke meşe reçinesidir! Kan falan değil!",
+        "*Baltanın sapını ovuşturur* Çam tomruklarını yarıyordum amirim... Ama kafamda Ekrem'in şantajları yankılanıyordu. Odun yerine sanki..."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Odunları istifler* Oduncu Tahsin olarak ormandayım amirim. Bahsettiğiniz konuyu anladım ama Ekrem Bey cinayeti hakkında ne öğrenmek istiyorsanız dinliyorum.",
+        "Kulübede yalnızdım ama gece bekçisi traktörün sesini orman yolunda duymuştur.",
+        "Gece saat 21:00'de sobayı yakıp yattım amirim, sabaha kadar orman kulübesinden adım atmadım.",
+        "Kereste fiyatları üzerine konuştuk. Biraz pazarlık ettik ama helalleştik.",
+        "Kütükleri dizdikten sonra sobayı harlayıp yatağıma yattım.",
+        "Oduncunun baltasında reçine de olur talaş da. Adli tıp incelesin amirim.",
+        "Sobalık meşe kütüklerini yarıp kışlık yakacak destesi yapıyordum amirim."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Baltasını sıkar ve sertçe bakar* Ne diyorsun amirim sen?! Ormanda kaçak kereste kestim diye katil mi oldum? Elinizde kanıtınız yoksa baltamın yanından uzak durun!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Oduncuyum ben, cinayetle işim olmaz amirim. Boş iddialarla beni oyalamayın!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Ben masum bir oduncuyum amirim! Ekrem Bey'le aram iyi değildi ama ona kıymadım! Ormana gidin, asıl katil orada saklanıyor!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Kulübede kereste istifliyordum... *terler* Sadece bir ara feneri alıp orman patikasına çıktım, Ekrem'in evine kadar gitmedim!"
+      ],
+      "GetInnocentAlibiResponse": [
+        "Orman kulübemdeydim amirim. Yağmur başlamadan önce sobalık kütükleri yarıp istifledim ve erkenden yattım."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Baltasını arkasına saklar* Baltamdaki lekeler çam reçinesidir amirim! Kanla reçineyi ayırt edemiyor musunuz?!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Ormandaki balta ve aletler iş gereğidir. Olay yerindeki delilleri adli laboratuvarda inceleyin amirim."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Ekrem ormandaki kaçak kereste işimi öğrendi! Beni ihbar etmekle tehdit edip haraç istiyordu!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Ekrem Bey kereste alırdı benden. Fiyat konusunda pazarlık ederdik ama cinayet sebebi olacak bir husumetimiz yoktu."
+      ],
+      "GetRandomGolgeSuspectOpinion": [
+        "Oduncu Tahsin'in baltasındaki reçine ve koyu lekelere dikkat edin amirim. Ormanda kaçak işler çevirirdi."
+      ],
+      "GenerateGossipOrCrossInterrogationResponse": [
+        "Oduncu"
+      ]
+    },
+    "102": {
+      "UnknownMethodGuilty": [
+        "*Önlüğünün kenarını büker* Ekrem Bey dükkânımın mülk sahibiydi... Kirayı geciktirince biraz sert konuşurdu ama aramızı düzeltmiştik amirim!"
+      ],
+      "UnknownMethodInnocent": [
+        "Ekrem Bey her sabah manava uğrar, taze meyvelerini alırdı. Kasabanın can damarıydı, çok üzgünüz."
+      ],
+      "GenerateDynamicGreeting": [
+        "Meyvelerin tozunu alıyorum dedektif bey. Ekrem Bey cinayeti yüzünden kasabanın tadı tuzu kalmadı ama ayaktayız.",
+        "Hoş geldiniz amirim, taze meyvelerim gibi temiz bir kasabayız aslında! Ekrem Bey vakası hepimizi sarstı, buyurun ne öğrenmek istersiniz?",
+        "Merhaba dedektif bey! Tezgâhın başındayım, kasabadaki dedikoduları mı yoksa cinayet gecesini mi soracaksınız?",
+        "Selamlar amirim. Buyurun çekinmeyin, Manav Ayşe'ye her şeyi sorabilirsiniz.",
+        "Hayırlı günler dedektifim! Elma kasalarını diziyordum, buyurun dinliyorum.",
+        "Aleykümselam amirim. Manav tezgâhı emrinizde."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Meyveler dondan ve yağmurdan çürüyecek diye korkuyorum dedektif bey. O gece hava öyle pusluydu ki pelerinime sarılıp güç bela yürüyebildim.",
+        "Tezgâhtan taze bir Amasya elması veya sulu şeftali ikram edeyim amirim! Vitamin olur, zihninizi açar.",
+        "İki yetimimi bu manav tezgâhından doyuruyorum dedektif bey! Onların geleceği için gece gündüz çalışırım.",
+        "36 yaşındayım dedektif bey. Genç yaşta hayatın yükü bindi omuzlarımıza."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Pelerinini sıkar* Manavda borç harç içindeyim amirim! Ekrem'in ölümü ve borç senetleri dışında laf dinleyecek mecalim yok!",
+        "*Tereddüt eder* Manavda yalnızdım... ama hava almak için çıktığımda sokak bomboştu!",
+        "*Telaşla* Gece 01:45 gibi... Sadece göl kenarına kadar gidip geldim!",
+        "*Gözyaşını siler* Dükkânımı elimden alıp manavı kumarhaneye çevirecekti! Nereye giderdim ben?!",
+        "*Meyveleri düzeltir* Tezgâhı örtüp pelerinime sarıldım, hızlı adımlarla evime geçtim.",
+        "*Kasaları titreyerek düzeltir* Manavın borç defterine bakıyordum! Ekrem'e olan borcum öyle büyümüştü ki dükkânımı elimden alacaktı!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Meyve kasasını siler* Manav Ayşe olarak buradayım amirim. Ekrem Bey vakası veya kasabadaki durumla ilgili ne sormak istiyorsanız buyurun.",
+        "Dükkânı kapatırken Naciye hanım komşum kapıdaydı, selamlaştık.",
+        "Akşam 20:00'de manavı kilitledim. Gece hiç çıkmadım.",
+        "Kasa kasa elma ve nar siparişi vermişti, avansını ödedi.",
+        "Manavın brandasını çekip evime gittim, sıcacık ıhlamurumu içtim.",
+        "Göl kenarından gelen taze elma kasalarını sayıyor, çürükleri ayıklıyordum amirim."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Neşesi birden kaybolur* Hahaha... amirim siz de şakacısınız! Borcum vardı diye adam mı öldürülür? Kasaların altına bakın, meyveden başka ne bulacaksınız?!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Manav dükkânında katil aramak da yeni moda oldu galiba amirim!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Bana iftira atmayın amirim! Ben dükkânımda neşeyle çalışan bir manavım. Gidin hekimin zehirli şişelerine bakın!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Dükkânı erken kapattım... *gözlerini kaçırır* Gece yarısı pelerinimi alıp sadece hava almak için göl kenarına yürümüştüm."
+      ],
+      "GetInnocentAlibiResponse": [
+        "Akşam üzeri manavı kapattım, elma kasalarını saydıktan sonra komşum Naciye ile biraz laflayıp evime çekildim."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Pelerin parçasını görünce yutkunur* O kumaş her tezgâhta var! Pelerinimi çiviler yırttı, olay yeriyle ilgisi yok!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Meyve kasaları ve kantar normal dükkân eşyası. Şüpheli bir şey varsa araştırın tabii."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Tüm dükkânımı borç karşılığı elimden alacaktı! Çocuklarımın rızkını o tefeciye yediremezdim!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Meyve sebze alırdı, parasını da gecikmeli olsa öderdi. Müşterimi neden öldüreyim amirim?"
+      ],
+      "GetRandomGolgeSuspectOpinion": [
+        "Manav Ayşe dükkânını Ekrem'e kaptırmamak için her şeyi yapabilirdi. Pelerinli hali o gece sokaktaydı."
+      ]
+    },
+    "103": {
+      "UnknownMethodGuilty": [
+        "*Körüğü hızlıca çeker* Ekrem Bey benden özel çelik kasalar ve dayanıklı kilitler sipariş ederdi. Sırlarını kasalarda saklamayı severdi..."
+      ],
+      "UnknownMethodInnocent": [
+        "Ekrem Bey işyerinin ve evinin kilit sistemlerini bana yaptırırdı. Sağlam demir işçiliğine önem verirdi."
+      ],
+      "GenerateDynamicGreeting": [
+        "Körüğün başındayız dedektif. Demir dövmekten kollar yoruldu ama halimize şükür. Buyurun.",
+        "Kızgın demir döverken laf dinlemek zordur amirim... Sorunuzu çabuk sorun, ocağın ateşi sönmesin.",
+        "Selam. Demir tavında dövülür dedektif, sorunuz neyse söyleyin çabucak.",
+        "Aleykümselam. Çekiç sesinden rahatsız olmazsanız buyurun dinliyorum.",
+        "Hayırlı işler dedektif bey. Örsümün başında sizi dinliyorum.",
+        "Selamlar. Demirci Kâzım'a ne sormak istiyorsanız açıkça sorun."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Ocağın karşısında hava hep sıcaktır dedektif. Ama dışarıdaki fırtına demir sesini bile bastırıyordu o gece.",
+        "Kızgın demirin yanında bir demlik çay içeriz dedektif. Yemek saatini unuttuk bu cinayet yüzünden.",
+        "Demirci ocağı babamdan, dedemden mirastır bana. Aile şerefimiz demirden daha serttir.",
+        "55 yaşındayım. Örsün sıcağı saçlarımızı ağarttı."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Çekici örse vurur* Demir tavında dövülür dedektif! Ekrem'in çelik kasası ve cinayet hakkında konuşacaksanız konuşun, ocağımın ateşi sönmesin!",
+        "*Çekici indirir* Demirci ocağında tek başınasındır amirim... O saatte kimse ocağa uğramaz.",
+        "*Ocağa bakar* Gece 02:10 gibiydi, fenerin gazı bitmişti... Kısa sürdü.",
+        "*Örse vurur* Yaptığım özel şifreli kasanın gizli bölmesine sahte senetler koymuştu, beni de ortak gösterecekti!",
+        "*Körüğü bırakır* Ocağı söndürdüm, kapıya asma kilidi vurup evime yollandım.",
+        "*Körüğe bakar* Ekrem'in benden istediği özel şifreli çelik kasanın kilit mekanizmasını dövüyordum amirim. O kilidin tek sırrı bendeydi!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Körüğü çeker* Demirci Kâzım'ım ben. O bahsettiğiniz konu bir yana, cinayet gecesi etraftaki sesleri mi soracaksınız?",
+        "Ocağı söndürürken çırağım Mehmet dükkânı süpürüyordu, ona sorabilirsiniz.",
+        "Akşam 21:30'da körüğü kapattım, gece boyunca ateşim sönecekti zaten.",
+        "Çelik kasa kilidinin yedeğini istedi, teslim edip parasını aldım.",
+        "Demirleri soğutup dükkânımı kapattım, gece boyu evimdeydim.",
+        "Atölyede saban demirlerini tavında dövüp su veriyordum amirim."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Örsün üzerine çekici fırlatır* Ağzınızdan çıkanı kulağınız duysun amirim! Çelik kilit dövdüm diye katil mi ilan edildim? Kanıtınız varsa konuşun!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Demir döverim, laf dövmem. Suçlamalarınız havada kalıyor."
+      ],
+      "GetInnocentAccusationResponse": [
+        "Masum insanlara çamur atmayın amirim. Örsümün başındaydım o gece. Katil arıyorsanız muhtarlığa gidin!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Ocakta demir dövüyordum... *sessizleşir* Gece yarısı fener sönünce dükkândan kısa süreliğine ayrıldım."
+      ],
+      "GetInnocentAlibiResponse": [
+        "Demirci ocağını akşam söndürdüm, örs başında saban demirlerini dövmüştüm. Yorgunluktan erkenden uyuyakalmışım."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Örsteki kilit ve bıçağa bakar* O bıçak benim örsümden çıktı ama ben satmadım! Çalınmış olabilir!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Örsümdeki ay damgasını herkes bilir. Bıçak yaparım ama kime satıldığını defterim yazar."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Gizli çelik kasanın sırrını bana yıktı! İşlediği kaçakçılığın faturasını benim ocağıma çıkaracaktı!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Kasa kilidi siparişi vermişti, parasını da peşin ödedi. Aramızda husumet yoktu."
+      ],
+      "GetRandomGolgeSuspectOpinion": [
+        "Demirci Kazım usta Ekrem'in gizli kasasının kilidini yapan adamdır. Ocağının arkasını iyi araştırın."
+      ]
+    },
+    "104": {
+      "UnknownMethodGuilty": [
+        "*Veresiye defterini arkasına gizler* Ekrem Bey bakkaldan alışveriş yapmazdı ama bana faizle borç para vermişti... O parayı ödeyecektim amirim!"
+      ],
+      "UnknownMethodInnocent": [
+        "Ekrem Bey haftalık gazetesini ve tütününü benden alırdı. Kasaba esnafına sahip çıkan biriydi."
+      ],
+      "GenerateDynamicGreeting": [
+        "Aaa nasıl olayım amirim, bakkal dükkânında müşteri bekliyorum. Herkes tedirgin, kimse sokağa çıkmıyor.",
+        "Aaa amirim hoş geldiniz sefalar getirdiniz! Gölge Şehir'in tüm havadisleri bakkaldan geçer, Ekrem Bey meselesini de dinleyin benden!",
+        "Merhaba dedektifim! Bakkal defterini kapattım, buyurun ne sormak istiyorsanız sorun.",
+        "Selamlar amirim! Bakkal dükkanım emrinize amadedir, buyurun.",
+        "Hayırlı günler amirim! Bir paket tütün ya da bir soru... Hangisini isterseniz buyurun!",
+        "Aleykümselam dedektif bey. Bakkal Naciye kulak kesildi."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Aaa hava çok ayaz amirim! Sobanın arkasından çıkamıyoruz. O geceki fırtınada bakkalın tabelası yerinden uçacaktı neredeyse!",
+        "Bakkal Naciye'de taze kaşar, sıcak çay, helva ne ararsan var amirim! Buyurun atıştırın, dedektiflik aç karnına yapılmaz.",
+        "Bakkal dükkânı bana rahmetli kocamdan kaldı amirim. Tek başıma dimdik ayakta durmaya çalışıyorum.",
+        "50 yaşındayım amirim. Bakkal tezgahında bir ömür tükettik."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Veresiye defterini büker* Bakkal dükkânımda dedikodu yapacak vaktim yok amirim! Ekrem'in borçları hakkında ne soracaksınız sorun!",
+        "*Panikle yutkunur* Bakkalın arkasındaki odamdaydım amirim... Tek başımaydım işte!",
+        "*Elleri titrer* Saat 02:00 gibi tütün almak için arkadaki depoya geçtim.",
+        "*Önlüğünü büker* Veresiye borcunu isteyince dükkânımı yakmakla tehdit etti! Canıma tak etmişti!",
+        "*Tezgaha yaslanır* Kepengi kilitledim, arka odadaki sedirime uzanıp uyudum.",
+        "*Bakkal defterini büker* Bakkalın kara kaplı veresiye defterini inceliyordum... Ekrem'in kasabaya taktığı borçların üzerini kırmızı kalemle çiziyordum!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Tezgaha yaslanır* Bakkal Naciye her şeyi duyar dedektifim. Ekrem Bey cinayeti hakkında aklınıza ne takıldıysa açıkça sorun.",
+        "Gece 01:00 gibi Muallim Fehmi Bey gaz lambası yağı almaya uğramıştı, şahidimdir.",
+        "Saat 22:00'de kepengi çektim, sabah 06:00'ya kadar kapı açmadım.",
+        "Eski veresiye hesabını kapattı, kahvesini içip gitti.",
+        "Günün hasılatını kasaya koyup dükkânımı kilitledim ve yattım.",
+        "Haftalık gaz yağı, un ve şeker stok kayıtlarımı tutuyordum dedektifim."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Panikle ellerini ovuşturur* Aaa tövbeler olsun amirim! Bakkal Naciye bir karıncayı bile incitmez! Veresiye borcunu ödemedi diye fare zehriyle adam öldürülür mü hiç?!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Bakkal Naciye'yi tüm Gölge Şehir tanır! Bana katil demek büyük günahtır amirim!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Aman amirim tövbe deyin! Bakkal adam katil olur mu? Kunduracının çizmelerine bakın, göl çamuru orada!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Erken uyudum amirim... *elleri titrer* Dükkânın arkasında lambayı yaktım ama sadece tütün sarıyordum!"
+      ],
+      "GetInnocentAlibiResponse": [
+        "Bakkalın kepengini indirip veresiye defterindeki hesapları kapattım. Gece bekçisi Rıfat amca da beni pencerede görmüştür."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Veresiye defterini kapatır* Yırtık sayfada sadece borç notları vardı! Zehir formülü falan yoktu!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Veresiye defterim herkese açıktır. Delil arıyorsanız dükkânımı didik didik edebilirsiniz."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Veresiye borcu 5 bin lirayı bulmuştu! 'Dükkânını yakarım' diye tehdit etti beni!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Veresiye yazdırırdı ama zengin adamdı, eninde sonunda kapatırdı. Husumetim yoktu."
+      ],
+      "GetRandomGolgeSuspectOpinion": [
+        "Bakkal Naciye'nin veresiye defterindeki yırtık sayfaya ve sakladığı fare zehirlerine bakın amirim."
+      ]
+    },
+    "105": {
+      "UnknownMethodGuilty": [
+        "*Tıp kodeksini kapatır, gerginleşir* Ekrem Bey kronik rahatsızlıkları için muayenehaneme gelirdi. Benden ağrı kesici ve uyku tentürleri talep ederdi..."
+      ],
+      "UnknownMethodInnocent": [
+        "Ekrem Bey'in aile hekimiydim. Mide ve karaciğer rahatsızlıkları için hazırladığım bitkisel kürleri kullanıyordu."
+      ],
+      "GenerateDynamicGreeting": [
+        "Hekimlik koşturmacası amirim... Hastalar, bitkisel tentürler... Kasabadaki bu gerginlik herkesin sağlığını bozdu.",
+        "Hekimlik yeminim sır saklamayı gerektirir amirim... Ama bu cinayet kasabanın dengesini bozdu. Tıbbi veya şahsi ne sormak istersiniz?",
+        "Merhaba dedektif. Şifalı bitkilerimi ayıklıyordum, Ekrem Bey'in zehirlenme şüphesi mi var?",
+        "Selam amirim. Tıbbi açıdan merak ettiğiniz bir konu varsa yanıtlayabilirim.",
+        "Hayırlı günler dedektif. Reçete defterini kapattım, buyurun.",
+        "Aleykümselam amirim. Muayenehanemde sorularınızı bekliyorum."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Mevsim geçişleri ve bu nemli hava enfeksiyonları tetikliyor amirim. O geceki yağmurda sokakta kalan hasta olurdu.",
+        "Şifalı nane, melisa ve papatya çayı öneririm dedektif. Sindirimi rahatlatır, sinirleri yatıştırır.",
+        "Hekimlik mesleğim yüzünden aile kurmaya vakit bulamadım dedektif. Kasaba halkının sağlığı benim ailem oldu.",
+        "42 yaşındayım. Tıp tahsilimi tamamlayıp bu kasabaya şifa dağıtmaya geldim."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Zehir şişelerini saklar* Hekim olarak tıbbi formüllerimle uğraşıyorum! Ekrem'in zehirlenmesiyle ilgili ne soracaksanız sorun!",
+        "*Gözlüğünü düzeltir* Laboratuvarımda yalnızdım... Tıbbi formüller gizlidir, kimseyi yanıma almam!",
+        "*Hızlı hızlı konuşur* Saat 02:15 civarıydı, bir hastanın nöbeti vardı... Yarım saatte döndüm!",
+        "*Hekim önlüğünü sıkar* Eski bir tıbbi hatamı öğrenmiş! Şantajla benden zehirli banotu özü hazırlamamı istedi!",
+        "*Önlüğünü çıkarır* Muayenehanemin ışığını söndürüp arka kapıdan evime geçtim.",
+        "*Banotu şişesine bakar* O zehir tıbbi amaçlıdır amirim! Cinayet aleti olduğunu kim söyledi?!",
+        "*Havan elini sıkar* Eski bir zehirli bitkiler el kitabını okuyordum... Baldıran otunun ve banotunun kanda iz bırakmayan formüllerini hazırlıyordum!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Tıp kodeksini kapatır* Hekim Sevgi olarak kasabanın sağlığından sorumluyum. Ekrem Bey'in otopsisi veya zehir şüphesi hakkında ne sormak istersiniz?",
+        "Hemşire hanım çıkışta hastanın dosyasını bıraktı, o saatte oradaydım.",
+        "Gece yarısı 00:30'da ilaç şişelerini raflara dizmeyi bitirip yattım.",
+        "Midesi için şifalı papatya ve nane çayı hazırlamamı istemişti, verdim.",
+        "İlaç dolaplarını kilitleyip evime çıktım, gece boyu uyudum.",
+        "Banotu zehirli bir ottur ama doğru dozda anesteziktir. Laboratuvar kayıtlarım açıktır.",
+        "Şifalı bitkiler kodeksini okuyup hastalar için papatya, kantaron ve melisa tentürü hazırlıyordum amirim."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Sinir krizi eşiğinde titrer* Ben bir tıp adamıyım amirim! Banotu reçetelerim hastaları iyileştirmek içindir! Bana iftira atacağınıza sokaktaki serserileri arayın!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Tıbbi teşhislerim kanuna uygundur. Boşuna şüphe üretmeyin!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Bana bu hakareti edemezsiniz! Ben hayat kurtaran bir hekimim. Katil demircinin örsünden çıkan bıçağı kullandı!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Muayenehanede ilaç hazırlıyordum... *sinirle* Gece Ekrem'in sokağından geçmiş olabilirim ama sadece hastaya gidiyordum!"
+      ],
+      "GetInnocentAlibiResponse": [
+        "Muayenehanemde şifalı bitki tentürleri hazırlıyor ve tıp kodeksini inceliyordum. Gece boyunca kapım çalmadı."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Mor şişeyi titreyen ellerle tutar* Bu şişedeki banotu özü tıbbi deneyler içindi! Kurbana ben içirmedim!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Banotu zehirli bir bitkidir evet, ama ben hekimim. Zehirle cinayet işleyecek kadar gözü dönmüş biri değilim."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Geçmişteki tıbbi hatamı kullanarak beni şantajla zehir üretmeye zorluyordu! Dayanamadım artık!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Hastamdı, kalp ilacı yazardım. Hekim hastasına düşmanlık beslemez amirim."
+      ],
+      "GetRandomGolgeSuspectOpinion": [
+        "Hekim Sevgi'nin serasındaki mor banotu zehirlerini inceleyin. Ekrem'in tırnaklarındaki morluklar tesadüf değil."
+      ],
+      "GenerateGossipOrCrossInterrogationResponse": [
+        "Hekim"
+      ]
+    },
+    "106": {
+      "UnknownMethodGuilty": [
+        "*Mührü masaya sertçe bırakır* Ekrem Bey Gölge Şehir meclisinde söz sahibi bir tüccardı. İmar projelerinde fikir ayrılıklarımız olurdu ama saygılıydı!"
+      ],
+      "UnknownMethodInnocent": [
+        "Ekrem Bey kasabamızın kalkınma projelerine maddi destek sağlayan saygın bir hayırseverdi."
+      ],
+      "GenerateDynamicGreeting": [
+        "Gölge Şehir'in asayişi ve huzuru için evrakların başındayım dedektif. Teşekkür ederim.",
+        "Gölge Şehir sakin bir yerdir dedektif bey. Bu talihsiz olayı çabuk çözüp kasabanın adını lekelemeden kapatmalıyız. Sorun bakalım.",
+        "Selamlar amirim. Muhtarlık evraklarını inceliyordum, kasabayla ilgili ne öğrenmek istersiniz?",
+        "Merhaba dedektif. Kasaba halkının güvenliği için buradayım, buyurun.",
+        "Hayırlı mesailer dedektif bey. Muhtar Cevdet olarak sorularınıza açığım.",
+        "Aleykümselam amirim. Gölge Şehir muhtarlığına hoş geldiniz."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Gölge Şehir'in mikro-kliması böyledir dedektif; bir anda fırtına kopar, bir anda don olur. Cinayet gecesi de tam bir doğa felaketi gibiydi.",
+        "Muhtarlıkta ikramımız eksik olmaz. Gölge Şehir'in meşhur cevizli pidesinden göndereyim size.",
+        "Gölge Şehir'in saygın ailelerindeniz. Muhtarlık mührü dedemin zamanından beri bu masadadır.",
+        "58 yaşındayım dedektif. Muhtarlık koltuğunda saç ağarttık."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Mührü masaya vurur* Muhtar Cevdet olarak vaktim kıymetlidir dedektif! Gölge Şehir'deki bu cinayet hakkında net konuşun!",
+        "*Makam koltuğunu düzeltir* Muhtar olarak gece çalışırken yanımda şahit tutacak değilim!",
+        "*Masadaki saate bakar* Gece 02:00'de muhtarlıktan çıktım, kasaba meydanında 20 dakika turladım.",
+        "*Sinirlenir* Çam ormanı arazisini kendi üstüne geçirip beni rezil edecekti! Gölge Şehir'in itibarını ayaklar altına alamazdım!",
+        "*Koltuğuna oturur* Muhtarlık binasını mühürleyip resmi aracımla evime gittim.",
+        "*Mührü masaya vurur* Çam ormanı arazisinin imar tahsis dosyasını okuyordum. Ekrem arazileri üstüne geçirip beni hiçe sayacaktı!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Resmi evrakları düzenler* Muhtar olarak soruşturmanıza tam destek veriyorum. Ekrem vakası hakkında ne öğrenmek istiyorsanız çekinmeden sorun.",
+        "Azalarımızdan Mustafa Bey gece 01:30'a kadar orman tahsis raporunu benimle inceledi.",
+        "Akşam 23:00'te tüm evrakları mühürleyip evime geçtim.",
+        "Kasabanın su şebekesi ihalesini konuştuk, resmi toplantı tutanaklarımız var.",
+        "Evrak çantamı alıp çıktım, eve gidip ailemle vakit geçirdim.",
+        "Gölge Şehir'in yıllık vergi matrahlarını ve su şebekesi haritasını inceliyordum dedektif bey."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Masasından kalkıp kurnazca gülümser* Sayın dedektif, makamıma saygısızlık ediyorsunuz. Sahte tapu iddialarınızla cinayeti bana yıkamazsınız!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Gölge Şehir Muhtarı olarak bu kasabada adaleti ben temsil ederim dedektif bey!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Haddinizi aşmayın dedektif! Gölge Şehir halkının oylarıyla seçilmiş muhtara iftira atamazsınız!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Ofiste tapu inceliyordum... *kurnazca* Gece 2 gibi kısa bir teftiş yürüyüşü yaptım, hepsi bu."
+      ],
+      "GetInnocentAlibiResponse": [
+        "Muhtarlık makamında köy meclisi kararlarını ve su şebekesi haritasını inceliyordum. Işığım gece boyu yanıktı."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Sahte tapuları masanın altına iter* Bu belgeler resmi taslaklardı! Kırık altın gözlük ise bana hediye gelmişti!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Muhtarlık mührü resmi evraklara basılır. Sahte evrak varsa arkasındaki çeteyi ortaya çıkarın."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Çam ormanı arazisini ucuza kapatıp beni makamımdan edecekti! Gölge Şehir'in geleceğini ona bırakamazdım!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Kasabanın önde gelen tüccarıydı. Fikir ayrılıklarımız oldu ama hepsi resmi çerçevedeydi."
+      ],
+      "GetRandomGolgeSuspectOpinion": [
+        "Muhtar Cevdet'in kasasındaki sahte çam ormanı tapusuna ve resmi mühürlü tehdit mektubuna bakın."
+      ]
+    },
+    "107": {
+      "UnknownMethodGuilty": [
+        "*Köstekli saatini yeleğine saklar* Ekrem Bey eski talebelerimdendi... Ama büyüyünce çok acımasız ve paragöz bir adama dönüştü evladım."
+      ],
+      "UnknownMethodInnocent": [
+        "Ekrem Bey benim yıllar önce ilkokulda okuttuğum kıymetli bir talebemdi. Aramızdaki saygı ve sevgi hiç bitmemişti."
+      ],
+      "GenerateDynamicGreeting": [
+        "Gaz lambasının ışığında kitaplarımla baş başayım evladım. İyiyim, hatıralarla avunuyorum.",
+        "Penceremin önünde oturup gaz lambasında kitap okurdum evladım... O gece ayak sesleri tam penceremin altından geçti. Dinliyorum sizi.",
+        "Merhaba evladım... Emekli bir muallim olarak kasabanın geçmişini iyi bilirim. Ne sormak istersin?",
+        "Aleykümselam dedektif bey. Gözlüğümü taktım, buyurun sizi dinliyorum.",
+        "Hayırlı günler evladım. İhtiyar muallimin evine hoş geldin.",
+        "Selamlar evladım. Gaz lambasının ışığında seni dinliyorum."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Penceremin camına vuran yağmur damlalarını dinlerdim evladım... Cinayet gecesi gök gürültüsü o ayak seslerini bile bastırıyordu.",
+        "Ihlamur kaynatırım evladım... İhtiyarlıkta hafif çorba ve ıhlamurdan başka bir şey gitmiyor boğazımdan.",
+        "Tüm talebelerim benim birer evladım sayılır evladım... Kendi çocuğum olmadı ama yüzlerce çocuk yetiştirdim.",
+        "68 yaşındayım evladım. 40 yılım muallimlikle, talebe okutmakla geçti."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Köstekli saatini yeleğine saklar* Yaşlı bir muallimim evladım... Ekrem'in ölümü ve o geceki ayak sesleri hakkında ne soracaksan sor!",
+        "*Hüzünle bakar* Penceremde tek başıma oturuyordum evladım... Yalnız bir ihtiyarım ben.",
+        "*Saatini saklar* Penceremde 01:30'dan 02:30'a kadar oturdum... Tam 02:14'te o ayak sesini duydum.",
+        "*Sesi titrer* Rahmetli babamın altın köstekli saatini borç karşılığı elimden zorla aldı! Geri vermiyordu zalim!",
+        "*Pencereyi kapatır* Gaz lambasını kısıp yatağıma geçtim evladım.",
+        "*Gözlüğünü siler* Gaz lambasında eski bir mahkeme kararını okuyordum evladım... Ekrem'in babamın saatine nasıl el koyduğunu anlatan o acı kararı..."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Kitabını kapatır* Muallim Fehmi olarak penceremdeyim evladım. Bahsettiğin konuyu anladım ama 02:14'te duyduğum sesler ve cinayet hakkında ne bilmek istersin?",
+        "Pencerede otururken karşı kaldırımdan geçen kunduracının fenerini gördüm, o da lambamı görmüştür.",
+        "02:14'te duyduğum o ayak sesini ömrümce unutmam. Köstekli saatim o an tam 02:14'ü gösteriyordu.",
+        "Eski bir divan edebiyatı kitabı getirdi bana, saatlerce o şiirleri okuyup çay içtik.",
+        "Kitabımı masaya bırakıp lambayı söndürdüm ve uyudum.",
+        "Gaz lambasının ışığında Fuzuli Divanı ve Gölge Şehir'in eski hatıratlarını okuyordum evladım. Geceleri kitap bana yoldaş olur."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Köstekli saatini saklayıp hüzünle bakar* Ben 40 yıllık öğretmenim evladım... Saatimi geri istedim sadece, Ekrem'in ölümünü bana nasıl yakıştırırsınız?"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Yaşlı bir öğretmene iftira atmak hiç yakışmıyor amirim..."
+      ],
+      "GetInnocentAccusationResponse": [
+        "Evladım ben emekli muallimim, tüm kasaba benim talebem sayılır. Bana bu kötülüğü nasıl kondurursunuz?"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Penceremde kitap okuyordum... *hüzünle* Saat 02:14'te kapıya çıktım ama sadece temiz hava için."
+      ],
+      "GetInnocentAlibiResponse": [
+        "Penceremin kenarında gaz lambasının ışığında divan şiirleri ve kasaba hatıratını okuyordum. 02:14'teki ayak seslerini de o yüzden net duydum."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Köstekli saate bakar* Saat babamın emanetiydi... Olay yerinde düştüyse Ekrem çalmıştı demektir!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Köstekli saatim eski bir antika. Cinayet aletiyle uzaktan yakından ilgisi olamaz evladım."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Babamdan kalan tek hatırayı, o altın köstekli saati zorla elimden aldı! Gururumla oynadı!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Kitap koleksiyoncusuydu, eski romanları tartışırdık. Kültürlü bir adamdı, aramız iyiydi."
+      ],
+      "GetRandomGolgeSuspectOpinion": [
+        "Fehmi Bey'in durmuş köstekli saatini ve o gece 02:14'te duyduğu sesleri sorgulayın."
+      ]
+    },
+    "108": {
+      "UnknownMethodGuilty": [
+        "*Deri bıçağını tezgaha saplar* Ekrem Bey bana toptan manda derisi temin ederdi. Son sevkiyatta eksik mal gönderince tartıştık ama cinayetle ilgim yok!"
+      ],
+      "UnknownMethodInnocent": [
+        "Ekrem Bey özel av çizmelerini sadece bana diktirirdi. Ayak ölçüsünü ve zevkini ezbere bilirdim."
+      ],
+      "GenerateDynamicGreeting": [
+        "Kösele dikiyorum amirim! Çamurlu sokaklar sayesinde işimiz çok ama bu cinayet canımızı sıktı.",
+        "Ayakkabı çamurundan insanın nereye gittiğini anlarım amirim... O gece gelen çizmelerdeki çamur göl kenarındandı! Ne öğrenmek istiyorsunuz?",
+        "Selam dedektif. Köseleleri dikiyorum, çamurlu ayakkabı izlerini mi soracaksınız?",
+        "Aleykümselam amirim. Kundura atölyemde sorularınızı dinliyorum.",
+        "Hayırlı işler dedektif. Mumlu ipliği çekerken kulaklarım sizde.",
+        "Selam amirim. Kunduracı Rasim usta dinliyor."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponse": [
+        "Çamur diz boyu amirim! Yağan yağmur sayesinde milletin çizmesi parçalanıyor, işimiz artıyor ama kasabanın havası çok boğucu.",
+        "Bir bardak tavşan kanı çay içeriz amirim. Kösele dikerken çaysız durulmaz.",
+        "Yalnız bir kunduracıyım amirim. Huysuzluğum da bu kimsesizliktendir belki.",
+        "60 yaşındayım amirim. Kösele dikmekten parmaklarım nasır tuttu."
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseGuilty": [
+        "*Deri bıçağını kaldırır* Kunduracıyım ben amirim! Çamurlu çizmeler veya Ekrem cinayeti dışında laf kalabalığı yapmayın!",
+        "*Homurdanır* Atölyemde yalnızdım! Çizme dikerken laf atan sevmem ben!",
+        "*Deriyi keser* Gece 02:00 ile 02:40 arası dışarıdaydım... Çamurlu yolda yürüdüm.",
+        "*Deri kayışını büker* Kaçak getirdiğim manda derilerini ihbar edecekti! Beni hapse attıracaktı!",
+        "*Bıçağını kınına sokar* Dükkânı kilitledim, çamurlu sokaktan evime yürüdüm.",
+        "*Mumlu ipe bakar* O iple taban dikiyorum amirim! Boğulma aleti nereden çıktı?!",
+        "*Deri bıçağını sallar* Av çizmelerinin kösele tabanını dikiyordum amirim... O gece göle gidecek adamın çizmesini hazırlıyordum!"
+      ],
+      "GenerateSmartOffTopicOrPersonaResponseInnocent": [
+        "*Mumlu ipi çeker* Kunduracı Rasim olarak atölyemdeyim. Cinayet gecesi göl yolundaki ayak izleri hakkında ne bilmek istiyorsanız sorun.",
+        "Siparişini yetiştirdiğim çizmeleri teslim ettiğim köylü Hasan o saatte atölyedeydi.",
+        "Akşam 21:00'den sonra dükkândan dışarı adım atan namerttir amirim.",
+        "Av çizmelerinin tabanını diktirdi, teslim edip ücretini ödedi.",
+        "Atölyemi kilitledim, doğruca evime gidip istirahat ettim.",
+        "Mumlu saraç ipidir o, kopmaz. Her kunduracıda bulunur.",
+        "Manda derisinden sağlam kışlık av çizmeleri dikiyordum amirim. Mumlu iplikle tabanları çift kat geçtim."
+      ],
+      "GetGuiltyEvadedResponse": [
+        "*Çizme bıçağını tezgaha saplar* Huysuzum diye katil mi oldum amirim?! Çamurlu ayak izi kasabanın yarısında var! Kanıtınız yoksa dükkânımı terk edin!"
+      ],
+      "GetGuiltyDefensiveResponse": [
+        "Kunduracı deriyi keser, canı değil! Lafınızı bilin de konuşun!"
+      ],
+      "GetInnocentAccusationResponse": [
+        "Yahu huysuzuz dediysek katil mi olduk?! Masum insanları darlamayı bırakın da gerçek katili bulun!"
+      ],
+      "GetGuiltyAlibiResponse": [
+        "Dükkânda çizme dikiyordum... *homurdanır* Çamurlu çizmeleri giyip dışarı çıktım ama göl kenarına uğramadım!"
+      ],
+      "GetInnocentAlibiResponse": [
+        "Kundura tezgâhımda av çizmelerinin kösele tabanını mumlu iple dikiyordum. Gece dışarı adım atmadım."
+      ],
+      "GetGuiltyWeaponResponse": [
+        "*Mumlu ipi çeker* Bu ip sadece taban dikmek içindir! Boğulma izleriyle eşleşmesi tamamen tesadüf!"
+      ],
+      "GetInnocentWeaponResponse": [
+        "Mumlu ip ve kundura kalıbı her ayakkabıcıda bulunur. Katili kalıbın numarasından bulabilirsiniz."
+      ],
+      "GetGuiltyMotiveResponse": [
+        "Kaçak deri sevkiyatımı öğrenip beni polise vermekle tehdit etti! Yaşlı kunduracıyı köle yapacaktı!"
+      ],
+      "GetInnocentMotiveResponse": [
+        "Çizmelerini bana tamir ettirirdi. Huysuzluğum ona özel değildi, herkese karşı böyleyim."
+      ],
+      "GetRandomGolgeSuspectOpinion": [
+        "Kunduracı Rasim'in atölyesindeki mumlu ayakkabı iplerini ve 42 numara çamurlu çizmelerini kontrol edin."
+      ]
+    },
+    "201": {
+      "GetSisorenFallbackContext": [
+        "Telgrafçı"
+      ],
+      "GenerateGossipOrCrossInterrogationResponse": [
+        "Telgrafçı"
+      ]
+    },
+    "205": {
+      "GetSisorenFallbackContext": [
+        "Sahaf"
+      ],
+      "GenerateGossipOrCrossInterrogationResponse": [
+        "Sahaf"
+      ]
+    },
+    "209": {
+      "GetSisorenFallbackContext": [
+        "Tüpçü"
+      ],
+      "GenerateGossipOrCrossInterrogationResponse": [
+        "Tüpçü"
+      ]
+    }
+  }
+}

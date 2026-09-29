@@ -16,16 +16,22 @@ public interface IGameRepository
     Task<NPC?> GetNPCByIdAsync(int id);
     Task UpdateNPCAsync(NPC npc);
     Task UpdateNPCTrustAsync(int npcId, int trustChange);
+    Task<IEnumerable<NPC>> GetNPCsByTownAsync(string townId);
 
     Task<IEnumerable<Clue>> GetAllCluesAsync();
     Task<IEnumerable<Clue>> GetCluesInBagAsync();
     Task UpdateClueStatusAsync(int clueId, string status);
+    Task<IEnumerable<Clue>> GetCluesByTownAsync(string townId);
 
     Task LogDialogWithCategoryAsync(int npcId, string playerQuestion, string npcResponse, int difficulty, string category);
     Task<IEnumerable<DialogLog>> GetRecentDialogLogsAsync(int npcId, int count);
     Task ClearAllDialogLogsAsync();
+    Task ClearDialogLogsByTownAsync(int minNpcId, int maxNpcId);
     Task ClearPlayerInventoryAsync();
+    Task ClearPlayerInventoryByTownAsync(int minClueId, int maxClueId);
+    Task ResetSisorenSessionAsync(int guiltyNpcId);
 
+    // AI
     Task<IEnumerable<NPCDialogue>> GetLocalAIPoolAsync(int npcId);
     Task<IEnumerable<HelperMessage>> GetHelperMessagesAsync(string context, string? building = null);
     Task<string> AnalyzeCluesForHelperAsync(List<int> clueIds, int guiltyNpcId);
@@ -47,5 +53,8 @@ public interface IGameRepository
     Task<IEnumerable<HelperMessage>> GetGolgeSehirHelperMessagesAsync(string context, string? building = null);
     Task ResetGolgeSehirSessionAsync(int guiltyNpcId);
     Task EnsureSisorenTablesAsync();
+    Task<IEnumerable<NPC>> GetSisorenNPCsAsync();
+    Task<NPC?> GetSisorenNPCByIdAsync(int id);
+    Task<IEnumerable<Clue>> GetSisorenCluesAsync();
     Task<IEnumerable<NPCDialogue>> GetSisorenDialoguesAsync(int npcId, string? category = null);
 }
