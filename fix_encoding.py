@@ -1,32 +1,22 @@
 import sys
-import shutil
 
-file_path = 'wwwroot/index.html'
+def fix_file(path):
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Reverse the mojibake: encode as cp1252, decode as utf-8
+        try:
+            fixed_content = content.encode('cp1252').decode('utf-8')
+            with open(path, 'w', encoding='utf-8') as f:
+                f.write(fixed_content)
+            print(f"Successfully fixed {path}")
+        except Exception as e:
+            print(f"Skipping {path}, might not be pure mojibake: {e}")
+    except Exception as e:
+        print(f"Error reading {path}: {e}")
 
-with open(file_path, 'r', encoding='utf-8') as f:
-    text = f.read()
-
-replacements = {
-    "Ã‡": "Ç",
-    "Ã§": "ç",
-    "ÄŸ": "ğ",
-    "Äž": "Ğ",
-    "Ä±": "ı",
-    "Ä°": "İ",
-    "Ã¶": "ö",
-    "Ã–": "Ö",
-    "ÅŸ": "ş",
-    "Åž": "Ş",
-    "Ã¼": "ü",
-    "Ãœ": "Ü",
-    "ğŸ” ": "🔍 ", # Also fixing the emoji
-    "â€”": "—" # fixing em-dash
-}
-
-for bad, good in replacements.items():
-    text = text.replace(bad, good)
-
-with open(file_path, 'w', encoding='utf-8') as f:
-    f.write(text)
-
-print("Replaced characters successfully!")
+if __name__ == '__main__':
+    fix_file('wwwroot/js/app.js')
+    fix_file('wwwroot/js/towns/sisoren/SisorenEngine.js')
+    fix_file('wwwroot/js/towns/golge_sehir/GolgeSehirEngine.js')
