@@ -252,8 +252,10 @@ public class DatabaseRepository : IGameRepository
 
     public async Task ClearDialogLogsByTownAsync(int minNpcId, int maxNpcId)
     {
-        using var db = CreateConnection();
-        await db.ExecuteAsync("DELETE FROM DialogLogs WHERE NPCId >= @Min AND NPCId <= @Max", new { Min = minNpcId, Max = maxNpcId });
+        try {
+            using var db = CreateConnection();
+            await db.ExecuteAsync("DELETE FROM DialogLogs WHERE NPCId >= @Min AND NPCId <= @Max", new { Min = minNpcId, Max = maxNpcId });
+        } catch {}
     }
 
     public async Task ClearPlayerInventoryAsync()
@@ -264,8 +266,10 @@ public class DatabaseRepository : IGameRepository
 
     public async Task ClearPlayerInventoryByTownAsync(int minClueId, int maxClueId)
     {
-        using var db = CreateConnection();
-        await db.ExecuteAsync("DELETE FROM PlayerInventory WHERE ClueId >= @Min AND ClueId <= @Max", new { Min = minClueId, Max = maxClueId });
+        try {
+            using var db = CreateConnection();
+            await db.ExecuteAsync("DELETE FROM PlayerInventory WHERE ClueId >= @Min AND ClueId <= @Max", new { Min = minClueId, Max = maxClueId });
+        } catch {}
     }
 
     public async Task ResetSisorenSessionAsync(int guiltyNpcId)
@@ -273,8 +277,11 @@ public class DatabaseRepository : IGameRepository
         using var db = CreateConnection();
         try
         {
-            await db.ExecuteAsync("UPDATE SisorenNPCs SET IsGuilty = 0");
-            await db.ExecuteAsync("UPDATE SisorenNPCs SET IsGuilty = 1 WHERE NPCId = @NPCId", new { NPCId = guiltyNpcId });
+            // Reset all to false
+            await db.ExecuteAsync("UPDATE SisorenNPCs SET IsGuilty = @FalseVal, TrustLevel = 50, StressLevel = 30, FearLevel = 30", new { FalseVal = false });
+            
+            // Set the specific one to true.
+            await db.ExecuteAsync("UPDATE SisorenNPCs SET IsGuilty = @TrueVal WHERE NPCId = @NPCId", new { TrueVal = true, NPCId = guiltyNpcId });
         }
         catch (Exception ex)
         {

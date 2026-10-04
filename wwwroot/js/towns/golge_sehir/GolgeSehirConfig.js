@@ -64,6 +64,7 @@ window.GOLGE_SEHIR_CONFIG = {
             npc: {
                 id: 101,
                 name: 'Oduncu Tahsin',
+                gender: 'male',
                 building: 'Oduncu',
                 role: 'Oduncu',
                 portrait: 'images/towns/golge_sehir/npcler/npc_101_talk.jpg',
@@ -127,6 +128,7 @@ window.GOLGE_SEHIR_CONFIG = {
             npc: {
                 id: 102,
                 name: 'Manav Ayşe',
+                gender: 'female',
                 building: 'Manav',
                 role: 'Manav',
                 portrait: 'images/towns/golge_sehir/npcler/npc_102_talk.jpg',
@@ -190,6 +192,7 @@ window.GOLGE_SEHIR_CONFIG = {
             npc: {
                 id: 103,
                 name: 'Demirci Kazım',
+                gender: 'male',
                 building: 'Demirci',
                 role: 'Demirci',
                 portrait: 'images/towns/golge_sehir/npcler/npc_103_talk.jpg',
@@ -253,6 +256,7 @@ window.GOLGE_SEHIR_CONFIG = {
             npc: {
                 id: 104,
                 name: 'Bakkal Naciye',
+                gender: 'female',
                 building: 'Bakkal',
                 role: 'Bakkal',
                 portrait: 'images/towns/golge_sehir/npcler/npc_104_talk.jpg',
@@ -316,6 +320,7 @@ window.GOLGE_SEHIR_CONFIG = {
             npc: {
                 id: 105,
                 name: 'Hekim Sevgi',
+                gender: 'female',
                 building: 'Hekim',
                 role: 'Hekim',
                 portrait: 'images/towns/golge_sehir/npcler/npc_105_talk.jpg',
@@ -379,6 +384,7 @@ window.GOLGE_SEHIR_CONFIG = {
             npc: {
                 id: 106,
                 name: 'Muhtar Cevdet',
+                gender: 'male',
                 building: 'Muhtarlık',
                 role: 'Muhtar',
                 portrait: 'images/towns/golge_sehir/npcler/npc_106_talk.jpg',
@@ -442,6 +448,7 @@ window.GOLGE_SEHIR_CONFIG = {
             npc: {
                 id: 107,
                 name: 'Fehmi Bey',
+                gender: 'male',
                 building: 'Fehmi Bey Ev',
                 role: 'Emekli Öğretmen',
                 img: 'images/towns/golge_sehir/npcler/npc_107_talk.jpg',
@@ -506,6 +513,7 @@ window.GOLGE_SEHIR_CONFIG = {
             npc: {
                 id: 108,
                 name: 'Kunduracı Rasim',
+                gender: 'male',
                 building: 'Kunduracı',
                 role: 'Kunduracı',
                 portrait: 'images/towns/golge_sehir/npcler/npc_108_talk.jpg',

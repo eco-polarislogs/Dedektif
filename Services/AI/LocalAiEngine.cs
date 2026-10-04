@@ -1631,7 +1631,7 @@ public class LocalAiEngine : IAIService
         string role = npcId switch {
             201 => "Telgrafçı", 202 => "Kahveci", 203 => "Sinemacı", 204 => "Bakkal",
             205 => "Sahaf", 206 => "Muhtar", 207 => "Tütüncü", 208 => "Çoban",
-            209 => "Tüpçü", 210 => "Hurdacı", 211 => "Madenci", 212 => "Dokumacı", 213 => "Şifacı",
+            209 => "Tüpçü", 210 => "Hurdacı", 211 => "Ev Hanımı", 212 => "Kasaba Büyüğü", 213 => "Dokumacı",
             _ => "Kasabalı"
         };
         
@@ -1679,14 +1679,14 @@ public class LocalAiEngine : IAIService
             105 => "Hekim", 106 => "Muhtar", 107 => "Muallim", 108 => "Kunduracı",
             201 => "Telgrafçı", 202 => "Kahveci", 203 => "Sinemacı", 204 => "Bakkal",
             205 => "Sahaf", 206 => "Muhtar", 207 => "Tütüncü", 208 => "Çoban",
-            209 => "Tüpçü", 210 => "Hurdacı", 211 => "Madenci", 212 => "Dokumacı", 213 => "Şifacı",
+            209 => "Tüpçü", 210 => "Hurdacı", 211 => "Ev Hanımı", 212 => "Kasaba Büyüğü", 213 => "Dokumacı",
             _ => "esnaf"
         };
 
         if (isGuilty) return $"*Gözleri seğirir ve sinirle masaya vurur* O {targetNpcRole} yalan söylüyor amirim! Kendi kirli işlerini örtbas etmek için benim gibi dürüst bir {currentRole}a iftira atıyor! Asıl onun cinayet gecesi nerede olduğunu bir araştırın!";
 
         if ((currentRole == "Tütüncü" && targetNpcRole == "Telgrafçı") || (currentRole == "Telgrafçı" && targetNpcRole == "Tütüncü")) return $"*Gözlerini kısar* O {targetNpcRole} ile yıllardır aramız bozuktur amirim. Bana çamur atmak için her fırsatı değerlendirir.";
-        if ((currentRole == "Şifacı" && targetNpcRole == "Madenci") || (currentRole == "Madenci" && targetNpcRole == "Şifacı")) return $"*Başını iki yana sallar* O {targetNpcRole} zehirli otların/madenlerin etkisinde kalmış herhalde! Benim cinayetle ne alakam olabilir?";
+        if ((currentRole == "Dokumacı" && targetNpcRole == "Çoban") || (currentRole == "Çoban" && targetNpcRole == "Dokumacı")) return $"*Başını iki yana sallar* O {targetNpcRole} yalan söylüyor! Dağda gezerken aklını kaçırmış herhalde, benim cinayetle ne alakam olabilir?";
         if ((currentRole == "Sahaf" && targetNpcRole == "Muhtar") || (currentRole == "Muhtar" && targetNpcRole == "Sahaf")) return $"*Alaycı bir gülümseme* O {targetNpcRole} hep kendi bildiğini okur amirim. Onun sözüne güvenip de beni suçlamayın.";
 
         if (currentRole == "Muhtar" && targetNpcRole != "Muhtar") return $"*Kendinden emin bir şekilde* Ben bu kasabanın Muhtarıyım. O {targetNpcRole} kendi çapında asılsız dedikodular yayıyor olabilir, itibar etmeyin.";

@@ -8,6 +8,8 @@ window.SisorenEngine = {
     currentActiveTown: null,
     hasShownSisorenIntro: false,
     introDialogCompleted: false,
+    hasShownDualIntro: false,
+    dualDialogStep: 0,
     visitedSisorenBuildings: new Set(),
 
     normalizeNpcQuestions: function (npcId, name, questions) {
@@ -79,8 +81,7 @@ window.SisorenEngine = {
                             building: bld.title,
                             role: child.role,
                             portrait: child.portrait || null,
-                            bg: null,
-                            talkBg: null,
+                            bg: child.bg, talkBg: child.talkBg,
                             greeting: child.greeting,
                             questions: this.normalizeNpcQuestions(child.numericId || child.id, child.name, child.questions),
                             isExtra: true,
@@ -106,8 +107,8 @@ window.SisorenEngine = {
                         building: extra.buildingId ? (window.SISOREN_CONFIG.buildings.find(b => b.id === extra.buildingId)?.title || 'Sokak') : 'Sokak',
                         role: extra.role,
                         portrait: extra.portrait,
-                        bg: null,
-                        talkBg: null,
+                        bg: extra.bg,
+                        talkBg: extra.talkBg,
                         greeting: extra.greeting,
                         questions: this.normalizeNpcQuestions(extra.numericId, extra.name, extra.questions),
                         isExtra: true,
@@ -153,6 +154,8 @@ window.SisorenEngine = {
         window.currentActiveTown = 'gizemli';
         this.hasShownSisorenIntro = false;
         this.introDialogCompleted = false;
+        this.hasShownDualIntro = false;
+        this.dualDialogStep = 0;
         this.visitedSisorenBuildings.clear();
         document.body.classList.remove('sisoren-theme');
         const tuccar = document.getElementById('tuccar-quick-tip-btn');
@@ -173,7 +176,7 @@ window.SisorenEngine = {
         widget.id = 'tuccar-quick-tip-btn';
         widget.className = 'helper-detective-widget sisoren-tuccar-widget';
         widget.title = 'Tüccar İlyas\'tan İpucu Al';
-        widget.style.cssText = 'position: fixed !important; left: auto !important; right: 20px !important; bottom: 15px !important; z-index: 9999 !important; display: none;';
+        widget.style.cssText = 'position: fixed !important; left: auto !important; right: 20px !important; bottom: 15px !important; z-index: 120; display: none;';
         widget.innerHTML = `
             <img src="images/towns/sisoren/npcler/tuccar_ilyas_helper.png" class="helper-detective-img" alt="Tüccar İlyas">
             <div class="helper-detective-badge">TÜCCAR İLYAS</div>
@@ -369,6 +372,105 @@ window.SisorenEngine = {
         if (typeof window.checkAutopsyConditions === 'function') {
             window.checkAutopsyConditions();
         }
+
+        if (!this.hasShownDualIntro) {
+            this.hasShownDualIntro = true;
+            this.dualDialogStep = 0;
+            setTimeout(() => this.playDualAssistantBubbleDialogue(), 500);
+        }
+    },
+
+    playDualAssistantBubbleDialogue: function () {
+        const dialogs = window.SISOREN_CONFIG.assistants.introDialogue;
+
+        const updateBubbleUI = (index) => {
+            if (index < 0 || index >= dialogs.length) return;
+
+            const current = dialogs[index];
+            const isCetin = (current.speaker === 'Çetin');
+
+            const speakerInfo = {
+                speaker: isCetin ? 'cetin' : 'ilyas',
+                speakerName: isCetin ? 'YARDIMCI DEDEKTİF ÇETİN' : 'DAĞCI TÜCCAR İLYAS',
+                avatar: isCetin ? 'images/dedektif_helper.png' : 'images/towns/sisoren/npcler/tuccar_ilyas_helper.png',
+                theme: isCetin ? 'cetin-speaking' : 'ilyas-speaking'
+            };
+
+            const box = document.getElementById('cinematic-helper-box');
+            const avatarImg = document.querySelector('.cinematic-helper-avatar img');
+            const nameEl = document.querySelector('.cinematic-helper-name');
+
+            if (box) {
+                box.classList.remove('ilyas-speaking', 'cetin-speaking', 'rifat-speaking');
+                box.classList.add(speakerInfo.theme);
+            }
+            if (avatarImg) avatarImg.src = speakerInfo.avatar;
+            if (nameEl) {
+                nameEl.textContent = speakerInfo.speakerName;
+                nameEl.style.color = isCetin ? '' : '#4ade80';
+            }
+
+            if (typeof window.showCinematicHelper === 'function') {
+                window.showCinematicHelper(current.text, false, `sisoren_intro_${index}`, false, speakerInfo);
+            }
+
+            const prevBtn = document.getElementById('cinematic-prev-btn');
+            if (prevBtn) {
+                prevBtn.style.display = (index > 0) ? 'inline-block' : 'none';
+            }
+        };
+
+        const finishIntro = () => {
+            this.introDialogCompleted = true;
+            window.introDialogCompleted = true;
+            const box = document.getElementById('cinematic-helper-box');
+            if (box) {
+                box.classList.remove('ilyas-speaking', 'rifat-speaking');
+                box.classList.add('cetin-speaking');
+            }
+            window.customHelperSkipClick = null;
+            window.customHelperPrevClick = null;
+            const skipBtn = document.getElementById('cinematic-skip-btn');
+            if (skipBtn) skipBtn.onclick = null;
+            const prevBtn = document.getElementById('cinematic-prev-btn');
+            if (prevBtn) prevBtn.onclick = null;
+        };
+
+        const showNext = () => {
+            if (this.dualDialogStep < dialogs.length) {
+                updateBubbleUI(this.dualDialogStep);
+                this.dualDialogStep++;
+            } else {
+                finishIntro();
+            }
+        };
+
+        showNext();
+
+        window.customHelperSkipClick = (e) => {
+            if (window.isHelperTyping) {
+                window.isHelperTyping = false;
+                if (window.cinematicTypewriterTimeout) clearTimeout(window.cinematicTypewriterTimeout);
+                const textEl = document.getElementById('cinematic-helper-text');
+                if (textEl && window.currentHelperMessageText) {
+                    textEl.textContent = window.currentHelperMessageText;
+                    textEl.classList.add('typing-done');
+                }
+            } else if (this.dualDialogStep < dialogs.length) {
+                showNext();
+            } else {
+                finishIntro();
+            }
+            return true;
+        };
+
+        window.customHelperPrevClick = (e) => {
+            if (this.dualDialogStep > 1) {
+                this.dualDialogStep -= 2;
+                showNext();
+            }
+            return true;
+        };
     },
 
     // =============================
@@ -487,7 +589,7 @@ window.SisorenEngine = {
             marker.style.top = extra.mapPos.top;
             marker.style.left = extra.mapPos.left;
             marker.style.position = 'absolute';
-            marker.style.zIndex = '60';
+            marker.style.zIndex = '100';
             marker.style.cursor = 'pointer';
 
             marker.innerHTML = `
@@ -504,101 +606,7 @@ window.SisorenEngine = {
         });
     },
 
-    // =============================
-    // ÇİFT YARDIMCI DİNAMİK KONUŞMA BALONU
-    // =============================
-    playDualAssistantBubbleDialogue: function () {
-        const dialogs = window.SISOREN_CONFIG.assistants.introDialogue;
-        let step = 0;
 
-        const updateBubbleUI = (index) => {
-            if (index < 0 || index >= dialogs.length) return;
-
-            const current = dialogs[index];
-            const isCetin = (current.speaker === 'Çetin');
-
-            const speakerInfo = {
-                speaker: isCetin ? 'cetin' : 'tuccar',
-                speakerName: isCetin ? 'YARDIMCI DEDEKTİF ÇETİN' : 'DAĞCI TÜCCAR İLYAS',
-                avatar: isCetin ? 'images/dedektif_helper.png' : 'images/towns/sisoren/npcler/tuccar_ilyas_helper.png',
-                theme: isCetin ? 'cetin-speaking' : 'tuccar-speaking'
-            };
-
-            const box = document.getElementById('cinematic-helper-box');
-            const avatarImg = document.querySelector('.cinematic-helper-avatar img');
-            const nameEl = document.querySelector('.cinematic-helper-name');
-
-            if (box) {
-                box.classList.remove('tuccar-speaking', 'cetin-speaking', 'rifat-speaking', 'ilyas-speaking');
-                box.classList.add(speakerInfo.theme);
-            }
-            if (avatarImg) avatarImg.src = speakerInfo.avatar;
-            if (nameEl) nameEl.textContent = speakerInfo.speakerName;
-
-            if (typeof window.showCinematicHelper === 'function') {
-                window.showCinematicHelper(current.text, false, `sisoren_intro_${index}`, false, speakerInfo);
-            }
-
-            const prevBtn = document.getElementById('cinematic-prev-btn');
-            if (prevBtn) {
-                prevBtn.style.display = (index > 0) ? 'inline-block' : 'none';
-            }
-        };
-
-        const finishIntro = () => {
-            this.introDialogCompleted = true;
-            window.introDialogCompleted = true;
-            const box = document.getElementById('cinematic-helper-box');
-            if (box) {
-                box.classList.remove('tuccar-speaking', 'rifat-speaking', 'ilyas-speaking');
-                box.classList.add('cetin-speaking');
-            }
-        };
-
-        const showNext = () => {
-            if (step < dialogs.length) {
-                updateBubbleUI(step);
-                step++;
-            } else {
-                finishIntro();
-            }
-        };
-
-        showNext();
-
-        const skipBtn = document.getElementById('cinematic-skip-btn');
-        if (skipBtn) {
-            // Remove previous onclick to prevent memory leaks if intro is triggered again
-            skipBtn.onclick = (e) => {
-                e.stopImmediatePropagation();
-                if (window.isHelperTyping) {
-                    window.isHelperTyping = false;
-                    if (window.cinematicTypewriterTimeout) clearTimeout(window.cinematicTypewriterTimeout);
-                    const textEl = document.getElementById('cinematic-helper-text');
-                    if (textEl && window.currentHelperMessageText) {
-                        textEl.textContent = window.currentHelperMessageText;
-                        textEl.classList.add('typing-done');
-                    }
-                } else if (step < dialogs.length) {
-                    showNext();
-                } else {
-                    finishIntro();
-                    skipBtn.onclick = null; // Clean up
-                }
-            };
-        }
-
-        const prevBtn = document.getElementById('cinematic-prev-btn');
-        if (prevBtn) {
-            prevBtn.onclick = (e) => {
-                e.stopImmediatePropagation();
-                if (step > 1) {
-                    step -= 2;
-                    showNext();
-                }
-            };
-        }
-    },
 
     // =============================
     // 6.4 SİSÖREN ÖZEL GÖREV ZARFI & KART ANİMASYONU
@@ -777,6 +785,10 @@ window.SisorenEngine = {
         if (worldMapScreen) worldMapScreen.classList.add('hidden');
         storyIntroScreen.classList.remove('hidden');
 
+        // Hide any lingering cinematic helper box (e.g. from world map) to prevent covering buttons
+        const cinematicBox = document.getElementById('cinematic-helper-box');
+        if (cinematicBox) cinematicBox.classList.add('hidden');
+
         storyTextEl.textContent = '';
         if (cursor) cursor.style.display = 'inline-block';
         if (skipStoryBtn) skipStoryBtn.classList.remove('hidden');
@@ -862,10 +874,90 @@ window.SisorenEngine = {
         // Bina iç mekan ekranını aç (interior-screen)
         this.openSisorenInteriorScreen(bld, npc, buildingExtras, buildingChildren);
 
+        // Banter çal
+        this.playBuildingBanter(bld.npcId);
+
         // Otopsi sayacını güncelle
         if (typeof window.checkAutopsyConditions === 'function') {
             setTimeout(() => window.checkAutopsyConditions(), 500);
         }
+    },
+
+    currentBanterTimer: null,
+    currentBanterStep: 0,
+    currentBanterList: [],
+
+    playBuildingBanter: function (npcId) {
+        if (typeof window.showCinematicHelper !== 'function') return;
+
+        const banters = {
+            201: [
+                { speaker: 'tuccar', text: 'Celal amcanın kahvehanesi... Bütün dedikoduların, yalanların demlendiği yer.' },
+                { speaker: 'cetin', text: 'Boş laflara karnımız tok İlyas. Bize somut kanıt lazım, dedikodu değil.' },
+                { speaker: 'tuccar', text: 'Bazen en gerçek ipucu fısıltılar arasında saklıdır Çetin Bey. Gözünüzü dört açın.' }
+            ],
+            202: [
+                { speaker: 'tuccar', text: 'Bakkal Cemile teyze... Hem dükkanı yönetir hem de mahallenin bekçiliğini yapar. Ekstra tüplerin nereye gittiğini en iyi o bilir.' },
+                { speaker: 'cetin', text: 'Eksik hesap kayıtları ve borç listesi bizim için daha önemli.' }
+            ],
+            203: [
+                { speaker: 'tuccar', text: 'Sahaf Hikmet, kasabanın hafızasıdır. Ama bazı kitapların sayfaları kasten yırtılmıştır.' },
+                { speaker: 'cetin', text: 'Eski gazetelerdeki cinayet haberlerini mi kastediyorsun?' }
+            ],
+            204: [
+                { speaker: 'tuccar', text: 'Eski Ahır. Çoban Durmuş\'un mekanı. Dağ yollarından gelen gizemli ayak izleri genelde burada son bulur.' }
+            ],
+            205: [
+                { speaker: 'tuccar', text: 'Telgrafhane... Kasabanın dış dünyayla tek bağlantısı. Şifreli mesajlar buradan geçer.' }
+            ],
+            206: [
+                { speaker: 'tuccar', text: 'Terkedilmiş sinema. Eskiden burası kasabanın kalbiydi, şimdi ise sadece toz ve gölgeler var.' }
+            ],
+            207: [
+                { speaker: 'tuccar', text: 'Muhtarlık. Meliha hanım bu kasabayı demir yumrukla yönetir.' }
+            ],
+            208: [
+                { speaker: 'tuccar', text: 'Tütüncü dükkanı. Dumanlı odaların ardında ne sırlar yatıyor kim bilir.' }
+            ],
+            209: [
+                { speaker: 'tuccar', text: 'Tüpçü. Eksik tüp meselesi hala çözülemedi amirim. Burası kilit nokta olabilir.' }
+            ],
+            210: [
+                { speaker: 'tuccar', text: 'Hurdacı Zehra. Paslı demirlerin ve kayıp eşyaların mezarlığı.' }
+            ],
+            211: [
+                { speaker: 'tuccar', text: 'Zeynep Teyze\'nin evi. Penceresinden kasabadaki her hareketi izler.' }
+            ],
+            212: [
+                { speaker: 'tuccar', text: 'Hatice Nine\'nin taş evi. O kadar yaşlı ki, kasabanın kurulduğu günleri bile hatırlıyor olabilir.' }
+            ],
+            213: [
+                { speaker: 'tuccar', text: 'Emine Hanım\'ın yamaçtaki evi. Buradan tüm kasaba ayaklarınızın altındadır, özellikle de gece vakti.' }
+            ]
+        };
+
+        if (!banters[npcId]) return;
+
+        this.currentBanterList = banters[npcId];
+        this.currentBanterStep = 0;
+        this.advanceBanter();
+    },
+
+    advanceBanter: function() {
+        if (this.currentBanterStep >= this.currentBanterList.length) {
+            return;
+        }
+
+        const current = this.currentBanterList[this.currentBanterStep];
+        const speakerInfo = {
+            speaker: current.speaker, // 'tuccar' or 'cetin'
+            speakerName: current.speaker === 'tuccar' ? 'TÜCCAR İLYAS (KASABALI)' : 'YARDIMCI DEDEKTİF ÇETİN',
+            avatar: current.speaker === 'tuccar' ? 'images/towns/sisoren/npcler/tuccar_ilyas_helper.png' : 'images/dedektif_helper.png',
+            theme: current.speaker === 'tuccar' ? 'ilyas-speaking' : 'cetin-speaking'
+        };
+
+        window.showCinematicHelper(current.text, false, `sisoren_banter_${this.currentBanterStep}`, false, speakerInfo);
+        this.currentBanterStep++;
     },
 
     // =============================
@@ -1108,8 +1200,8 @@ window.SisorenEngine = {
                 building: extra.buildingId || 'Sokak',
                 role: extra.role,
                 portrait: extra.portrait,
-                bg: null,
-                talkBg: null,
+                bg: extra.bg,
+                talkBg: extra.talkBg,
                 greeting: extra.greeting,
                 questions: extra.questions || [],
                 isExtra: true,
@@ -1151,6 +1243,23 @@ window.SisorenEngine = {
         if (tuccarBtn) {
             tuccarBtn.style.display = 'none';
         }
+    },
+
+    resetSisorenState: function () {
+        this.hasShownSisorenIntro = false;
+        this.introDialogCompleted = false;
+        this.hasShownDualIntro = false;
+        this.dualDialogStep = 0;
+        if (this.visitedSisorenBuildings) {
+            this.visitedSisorenBuildings.clear();
+        }
+        if (window.sisorenTalkedExtraNpcs) {
+            window.sisorenTalkedExtraNpcs.clear();
+        }
+        window.submittedForensicCountSisoren = 0;
+        window.isAutopsyReadySisoren = false;
+        window.isAutopsyTimerStartedSisoren = false;
+        this.clearSisorenMap();
     },
 
     // =============================

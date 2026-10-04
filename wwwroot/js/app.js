@@ -45,8 +45,8 @@ window.townStates = {
 let _currentActiveTown = 'gizemli';
 
 Object.defineProperty(window, 'currentActiveTown', {
-    get: function() { return _currentActiveTown; },
-    set: function(val) {
+    get: function () { return _currentActiveTown; },
+    set: function (val) {
         if (_currentActiveTown && window.townStates[_currentActiveTown]) {
             if (typeof currentBag !== 'undefined') {
                 window.townStates[_currentActiveTown].bag = [...currentBag];
@@ -62,7 +62,7 @@ Object.defineProperty(window, 'currentActiveTown', {
         if (!window.townStates[val]) {
             window.townStates[val] = { bag: [], helperHistory: [], helperHistoryIdx: -1 };
         }
-        
+
         if (typeof currentBag !== 'undefined') {
             currentBag = [...window.townStates[val].bag];
             window.currentBag = currentBag;
@@ -73,7 +73,7 @@ Object.defineProperty(window, 'currentActiveTown', {
         if (typeof currentHelperHistoryIndex !== 'undefined') {
             currentHelperHistoryIndex = window.townStates[val].helperHistoryIdx;
         }
-        
+
         if (typeof updateBagUI === 'function') updateBagUI();
         if (typeof checkAutopsyConditions === 'function') checkAutopsyConditions();
 
@@ -109,7 +109,7 @@ Object.defineProperty(window, 'currentActiveTown', {
 });
 // ----------------------------------------------------
 
-const MAX_BAG_SIZE = 5;
+const getMaxBagSize = () => (window.currentActiveTown === 'sisoren' ? 8 : 5);
 let activeNpcId = null;
 let currentSessionId = 0;
 let currentPendingObject = null;
@@ -132,27 +132,27 @@ var currentHelperMessageText = '';
 // === GAME DATA ===
 const NPC_DATA = {
     1: {
-        id: 1, name: 'Kasap Hasan', building: 'Kasap', role: 'Kasabadaki eski kasap', img: 'images/hasan.png', bg: 'images/butcher_interior.png', talkBg: 'images/hasan.png', clipPath: 'ellipse(22% 35% at 50% 55%)',
+        id: 1, name: 'Kasap Hasan', gender: 'male', building: 'Kasap', role: 'Kasabadaki eski kasap', img: 'images/hasan.png', bg: 'images/butcher_interior.png', talkBg: 'images/hasan.png', clipPath: 'ellipse(22% 35% at 50% 55%)',
         secret: 'Cinayet gecesi dükkânında gizlice muhtara et sattı.',
         murderStory: 'Yağmurlu bir sonbahar gecesiydi. Kasap Hasan, dükkânını kapattıktan sonra doğruca Osman Bey\'in evine yürüdü. Yıllardır biriken veresiye borcu artık dayanılmaz bir hal almıştı — Osman Bey her seferinde ödemeyi erteliyordu. O gece Hasan son kez parasını istemeye gitti. Kapıyı Osman Bey açtığında, Hasan\'ın gözlerindeki öfkeyi fark edemedi. "Paran yarın gelecek" dedi alaycı bir gülümsemeyle. "Yarın mı? Yıllardır yarın diyorsun!" diye kükredi Hasan. Tartışma kızıştıkça Hasan\'ın eli yanında getirdiği satıra gitti. Bir anlık öfke krizinde, o ağır satırı kurbanın boyun bölgesine indirdi. Derin, tırtıklı yara — ancak bir kasabın elinden çıkabilecek bir darbeydi. Osman Bey son çırpınışlarında Hasan\'ın siyah deri önlüğünden parçalar kopartmaya çalıştı, tırnakları arasında kalan o küçük parçalar, son nefesinde bile savaştığının kanıtıydı. Hasan panikle satırı dükkânına götürüp tezgaha sapladı. Kanlı önlüğünü bir köşeye fırlattı, kara kaplı veresiye defterindeki Osman\'ın adını kırmızı kalemle çizdi. Ama karanlıkta ne kadar temizlerse temizlesin, kanın izi her yere sinmişti.'
     },
     2: {
-        id: 2, name: 'Eczacı Selma', building: 'Eczane', role: 'Eczane sahibi', img: 'images/selma.png', bg: 'images/eczane_final.png', talkBg: 'images/eczane_ic_mekan.png', clipPath: 'ellipse(20% 35% at 50% 60%)',
+        id: 2, name: 'Eczacı Selma', gender: 'female', building: 'Eczane', role: 'Eczane sahibi', img: 'images/selma.png', bg: 'images/eczane_final.png', talkBg: 'images/eczane_ic_mekan.png', clipPath: 'ellipse(20% 35% at 50% 60%)',
         secret: 'Kurbanın zehirlendiğini biliyordu ama gizledi.',
         murderStory: 'Eczacı Selma, yıllardır kasabada sessiz sedasız çalışan, herkesin güvendiği bir kadındı. Ama bu sessizliğin ardında derin bir nefret gizliydi. Osman Bey, Selma\'nın geçmişine dair bir sır keşfetmiş ve onu aylardır bununla tehdit ediyordu — sessiz kalmasının karşılığında düzenli para talep ediyordu. O gece Selma, planını uygulamaya koydu. Eczanesinin tezgahı altında yetiştirdiği ölümcül bir sarmaşık türünün özünü, son derece dikkatli bir şekilde Osman Bey\'in her gün kullandığı kalp ilacına karıştırdı. Dozajı mükemmel hesaplamıştı — ne çok az, ne çok fazla. İlacı o gün Osman\'ın eline bizzat verdi, gülümseyerek. "Geçmiş olsun Osman Bey, bu ilacı düzenli alın" dedi. Gece yarısı, Osman Bey yatmadan önce ilacını içti. Birkaç dakika içinde kalbinde keskin bir ağrı hissetti. Kalp krizi geçiriyormuş gibi kıvrandı, nefes almaya çalıştı ama zehir çoktan damarlarına yayılmıştı. Selma, o sırada eczanesinin karanlık köşesinde, yağmurun sesini dinleyerek bekledi. Boş ilaç şişesini masanın altına sakladı, parmak izlerini titizlikle sildi. Reçete defterinin son sayfalarını — Osman\'ın gerçek teşhisini ve zehirlenme belirtilerini içeren notları — aceleyle yırtıp attı. Ama her ne kadar profesyonel davranmış olsa da, zehirli sarmaşık tezgahın altında kurumaya bırakılmış halde duruyordu.'
     },
     3: {
-        id: 3, name: 'Muhtar Kemal', building: 'Muhtarlık', role: 'Kasabanın muhtarı', img: 'images/kemal.png', bg: 'images/muhtarlik_wide.png', talkBg: 'images/muhtar_final.png', clipPath: 'ellipse(22% 35% at 50% 60%)',
+        id: 3, name: 'Muhtar Kemal', gender: 'male', building: 'Muhtarlık', role: 'Kasabanın muhtarı', img: 'images/kemal.png', bg: 'images/muhtarlik_wide.png', talkBg: 'images/muhtar_final.png', clipPath: 'ellipse(22% 35% at 50% 60%)',
         secret: 'Kurbanla arazi anlaşmazlığı vardı.',
         murderStory: 'Muhtar Kemal, kasabanın en güçlü adamıydı — herkesin sırrını biliyor, her kapıyı açıyordu. Ama yaklaşan belediye seçimleri için büyük bir arazi projesine ihtiyacı vardı ve o arazinin sahibi Osman Bey\'di. Haftalardır Osman\'ı arazisini satması için ikna etmeye çalışmıştı ama Osman direndi. "Bu arazi babamdan kalma, satmam" dedi her seferinde. O gece Kemal, tüm diplomatik maskesini çıkardı. Gece yarısı Osman\'ın evine sızdı — muhtarlık kasasındaki yedek anahtarlarla kapıyı açmak çocuk oyuncağıydı. İçeri girdiğinde Osman masasında oturmuş, belgelerini inceliyordu. "Sen de mi Kemal?" dedi Osman, şaşkınlıkla. Kemal sahte tapu belgelerini masaya fırlattı. "Bunu imzalayacaksın, ya da..." Osman belgeleri yırtmaya başladı. Kemal kontrolünü kaybetti. Masadaki ağır bronz mühürü kaptığı gibi Osman\'ın yüzüne indirdi. Şiddetli bir boğuşma başladı — mobilyalar devrildi, Osman\'ın gözlüğü yere düşüp kırıldı. Kemal, son darbeyi kurbanın şakağına indirdiğinde, Osman\'ın gözleri kararıp yere yığıldı. Ölüm sebebi: ağır darbe sonucu beyin kanaması. Kemal panikle evi terk etti ama aceleyle çıkarken yırtılmış tapu belgelerini ve kırık gözlüğü olduğu yerde bıraktı. Ofisine döndüğünde, titreyerek gizli kasasını açıp sahte belgelerin kopyalarını içine kilitledi.'
     },
     4: {
-        id: 4, name: 'Komiser Güneş', building: 'Karakol', role: 'Kadın polis komiseri', img: 'images/gunes.png', bg: 'images/karakol_final.png', talkBg: 'images/karakol_ic_mekan.png', clipPath: 'ellipse(20% 35% at 50% 60%)',
+        id: 4, name: 'Komiser Güneş', gender: 'female', building: 'Karakol', role: 'Kadın polis komiseri', img: 'images/gunes.png', bg: 'images/karakol_final.png', talkBg: 'images/karakol_ic_mekan.png', clipPath: 'ellipse(20% 35% at 50% 60%)',
         secret: 'Olay yerindeki delilleri sakladı.',
         murderStory: 'Komiser Güneş, kasabanın adalet sembolüydü — ya da öyle görünüyordu. Gerçekte yıllardır Osman Bey\'den düzenli rüşvet alıyordu. Osman, kasabadaki yasadışı arazi işlemlerini ve kaçak ticaret yollarını biliyordu; Güneş ise bu bilgilerin gün yüzüne çıkmaması için olayları kapatıyor, dosyaları kaybediyordu. Ama Osman artık bu düzenden bıkmıştı ve Güneş\'i ihbar etmekle tehdit etti. "Yarın sabah savcılığa gidiyorum" dedi telefonda, sesi kararlıydı. Güneş o gece üniformasını giydi, polis copunu beline taktı ve Osman\'ın evine gitti. Kapıyı açan Osman, komiserin yüzündeki soğuk ifadeyi gördüğünde anladı ama çok geçti. Güneş ilk darbeyi polis copuyla Osman\'ın karnına indirdi. Osman ikiye katlanırken, Güneş onu yere devirdi. Boğuşma sırasında Osman savunma yaraları aldı — kollarında, ellerinde darbe izleri oluştu. Güneş yakın mesafeden copla art arda vurdu. Son darbe şakağına geldiğinde Osman hareketsiz kaldı. Havasız kalma ve travmatik darbeler — bir polisin eğitimli şiddetiyle uyumlu izler. Güneş, bir polis olarak olay yerini profesyonelce temizlemeye çalıştı — parmak izlerini sildi, kan lekelerini temizledi. Ama boğuşma sırasında paltosunun pirinç düğmesi kopmuş, rozeti yere düşmüştü. Karanlıkta bunları fark edemedi. Karakola döndüğünde, "GİZLİ" damgalı dosyaya Osman\'ın ihbar dilekçesini kilitledi ve anahtarı çekmecesinin derinliklerine gömdü.'
     },
     5: {
-        id: 5, name: 'Terzi Yahya', building: 'Terzi', role: 'Kasabanın terzisi', img: 'images/yahya.png', bg: 'images/terzi_final.png', talkBg: 'images/terzi_ic_mekan.png', clipPath: 'ellipse(22% 35% at 50% 60%)',
+        id: 5, name: 'Terzi Yahya', gender: 'male', building: 'Terzi', role: 'Kasabanın terzisi', img: 'images/yahya.png', bg: 'images/terzi_final.png', talkBg: 'images/terzi_ic_mekan.png', clipPath: 'ellipse(22% 35% at 50% 60%)',
         secret: 'Kurbana gizli cepli ceket dikti, son gören kişi.',
         murderStory: 'Terzi Yahya, kasabanın en yaşlı ve en saygın ustasıydı. Ama bu saygın cephenin arkasında karanlık bir ortaklık vardı — Yahya, yıllardır Osman Bey\'in gizli işlerinin sessiz ortağıydı. Para aklama, belge saklama, hatta kaçak mal transferi... Osman\'ın son diktirdiği ceketin astarına gizli bir cep dikmişti ve bu cepte, tüm yasadışı işlemlerin kaydını içeren bir USB bellek saklanıyordu. Ama Osman, ortaklığı bitirmeye ve Yahya\'yı saf dışı bırakmaya karar vermişti. O gece Yahya, payını almak için Osman\'ın evine gitti. "Param nerede Osman?" diye sordu titreyen bir sesle. Osman güldü. "Senin paran mı? Bu işte sen artık yoksun yaşlı adam. O USB\'yi de sana vermeyeceğim." Yılların birikimi bir anda patladı. Yahya, meslek hayatının en sadık aleti olan iplik makarasını cebinden çıkardı. Kalın, dayanıklı, kopması imkansız terzi ipliğini Osman\'ın boynuna doladı ve tüm gücüyle sıktı. Osman çırpındı, direndi — bu sırada Yahya\'nın diktiği ceketinden kumaş parçaları yırtıldı. Ama Yahya bırakmadı. İplik boyun bölgesinde derin izler bırakarak, Osman\'ın son nefesini de aldı. Yahya titreyerek ayağa kalktı. Kanlı iplik makarasını cebine koydu, yırtılan kumaş parçalarını toplamaya çalıştı ama hepsini bulamadı. Dükkânına döndüğünde, o gece diktiği son ceketin gizli cebindeki not hâlâ duruyordu: "Bu gece gel, konuşalım."'
     }
@@ -910,7 +910,7 @@ function updateForensicBadge() {
     const isGolge = (window.currentActiveTown === 'golge_sehir' || document.body.classList.contains('golge-sehir-theme'));
     const reqLabs = isSisoren ? 5 : (isGolge ? 4 : 3);
 
-    const labCount = isSisoren 
+    const labCount = isSisoren
         ? (window.submittedForensicCountSisoren || 0)
         : (isGolge ? (window.submittedForensicCountGolge || 0) : submittedForensicCount);
 
@@ -930,7 +930,7 @@ document.getElementById('forensic-pending-badge')?.addEventListener('click', () 
     const isSisoren = (window.currentActiveTown === 'sisoren' || document.body.classList.contains('sisoren-theme'));
     const isGolge = (window.currentActiveTown === 'golge_sehir' || document.body.classList.contains('golge-sehir-theme'));
     const reqLabs = isSisoren ? 5 : (isGolge ? 4 : 3);
-    const labCount = isSisoren 
+    const labCount = isSisoren
         ? (window.submittedForensicCountSisoren || 0)
         : (isGolge ? (window.submittedForensicCountGolge || 0) : submittedForensicCount);
     showGlobalNotification("BİLGİ", `Adli Tıp Kurumu'na şu ana kadar ${labCount} adet delil bulgusu iletildi. (Otopsi raporunun başlaması için en az ${reqLabs} lab gönderimi gereklidir).`, false);
@@ -970,7 +970,7 @@ document.getElementById('autopsy-timer-container').addEventListener('click', () 
         buildingCount = uniqueGizemliVisited.size;
     }
 
-    const labCount = isSisoren 
+    const labCount = isSisoren
         ? (window.submittedForensicCountSisoren || 0)
         : (isGolge ? (window.submittedForensicCountGolge || 0) : submittedForensicCount);
 
@@ -1133,12 +1133,14 @@ document.getElementById('start-btn').addEventListener('click', () => {
 
     // Çetin bölge haritasında konuşsun (Geçmiş tecrübeyi ve çözülen kasabaları hatırlar)
     setTimeout(() => {
-        if (window.gizemliSolved && window.golgeSolved) {
-            showCinematicHelper("Harika bir iş çıkardık Amirims! Hem Gizemli Kasaba'yı hem de Gölge Şehir'i aydınlattık! Şimdi diğer kasabalardaki yeni gizemlere odaklanalım!", false, 'world_map_both_solved');
-        } else if (window.gizemliSolved) {
-            showCinematicHelper("Tebrikler Amirims! Gizemli Kasaba davasını başarıyla çözdük ve Gölge Şehir'in kilidini açtık. Hazır olduğunuzda yeni kasabaya geçelim!", false, 'world_map_gizemli_solved');
-        } else {
-            triggerHelperMessage('splash');
+        if (!worldMapScreen.classList.contains('hidden')) {
+            if (window.gizemliSolved && window.golgeSolved) {
+                showCinematicHelper("Harika bir iş çıkardık Amirims! Hem Gizemli Kasaba'yı hem de Gölge Şehir'i aydınlattık! Şimdi diğer kasabalardaki yeni gizemlere odaklanalım!", false, 'world_map_both_solved');
+            } else if (window.gizemliSolved) {
+                showCinematicHelper("Tebrikler Amirims! Gizemli Kasaba davasını başarıyla çözdük ve Gölge Şehir'in kilidini açtık. Hazır olduğunuzda yeni kasabaya geçelim!", false, 'world_map_gizemli_solved');
+            } else {
+                triggerHelperMessage('splash');
+            }
         }
     }, 1000);
 });
@@ -1155,8 +1157,11 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
         onConfirm: async () => {
             try {
                 let endpoint = '/api/game/reset';
-                if (window.currentActiveTown === 'golge_sehir') {
+                const leavingTown = window.currentActiveTown;
+                if (leavingTown === 'golge_sehir') {
                     endpoint = '/api/golge-sehir/reset';
+                } else if (leavingTown === 'sisoren') {
+                    endpoint = '/api/sisoren/reset';
                 }
                 const res = await fetch(endpoint, { method: 'POST' });
                 const resetData = await res.json();
@@ -1178,8 +1183,7 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
                         window.GolgeSehirEngine.clearGolgeSehirMap();
                     }
                     if (window.SisorenEngine) {
-                        window.SisorenEngine.visitedSisorenBuildings.clear();
-                        window.SisorenEngine.clearSisorenMap();
+                        window.SisorenEngine.resetSisorenState();
                     }
                     const tuccar = document.getElementById('tuccar-quick-tip-btn');
                     if (tuccar) tuccar.remove();
@@ -1197,6 +1201,10 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
                     submittedForensicCount = 0;
                     submittedForensicCountGizemli = 0;
                     submittedForensicCountGolge = 0;
+                    window.submittedForensicCountSisoren = 0;
+                    window.isAutopsyReadySisoren = false;
+                    window.isAutopsyTimerStartedSisoren = false;
+                    if (window.sisorenTalkedExtraNpcs) window.sisorenTalkedExtraNpcs.clear();
                     dialogHistory = {};
                     npcTalkCompleted = {};
                     activeNpcId = null;
@@ -1229,6 +1237,94 @@ document.getElementById('world-back-btn')?.addEventListener('click', () => {
     });
 });
 
+// =============================================================
+// KASABA İLERLEME SİSTEMİ (Gizemli → Gölge Şehir → Sisören)
+// Kilit durumu YALNIZCA çözüm bayraklarından türetilir ve localStorage'da kalıcıdır.
+// =============================================================
+const TOWN_PROGRESS_KEY = 'dedektiflik_town_progress_v1';
+(function loadTownProgress() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(TOWN_PROGRESS_KEY) || '{}');
+        window.gizemliSolved = !!saved.gizemli;
+        window.golgeSolved = !!saved.golge_sehir;
+        window.sisorenSolved = !!saved.sisoren;
+    } catch (e) {
+        window.gizemliSolved = false; window.golgeSolved = false; window.sisorenSolved = false;
+    }
+})();
+
+function saveTownProgress() {
+    try {
+        localStorage.setItem(TOWN_PROGRESS_KEY, JSON.stringify({
+            gizemli: !!window.gizemliSolved,
+            golge_sehir: !!window.golgeSolved,
+            sisoren: !!window.sisorenSolved
+        }));
+    } catch (e) { /* storage kapalı olabilir */ }
+}
+
+function setTownLockUI(townId, unlocked) {
+    const el = document.querySelector(`.region-town[data-town-id="${townId}"]`);
+    if (!el) return;
+    const label = townId === 'golge_sehir' ? 'GÖLGEŞEHİR' : 'SİSÖREN';
+    const tagEl = el.querySelector('.region-town-tag');
+    el.classList.toggle('town-locked', !unlocked);
+    el.classList.toggle('town-active', unlocked);
+    if (townId === 'sisoren') el.classList.toggle('town-sisoren-active', unlocked);
+    if (tagEl) {
+        tagEl.classList.toggle('tag-locked', !unlocked);
+        tagEl.classList.toggle('tag-active', unlocked);
+        tagEl.innerHTML = unlocked
+            ? `<i class="fa-solid fa-magnifying-glass"></i> ${label} <span class="status-badge status-open status-open-${townId === 'golge_sehir' ? 'golge' : 'sisoren'}">Soruşturmaya Açık</span>`
+            : `<i class="fa-solid fa-lock"></i> ${label} <span class="status-badge status-locked">Kilitli Bölge</span>`;
+    }
+}
+
+function applyTownProgression() {
+    setTownLockUI('golge_sehir', !!window.gizemliSolved);
+    setTownLockUI('sisoren', !!window.golgeSolved);
+}
+window.applyTownProgression = applyTownProgression;
+
+// Kasabayı çözülmüş olarak işaretle (yalnızca sıradaki kasaba açılır)
+function markTownSolved(townId) {
+    if (townId === 'gizemli') window.gizemliSolved = true;
+    else if (townId === 'golge_sehir' && window.gizemliSolved) window.golgeSolved = true;
+    else if (townId === 'sisoren' && window.golgeSolved) window.sisorenSolved = true;
+    saveTownProgress();
+    applyTownProgression();
+}
+window.markTownSolved = markTownSolved;
+
+// NPC / delil kimliğinden kasaba çözümle (kesin aralıklar)
+function getTownByNpcId(id) {
+    id = Number(id);
+    if (id >= 201 && id <= 399) return 'sisoren';
+    if (id >= 101 && id <= 199) return 'golge_sehir';
+    if (id >= 1 && id <= 99) return 'gizemli';
+    return null;
+}
+function getTownByClue(clue) {
+    if (!clue) return null;
+    if (clue.town) return clue.town;
+    const id = Number(clue.id);
+    if (id >= 2000 && id <= 2999) return 'sisoren';
+    if (id >= 1000 && id <= 1999) return 'golge_sehir';
+    if (id >= 1 && id <= 99) return 'gizemli';
+    return null;
+}
+window.getTownByNpcId = getTownByNpcId;
+window.getTownByClue = getTownByClue;
+
+// Delil aktif kasabaya ait değilse çantaya ASLA girmez
+function isClueOfActiveTown(clue) {
+    const t = getTownByClue(clue);
+    return t !== null && t === window.currentActiveTown;
+}
+window.isClueOfActiveTown = isClueOfActiveTown;
+
+applyTownProgression();
+
 // Bölge Haritasındaki Kasaba Tıklamaları & Seviye İlerleme Kilidi (1. Seviye: Gizemli Kasaba, 2. Seviye: Gölge Şehir)
 document.querySelectorAll('.region-town').forEach(townEl => {
     townEl.addEventListener('click', (e) => {
@@ -1237,7 +1333,7 @@ document.querySelectorAll('.region-town').forEach(townEl => {
 
         if (townId === 'golge_sehir' || townName === 'Gölgeşehir') {
             // Kilit Kontrolü: Gizemli Kasaba çözülmeden Gölge Şehir açılamaz
-            if (townEl.classList.contains('town-locked') && !window.gizemliSolved) {
+            if (!window.gizemliSolved) {
                 document.getElementById('locked-town-title').textContent = "GÖLGE ŞEHİR - KİLİTLİ BÖLGE";
                 document.getElementById('locked-town-desc').textContent = "Gölge Şehir soruşturmasına geçmek için önce Gizemli Kasaba cinayet vakasını başarıyla çözmeli ve katili bulmalısınız!";
                 if (townLockedModal) townLockedModal.classList.remove('hidden');
@@ -1257,7 +1353,7 @@ document.querySelectorAll('.region-town').forEach(townEl => {
             // Gizemli Kasaba (1. Seviye) → Osman Bey Hikaye Ekranı
             window.currentActiveTown = 'gizemli';
             document.body.classList.remove('golge-sehir-theme', 'sisoren-theme');
-                            if(typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
+            if (typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
             // Gizemli Kasaba delil havuzunu izole et (Gölge Şehir eşyalarını tamamen ayır)
             /* Bag filtering removed in favor of state isolation */
 
@@ -1277,7 +1373,7 @@ document.querySelectorAll('.region-town').forEach(townEl => {
             });
         } else if (townId === 'sisoren' || townName === 'Sisören') {
             // Sisören (3. Seviye Dağ Kasabası)
-            if (townEl.classList.contains('town-locked') && (!window.gizemliSolved || !window.golgeSolved)) {
+            if (!window.gizemliSolved || !window.golgeSolved) {
                 document.getElementById('locked-town-title').textContent = "SİSÖREN - KİLİTLİ BÖLGE";
                 document.getElementById('locked-town-desc').textContent = "Sisören dağ kasabasına giden patikalar yoğun sis altında kapalı. Önce Gizemli Kasaba ve Gölge Şehir vakalarını aydınlatmalısınız!";
                 if (townLockedModal) townLockedModal.classList.remove('hidden');
@@ -1825,13 +1921,19 @@ document.getElementById('building-clue-take-btn')?.addEventListener('click', () 
         return;
     }
 
+    if (!isClueOfActiveTown(currentPendingObject)) {
+        console.warn('Kasaba izolasyonu: başka kasabaya ait delil engellendi', currentPendingObject.id);
+        buildingClueModal.classList.add('hidden');
+        return;
+    }
+
     if (currentBag.some(b => b.id === currentPendingObject.id)) {
         showGlobalNotification('Bilgi', 'Bu delil zaten çantanızda bulunuyor.', false);
         buildingClueModal.classList.add('hidden');
         return;
     }
 
-    if (currentBag.length >= MAX_BAG_SIZE) {
+    if (currentBag.length >= getMaxBagSize()) {
         showCinematicHelper('Amirim! Çantamız doldu. Maksimum 5 delil taşıyabiliriz. Önce Adli Tıbba göndermeliyiz!', false);
     } else {
         currentBag.push(currentPendingObject);
@@ -1839,7 +1941,7 @@ document.getElementById('building-clue-take-btn')?.addEventListener('click', () 
         logAction('collect_clue', currentPendingObject.id, currentPendingObject.name);
         saveGameState();
         checkAutopsyConditions();
-        showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' delilini çantaya attık! (${currentBag.length}/${MAX_BAG_SIZE} delil).`, false);
+        showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' delilini çantaya attık! (${currentBag.length}/${getMaxBagSize()} delil).`, false);
     }
     if (buildingClueModal) buildingClueModal.classList.add('hidden');
 });
@@ -1997,21 +2099,27 @@ document.getElementById('clue-take-btn').addEventListener('click', () => {
         return;
     }
 
+    if (!isClueOfActiveTown(currentPendingObject)) {
+        console.warn('Kasaba izolasyonu: başka kasabaya ait delil engellendi', currentPendingObject.id);
+        clueInspectModal.classList.add('hidden');
+        return;
+    }
+
     if (currentBag.some(b => b.id === currentPendingObject.id)) {
         showGlobalNotification('Bilgi', 'Bu delil zaten çantanızda bulunuyor.', false);
         clueInspectModal.classList.add('hidden');
         return;
     }
 
-    if (currentBag.length >= MAX_BAG_SIZE) {
-        showCinematicHelper('Amirim! Çantamız doldu. Maksimum 5 delil taşıyabiliriz. Önce Adli Tıbba göndermeliyiz!', false);
+    if (currentBag.length >= getMaxBagSize()) {
+        showCinematicHelper(`Amirim! Çantamız doldu. Maksimum ${getMaxBagSize()} delil taşıyabiliriz. Önce Adli Tıbba göndermeliyiz!`, false);
     } else {
         currentBag.push(currentPendingObject);
         window.currentBag = currentBag;
         logAction('collect_clue', currentPendingObject.id, currentPendingObject.name);
         saveGameState();
         checkAutopsyConditions();
-        showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' delilini çantaya attık! (${currentBag.length}/${MAX_BAG_SIZE} delil). Şüphelileri sorgularken bu delili ipucu olarak kullanabiliriz.`, false);
+        showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' delilini çantaya attık! (${currentBag.length}/${getMaxBagSize()} delil). Şüphelileri sorgularken bu delili ipucu olarak kullanabiliriz.`, false);
     }
     closeClueInspectAndReturn();
 });
@@ -2317,6 +2425,19 @@ function triggerForensicFinding(findingText, findingType) {
     }
 }
 
+// Lab sayacını delilin AİT OLDUĞU kasabaya göre artır (Sisören dahil)
+function incrementTownLabCount(clue) {
+    const town = getTownByClue(clue) || window.currentActiveTown;
+    if (town !== window.currentActiveTown) return; // Kasaba dışı veri sayılmaz
+    if (town === 'sisoren') {
+        window.submittedForensicCountSisoren = (window.submittedForensicCountSisoren || 0) + 1;
+    } else if (town === 'golge_sehir') {
+        window.submittedForensicCountGolge++;
+    } else {
+        window.submittedForensicCountGizemli++;
+    }
+}
+
 // Adli Tıbba Gönder Buton Dinleyicileri
 document.addEventListener('DOMContentLoaded', () => {
     const sendBloodBtn = document.getElementById('send-blood-btn');
@@ -2343,11 +2464,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         sendBloodBtn.disabled = true;
                         sendBloodBtn.innerHTML = '<i class="fa-solid fa-check"></i> KAN LEKESİ ADLİ TIBBA GÖNDERİLDİ';
                         sendBloodBtn.style.opacity = '0.6';
-                        if (window.currentActiveTown === 'golge_sehir') {
-                            window.submittedForensicCountGolge++;
-                        } else {
-                            window.submittedForensicCountGizemli++;
-                        }
+                        incrementTownLabCount(currentPendingObject);
                         checkAutopsyConditions();
                         showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' üzerindeki KAN LEKESİ bulgusunu Adli Tıp Merkezi'ne ilettim. Otopsi raporuna yeni detaylar eklendi!`, false);
                     }
@@ -2377,11 +2494,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         sendPrintBtn.disabled = true;
                         sendPrintBtn.innerHTML = '<i class="fa-solid fa-check"></i> PARMAK İZİ ADLİ TIBBA GÖNDERİLDİ';
                         sendPrintBtn.style.opacity = '0.6';
-                        if (window.currentActiveTown === 'golge_sehir') {
-                            window.submittedForensicCountGolge++;
-                        } else {
-                            window.submittedForensicCountGizemli++;
-                        }
+                        incrementTownLabCount(currentPendingObject);
                         checkAutopsyConditions();
                         showCinematicHelper(`Harika Amirim! '${currentPendingObject.name}' üzerindeki PARMAK İZİ bulgusunu Adli Tıp Merkezi'ne ilettim. Otopsi raporuna yeni detaylar eklendi!`, false);
                     }
@@ -2467,6 +2580,15 @@ function setupForensicTools() {
         const thumbsContainer = document.getElementById('clue-thumbnails');
         if (!thumbsContainer || !currentPendingObject) return;
         thumbsContainer.innerHTML = '';
+
+        // Gölge Şehir ve Sisören delilleri 2D olduğu için 4 yönlü görselleri yüklemeye çalışma
+        if (currentPendingObject.id >= 1000 || window.currentActiveTown === 'golge_sehir' || window.currentActiveTown === 'sisoren') {
+            thumbsContainer.classList.add('hidden');
+            const rotateControls = document.getElementById('clue-rotate-controls');
+            if (rotateControls) rotateControls.classList.add('hidden');
+            return;
+        }
+
         thumbsContainer.classList.remove('hidden');
 
         const imgPath = currentPendingObject.img;
@@ -2591,14 +2713,32 @@ function setupForensicTools() {
             if (currentPendingObject) {
                 if (currentPendingObject.bloodSpot) {
                     const spot = currentPendingObject.bloodSpot;
-                    const targetAngle = spot.angle !== undefined ? spot.angle : 0;
+                    let targetAngle = spot.angle !== undefined ? spot.angle : 0;
+                    // Sisören ve Gölge Şehir'de 3D rotasyon kapalı olduğu için açıyı görmezden gel
+                    if (currentPendingObject.id >= 1000 || window.currentActiveTown === 'sisoren' || window.currentActiveTown === 'golge_sehir') {
+                        targetAngle = currentRotationIndex;
+                    }
 
                     if (currentRotationIndex === targetAngle) {
                         const imgRect = imgEl.getBoundingClientRect();
-                        const imgOffsetLeft = imgRect.left - wrapperRect.left;
-                        const imgOffsetTop = imgRect.top - wrapperRect.top;
-                        const cx = imgOffsetLeft + imgRect.width * spot.xRatio;
-                        const cy = imgOffsetTop + imgRect.height * spot.yRatio;
+                        const imgRatio = imgEl.naturalWidth / imgEl.naturalHeight;
+                        const containerRatio = imgRect.width / imgRect.height;
+                        let renderWidth, renderHeight, renderLeft, renderTop;
+                        if (imgRatio > containerRatio) {
+                            renderWidth = imgRect.width;
+                            renderHeight = imgRect.width / imgRatio;
+                            renderLeft = imgRect.left;
+                            renderTop = imgRect.top + (imgRect.height - renderHeight) / 2;
+                        } else {
+                            renderHeight = imgRect.height;
+                            renderWidth = imgRect.height * imgRatio;
+                            renderTop = imgRect.top;
+                            renderLeft = imgRect.left + (imgRect.width - renderWidth) / 2;
+                        }
+                        const imgOffsetLeft = renderLeft - wrapperRect.left;
+                        const imgOffsetTop = renderTop - wrapperRect.top;
+                        const cx = imgOffsetLeft + renderWidth * spot.xRatio;
+                        const cy = imgOffsetTop + renderHeight * spot.yRatio;
 
                         const dist = Math.hypot(x - cx, y - cy);
                         if (dist < 130) {
@@ -2629,7 +2769,7 @@ function setupForensicTools() {
 
             const imgRect = imgEl.getBoundingClientRect();
             const wrapperRect = wrapper.getBoundingClientRect();
-            
+
             // Calculate actual rendered image dimensions inside object-fit: contain
             const imgRatio = imgEl.naturalWidth / imgEl.naturalHeight;
             const containerRatio = imgRect.width / imgRect.height;
@@ -2666,16 +2806,23 @@ function setupForensicTools() {
 
             // Parmak izi gösterimi — SADECE tozlama fırçası TAM lekenin üstüne sürülürse göster!
             if (currentPendingObject) {
-                if (currentPendingObject.fingerprintSpot) {
-                    const spot = currentPendingObject.fingerprintSpot;
-                    const targetAngle = spot.angle !== undefined ? spot.angle : 0;
+                let spot = currentPendingObject.fingerprintSpot;
+
+                // Sadece Sisören delillerinde (ID >= 2000) her nesnenin kesin bir parmak izi bulgusu olsun
+                if (!spot && (currentPendingObject.id >= 2000 || window.currentActiveTown === 'sisoren')) {
+                    spot = { xRatio: 0.5, yRatio: 0.5, angle: 0 };
+                }
+
+                if (spot) {
+                    let targetAngle = spot.angle !== undefined ? spot.angle : 0;
+                    // Sisören ve Gölge Şehir'de 3D rotasyon kapalı olduğu için açıyı görmezden gel
+                    if (currentPendingObject.id >= 1000 || window.currentActiveTown === 'sisoren' || window.currentActiveTown === 'golge_sehir') {
+                        targetAngle = currentRotationIndex;
+                    }
 
                     if (currentRotationIndex === targetAngle) {
-                        const imgRect = imgEl.getBoundingClientRect();
-                        const imgOffsetLeft = imgRect.left - wrapperRect.left;
-                        const imgOffsetTop = imgRect.top - wrapperRect.top;
-                        const cx = imgOffsetLeft + imgRect.width * spot.xRatio;
-                        const cy = imgOffsetTop + imgRect.height * spot.yRatio;
+                        const cx = imgOffsetLeft + renderWidth * spot.xRatio;
+                        const cy = imgOffsetTop + renderHeight * spot.yRatio;
 
                         const dist = Math.hypot(x - cx, y - cy);
                         if (dist < 110) {
@@ -2822,8 +2969,8 @@ function openNpcTalk(npcId) {
                     building: extra.buildingId || 'Sokak',
                     role: extra.role,
                     portrait: extra.portrait,
-                    bg: null,
-                    talkBg: null,
+                    bg: extra.bg,
+                    talkBg: extra.talkBg,
                     greeting: extra.greeting,
                     questions: extra.questions || [],
                     isExtra: true,
@@ -3081,11 +3228,11 @@ function loadContextualQuestions(npcId) {
             }
 
             let questionsToShow = [];
-            if (data && data.success && Array.isArray(data.dialogues) && data.dialogues.length > 0) {
-                questionsToShow = data.dialogues;
-            } else if (npcId >= 200) {
-                // Sisören Frontend Fallback (SISOREN_CONFIG içinden hazır soru havuzu)
+            if (npcId >= 200 && window.SISOREN_CONFIG) {
+                // Sisören Frontend Fallback (SISOREN_CONFIG içinden hazır soru havuzu) API'den önce tercih et
                 questionsToShow = getSisorenFallbackQuestions(npcId, askedCount);
+            } else if (data && data.success && Array.isArray(data.dialogues) && data.dialogues.length > 0) {
+                questionsToShow = data.dialogues;
             } else if (npcId >= 100) {
                 // Gölge Şehir Frontend Fallback (GOLGE_SEHIR_CONFIG içinden 4'lü hazır soru havuzu)
                 questionsToShow = getGolgeFallbackQuestions(npcId, askedCount);
@@ -3149,10 +3296,10 @@ function ensureFourNpcQuestions(questions, npcId, askedCount) {
         const source = result.length > 0
             ? result[(result.length - 1) % result.length]
             : {
-            q: 'O gece başka hangi ayrıntıyı hatırlıyorsun?',
-            a: 'Bu ayrıntıyı tam hatırlamıyorum amirim.',
-            difficulty: 2,
-            category: 'derinlesme'
+                q: 'O gece başka hangi ayrıntıyı hatırlıyorsun?',
+                a: 'Bu ayrıntıyı tam hatırlamıyorum amirim.',
+                difficulty: 2,
+                category: 'derinlesme'
             };
         result.push({
             ...source,
@@ -3218,8 +3365,13 @@ function getSisorenFallbackQuestions(npcId, askedCount) {
         const currentCategory = categories[askedCount] || 'tanisma';
         // Önce mevcut kategorideki soruları filtrele
         let filtered = pool.filter(q => q.category === currentCategory);
-        if (filtered.length === 0) filtered = pool.slice(askedCount * 2, askedCount * 2 + 4);
-        if (filtered.length === 0) filtered = pool.slice(0, 4);
+
+        // Eğer 4 sorudan az çıktıysa, havuzdaki diğer sorulardan eksikleri tamamla
+        if (filtered.length < 4) {
+            const others = pool.filter(q => !filtered.includes(q));
+            filtered = [...filtered, ...others.slice(0, 4 - filtered.length)];
+        }
+
         return filtered.slice(0, 4);
     }
 
@@ -3342,13 +3494,25 @@ function typeWriter(element, text, i, onComplete) {
 
         // Ses efekti (Her 3 harfte bir mırıldanma/ses tonu)
         if (i % 3 === 0) {
-            // Eczacı Selma (2) ve Komiser Güneş (4) kadın
-            if (activeNpcId == 2 || activeNpcId == 4) {
-                playSynthVoice(true); // Kadın sesi
+            let isFemale = false;
+            let shouldPlay = false;
+
+            if (window.NPC_DATA && window.NPC_DATA[activeNpcId] && window.NPC_DATA[activeNpcId].gender) {
+                isFemale = (window.NPC_DATA[activeNpcId].gender === 'female');
+                shouldPlay = true;
+            } else {
+                // Fallback (eğer config'de gender yoksa)
+                if (activeNpcId == 2 || activeNpcId == 4) {
+                    isFemale = true;
+                    shouldPlay = true;
+                } else if (activeNpcId == 1 || activeNpcId == 3 || activeNpcId == 5) {
+                    isFemale = false;
+                    shouldPlay = true;
+                }
             }
-            // Kasap Hasan (1), Muhtar Kemal (3), Terzi Yahya (5) erkek
-            else if (activeNpcId == 1 || activeNpcId == 3 || activeNpcId == 5) {
-                playSynthVoice(false); // Erkek sesi
+
+            if (shouldPlay) {
+                playSynthVoice(isFemale); // true: Kadın, false: Erkek
             }
         }
 
@@ -3415,10 +3579,10 @@ async function askQuestionBackend(npcId, question) {
                     GuiltyNpcId: guiltyNpcId
                 })
             });
-            if (sisorenResponse.ok) {
-                const data = await sisorenResponse.json();
-                if (data.dialogue) answer = data.dialogue;
-            }
+            // Not: Backend (LocalAiEngine) henüz Sisören için özelleştirilmediğinden,
+            // API'den dönen jenerik "Masum insanlara çamur atmayın" cevaplarını KULLANMIYORUZ.
+            // Sadece backend tarafında history loglanması için fetch atıyoruz.
+            // answer değişkenini question.a (config'den gelen hazır cevap) olarak bırakıyoruz.
         } catch (error) {
             console.warn('Sisören kayıtlı diyalog yanıtı alınamadı, yerel cevap kullanılacak.', error);
         }
@@ -3832,7 +3996,7 @@ function renderFoundScreen() {
         if (!npc) continue;
         const hasHistory = dialogHistory[id] && dialogHistory[id].length > 0;
         const askedCount = askedQuestionCount[id] || 0;
-        
+
         let baseImg;
         if (isSisoren) {
             baseImg = npc.portrait || '';
@@ -3878,11 +4042,11 @@ function renderFoundScreen() {
                 <button class="btn btn-outline" style="width:100%; margin-bottom:6px;" onclick="window.showNpcHistory(${id})"><i class="fa-solid fa-comments"></i> Notlar</button>
             </div>
             <div class="found-npc-actions" style="display:flex; gap:6px; width:100%;">
-                ${isAlreadyInnocent 
-                    ? '<button class="btn btn-success" style="width:100%; pointer-events:none;" disabled><i class="fa-solid fa-shield-check"></i> MASUM İLAN EDİLDİ</button>'
-                    : `<button class="btn btn-danger" style="flex:1;" onclick="if(typeof window.playJudgeGavelTripleStrike==='function')window.playJudgeGavelTripleStrike(); window.accuseNpc(${id});"><i class="fa-solid fa-handcuffs"></i> Suçlu</button>
+                ${isAlreadyInnocent
+                ? '<button class="btn btn-success" style="width:100%; pointer-events:none;" disabled><i class="fa-solid fa-shield-check"></i> MASUM İLAN EDİLDİ</button>'
+                : `<button class="btn btn-danger" style="flex:1;" onclick="if(typeof window.playJudgeGavelTripleStrike==='function')window.playJudgeGavelTripleStrike(); window.accuseNpc(${id});"><i class="fa-solid fa-handcuffs"></i> Suçlu</button>
                        <button class="btn btn-success" style="flex:1;" onclick="window.innocentNpc(${id})"><i class="fa-solid fa-shield-halved"></i> Masum</button>`
-                }
+            }
             </div>
         `;
         grid.appendChild(card);
@@ -3916,11 +4080,11 @@ function renderFoundScreen() {
                 <div class="found-npc-role">${extraNpc.building || 'Sokak'} (${extraNpc.gender === 'female' ? 'Kadın' : 'Erkek'})</div>
                 ${hasHistory ? `<div style="font-size:0.75rem; color:#34d399; font-weight:bold; margin-bottom:6px;"><i class="fa-solid fa-comment-check"></i> ${askedCount} Soru</div>` : ''}
                 <div class="found-npc-actions" style="display:flex; gap:6px; width:100%;">
-                    ${isAlreadyInnocent 
-                        ? '<button class="btn btn-success" style="width:100%; pointer-events:none; font-size:0.75rem;" disabled><i class="fa-solid fa-shield-check"></i> MASUM</button>'
-                        : `<button class="btn btn-danger" style="flex:1; font-size:0.75rem;" onclick="window.accuseNpc(${extraId})"><i class="fa-solid fa-handcuffs"></i> Suçla</button>
+                    ${isAlreadyInnocent
+                    ? '<button class="btn btn-success" style="width:100%; pointer-events:none; font-size:0.75rem;" disabled><i class="fa-solid fa-shield-check"></i> MASUM</button>'
+                    : `<button class="btn btn-danger" style="flex:1; font-size:0.75rem;" onclick="window.accuseNpc(${extraId})"><i class="fa-solid fa-handcuffs"></i> Suçla</button>
                            <button class="btn btn-success" style="flex:1; font-size:0.75rem;" onclick="window.innocentNpc(${extraId})"><i class="fa-solid fa-shield-halved"></i> Masum</button>`
-                    }
+                }
                 </div>
             `;
             grid.appendChild(card);
@@ -4042,7 +4206,7 @@ window.accuseNpc = function (accusedId) {
     const jailNpcName = document.getElementById('jail-npc-name');
     const jailArrestedText = document.getElementById('jail-arrested-text');
 
-    if (jailNpcFull) jailNpcFull.src = jailImages[npc.id] || npc.img;
+    if (jailNpcFull) jailNpcFull.src = jailImages[npc.id] || npc.img || npc.portrait;
     if (jailNpcName) jailNpcName.textContent = npc.name;
 
     // Animasyonu sıfırla
@@ -4085,7 +4249,7 @@ window.accuseNpc = function (accusedId) {
     fetch(accuseEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             NpcId: accusedId,
             GuiltyNpcId: (typeof guiltyNpcId !== 'undefined' && guiltyNpcId) ? guiltyNpcId : (window.guiltyNpcId || null)
         })
@@ -4143,7 +4307,7 @@ window.accuseNpc = function (accusedId) {
                     retryBtn.innerHTML = '<i class="fa-solid fa-map-location-dot"></i> Haritaya Dön';
                     retryBtn.classList.remove('hidden');
 
-                    if (window.currentActiveTown === 'golge_sehir' || accusedId > 100) {
+                    if (window.currentActiveTown === 'golge_sehir' || (accusedId > 100 && accusedId < 200)) {
                         window.golgeSolved = true;
                         // 3. Bölge: Sisören Kilidini Aç
                         const sisorenTownBtn = document.querySelector('.region-town[data-town-name="Sisören"]') || document.querySelector('.region-town[data-town-id="sisoren"]');
@@ -4157,6 +4321,8 @@ window.accuseNpc = function (accusedId) {
                                 tagEl.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> SİSÖREN <span class="status-badge status-open" style="background:#10b981; color:#064e3b; font-weight:bold;">Soruşturmaya Açık</span>';
                             }
                         }
+                    } else if (window.currentActiveTown === 'sisoren' || accusedId >= 200) {
+                        window.sisorenSolved = true;
                     }
 
                     // Haritaya dönüş için event listener
@@ -4172,12 +4338,15 @@ window.accuseNpc = function (accusedId) {
                             // Kasaba durumunu temizle
                             window.currentActiveTown = 'gizemli';
                             document.body.classList.remove('golge-sehir-theme', 'sisoren-theme');
-                            if(typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
+                            if (typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
                             visitedBuildings.clear();
                             if (window.GolgeSehirEngine) {
                                 window.GolgeSehirEngine.visitedGolgeBuildings.clear();
                                 window.GolgeSehirEngine.clearGolgeSehirMap();
                                 window.GolgeSehirEngine.resetGolgeState();
+                            }
+                            if (window.SisorenEngine) {
+                                window.SisorenEngine.resetSisorenState();
                             }
                             currentBag = [];
                             submittedBloodClueIds.clear();
@@ -4199,10 +4368,14 @@ window.accuseNpc = function (accusedId) {
 
                         // Çetin bölge haritasında durumu kutlar
                         setTimeout(() => {
-                            if (window.gizemliSolved && window.golgeSolved) {
-                                showCinematicHelper("Harika bir iş çıkardık Amirims! Hem Gizemli Kasaba'yı hem de Gölge Şehir'i aydınlattık! Şimdi diğer kasabalardaki yeni gizemlere odaklanalım!", false, 'world_map_both_solved');
-                            } else if (window.gizemliSolved) {
-                                showCinematicHelper("Tebrikler Amirims! Gizemli Kasaba davasını başarıyla çözdük ve Gölge Şehir'in kilidini açtık. Hazır olduğunuzda yeni kasabaya geçelim!", false, 'world_map_gizemli_solved');
+                            if (!document.getElementById('world-map-screen').classList.contains('hidden')) {
+                                if (window.gizemliSolved && window.golgeSolved && window.sisorenSolved) {
+                                    showCinematicHelper("İnanılmaz bir başarı Amirims! Sisören'in dondurucu sırlarını da çözdük. Üç kasabayı da karanlıktan kurtardın, efsanevi bir dedektifsin!", false, 'world_map_all_solved');
+                                } else if (window.gizemliSolved && window.golgeSolved) {
+                                    showCinematicHelper("Harika bir iş çıkardık Amirims! Hem Gizemli Kasaba'yı hem de Gölge Şehir'i aydınlattık! Şimdi Sisören'in soğuk dağlarına odaklanalım!", false, 'world_map_both_solved');
+                                } else if (window.gizemliSolved) {
+                                    showCinematicHelper("Tebrikler Amirims! Gizemli Kasaba davasını başarıyla çözdük ve Gölge Şehir'in kilidini açtık. Hazır olduğunuzda yeni kasabaya geçelim!", false, 'world_map_gizemli_solved');
+                                }
                             }
                         }, 800);
                     };
@@ -4238,7 +4411,7 @@ window.accuseNpc = function (accusedId) {
                             // Kasaba durumunu temizle
                             window.currentActiveTown = 'gizemli';
                             document.body.classList.remove('golge-sehir-theme', 'sisoren-theme');
-                            if(typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
+                            if (typeof window.resetHelperWidget === 'function') window.resetHelperWidget();
                             visitedBuildings.clear();
                             if (window.GolgeSehirEngine) {
                                 window.GolgeSehirEngine.visitedGolgeBuildings.clear();
@@ -4562,9 +4735,9 @@ function reopenHelperSpeechBubble() {
     if (box) {
         box.classList.remove('hidden');
         document.getElementById('interior-helper-btn')?.classList.add('hidden');
-    document.getElementById('town-helper-btn')?.classList.add('hidden');
-    if (document.getElementById('bekci-quick-tip-btn')) document.getElementById('bekci-quick-tip-btn').style.display = 'none';
-    if (document.getElementById('tuccar-quick-tip-btn')) document.getElementById('tuccar-quick-tip-btn').style.display = 'none';
+        document.getElementById('town-helper-btn')?.classList.add('hidden');
+        if (document.getElementById('bekci-quick-tip-btn')) document.getElementById('bekci-quick-tip-btn').style.display = 'none';
+        if (document.getElementById('tuccar-quick-tip-btn')) document.getElementById('tuccar-quick-tip-btn').style.display = 'none';
 
         isHelperTyping = false;
         if (cinematicTypewriterTimeout) clearTimeout(cinematicTypewriterTimeout);
@@ -4583,7 +4756,10 @@ document.getElementById('town-helper-btn')?.addEventListener('click', reopenHelp
 document.querySelector('.cinematic-helper-avatar')?.addEventListener('click', reopenHelperSpeechBubble);
 
 // Önceki Mesaj
-document.getElementById('cinematic-prev-btn')?.addEventListener('click', () => {
+document.getElementById('cinematic-prev-btn')?.addEventListener('click', (e) => {
+    if (typeof window.customHelperPrevClick === 'function') {
+        if (window.customHelperPrevClick(e)) return;
+    }
     if (currentHelperHistoryIndex > 0) {
         currentHelperHistoryIndex--;
         const item = helperMessageHistory[currentHelperHistoryIndex];
@@ -4596,7 +4772,10 @@ document.getElementById('cinematic-prev-btn')?.addEventListener('click', () => {
 });
 
 // Yazı Geçme
-document.getElementById('cinematic-skip-btn')?.addEventListener('click', () => {
+document.getElementById('cinematic-skip-btn')?.addEventListener('click', (e) => {
+    if (typeof window.customHelperSkipClick === 'function') {
+        if (window.customHelperSkipClick(e)) return;
+    }
     if (isHelperTyping) {
         isHelperTyping = false;
         if (cinematicTypewriterTimeout) clearTimeout(cinematicTypewriterTimeout);
@@ -4624,11 +4803,11 @@ document.getElementById('helper-tip-btn')?.addEventListener('click', () => provi
 function handleHelperBagClick() {
     openBag();
     if (currentBag.length === 0) {
-        showCinematicHelper(`Amirims, çantamız henüz bomboş (0/${MAX_BAG_SIZE} delil)! Binalara girip nesnelere tıklayarak delilleri toplayın. Hatırlatırım, çantanıza yalnızca ${MAX_BAG_SIZE} delil alabilirsiniz, dikkatli seçin!`, false);
+        showCinematicHelper(`Amirims, çantamız henüz bomboş (0/${getMaxBagSize()} delil)! Binalara girip nesnelere tıklayarak delilleri toplayın. Hatırlatırım, çantanıza yalnızca ${getMaxBagSize()} delil alabilirsiniz, dikkatli seçin!`, false);
     } else {
         const names = currentBag.map(c => `'${c.name}'`).join(', ');
         const inspectedCount = currentBag.filter(c => c.inspected).length;
-        let msg = `Amirims, çantamızda ${currentBag.length}/${MAX_BAG_SIZE} delil var: ${names}. `;
+        let msg = `Amirims, çantamızda ${currentBag.length}/${getMaxBagSize()} delil var: ${names}. `;
         if (inspectedCount > 0) {
             msg += `${inspectedCount} tanesi zaten incelendi. `;
         }
@@ -4677,7 +4856,7 @@ function handleHelperAnalyzeClick() {
         .catch(() => {
             // Backend erişilemezse bile çantadaki bilgiyi göster
             const inspectedCount = currentBag.filter(c => c.inspected).length;
-            let msg = `Amirims, çantamızda toplam ${currentBag.length}/${MAX_BAG_SIZE} delil var: ${clueNames}. `;
+            let msg = `Amirims, çantamızda toplam ${currentBag.length}/${getMaxBagSize()} delil var: ${clueNames}. `;
             if (inspectedCount > 0) {
                 msg += `Bunlardan ${inspectedCount} tanesi incelendi. `;
             }
@@ -4761,15 +4940,15 @@ function checkAndDropClues(npcId, clueIds) {
     if (!npcSceneObjects) return;
 
     clueIds.forEach(clueId => {
-        // Çanta limiti kontrolü (Maksimum MAX_BAG_SIZE / 5)
-        if (currentBag.length >= MAX_BAG_SIZE) return;
+        // Çanta limiti kontrolü
+        if (currentBag.length >= getMaxBagSize()) return;
 
         // Zaten çantada var mı?
         if (currentBag.some(c => c.id === clueId)) return;
 
         // Clue bilgisini SCENE_OBJECTS içinden bul
         const clueInfo = npcSceneObjects.find(obj => obj.id === clueId);
-        if (clueInfo) {
+        if (clueInfo && isClueOfActiveTown(clueInfo)) {
             currentBag.push(clueInfo);
             window.currentBag = currentBag;
             newCluesFound = true;
@@ -4786,15 +4965,18 @@ function checkAndDropClues(npcId, clueIds) {
 }
 
 function saveTestimonyToBag(npcName, testimonyText) {
-    if (currentBag.length >= MAX_BAG_SIZE) {
+    if (currentBag.length >= getMaxBagSize()) {
         showCinematicHelper("Amirim! Çantamız dolu. Önce çantadaki delilleri Adli Tıp laboratuvarına incelemeye göndermelisiniz.", false);
         return;
     }
 
     // Generate a unique ID for the testimony
-    const testimonyId = 1000 + currentBag.length;
+    // NOT: Eski 1000+N kimliği Gölge Şehir delil aralığıyla çakışıyordu. Artık kasabaya etiketli benzersiz ID.
+    const testimonyId = 900000 + Math.floor(Math.random() * 90000);
     const testimonyClue = {
         id: testimonyId,
+        town: window.currentActiveTown,
+        isTestimony: true,
         name: `${npcName}'nin İfadesi`,
         desc: `"${testimonyText}"`,
         img: 'images/helper_avatar.png', // Temporary generic icon or a custom testimony icon

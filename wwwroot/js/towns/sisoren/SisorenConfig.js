@@ -15,14 +15,22 @@ window.SISOREN_CONFIG = {
     requiredBuildings: 5,
     requiredLabs: 5,
 
-    storyIntroText: "Uçsuz bucaksız sisli dağların zirvesinde, çam ormanlarıyla çevrili tekinsiz bir dağ kasabası: Sisören...\n\nSarp yamaçlar arasında göz gözü görmeyen yoğun bir sis tabakası kasabanın üzerine çökmüş durumda. Bakkalın önündeki ıslak kasalar, ahırın çamurlu çitleri arasındaki inekler ve telgraf tellerinin vızıltısı... Bu dağ kasabasında sırlar sisin ardına gizlenir. şüpheliler listesini bu sefer sen oluşturuyorsun, karanlık sırlar ve sarp yamaçlar... Sis perdesini aralamaya hazır mısınız?",
+    storyIntroText: "Uçsuz bucaksız dağların zirvesinde, çam ormanlarıyla çevrili, dış dünyadan kopuk tekinsiz bir dağ kasabası: SİSÖREN...\n\nSarp yamaçların arasına sıkışmış bu kasabanın üzerine, göz gözü görmeyen ağır ve yoğun bir sis tabakası çökmüş durumda. Telgraf tellerinin rüzgardaki ürkütücü vızıltısı, bakkalın önünde çürümeye yüz tutmuş ahşap kasalar ve tüpçünün deposundan sızan hafif gaz kokusu... Burada sırlar, sadece fısıltılarla dağdan dağa yayılır.\n\nKasabanın ileri gelenlerinden biri, sisli bir gece yarısı esrarengiz bir şekilde vahşice öldürüldü. 13 farklı mekan, 13 farklı şüpheli. Kimin dost, kimin düşman olduğu belirsiz. Bu dağ kasabasında paranın, yalanların ve gizli ittifakların izini sürmen gerekecek. Şüpheliler listesini bu sefer sen oluşturuyorsun... Sis perdesini aralamaya ve katili bulmaya hazır mısın?",
 
     assistants: {
         primary: {
             name: 'Yardımcı Dedektif Çetin',
             portrait: 'images/dedektif_helper.png',
             subtitle: 'Olay Yeri & Adli Analiz Uzmanı'
-        }
+        },
+        introDialogue: [
+            { speaker: 'Çetin', text: 'Sisören\'e nihayet ulaştık amirim. Burası Gölge Şehir\'den bile daha soğuk ve karanlık. Her yeri sis kaplamış.' },
+            { speaker: 'İlyas', text: 'Sisören kasabasına hoş geldiniz amirim. Buralar tehlikelidir, ama ben arkanızdayım. Dağcı Tüccar İlyas emrinizde.' },
+            { speaker: 'Çetin', text: 'Sen de kimsin? Olay yerine sivillerin girmesi yasak!' },
+            { speaker: 'İlyas', text: 'Ben bu dağları avcumun içi gibi bilirim memur bey. Sisören\'de kimin ne sakladığını, kimin kimin kuyusunu kazdığını benden iyi kimse bilemez. Katili bulmak istiyorsanız rehberliğime ihtiyacınız olacak.' },
+            { speaker: 'Çetin', text: 'Amirim, bu adama güvenebilir miyiz? Şüphelilerin evlerini ve binaları gezerken bu tüccarın söylediklerine dikkat etmeliyiz.' },
+            { speaker: 'İlyas', text: 'Bana güvenebilirsiniz amirim. Şimdi, soruşturmaya binaları gezerek başlayalım. Her binanın gizli bir hikayesi vardır, yeter ki nereye bakacağınızı bilin.' }
+        ]
     },
 
     // 13 SUÇLANABİLİR ŞÜPHELİ (7 KADIN, 6 ERKEK) + BAZI BİNALARDA SUÇLANAMAYAN MASUM ÇOCUKLAR
@@ -48,9 +56,16 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/telgrafhane_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/telgrafhane_interior.jpg',
                 greeting: 'Tik tak tik tak... Bu telgraf telleri her şeyi duyar amirim.',
-                questions: ['Cinayet gecesi telgrafhaneye mesaj geldi mi?', 'Hangi kasabalılar düzenli telgraf çekiyor?', 'Şifreli mesajlar hakkında ne biliyorsun?', 'O gece tellerde garip bir sinyal fark ettin mi?']
+                questions: ['Cinayet gecesi telgrafhaneye mesaj geldi mi?', 'Hangi kasabalılar düzenli telgraf çekiyor?', 'Şifreli mesajlar hakkında ne biliyorsun?', 'O gece tellerde garip bir sinyal fark ettin mi?'],
+                murderStory: 'Telgrafçı Rüstem, yıllardır kasabanın en gizli sırlarını o cızırtılı tellerin ucunda dinleyen adamdı. O gece kurbandan gelen şantaj telgrafını bizzat çözdüğünde, geçmişindeki o karanlık lekenin ifşa edileceğini anladı. Telgrafhanenin loş, ahşap odasında, tellerin aralıksız vızıltısı beynini kemirirken kontrolünü tamamen kaybetti. Gece yarısı yoğun sisin çöktüğü dağ yolunda kurbanı kıstırdı. Kurban daha ne olduğunu anlayamadan, Rüstem elindeki sert kauçuk kaplamalı, kalın telgraf kablosunu acımasızca boynuna doladı. Kurbanın son çırpınışları sisin içinde kaybolurken, nefesi tamamen kesilene kadar kabloyu sıktı. Bedenini ormanın derinliklerinde çürümeye terk edip, ellerindeki kanı bile tam yıkamadan makinesinin başına döndü; hiçbir şey olmamış gibi, ölümcül bir soğukkanlılıkla mors alfabesi tuşlarına basmaya devam etti.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2011, name: 'Şifreli Telgraf Şeridi', desc: 'Çöpe atılmış, sadece son birkaç kelimesi ("...gece yarısı gölde...") okunabilen yırtık bir mesaj kopyası.', img: 'images/towns/sisoren/deliller/2011.jpg', top: '75%', left: '20%', fingerprintSpot: { xRatio: 0.69, yRatio: 0.72, angle: -35 }, bloodSpot: { xRatio: 0.6, yRatio: 0.4, angle: 0 } },
+                { id: 2012, name: 'Kanlı Parmak İzi', desc: 'Mors alfabesi tuş takımının (telgraf manilesi) tam altına bulaşmış ve silinmeyi unutulmuş taze bir iz.', img: 'images/towns/sisoren/deliller/2012.jpg', top: '55%', left: '40%', fingerprintSpot: { xRatio: 0.77, yRatio: 0.30, angle: 26 }, bloodSpot: { xRatio: 0.68, yRatio: 0.65, angle: 27 } },
+                { id: 2013, name: 'Rüşvet Kesesi', desc: 'Telgraf memurunun masasının gizli çekmecesinde duran, kasaba dışından gönderilmiş isimsiz yüklü miktar para.', img: 'images/towns/sisoren/deliller/2013.jpg', top: '65%', left: '60%', fingerprintSpot: { xRatio: 0.3, yRatio: 0.7, angle: 0 }, bloodSpot: null },
+                { id: 2014, name: 'Kesik Hat Kablosu', desc: 'Arka odada kasten kesilmiş ve iletişimi koparmak için saklanmış yedek telgraf telleri.', img: 'images/towns/sisoren/deliller/2014.jpg', top: '35%', left: '80%', fingerprintSpot: { xRatio: 0.2, yRatio: 0.2, angle: 0 }, bloodSpot: { xRatio: 0.8, yRatio: 0.8, angle: 0 } },
+                { id: 2015, name: 'Tehdit Mesajı Taslağı', desc: 'Karalama kâğıtlarının arasında bulunan, gönderici adı karalanmış tehditkâr bir not.', img: 'images/towns/sisoren/deliller/2015.jpg', top: '45%', left: '10%', fingerprintSpot: { xRatio: 0.7, yRatio: 0.3, angle: 0 }, bloodSpot: null }
+            ]
         },
         // 2. KAHVEHANE (NPC 202) — İrfan (Erkek #2)
         {
@@ -73,9 +88,16 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/kahvehane_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/kahvehane_interior.jpg',
                 greeting: 'Buyurun amirim, taze demlenmiş dağ çayı... Sohbet de bedava.',
-                questions: ['Cinayet gecesi kahvehanede kimler vardı?', 'En son kim geç saatte kaldı?', 'Kasabalılar arasında kavga çıktı mı?', 'Ekrem hakkında dedikodular neler?']
+                questions: ['Cinayet gecesi kahvehanede kimler vardı?', 'En son kim geç saatte kaldı?', 'Kasabalılar arasında kavga çıktı mı?', 'Ekrem hakkında dedikodular neler?'],
+                murderStory: 'Kahveci İrfan, yılların yorgunluğunu demliğiyle atan, ancak öfkesini de içinde demleyen bir adamdı. Kurbanın, kahvehaneyi hacizle elinden almak için yıllardır sinsi bir kumpas kurduğunu o geceki son tartışmalarında kesin olarak öğrendi. Kahvehanedeki son müşteri de kalkıp yoğun sise karıştıktan sonra İrfan kepenkleri sertçe kapattı. Çay ocağının altındaki gizli zuladan, dedesinden kalma altıpatlar tabancasını çıkardı. Gecenin dondurucu karanlığında kurbanı dağ yoluna kadar adım adım takip etti. Rüzgarın ıslığı merminin sesini bastırırken, yılların birikmiş öfkesiyle tetiği tek seferde, tam kalbine nişan alarak çekti. Kurban yere yığılırken yüzünde sadece soğuk bir ifade vardı. Sabaha karşı kahvehaneye sessizce geri döndü, ocağın ateşini harlayıp, kasabalılara ikram edeceği o taze sabah çayını hiçbir vicdan azabı çekmeden demlemeye koyuldu.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2021, name: 'Gizli Mesajlı Fincan', desc: 'Altına sert bir cisimle buluşma saati kazınmış, masada yarım bırakılmış kulpsuz kahve fincanı.', img: 'images/towns/sisoren/deliller/2021.jpg', top: '60%', left: '30%', fingerprintSpot: { xRatio: 0.72, yRatio: 0.32, angle: 37 }, bloodSpot: null },
+                { id: 2022, name: 'İşaretli Okey Taşı', desc: 'Yerdeki talaşların arasına düşmüş, üzerinde yasa dışı bir örgütün sembolü kazınmış sahte bir taş.', img: 'images/towns/sisoren/deliller/2022.jpg', top: '80%', left: '50%', fingerprintSpot: { xRatio: 0.77, yRatio: 0.51, angle: -45 }, bloodSpot: null },
+                { id: 2023, name: 'Yırtık Borç Listesi', desc: 'Kırık bir sandalyenin bacağına sıkıştırılmış, bazı isimlerin üzeri kırmızıyla çizilmiş kâğıt.', img: 'images/towns/sisoren/deliller/2023.jpg', top: '75%', left: '70%', fingerprintSpot: { xRatio: 0.4, yRatio: 0.6, angle: 0 }, bloodSpot: null },
+                { id: 2024, name: 'Yanık Kasket', desc: 'Sobanın içine atılmış ama tam yanmamış, kenarında kan lekesi bulunan tanıdık bir şapka.', img: 'images/towns/sisoren/deliller/2024.jpg', top: '40%', left: '85%', fingerprintSpot: { xRatio: 0.41, yRatio: 0.30, angle: -34 }, bloodSpot: { xRatio: 0.6, yRatio: 0.2, angle: 0 } },
+                { id: 2025, name: 'Zulalanmış Altıpatlar', desc: 'Çay ocağının altındaki tahtaların arkasına gizlenmiş, bir mermisi eksik ruhsatsız tabanca.', img: 'images/towns/sisoren/deliller/2025.jpg', top: '50%', left: '15%', fingerprintSpot: { xRatio: 0.3, yRatio: 0.8, angle: 0 }, bloodSpot: { xRatio: 0.7, yRatio: 0.5, angle: 0 } }
+            ]
         },
         // 3. SİNEMA (NPC 203) — Nejat (Erkek #3)
         {
@@ -98,9 +120,16 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/sinema_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/sinema_interior.jpg',
                 greeting: 'Film bitti ama perde henüz inmedi amirim...',
-                questions: ['O gece sinema salonunda kimler vardı?', 'Arka kapıdan biri girip çıktı mı?', 'Film makinesi odasında saklanan ne?', 'Karanlık salonda şüpheli bir şey gördün mü?']
+                questions: ['O gece sinema salonunda kimler vardı?', 'Arka kapıdan biri girip çıktı mı?', 'Film makinesi odasında saklanan ne?', 'Karanlık salonda şüpheli bir şey gördün mü?'],
+                murderStory: 'Sinemacı Nejat, hayatı hep perdelerdeki kurmaca hikayelerden ibaret sanırdı; ta ki kurban, onun yasadışı işlerini ve gizli kaçakçılık ağını eski bir film rulosuna saniye saniye kaydedene kadar. O gece son seansın ardından kurban, şantaj için makine dairesine geldiğinde Nejat\'ın gözü dönmüştü. İkili arasındaki itiş kakış sırasında Nejat, sinema dünyasının o sahte büyüsünü gerçeğe çevirdi; kurbanı, devasa film projeksiyon makinesinin dönen keskin çarklarının arasına acımasızca itti. Çarklar kurbanın bedenini ezerken, Nejat kasten perdedeki filmin sesini sonuna kadar açıp çığlıkları bastırdı. Kan izlerini ve yırtılan giysi parçalarını ustalıkla temizledikten sonra, perdede dönen mutlu son sahnesini, elinde bir kadeh içkiyle, hayatının en karanlık başyapıtı gibi seyretti.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2031, name: 'Kesilmiş Film Bobini', desc: 'Makine dairesinde yer alan bir filmin en kritik sahnesinin kasten kesilip saklanmış parçası.', img: 'images/towns/sisoren/deliller/2031.jpg', top: '40%', left: '25%', fingerprintSpot: { xRatio: 0.37, yRatio: 0.56, angle: -19 }, bloodSpot: null },
+                { id: 2032, name: 'Şantajlı Afiş', desc: 'Gişe memurunun çekmecesinde, arka yüzüne "Ne yaptığını biliyorum" yazılmış eski bir film afişi.', img: 'images/towns/sisoren/deliller/2032.jpg', top: '65%', left: '15%', fingerprintSpot: { xRatio: 0.8, yRatio: 0.2, angle: 0 }, bloodSpot: null },
+                { id: 2033, name: 'Düşmüş Bilet Koçanı', desc: 'Arka sıradaki koltuklardan birinin altına düşmüş, cinayet saatine ait yırtık bir bilet parçası.', img: 'images/towns/sisoren/deliller/2033.jpg', top: '85%', left: '45%', fingerprintSpot: { xRatio: 0.70, yRatio: 0.62, angle: 1 }, bloodSpot: null },
+                { id: 2034, name: 'Kanlı Deri Eldiven', desc: 'Perdenin arkasındaki karanlık köşede unutulmuş, pahalı bir kumaştan yapılmış eldiven teki.', img: 'images/towns/sisoren/deliller/2034.jpg', top: '70%', left: '75%', fingerprintSpot: null, bloodSpot: { xRatio: 0.78, yRatio: 0.63, angle: 39 } },
+                { id: 2035, name: 'Rujlu Aynadaki Saat', desc: 'Sahne arkasındaki eski bir makyaj aynasına aceleyle rujla yazılmış bir rıhtım adresi.', img: 'images/towns/sisoren/deliller/2035.jpg', top: '50%', left: '85%', fingerprintSpot: { xRatio: 0.2, yRatio: 0.8, angle: 0 }, bloodSpot: null }
+            ]
         },
         // 4. BAKKAL (NPC 204) — Cemile (Kadın #1) + Gofret Alan Kız Çocuk
         {
@@ -123,7 +152,8 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/bakkal_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/bakkal_interior.jpg',
                 greeting: 'Hoş geldiniz amirim, burada her şey taze... Dedikodular da dahil.',
-                questions: ['Son günlerde dükkâna gelen şüpheli biri oldu mu?', 'Veresiye defterinde silinen isim kimin?', 'O gece dükkândan çalınan ne?', 'Kasabalıların borç kavgaları hakkında ne biliyorsun?']
+                questions: ['Son günlerde dükkâna gelen şüpheli biri oldu mu?', 'Veresiye defterinde silinen isim kimin?', 'O gece dükkândan çalınan ne?', 'Kasabalıların borç kavgaları hakkında ne biliyorsun?'],
+                murderStory: 'Bakkal Cemile, yıllardır kuruş hesabı yaparak ayakta tuttuğu o küçük dükkânın, kurbanın bitmek bilmeyen borçları ve bitmek bilmeyen tehditleri yüzünden elinden kayıp gitmesine seyirci kalamazdı. Kurbanın veresiye defterindeki kabaran borcu bir yana, dükkâna el koyma planı Cemile\'nin son sabır damlasını da taşırdı. O gece kurban, sırıtarak haftalık erzaklarını almaya geldiğinde, Cemile ona her zamankinden daha kibar davrandı. Ancak kurbanın paketlediği pahalı ithal peynirin içine, arka odada fareler için özel olarak sakladığı o son derece zehirli, ağır kimyasalı şırıngayla dikkatlice enjekte etmişti. Kurban evinde o lokmayı yuttuğu an kalbi durdu ve ölümü tamamen doğal bir kalp krizi gibi kayıtlara geçti. Ta ki bakkalın karanlık kilerinde unutulan o içi boşaltılmış zehir şişesi asıl gerçeği tüm vahşetiyle haykırana dek.'
             },
             // Bakkalda gofret alan kız çocuğu (Konuşulabilir, suçlanamaz)
             children: [
@@ -137,10 +167,21 @@ window.SISOREN_CONFIG = {
                     isChild: true,
                     canAccuse: false,
                     greeting: 'Amca bana bakkal teyze çilekli gofret verdi... Dün gece dışarıda çok koşan birini gördüm!',
-                    questions: ['Dün gece dışarıda kimi gördün?', 'Gofretini nereden aldın?', 'Bakkalda garip bir ses duydun mu?']
+                    questions: [
+                        { q: 'Dün gece dışarıda kimi gördün?', a: 'Çok uzun boylu biriydi... Simsiyah bir paltosu vardı, yüzünü göremedim amca.', difficulty: 1, category: 'tanisma' },
+                        { q: 'Gofretini nereden aldın?', a: 'Bakkal Cemile teyze verdi! Ama verirken elleri çok titriyordu...', difficulty: 1, category: 'tanisma' },
+                        { q: 'Bakkalda garip bir ses duydun mu?', a: 'Evet! Arka odadan tıkır tıkır sesler geliyordu, sanki biri ağır kutuları çekiyordu.', difficulty: 2, category: 'derinlesme' },
+                        { q: 'Paltolu adam nereye koşuyordu?', a: 'Sinemaya doğru koşuyordu, sonra sisin içinde kayboldu.', difficulty: 2, category: 'derinlesme' }
+                    ]
                 }
             ],
-            hotspots: []
+                        hotspots: [
+                { id: 2041, name: 'Saklanmış Fare Zehri', desc: 'Tezgâhın arkasına gizlenmiş, yarısı kullanılmış ve kutusu ezilmiş ağır bir kimyasal zehir.', img: 'images/towns/sisoren/deliller/2041.jpg', top: '55%', left: '20%', fingerprintSpot: { xRatio: 0.55, yRatio: 0.63, angle: 28 }, bloodSpot: null },
+                { id: 2042, name: 'Kopuk Veresiye Sayfası', desc: 'Veresiye defterinde, cinayet gecesine ait sayfaların kasten koparılmış olması.', img: 'images/towns/sisoren/deliller/2042.jpg', top: '45%', left: '60%', fingerprintSpot: { xRatio: 0.7, yRatio: 0.3, angle: 0 }, bloodSpot: null },
+                { id: 2043, name: 'Yabancı Gümüş Sikke', desc: 'Kasanın yanına düşmüş, kasabadan kimseye ait olmayan ve başka bir şehre ait para.', img: 'images/towns/sisoren/deliller/2043.jpg', top: '65%', left: '70%', fingerprintSpot: { xRatio: 0.41, yRatio: 0.36, angle: -12 }, bloodSpot: null },
+                { id: 2044, name: 'Kaçak Tütün', desc: 'Rafların en arkasında, un çuvallarının ardına zulalanmış faturasız ithal tütün paketleri.', img: 'images/towns/sisoren/deliller/2044.jpg', top: '30%', left: '85%', fingerprintSpot: { xRatio: 0.34, yRatio: 0.52, angle: 39 }, bloodSpot: null },
+                { id: 2045, name: 'İsimli Senet', desc: 'Yerdeki boş kasaların arasına düşmüş, üzerinde kurbanın adının yazılı olduğu buruşuk bir borç senedi.', img: 'images/towns/sisoren/deliller/2045.jpg', top: '80%', left: '30%', fingerprintSpot: { xRatio: 0.2, yRatio: 0.8, angle: 0 }, bloodSpot: { xRatio: 0.8, yRatio: 0.2, angle: 0 } }
+            ]
         },
         // 5. SAHAF (NPC 205) — Hikmet (Erkek #4) + Kitap Okuyan 2 Çocuk
         {
@@ -163,7 +204,8 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/sahaf_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/sahaf_interior.jpg',
                 greeting: 'Kitaplarda her şeyin cevabı vardır amirim... Cinayetin de.',
-                questions: ['El yazmalarında şifreli notlar var mı?', 'Son müşterin kim ve ne aldı?', 'Eski haritalar arasında saklanan belge ne?', 'O gece dükkânına gelen oldu mu?']
+                questions: ['El yazmalarında şifreli notlar var mı?', 'Son müşterin kim ve ne aldı?', 'Eski haritalar arasında saklanan belge ne?', 'O gece dükkânına gelen oldu mu?'],
+                murderStory: 'Sahaf Hikmet, hayatını eski sayfaların tozuna ve unutulmuş sırların büyüsüne adamış bir adamdı. Ancak kurban, dükkânın en nadide el yazmasının içindeki şifreyi gizlice çözmüş ve kasabanın altındaki efsanevi altınların haritasını ele geçirmişti. Hikmet, nesillerdir koruduğu bu sırrın basit bir açgözlü tarafından yağmalanmasına izin veremezdi. Gece yarısı dükkânın kapıları kapandıktan sonra kurban haritayı çalmaya yeltendiğinde, Hikmet kütüphanenin en karanlık köşesinde onun karşısına dikildi. Gözünü kırpmadan, eline geçirdiği Osmanlı döneminden kalma, demir kaplamalı ve oldukça ağır bir ansiklopediyi kurbanın kafasına defalarca, hınçla indirdi. Kanlar eski kitapların sayfalarına sıçrarken, Hikmet haritayı alıp cesedi gölgelerin arasına sürükledi; bilgi uğruna işlediği bu cinayeti, tozlu rafların ardına sonsuza dek gömdü.'
             },
             // Sahafta kitap okuyan 2 çocuk (Konuşulabilir, suçlanamaz)
             children: [
@@ -177,7 +219,12 @@ window.SISOREN_CONFIG = {
                     isChild: true,
                     canAccuse: false,
                     greeting: 'Sessiz olun dedektif amca, Hikmet amca kızıyor... Biz eski haritaları inceliyoruz.',
-                    questions: ['Hangi kitabı okuyorsun?', 'Buraya gece gelen birini gördün mü?']
+                    questions: [
+                        { q: 'Hangi kitabı okuyorsun?', a: 'Sisli Dağların Sırrı diye bir masal kitabı okuyorum. İçinde kayıp altınlardan bahsediyor!', difficulty: 1, category: 'tanisma' },
+                        { q: 'Buraya gece gelen birini gördün mü?', a: 'Dün akşam dükkân kapanırken sert bakışlı bir adam geldi, harita sordu.', difficulty: 2, category: 'derinlesme' },
+                        { q: 'Hikmet amca ne yapıyordu?', a: 'Kalın bir kitabı oyuyordu, içine bir kağıt sakladı.', difficulty: 2, category: 'derinlesme' },
+                        { q: 'Başka dikkatini çeken bir şey oldu mu?', a: 'Vitrin camında kurumuş bir leke gördüm, kırmızı kırmızı...', difficulty: 3, category: 'yuzlestirme' }
+                    ]
                 },
                 {
                     id: 'sahaf_cocuk_2',
@@ -189,10 +236,21 @@ window.SISOREN_CONFIG = {
                     isChild: true,
                     canAccuse: false,
                     greeting: 'Ben sisli dağları çiziyorum dedektif amca... Çizimimdeki şu siyah paltolu adamı dün gece gördüm!',
-                    questions: ['Çizdiğin siyah paltolu adam kim?', 'O adam nereye doğru yürüyordu?']
+                    questions: [
+                        { q: 'Çizdiğin siyah paltolu adam kim?', a: 'Bilmiyorum, yüzü görünmüyordu. Sadece elinde parlak bir şey tutuyordu.', difficulty: 1, category: 'tanisma' },
+                        { q: 'O adam nereye doğru yürüyordu?', a: 'Göl kenarına doğru, hurdacının oralara gidiyordu.', difficulty: 2, category: 'derinlesme' },
+                        { q: 'Parlak şey neye benziyordu?', a: 'Bıçak gibiydi amca, ama sapı çok garipti, gümüş gibi parlıyordu.', difficulty: 3, category: 'yuzlestirme' },
+                        { q: 'Başka resim çizdin mi?', a: 'Evet, muhtar teyzenin de resmini çizdim. O da gece yarısı dışarıdaydı.', difficulty: 2, category: 'derinlesme' }
+                    ]
                 }
             ],
-            hotspots: []
+                        hotspots: [
+                { id: 2051, name: 'İçi Oyulmuş Ansiklopedi', desc: 'Sayfaları kesilerek gizli bir kutu haline getirilmiş, içinde şifreli bir harita barındıran kalın ciltli kitap.', img: 'images/towns/sisoren/deliller/2051.jpg', top: '45%', left: '20%', fingerprintSpot: { xRatio: 0.61, yRatio: 0.27, angle: -21 }, bloodSpot: null },
+                { id: 2052, name: 'Şifreli Kenar Notları', desc: 'Kasaba tarihini anlatan eski bir kitabın kenarlarına kırmızı mürekkeple düşülmüş garip rakamlar.', img: 'images/towns/sisoren/deliller/2052.jpg', top: '35%', left: '50%', fingerprintSpot: { xRatio: 0.8, yRatio: 0.2, angle: 0 }, bloodSpot: null },
+                { id: 2053, name: 'Kurumuş Kan Damlası', desc: 'Vitrindeki satılık eski bir cep saatinin kapağına içeriden yapışmış şüpheli leke.', img: 'images/towns/sisoren/deliller/2053.jpg', top: '55%', left: '75%', fingerprintSpot: null, bloodSpot: { xRatio: 0.29, yRatio: 0.40, angle: -10 } },
+                { id: 2054, name: 'Kasa İzi', desc: 'Yerdeki kalın toz tabakasında, kısa süre önce ağır bir eşyanın (veya kasanın) yerinden çekildiğini gösteren sürtünme izi.', img: 'images/towns/sisoren/deliller/2054.jpg', top: '85%', left: '40%', fingerprintSpot: null, bloodSpot: null },
+                { id: 2055, name: 'Sahte Vasiyetname', desc: 'Nadir eserlerin arasına sıkıştırılmış, kurbanın imzasının taklit edildiği yırtık bir vasiyet taslağı.', img: 'images/towns/sisoren/deliller/2055.jpg', top: '65%', left: '10%', fingerprintSpot: { xRatio: 0.3, yRatio: 0.7, angle: 0 }, bloodSpot: null }
+            ]
         },
         // 6. MUHTARLIK (NPC 206) — Muhtar Meliha (Kadın #2)
         {
@@ -215,9 +273,16 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/muhtarlik_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/muhtarlik_interior.jpg',
                 greeting: 'Bu dağ kasabasında herkes birbirini tanır amirim. Sırlar sisin ardına saklanır.',
-                questions: ['Arazi kavgaları kimler arasında?', 'Resmi mühürü en son kim kullandı?', 'Cinayet gecesi köy meydanında kimler vardı?', 'Kasabanın karanlık geçmişi hakkında ne biliyorsun?']
+                questions: ['Arazi kavgaları kimler arasında?', 'Resmi mühürü en son kim kullandı?', 'Cinayet gecesi köy meydanında kimler vardı?', 'Kasabanın karanlık geçmişi hakkında ne biliyorsun?'],
+                murderStory: 'Muhtar Meliha Hanım, kasabadaki o sarsılmaz otoritesini korumak için elini kana bulamaktan asla çekinmeyecek kadar hırslı bir kadındı. Kurban, onun resmi mühürleri kullanarak kasabanın en değerli arazilerini kendi üstüne geçirdiğini belgeleyen sahte evrakları bulmuş ve tüm kasabaya duyurmakla tehdit etmişti. Meliha Hanım, o gece kurbanı "anlaşmak" bahanesiyle, kimsenin olmadığı resmi muhtarlık binasına çağırdı. Kurban daha konuyu açamadan, Meliha Hanım ona kendi elleriyle doldurduğu, içine ölümcül bir felç edici zehir kattığı o acı dağ kahvesini ikram etti. Kurban saniyeler içinde nefessiz kalıp yere yığılırken, Meliha Hanım büyük bir soğukkanlılıkla kurbanın cebindeki tüm sahte evrakları alıp şöminede yaktı. Cesedi ise gece yarısı ormanın girişine taşıyıp, vahşi bir hayvan saldırısı süsü verdi.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2061, name: 'Asitle Silinmiş Kütük', desc: 'Nüfus kütük defterinde, maktulün ve ailesinin adının üzerinin asit/mürekkep ile yok edilmeye çalışıldığı sayfa.', img: 'images/towns/sisoren/deliller/2061.jpg', top: '50%', left: '40%', fingerprintSpot: { xRatio: 0.41, yRatio: 0.22, angle: -9 }, bloodSpot: null },
+                { id: 2062, name: 'Kırık Mühür', desc: 'Sahte belgelere basılırken fazla baskı uygulandığı için kenarı çatlamış resmi kasaba damgası.', img: 'images/towns/sisoren/deliller/2062.jpg', top: '55%', left: '60%', fingerprintSpot: { xRatio: 0.27, yRatio: 0.65, angle: -44 }, bloodSpot: null },
+                { id: 2063, name: 'Gizli Orman Tapusu', desc: 'Kilitli dolabın dibinde bulunan, kasabanın dışındaki kime ait olduğu belirsiz bir arazi haritası.', img: 'images/towns/sisoren/deliller/2063.jpg', top: '75%', left: '20%', fingerprintSpot: { xRatio: 0.2, yRatio: 0.2, angle: 0 }, bloodSpot: null },
+                { id: 2064, name: 'Boş Kovan', desc: 'Muhtarın masasının altına, süpürgeliğin dibine yuvarlanmış cinayet silahına ait mermi kovanı.', img: 'images/towns/sisoren/deliller/2064.jpg', top: '85%', left: '50%', fingerprintSpot: { xRatio: 0.62, yRatio: 0.35, angle: -38 }, bloodSpot: null },
+                { id: 2065, name: 'Parçalanmış Uyarı Mektubu', desc: 'Çöp kutusunda bulunan, üst makamlardan gelmiş ancak yırtılıp yok edilmek istenen resmi evrak.', img: 'images/towns/sisoren/deliller/2065.jpg', top: '65%', left: '80%', fingerprintSpot: { xRatio: 0.30, yRatio: 0.36, angle: 2 }, bloodSpot: null }
+            ]
         },
         // 7. TÜTÜNCÜ (NPC 207) — Nermin (Kadın #3)
         {
@@ -240,9 +305,16 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/tutuncu_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/tutuncu_interior.jpg',
                 greeting: 'Duman her zaman bir iz bırakır amirim...',
-                questions: ['Özel karışım tütününü kimler satın alıyor?', 'O gece dükkânın arka odasında ne oldu?', 'Tütün yaprakları arasında saklanan ne?', 'Kaçak tütün ticareti hakkında ne biliyorsun?']
+                questions: ['Özel karışım tütününü kimler satın alıyor?', 'O gece dükkânın arka odasında ne oldu?', 'Tütün yaprakları arasında saklanan ne?', 'Kaçak tütün ticareti hakkında ne biliyorsun?'],
+                murderStory: 'Tütüncü Nermin, o zarif görüntüsünün altında acımasız bir kaçakçılık şebekesini yönetiyordu. Sattığı o pahalı, ithal tütünlerin aslında yasadışı yollarla kasabaya sokulduğunu tesadüfen öğrenen kurban, sus payı olarak Nermin\'den yüklü miktarda haraç istemeye kalkıştı. O gece yoğun sisin altında, tütün deposunun o boğucu ve keskin kokulu havasında ikili arasında çıkan tartışma kısa sürede ölümcül bir kavgaya dönüştü. Nermin, kurbanın arkasını dönmesini fırsat bilip, tezgahta duran içi kurşun dolu, antika ve son derece ağır o meşe pipoyu kurbanın şakağına acımasızca, tüm gücüyle indirdi. Cesetten sızan kanlar tütün yapraklarına karışırken, Nermin bedeni tütün balyalarının en diplerine gömdü. Çürüyen bedenin kokusunu bastırmak için günlerce dükkânında en ağır, baharatlı tütsüleri yaktı.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2071, name: 'İthal Puro İzmariti', desc: 'Normalde kasabada satılmayan, sadece çok zengin bir şüpheliye ait olduğu bilinen yarım içilmiş puro.', img: 'images/towns/sisoren/deliller/2071.jpg', top: '65%', left: '30%', fingerprintSpot: { xRatio: 0.69, yRatio: 0.61, angle: -32 }, bloodSpot: null },
+                { id: 2072, name: 'Şifreli Sigara Kâğıdı', desc: 'Sigara sarma kâğıtlarının içine gizlenmiş, ısıtıldığında ortaya çıkan mürekkeple yazılmış adres listesi.', img: 'images/towns/sisoren/deliller/2072.jpg', top: '45%', left: '55%', fingerprintSpot: { xRatio: 0.45, yRatio: 0.69, angle: 28 }, bloodSpot: null },
+                { id: 2073, name: 'İçi Boşaltılmış Pipo', desc: 'Şüpheli bir şekilde ağırlaşmış, tütün haznesinin içine rulo yapılmış banknotlar sıkıştırılmış pipo.', img: 'images/towns/sisoren/deliller/2073.jpg', top: '55%', left: '75%', fingerprintSpot: { xRatio: 0.43, yRatio: 0.60, angle: -9 }, bloodSpot: null },
+                { id: 2074, name: 'Lekeli Gümüş Tabaka', desc: 'Kasanın altında, üzerinde temizlenmeye çalışılmış kan izleri bulunan şık bir sigara tabakası.', img: 'images/towns/sisoren/deliller/2074.jpg', top: '75%', left: '45%', fingerprintSpot: { xRatio: 0.2, yRatio: 0.8, angle: 0 }, bloodSpot: { xRatio: 0.8, yRatio: 0.2, angle: 0 } },
+                { id: 2075, name: 'Zehirli Sıvı Şişesi', desc: 'Tütün balyalarının arasına gizlenmiş, tütün aroması gibi kokan ama aslında felce yol açan küçük şişe.', img: 'images/towns/sisoren/deliller/2075.jpg', top: '35%', left: '20%', fingerprintSpot: { xRatio: 0.26, yRatio: 0.46, angle: 29 }, bloodSpot: null }
+            ]
         },
         // 8. AHIR (NPC 208) — Çoban Durmuş (Erkek #5) + Çoban Olarak Yetiştirilen Çocuk (Oğlu Kerem)
         {
@@ -266,7 +338,8 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/ahir_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/ahir_interior.jpg',
                 greeting: 'Hayvanlar bile o gece huzursuzdu amirim... Oğlumu da çoban yetiştiriyorum, göz kulak oluyoruz sürüye.',
-                questions: ['Ahırda saklanan yabancı kim?', 'Çamurlu ayak izleri nereye gidiyor?', 'Saman balyalarının altında ne var?', 'O gece hayvanlar neden rahatsız oldu?']
+                questions: ['Ahırda saklanan yabancı kim?', 'Çamurlu ayak izleri nereye gidiyor?', 'Saman balyalarının altında ne var?', 'O gece hayvanlar neden rahatsız oldu?'],
+                murderStory: 'Çoban Durmuş için sürüsü, bu dünyadaki her şeyden daha değerliydi. Kurbanın gizlice dereye akıttığı zehirli atıklar yüzünden Durmuş\'un en değer verdiği hayvanları tek tek can çekişerek ölmeye başlamıştı. Yasalar kurbanı koruyunca, Durmuş kendi adaletini sağlamaya yemin etti. O gece fırtınalı bir havada, kurbanı ıssız bir ahırda kıstırdı. Elindeki o paslı, sivri ve devasa nalbant çivisini hiç tereddüt etmeden kurbanın boynuna sapladı. Kurban kanlar içinde yere yığılırken, Durmuş\'un gözünde sadece ölen koyunlarının intikamı vardı. Bedeni atının arkasına bağlayıp, dağın görünmeyen, sarp ve kayalık arka yüzündeki uçurumdan aşağı fırlattı. Ertesi sabah, sanki gece hiç cinayet işlememiş gibi, o çamurlu çizmeleriyle sürüsünün başında ıslık çalarak otlatmaya devam etti.'
             },
             // Çoban olarak yetiştirilen oğlu (Konuşulabilir, suçlanamaz)
             children: [
@@ -280,10 +353,21 @@ window.SISOREN_CONFIG = {
                     isChild: true,
                     canAccuse: false,
                     greeting: 'Babam bana koyunları gütmeyi öğretiyor dedektif amca... Gece sürünün yanından hızla biri geçti!',
-                    questions: ['Sürünün yanından geçen adam nasıldı?', 'Babana yardım ederken şüpheli bir iz buldun mu?', 'Köpek Karabaş kime havladı?']
+                    questions: [
+                        { q: 'Sürünün yanından geçen adam nasıldı?', a: 'Çok hızlı koşuyordu, elinde feneri bile yoktu amca. Nefes nefeseydi.', difficulty: 1, category: 'tanisma' },
+                        { q: 'Babana yardım ederken şüpheli bir iz buldun mu?', a: 'Evet, samanların arkasında yırtık bir mektup parçası buldum ama rüzgar uçurdu.', difficulty: 2, category: 'derinlesme' },
+                        { q: 'Köpek Karabaş kime havladı?', a: 'Karabaş yabancılara hep havlar ama o gece havlamadı, demek ki tanıdık biriydi!', difficulty: 3, category: 'yuzlestirme' },
+                        { q: 'O gece baban yanınızda mıydı?', a: 'Babam bir ara "su getireceğim" diye ahırdan çıktı, uzun süre gelmedi.', difficulty: 2, category: 'derinlesme' }
+                    ]
                 }
             ],
-            hotspots: []
+                        hotspots: [
+                { id: 2081, name: 'Kesik Eyer Kayışı', desc: 'Maktulün atına ait, kazaya sebep olmak için kasten yarıya kadar kesilmiş deri eyer parçası.', img: 'images/towns/sisoren/deliller/2081.jpg', top: '50%', left: '25%', fingerprintSpot: null, bloodSpot: null },
+                { id: 2082, name: 'Kanlı Nalbant Çivisi', desc: 'Saman balyalarının derinine gömülmüş, üzerinde doku ve kan izleri olan keskin bir at nalı çivisi.', img: 'images/towns/sisoren/deliller/2082.jpg', top: '70%', left: '15%', fingerprintSpot: null, bloodSpot: { xRatio: 0.70, yRatio: 0.75, angle: 26 } },
+                { id: 2083, name: 'Kopuk Altın Zincir', desc: 'Hayvanların su yalağının dibinde parlayan, kurbana ait koptuğu belli olan cep saati zinciri.', img: 'images/towns/sisoren/deliller/2083.jpg', top: '80%', left: '55%', fingerprintSpot: null, bloodSpot: null },
+                { id: 2084, name: 'Yabancı Bot İzi', desc: 'Hayvanların huzursuzlandığı köşede toprağa kalıbı çıkmış, kasabalıya ait olmayan sivri burunlu bot izi.', img: 'images/towns/sisoren/deliller/2084.jpg', top: '85%', left: '80%', fingerprintSpot: null, bloodSpot: null },
+                { id: 2085, name: 'Saplı Bıçak', desc: 'Tahta direğe sertçe saplanmış, üzerinde kurbana yönelik kısa bir tehdit notu bulunan paslı çakı.', img: 'images/towns/sisoren/deliller/2085.jpg', top: '40%', left: '65%', fingerprintSpot: { xRatio: 0.23, yRatio: 0.62, angle: 0 }, bloodSpot: null }
+            ]
         },
         // 9. TÜPÇÜ (NPC 209) — Şevket (Erkek #6)
         {
@@ -306,9 +390,16 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/tupcu_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/tupcu_interior.jpg',
                 greeting: 'Gaz sızıntısı her zaman tehlikelidir amirim... Ama bazı patlamalar kasıtlıdır.',
-                questions: ['Son tüp teslimatını kime yaptın?', 'Depo kayıtlarında eksik tüp var mı?', 'O gece dükkânına gelen oldu mu?', 'Gaz kokusu nereden geliyor?']
+                questions: ['Son tüp teslimatını kime yaptın?', 'Depo kayıtlarında eksik tüp var mı?', 'O gece dükkânına gelen oldu mu?', 'Gaz kokusu nereden geliyor?'],
+                murderStory: 'Tüpçü Şevket, her zaman kasabanın arka planında kalan, görünmez bir adamdı; ama kurbanın ona attığı iftiralar yüzünden ailesinin onuru lekelenmişti. İntikam ateşiyle yanan Şevket, o gece kurbanın evine sözde tüp teslimatı yapmak için gitti. Mahzenin karanlığında, ustalıkla ve büyük bir sessizlikle gaz vanasını bilerek gevşetti ve boruda ufak bir çatlak oluşturdu. Amacı belki sadece kurbanı korkutmak, hafif bir zehirlenmeyle hastanelik etmekti; ancak kurban karanlıkta sızan gazın kokusunu almayıp ışığı yakmak için o kibriti çaktığında, tüm ev devasa bir ateş topuna dönüşerek patladı. Şevket, uzaktan alevleri izlerken yüzünde korkunç bir tatmin duygusu vardı. Bu kusursuz cinayeti trajik bir "kaza" gibi gösterip sessizliğini yıllarca başarıyla korudu.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2091, name: 'Sabote Edilmiş Vana', desc: 'Valfi kasten bozulmuş ve ufak bir kıvılcımla gaz sızdırıp patlamaya hazır hale getirilmiş piknik tüpü.', img: 'images/towns/sisoren/deliller/2091.jpg', top: '65%', left: '20%', fingerprintSpot: { xRatio: 0.38, yRatio: 0.49, angle: -29 }, bloodSpot: null },
+                { id: 2092, name: 'İngiliz Anahtarındaki Leke', desc: 'Demir anahtarın üzerinde, sadece yağ veya pas lekesi olmayan, silinmeye çalışılmış kurumuş kan izleri.', img: 'images/towns/sisoren/deliller/2092.jpg', top: '75%', left: '35%', fingerprintSpot: { xRatio: 0.27, yRatio: 0.39, angle: 20 }, bloodSpot: { xRatio: 0.7, yRatio: 0.3, angle: 0 } },
+                { id: 2093, name: 'Sahte Teslimat Kaydı', desc: 'Müşteri defterinde, olay yeri olan eve cinayet gecesi teslimat yapılmış gibi gösterilen sonradan eklenme kayıt.', img: 'images/towns/sisoren/deliller/2093.jpg', top: '45%', left: '60%', fingerprintSpot: { xRatio: 0.2, yRatio: 0.8, angle: 0 }, bloodSpot: null },
+                { id: 2094, name: 'Zulalanmış Mücevher', desc: 'Dükkanın arkasındaki kullanılamaz boş tüplerin birinin içine beze sarılarak saklanmış çalıntı kolye.', img: 'images/towns/sisoren/deliller/2094.jpg', top: '55%', left: '80%', fingerprintSpot: { xRatio: 0.24, yRatio: 0.49, angle: -18 }, bloodSpot: null },
+                { id: 2095, name: 'Kopuk Düğme', desc: 'Kırık bir vana parçasının yanına düşmüş, arbede sırasında failin ceketinden koptuğu belli olan özel düğme.', img: 'images/towns/sisoren/deliller/2095.jpg', top: '85%', left: '50%', fingerprintSpot: { xRatio: 0.64, yRatio: 0.79, angle: -16 }, bloodSpot: null }
+            ]
         },
         // 10. HURDACI (NPC 210) — Zehra (Kadın #4)
         {
@@ -331,9 +422,16 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/hurdaci_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/hurdaci_interior.jpg',
                 greeting: 'Paslanmış demir bile bir hikâye anlatır amirim... Buraya gelen her hurdanın izi bendedir.',
-                questions: ['Son getirilen hurda parçalar nereden geldi?', 'Paslı bıçak kime ait?', 'Hurda yığınları arasında saklanan ne?', 'O gece dükkânından garip sesler duyuldu mu?']
+                questions: ['Son getirilen hurda parçalar nereden geldi?', 'Paslı bıçak kime ait?', 'Hurda yığınları arasında saklanan ne?', 'O gece dükkânından garip sesler duyuldu mu?'],
+                murderStory: 'Hurdacı Zehra\'nın o döküntü ve paslı dükkânı, aslında çevre kasabalardan çalınan malların iz bırakmadan eritildiği devasa bir kara para aklama merkeziydi. Kurban, bu kirli çarkı fark edip Zehra\'dan her ay düzenli pay isteyerek onu ihbar etmekle tehdit edince, kendi ölüm fermanını imzalamış oldu. Zehra o gece kurbanı "parayı vermek" bahanesiyle dükkânın en izbe köşesindeki sanayi tipi pres makinesinin yanına çekti. Kurban parayı saymak için eğildiği an, Zehra hızla onu pres makinesinin çelik çeneleri arasına itip kapağı kilitledi ve makineyi tam güçte çalıştırdı. Kurbanın kulakları sağır eden çığlıkları ve kırılan kemik sesleri, hurdaların kesici gürültüsü ve metalin soğuk ezici gücü arasında tamamen kaybolup gitti.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2101, name: 'Çalıntı Çelik Kasa', desc: 'Preslenmek üzere olan bir hurda yığınının arasına sıkıştırılarak yok edilmeye çalışılan kilitli kasa.', img: 'images/towns/sisoren/deliller/2101.jpg', top: '50%', left: '20%', fingerprintSpot: { xRatio: 0.52, yRatio: 0.57, angle: -11 }, bloodSpot: null },
+                { id: 2102, name: 'Kazınmış Plaka', desc: 'Parçalanmış eşyaların arasında yeni sayılabilecek, aidiyeti belli olmasın diye üzeri zımparalanmış araç/araba plakası.', img: 'images/towns/sisoren/deliller/2102.jpg', top: '65%', left: '40%', fingerprintSpot: null, bloodSpot: null },
+                { id: 2103, name: 'Seri Numarası Silinmiş Tüfek', desc: 'Yağ varillerinin arkasına gizlenmiş, namlusu kesilmiş ve seri numarası eğelenmiş silah.', img: 'images/towns/sisoren/deliller/2103.jpg', top: '75%', left: '60%', fingerprintSpot: { xRatio: 0.33, yRatio: 0.61, angle: 10 }, bloodSpot: { xRatio: 0.6, yRatio: 0.4, angle: 0 } },
+                { id: 2104, name: 'Kanlı Tartım Fişi', desc: 'Hurdacı kantarının altında, şüpheli bir gece yarısı tartımını gösteren ve üzerinde kan damlası olan makbuz.', img: 'images/towns/sisoren/deliller/2104.jpg', top: '45%', left: '75%', fingerprintSpot: { xRatio: 0.3, yRatio: 0.7, angle: 0 }, bloodSpot: { xRatio: 0.27, yRatio: 0.35, angle: -18 } },
+                { id: 2105, name: 'Kurbana Ait Yüzük', desc: 'Eritilecek bakır tellerin içine karışmış, kurbana ait baş harflerin kazılı olduğu deforme olmuş gümüş yüzük.', img: 'images/towns/sisoren/deliller/2105.jpg', top: '85%', left: '30%', fingerprintSpot: null, bloodSpot: null }
+            ]
         },
         // 11. KASABALI EVİ 1 (NPC 211) — Zeynep Teyze (Kadın #5)
         {
@@ -356,9 +454,14 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/kasabali_evi_1_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/kasabali_evi_1_interior.jpg',
                 greeting: 'Oğlum pencereden gördüklerimi anlatayım sana...',
-                questions: ['O gece pencereden kimi gördün?', 'Komşularla aranda husumet var mı?', 'Evinde sakladığın eski mektuplar neler?', 'Kasabanın geçmişinde karanlık bir olay mı var?']
+                questions: ['O gece pencereden kimi gördün?', 'Komşularla aranda husumet var mı?', 'Evinde sakladığın eski mektuplar neler?', 'Kasabanın geçmişinde karanlık bir olay mı var?'],
+                murderStory: 'Zeynep Teyze, dışarıdan bakıldığında kasabanın en zarif ve sessiz yaşlı kadınlarından biriydi; ancak kurban, onun onlarca yıl önce işlediği korkunç bir günahın sırrını şans eseri öğrenmişti. Haftalardır her gece evine gelip onun tüm birikimini şantajla sömüren kurban, o gece de son altını almak için kapısına dayandı. Artık onuru ve hayatı elinden giden Zeynep Teyze\'nin sabrı o an tamamen taştı. Kurban, karanlıkta sırıtırken, Zeynep Teyze cübbesinin içine sakladığı, dedesinden kalma o kalın, ucu paslı, eski avcı bıçağını çıkardı ve sisin içinde beliren siluete acımasızca, kör bir öfkeyle defalarca sapladı. Yaşına rağmen inanılmaz bir güçle işlediği bu cinayetin ardından, kanlı ellerini soğuk suyla sakince yıkayıp, şöminenin karşısında kahvesini yudumladı.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2111, name: 'Yırtık Mektup', desc: 'Masanın altına düşmüş, tehditkâr sözler içeren eksik bir mektup.', img: 'images/towns/sisoren/deliller/2111.jpg', top: '50%', left: '20%', fingerprintSpot: { xRatio: 0.45, yRatio: 0.65, angle: -10 }, bloodSpot: null },
+                { id: 2112, name: 'Çamurlu Ayak İzi', desc: 'Halının kenarında belirgin bir şekilde duran, kasabaya yabancı bir çizme izi.', img: 'images/towns/sisoren/deliller/2112.jpg', top: '70%', left: '50%', fingerprintSpot: null, bloodSpot: { xRatio: 0.6, yRatio: 0.75, angle: 22 } },
+                { id: 2113, name: 'Kırık Cam Parçası', desc: 'Pencerenin kenarında içeriden dışarıya doğru kırılmış küçük bir cam parçası.', img: 'images/towns/sisoren/deliller/2113.jpg', top: '40%', left: '80%', fingerprintSpot: { xRatio: 0.65, yRatio: 0.70, angle: -15 }, bloodSpot: { xRatio: 0.45, yRatio: 0.68, angle: 5 } }
+            ]
         },
         // 12. KASABALI EVİ 2 (NPC 212) — Hatice Nine (Kadın #6)
         {
@@ -381,9 +484,14 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/kasabali_evi_2_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/kasabali_evi_2_interior.jpg',
                 greeting: 'Bu yaştan sonra ne sırlar gördüm amirim... Dağın sisi bile saklayamaz bazı günahları.',
-                questions: ['O gece neden uyumadın?', 'Dışarıdan gelen ayak seslerini tanıdın mı?', 'Eski fotoğraf albümünde saklanan sır ne?', 'Kasabadaki herkesin geçmişini biliyorsun, anlat bakalım.']
+                questions: ['O gece neden uyumadın?', 'Dışarıdan gelen ayak seslerini tanıdın mı?', 'Eski fotoğraf albümünde saklanan sır ne?', 'Kasabadaki herkesin geçmişini biliyorsun, anlat bakalım.'],
+                murderStory: 'Hatice Nine, bu kasabanın yaşayan tarihi ve en kadim hafızasıydı. Kurban denen o açgözlü adam, kasabayı devasa bir şirkete tamamen satıp buradaki herkesi evlerinden sürmek için gizli imzalar atmaya başladığında, Hatice Nine kasabayı korumak için eski usullere başvurması gerektiğini anladı. Yılların verdiği otacı bilgeliğiyle, ormanın en derin, ışıksız köşelerinden topladığı ve hiçbir tıbbi testte iz bırakmayan o özel, ölümcül kara dağ mantarlarını saatlerce kaynattı. O gece barışmak bahanesiyle kurbanı evine davet etti ve zehri onun o sevdiği bitki çayına zerre zerre karıştırdı. Kurban, çayını yudumlarken felç edici bir kalp kriziyle yere yığıldı. Hatice Nine, onun gözlerindeki son ışığın sönüşünü sallanan sandalyesinden, yüzünde adaleti sağlamış bir kasaba koruyucusunun huzuruyla izledi.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2121, name: 'Eski Fotoğraf Albümü', desc: 'Sayfalarından biri yeni koparılmış, kurbanla ilgili sırları barındıran albüm.', img: 'images/towns/sisoren/deliller/2121.jpg', top: '60%', left: '30%', fingerprintSpot: { xRatio: 0.65, yRatio: 0.40, angle: 12 }, bloodSpot: null },
+                { id: 2122, name: 'Zehirli Bitki Kökü', desc: 'Mutfak tezgahında bırakılmış, normalde bu yörede yetişmeyen zehirli bir bitki parçası.', img: 'images/towns/sisoren/deliller/2122.jpg', top: '45%', left: '60%', fingerprintSpot: { xRatio: 0.35, yRatio: 0.65, angle: -8 }, bloodSpot: null },
+                { id: 2123, name: 'Gümüş Düğme', desc: 'Yer minderinin arasına sıkışmış, maktulün ceketine ait olduğu anlaşılan gümüş düğme.', img: 'images/towns/sisoren/deliller/2123.jpg', top: '75%', left: '80%', fingerprintSpot: { xRatio: 0.51, yRatio: 0.49, angle: 24 }, bloodSpot: { xRatio: 0.55, yRatio: 0.52, angle: 0 } }
+            ]
         },
         // 13. KASABALI EVİ 3 (NPC 213) — Emine Hanım (Kadın #7)
         {
@@ -395,7 +503,7 @@ window.SISOREN_CONFIG = {
             hasSign: false,
             interiorImg: 'images/towns/sisoren/interiors/kasabali_evi_3_interior.jpg',
             details: 'Tabelasız, yamaçta çam ağaçları arasındaki ahşap taş karışımı dağ evi.',
-            style: { top: '25%', left: '26%', width: '12%', height: '17%' },
+            style: { top: '42%', left: '29%', width: '7%', height: '10%' },
             npc: {
                 id: 213,
                 name: 'Emine Hanım',
@@ -406,9 +514,14 @@ window.SISOREN_CONFIG = {
                 bg: 'images/towns/sisoren/interiors/kasabali_evi_3_interior.jpg',
                 talkBg: 'images/towns/sisoren/interiors/kasabali_evi_3_interior.jpg',
                 greeting: 'Dağ yamaçları sessiz görünür amirim ama gece rüzgarı her fısıltıyı taşır...',
-                questions: ['Yamaçtan kasaba meydanını görebiliyor musun?', 'O gece fenerle dağa çıkan birini gördün mü?', 'Dokuduğun yün atkılardan birini meydanda bulan oldu mu?', 'Kasabada en çok kimden şüpheleniyorsun?']
+                questions: ['Yamaçtan kasaba meydanını görebiliyor musun?', 'O gece fenerle dağa çıkan birini gördün mü?', 'Dokuduğun yün atkılardan birini meydanda bulan oldu mu?', 'Kasabada en çok kimden şüpheleniyorsun?'],
+                murderStory: 'Emine Hanım, yamacın tepesindeki izole evinde kendi halinde dokuma yapan sessiz bir kadındı. Ancak son aylarda, kurbanın onun evini gizlice izlediğini, özel hayatını röntgenlediğini ve kasabada onun hakkında iğrenç dedikodular yaydığını fark etmişti. O gece kurban kasabaya inmek için karanlık orman yoluna girdiğinde, Emine Hanım, kendi elleriyle haftalarca ördüğü, çelik kadar sağlam o kalın yün ipi cebine saklayıp onu gölgelerin içinden takip etti. Kurban tam o ıssız köprüden geçerken, Emine Hanım sessizce arkasından yaklaşıp yün ipi boğazına doladı ve var gücüyle sıktı. Kurban nefessiz kalarak can verdikten sonra, Emine Hanım kusursuz bir zekayla ipi büyük bir çınar ağacının kalın dalına asıp kurbana korkunç bir intihar süsü verdi.'
             },
-            hotspots: []
+                        hotspots: [
+                { id: 2131, name: 'Kanlı Yün Yumağı', desc: 'Dokuma tezgahının altında bulunan, üzerine kan damlamış yün ip.', img: 'images/towns/sisoren/deliller/2131.jpg', top: '55%', left: '25%', fingerprintSpot: { xRatio: 0.48, yRatio: 0.60, angle: -14 }, bloodSpot: { xRatio: 0.58, yRatio: 0.65, angle: 33 } },
+                { id: 2132, name: 'Gizli Çekmece', desc: 'Sandığın içinde gizli bir bölme. İçinde kurbanın sahte kimliği bulunuyor.', img: 'images/towns/sisoren/deliller/2132.jpg', top: '65%', left: '70%', fingerprintSpot: { xRatio: 0.45, yRatio: 0.55, angle: 18 }, bloodSpot: null },
+                { id: 2133, name: 'Kopuk Kolye', desc: 'Yerdeki talaşların arasında parlayan, arbede sırasında koptuğu anlaşılan kolye.', img: 'images/towns/sisoren/deliller/2133.jpg', top: '80%', left: '45%', fingerprintSpot: { xRatio: 0.40, yRatio: 0.70, angle: 55 }, bloodSpot: { xRatio: 0.60, yRatio: 0.60, angle: 10 } }
+            ]
         }
     ],
 
@@ -422,6 +535,8 @@ window.SISOREN_CONFIG = {
         // === KAHVEHANE EKSTRA NPC'LERİ ===
         {
             id: 'kahve_celal',
+            bg: 'images/towns/sisoren/interiors/kahvehane_interior.jpg',
+            talkBg: 'images/towns/sisoren/interiors/kahvehane_interior.jpg',
             numericId: 301,
             buildingId: 'kahvehane',
             name: 'Celal Amca',
@@ -441,6 +556,8 @@ window.SISOREN_CONFIG = {
         },
         {
             id: 'kahve_hamdi',
+            bg: 'images/towns/sisoren/interiors/kahvehane_interior.jpg',
+            talkBg: 'images/towns/sisoren/interiors/kahvehane_interior.jpg',
             numericId: 302,
             buildingId: 'kahvehane',
             name: 'Hamdi Dayı',
@@ -480,6 +597,9 @@ window.SISOREN_CONFIG = {
         // === SOKAK EKSTRA NPC'LERİ ===
         {
             id: 'sokak_serif',
+            mapPos: { top: '35%', left: '35%' },
+            bg: 'images/towns/sisoren/sisoren_map_v5.jpg',
+            talkBg: 'images/towns/sisoren/sisoren_map_v5.jpg',
             numericId: 304,
             buildingId: null, // Sokakta
             name: 'Şerife Teyze',
@@ -499,6 +619,9 @@ window.SISOREN_CONFIG = {
         },
         {
             id: 'sokak_cemal',
+            mapPos: { top: '75%', left: '55%' },
+            bg: 'images/towns/sisoren/sisoren_map_v5.jpg',
+            talkBg: 'images/towns/sisoren/sisoren_map_v5.jpg',
             numericId: 305,
             buildingId: null, // Sokakta
             name: 'Oduncu Çırağı Cemal',
@@ -517,6 +640,9 @@ window.SISOREN_CONFIG = {
         },
         {
             id: 'sokak_postaci',
+            mapPos: { top: '55%', left: '25%' },
+            bg: 'images/towns/sisoren/sisoren_map_v5.jpg',
+            talkBg: 'images/towns/sisoren/sisoren_map_v5.jpg',
             numericId: 306,
             buildingId: null, // Sokakta
             name: 'Postacı Nuri Efendi',
@@ -525,7 +651,7 @@ window.SISOREN_CONFIG = {
             role: 'Kasaba Postacısı',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_306.jpg',
             greeting: 'Mektuplar sırları taşır amirim... Her gün kasabanın her köşesine posta dağıtıyorum.',
             questions: [
                 { q: 'Son zamanlarda kime garip mektuplar geldi?', a: 'Sahaf Hikmet\'e dışarıdan şifreli zarflar geliyor. Zeynep Teyze de her hafta İstanbul\'a mektup gönderiyor ama alıcı adresi hep farklı.', difficulty: 2, category: 'derinlesme' },
@@ -545,7 +671,7 @@ window.SISOREN_CONFIG = {
             role: 'Telgraf Çırağı',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_307.jpg',
             greeting: 'Tık tık tık... Morse alfabesini yeni öğrendim amirim. Rüstem usta çok sert ama iyi öğretiyor.',
             questions: [
                 { q: 'Gece telgrafhaneye gelen mesajlar hakkında ne biliyorsun?', a: 'Cinayet gecesi çok garip bir şifreli mesaj geldi. Rüstem usta onu okuyunca yüzü bembeyaz oldu ve mesajı hemen yaktı!', difficulty: 3, category: 'yuzlestirme' },
@@ -564,7 +690,7 @@ window.SISOREN_CONFIG = {
             role: 'Sinema Biletçisi',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_308.jpg',
             greeting: 'Hoş geldiniz amirim... Sinema karanlıktır, herkes gizlenebilir burada.',
             questions: [
                 { q: 'Cinayet gecesi sinemada kimler vardı?', a: 'O gece film gösterimi yoktu ama Nejat arka odada birisiyle buluştu. Seslerini duydum ama yüzünü göremedim.', difficulty: 2, category: 'derinlesme' },
@@ -583,7 +709,7 @@ window.SISOREN_CONFIG = {
             role: 'Muhtarlık Kâtibi',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_309.jpg',
             greeting: 'Her belge benim elimden geçer amirim... Bu kasabanın resmi tarihini ben yazarım.',
             questions: [
                 { q: 'Muhtar Meliha hakkında ne biliyorsun?', a: 'Meliha Hanım güçlü bir kadındır ama son zamanlarda arazi tapularıyla çok uğraşıyor. Bazı belgeler gece yarısı imzalanıyor...', difficulty: 2, category: 'derinlesme' },
@@ -603,7 +729,7 @@ window.SISOREN_CONFIG = {
             role: 'Düzenli Müşteri',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_310.jpg',
             greeting: 'Nermin hanımın tütünü gibisi yok amirim... Her gün gelir, bir de çay içerim.',
             questions: [
                 { q: 'Nermin hanım hakkında ne biliyorsun?', a: 'Nermin çalışkan bir kadındır ama gece yarıları dükkânda kalıyor. Birkaç kez arka odadan garip kokular geldi... Tütün değildi o!', difficulty: 2, category: 'derinlesme' },
@@ -622,7 +748,7 @@ window.SISOREN_CONFIG = {
             role: 'Hurda Toplayan Çocuk',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_311.jpg',
             greeting: 'Zehra abla bana hurda toplamayı öğretti... Ben her yeri gezerim amirim!',
             questions: [
                 { q: 'Hurda toplarken garip bir şey buldun mu?', a: 'Dün dağ yolunda kanlı bir bıçak buldum! Zehra ablaya verdim ama o "eskidir, at" dedi ve hurda yığınına attı.', difficulty: 3, category: 'yuzlestirme' },
@@ -641,7 +767,7 @@ window.SISOREN_CONFIG = {
             role: 'Tüp Teslimatçısı',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_312.jpg',
             greeting: 'Her gün kasabanın her evine tüp taşırım amirim... Kimin neye ihtiyacı var bilirim.',
             questions: [
                 { q: 'Şevket hakkında garip bir şey fark ettin mi?', a: 'Şevket usta son hafta normalden fazla tüp sipariş etti. Depoyu doldurdu ama satış yapmıyor. Neden bu kadar gaz biriktiriyor?', difficulty: 2, category: 'derinlesme' },
@@ -660,7 +786,7 @@ window.SISOREN_CONFIG = {
             role: 'Sokak Çocuğu',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_313.jpg',
             greeting: 'Amca amca! Ben her şeyi görürüm çünkü büyükler beni fark etmez!',
             questions: [
                 { q: 'Cinayet gecesi bir şey gördün mü?', a: 'Gece anneme su almaya çıktım ve sahaf amcanın dükkânından birinin çıktığını gördüm. Elinde bir kitap değil, parlak bir bıçak vardı!', difficulty: 3, category: 'yuzlestirme' },
@@ -677,7 +803,7 @@ window.SISOREN_CONFIG = {
             role: 'Kasaba Gece Bekçisi',
             isExtra: true,
             canBeGuilty: false,
-            portrait: null,
+            portrait: 'images/towns/sisoren/npcler/npc_314.jpg',
             greeting: 'Saat başı devriye gezerim amirim... Bu kasabanın gecesi gündüzünden daha hareketlidir.',
             questions: [
                 { q: 'Cinayet gecesi devriyede neler gördün?', a: 'Saat 01:30\'da muhtarlığın ışığı yanıyordu, garip çünkü Meliha Hanım erken yatar. Saat 02:00\'de ahırdan köpek havlaması geldi, sonra sahaf tarafından koşan bir gölge...', difficulty: 3, category: 'yuzlestirme' },

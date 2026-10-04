@@ -660,6 +660,12 @@ window.GolgeSehirEngine = {
                 box.classList.remove('rifat-speaking');
                 box.classList.add('cetin-speaking');
             }
+            window.customHelperSkipClick = null;
+            window.customHelperPrevClick = null;
+            const skipBtn = document.getElementById('cinematic-skip-btn');
+            if (skipBtn) skipBtn.onclick = null;
+            const prevBtn = document.getElementById('cinematic-prev-btn');
+            if (prevBtn) prevBtn.onclick = null;
         };
 
         const showNext = () => {
@@ -673,36 +679,30 @@ window.GolgeSehirEngine = {
 
         showNext();
 
-        const skipBtn = document.getElementById('cinematic-skip-btn');
-        if (skipBtn) {
-            skipBtn.onclick = (e) => {
-                e.stopPropagation();
-                if (window.isHelperTyping) {
-                    window.isHelperTyping = false;
-                    if (window.cinematicTypewriterTimeout) clearTimeout(window.cinematicTypewriterTimeout);
-                    const textEl = document.getElementById('cinematic-helper-text');
-                    if (textEl && window.currentHelperMessageText) {
-                        textEl.textContent = window.currentHelperMessageText;
-                        textEl.classList.add('typing-done');
-                    }
-                } else if (this.dualDialogStep < dialogs.length) {
-                    showNext();
-                } else {
-                    finishIntro();
+        window.customHelperSkipClick = (e) => {
+            if (window.isHelperTyping) {
+                window.isHelperTyping = false;
+                if (window.cinematicTypewriterTimeout) clearTimeout(window.cinematicTypewriterTimeout);
+                const textEl = document.getElementById('cinematic-helper-text');
+                if (textEl && window.currentHelperMessageText) {
+                    textEl.textContent = window.currentHelperMessageText;
+                    textEl.classList.add('typing-done');
                 }
-            };
-        }
+            } else if (this.dualDialogStep < dialogs.length) {
+                showNext();
+            } else {
+                finishIntro();
+            }
+            return true;
+        };
 
-        const prevBtn = document.getElementById('cinematic-prev-btn');
-        if (prevBtn) {
-            prevBtn.onclick = (e) => {
-                e.stopPropagation();
-                if (this.dualDialogStep > 1) {
-                    this.dualDialogStep -= 2;
-                    showNext();
-                }
-            };
-        }
+        window.customHelperPrevClick = (e) => {
+            if (this.dualDialogStep > 1) {
+                this.dualDialogStep -= 2;
+                showNext();
+            }
+            return true;
+        };
     },
 
     // 5. BEKÇİ RIFAT AYAKTA DURAN YARDIMCI WIDGET'I (ÇETİN GİBİ ŞEFFAF & BÜYÜK GÖRÜNÜM)

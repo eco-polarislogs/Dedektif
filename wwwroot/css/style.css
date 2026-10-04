@@ -459,6 +459,15 @@ canvas {
     transform: scale(1.04);
 }
 
+/* Gölge Şehir Özel Hover */
+.region-town[data-town-name="Gölgeşehir"].town-active:hover,
+.region-town[data-town-id="golge_sehir"].town-active:hover {
+    background: rgba(255, 204, 0, 0.14) !important;
+    border-color: #ffcc00 !important;
+    box-shadow: 0 0 30px rgba(255, 204, 0, 0.5), inset 0 0 20px rgba(255, 204, 0, 0.2) !important;
+    transform: scale(1.04) !important;
+}
+
 /* Kilitli Kasabalar */
 .region-town.town-locked:hover {
     background: rgba(255, 74, 74, 0.12);
@@ -1135,17 +1144,11 @@ body.helper-box-active .talk-corner-btn,
 
 /* Sadece Karakter Katmanına Uygulanacak Duygu Efektleri */
 .npc-talk-character-layer.emotion-angry {
-    filter: brightness(1.3) contrast(1.3) saturate(1.5) sepia(0.3) hue-rotate(-20deg) drop-shadow(0 0 20px rgba(255, 0, 0, 0.5)) !important;
-    animation: slightShake 0.2s infinite;
-    transform: scale(1.02);
-    /* Hafifçe büyüsün */
+    /* filter, animation ve transform özellikleri görseller sabit kalsın diye kaldırıldı */
 }
 
 .npc-talk-character-layer.emotion-nervous {
-    filter: brightness(0.6) contrast(1.2) saturate(0.4) sepia(0.2) hue-rotate(180deg) blur(1px) !important;
-    animation: nervousShake 0.1s infinite;
-    transform: scale(0.98);
-    /* Hafifçe küçülsün */
+    /* filter, animation ve transform özellikleri görseller sabit kalsın diye kaldırıldı */
 }
 
 .npc-talk-overlay {
@@ -5383,7 +5386,7 @@ body.helper-box-active .talk-corner-btn,
     left: auto !important;
     right: 20px !important;
     bottom: 15px !important;
-    z-index: 9999 !important;
+    z-index: 2900 !important;
 }
 
 /* ========================================================= */

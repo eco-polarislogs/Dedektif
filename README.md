@@ -16,6 +16,13 @@ Sisli ve tekinsiz bir dağ kasabası olan Gölge Şehir'in çam ormanı girişin
 - **Özel Kapı & Mekân Etkileşimleri:** Fehmi Bey'in evinde sinematik kapı çarpma sekansı ve iki aşamalı dedektiflik kararı.
 - **32 Yeni 3D Delil:** Her binada 4 farklı açıdan (`front`, `back`, `left`, `right`) incelenebilen deliller.
 
+### 🏔️ Vaka #301: Sisören Dağ Kasabası Cinayeti (YENİ GENİŞLETME PAKETİ)
+Yoğun sisiyle meşhur, dış dünyaya kapalı Sisören kasabasında vahşi bir cinayet işlendi. 
+- **13 Farklı Bina ve Zengin Şüpheli Ağı:** Telgrafhane, Kahvehane, Sinema, Bakkal, Sahaf, Muhtarlık, Tütüncü, Ahır ve Kasabalı Evleri.
+- **Yan NPC'ler :** Her binada asıl şüphelilerin yanı sıra çocuk veya çırak gibi yan karakterler bulunur. Soruşturmada size ipucu verebilirler !
+- **Kendi Suçlu Listeni Oluştur:** Oyuncunun sadece kısıtlı seçeneklerden seçmediği, doğrudan bulduğu suçluyu kendi inisiyatifiyle girdiği özgür suçlama ekranı. 
+- **Gezgin Tüccar İlyas:** Size kasabanın sırlarını anlatan rehber karakter.
+
 > 🎲 **Dinamik Tekrar Oynanabilirlik:** Her yeni soruşturma başlatıldığında suçlu karakter backend motoru tarafından **rastgele** belirlenir. Şüphelilerin tepkileri ve suçluluk psikolojileri yapay zeka tarafından dinamik olarak yönetilir.
 
 ---
@@ -53,6 +60,21 @@ Sisli ve tekinsiz bir dağ kasabası olan Gölge Şehir'in çam ormanı girişin
 | 106 | **Muhtar Cevdet** | Muhtarlık Ofisi | Çam ormanı arazilerinin sahte tapularını mühürleyen kasaba muhtarı. |
 | 107 | **Fehmi Bey** | Kasabalı Evi | Yabancılara kapısını çarpan, babasından kalma köstekli saatin peşindeki emekli muallim. |
 | 108 | **Kunduracı Rasim** | Kundura Atölyesi | Olay yerindeki çamurlu çizme izlerinin ve deri dikiş ipliklerinin sahibi. |
+
+### 3. Sisören Şüphelileri (Vaka #301)
+| # | İsim | Mekân | Rol & Arka Plan |
+|---|---|---|---|
+| 201 | **Telgrafçı Rüstem** | Telgrafhane | Şifreli mesajlar ve kasabanın sırlarını tellerden dinleyen adam. |
+| 202 | **Kahveci İrfan** | Kahvehane | Kumar borçları ve gizli örgüt bağlantıları olan kahveci. |
+| 203 | **Sinemacı Nejat** | Sinema | Filmleri sansürleyen ve şantaj kasetleri biriktiren makinist. |
+| 204 | **Bakkal Cemile** | Bakkal | Veresiye defteri kabarık ve kaçak tütün satan esnaf. |
+| 205 | **Sahaf Hikmet** | Sahaf | İçi oyulmuş kitaplarda sır saklayan ihtiyar sahaf. |
+| 206 | **Muhtar Meliha** | Muhtarlık | Resmi belgelerde sahtecilik ve rüşvet çarkı çeviren muhtar. |
+| 207 | **Tütüncü Nermin** | Tütüncü | Zehirli bitkiler ve ithal purolarla uğraşan kadın. |
+| 208 | **Çoban Durmuş** | Ahır | Hayvan kaçakçılığı ve karanlık işlere bulaşmış çoban. |
+| 209-213 | **Kasabalılar** | Evler | Çeşitli sırları olan yerel halk ve şüpheli komşular. |
+
+> **Özel Not:** Sisören'de ana şüphelilerin dışında Küçük Elif, Can, Selin ve Çoban Çırağı Kerem gibi sadece sorgulanabilen **Yan NPC'ler** bulunmaktadır. Ayrıca bu kasabada kendi suçlu listenizi sizin belirlediğiniz bir mekanizma mevcuttur.
 
 ---
 
