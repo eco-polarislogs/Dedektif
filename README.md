@@ -3,7 +3,7 @@
 Yapay zeka (AI) hikâye tabanlı, **Point & Click (Tıkla & Bul)** tarzı gelişmiş bir web dedektiflik RPG oyunudur. Gizemli Kasaba ve Gölge Şehir haritalarında işlenen karmaşık cinayetleri çözmek için binaları gezmeli, 3D delilleri toplamalı, laboratuvar araçlarıyla adli tıp incelemeleri yapmalı ve şüphelileri yapay zekayla sorguya çekerek gerçek katili adalete teslim etmelisiniz!
 
 ---
- ------(ÖNEMLİ NOT: Sisören kasabası yapılırken bazı teknik aksaklıklar ve backend veri kaybı sebebiyle kasaba yapımı daha uzun sürecektir.)-------
+ 
 ## 🎮 Vaka Dosyaları ve Hikâyeler
 
 ### 🍂 Vaka #104: Gizemli Kasaba Cinayeti
