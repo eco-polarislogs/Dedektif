@@ -460,7 +460,9 @@ window.SISOREN_CONFIG = {
                         hotspots: [
                 { id: 2111, name: 'Yırtık Mektup', desc: 'Masanın altına düşmüş, tehditkâr sözler içeren eksik bir mektup.', img: 'images/towns/sisoren/deliller/2111.jpg', top: '50%', left: '20%', fingerprintSpot: { xRatio: 0.45, yRatio: 0.65, angle: -10 }, bloodSpot: null },
                 { id: 2112, name: 'Çamurlu Ayak İzi', desc: 'Halının kenarında belirgin bir şekilde duran, kasabaya yabancı bir çizme izi.', img: 'images/towns/sisoren/deliller/2112.jpg', top: '70%', left: '50%', fingerprintSpot: null, bloodSpot: { xRatio: 0.6, yRatio: 0.75, angle: 22 } },
-                { id: 2113, name: 'Kırık Cam Parçası', desc: 'Pencerenin kenarında içeriden dışarıya doğru kırılmış küçük bir cam parçası.', img: 'images/towns/sisoren/deliller/2113.jpg', top: '40%', left: '80%', fingerprintSpot: { xRatio: 0.65, yRatio: 0.70, angle: -15 }, bloodSpot: { xRatio: 0.45, yRatio: 0.68, angle: 5 } }
+                { id: 2113, name: 'Kırık Cam Parçası', desc: 'Pencerenin kenarında içeriden dışarıya doğru kırılmış küçük bir cam parçası.', img: 'images/towns/sisoren/deliller/2113.jpg', top: '40%', left: '80%', fingerprintSpot: { xRatio: 0.65, yRatio: 0.70, angle: -15 }, bloodSpot: { xRatio: 0.45, yRatio: 0.68, angle: 5 } },
+                { id: 2114, name: 'Eski Avcı Bıçağı', desc: 'Dedesinden kalma kalın, ucu paslı ve sapında kurumuş kan lekeleri bulunan avcı bıçağı.', img: 'images/towns/sisoren/deliller/2114.jpg', top: '60%', left: '35%', fingerprintSpot: { xRatio: 0.30, yRatio: 0.80, angle: 10 }, bloodSpot: { xRatio: 0.70, yRatio: 0.30, angle: -5 } },
+                { id: 2115, name: 'Altın Kese', desc: 'İçinde kurbanın şantajla sızdırdığı birkaç altın sikke bulunan, yıpranmış siyah kadife kese.', img: 'images/towns/sisoren/deliller/2115.jpg', top: '80%', left: '25%', fingerprintSpot: { xRatio: 0.50, yRatio: 0.50, angle: 0 }, bloodSpot: null }
             ]
         },
         // 12. KASABALI EVİ 2 (NPC 212) — Hatice Nine (Kadın #6)
@@ -490,7 +492,9 @@ window.SISOREN_CONFIG = {
                         hotspots: [
                 { id: 2121, name: 'Eski Fotoğraf Albümü', desc: 'Sayfalarından biri yeni koparılmış, kurbanla ilgili sırları barındıran albüm.', img: 'images/towns/sisoren/deliller/2121.jpg', top: '60%', left: '30%', fingerprintSpot: { xRatio: 0.65, yRatio: 0.40, angle: 12 }, bloodSpot: null },
                 { id: 2122, name: 'Zehirli Bitki Kökü', desc: 'Mutfak tezgahında bırakılmış, normalde bu yörede yetişmeyen zehirli bir bitki parçası.', img: 'images/towns/sisoren/deliller/2122.jpg', top: '45%', left: '60%', fingerprintSpot: { xRatio: 0.35, yRatio: 0.65, angle: -8 }, bloodSpot: null },
-                { id: 2123, name: 'Gümüş Düğme', desc: 'Yer minderinin arasına sıkışmış, maktulün ceketine ait olduğu anlaşılan gümüş düğme.', img: 'images/towns/sisoren/deliller/2123.jpg', top: '75%', left: '80%', fingerprintSpot: { xRatio: 0.51, yRatio: 0.49, angle: 24 }, bloodSpot: { xRatio: 0.55, yRatio: 0.52, angle: 0 } }
+                { id: 2123, name: 'Gümüş Düğme', desc: 'Yer minderinin arasına sıkışmış, maktulün ceketine ait olduğu anlaşılan gümüş düğme.', img: 'images/towns/sisoren/deliller/2123.jpg', top: '75%', left: '80%', fingerprintSpot: { xRatio: 0.51, yRatio: 0.49, angle: 24 }, bloodSpot: { xRatio: 0.55, yRatio: 0.52, angle: 0 } },
+                { id: 2124, name: 'Kara Dağ Mantarı', desc: 'Sadece en karanlık orman diplerinde yetişen ve kurutulmuş, ölümcül kara dağ mantarları.', img: 'images/towns/sisoren/deliller/2124.jpg', top: '80%', left: '40%', fingerprintSpot: { xRatio: 0.40, yRatio: 0.60, angle: 15 }, bloodSpot: null },
+                { id: 2125, name: 'Sahte Arazi Tapusu', desc: 'Kurbanın kasabayı satmak için hazırladığı, şöminede yarısı yanmış sahte arazi tapusu.', img: 'images/towns/sisoren/deliller/2125.jpg', top: '85%', left: '65%', fingerprintSpot: { xRatio: 0.70, yRatio: 0.30, angle: -10 }, bloodSpot: null }
             ]
         },
         // 13. KASABALI EVİ 3 (NPC 213) — Emine Hanım (Kadın #7)
@@ -520,7 +524,9 @@ window.SISOREN_CONFIG = {
                         hotspots: [
                 { id: 2131, name: 'Kanlı Yün Yumağı', desc: 'Dokuma tezgahının altında bulunan, üzerine kan damlamış yün ip.', img: 'images/towns/sisoren/deliller/2131.jpg', top: '55%', left: '25%', fingerprintSpot: { xRatio: 0.48, yRatio: 0.60, angle: -14 }, bloodSpot: { xRatio: 0.58, yRatio: 0.65, angle: 33 } },
                 { id: 2132, name: 'Gizli Çekmece', desc: 'Sandığın içinde gizli bir bölme. İçinde kurbanın sahte kimliği bulunuyor.', img: 'images/towns/sisoren/deliller/2132.jpg', top: '65%', left: '70%', fingerprintSpot: { xRatio: 0.45, yRatio: 0.55, angle: 18 }, bloodSpot: null },
-                { id: 2133, name: 'Kopuk Kolye', desc: 'Yerdeki talaşların arasında parlayan, arbede sırasında koptuğu anlaşılan kolye.', img: 'images/towns/sisoren/deliller/2133.jpg', top: '80%', left: '45%', fingerprintSpot: { xRatio: 0.40, yRatio: 0.70, angle: 55 }, bloodSpot: { xRatio: 0.60, yRatio: 0.60, angle: 10 } }
+                { id: 2133, name: 'Kopuk Kolye', desc: 'Yerdeki talaşların arasında parlayan, arbede sırasında koptuğu anlaşılan kolye.', img: 'images/towns/sisoren/deliller/2133.jpg', top: '80%', left: '45%', fingerprintSpot: { xRatio: 0.40, yRatio: 0.70, angle: 55 }, bloodSpot: { xRatio: 0.60, yRatio: 0.60, angle: 10 } },
+                { id: 2134, name: 'Kalın Yün İp', desc: 'Boğma izleriyle uyuşan, özel dokunmuş çok kalın ve dayanıklı bir yün ip parçası.', img: 'images/towns/sisoren/deliller/2134.jpg', top: '45%', left: '40%', fingerprintSpot: { xRatio: 0.30, yRatio: 0.60, angle: 0 }, bloodSpot: null },
+                { id: 2135, name: 'Çizik Dürbün', desc: 'Maktulün, Emine Hanım\'ı uzaktan gözetlemek için kullandığı, merceği çizik dürbün.', img: 'images/towns/sisoren/deliller/2135.jpg', top: '75%', left: '85%', fingerprintSpot: { xRatio: 0.60, yRatio: 0.40, angle: 25 }, bloodSpot: null }
             ]
         }
     ],
