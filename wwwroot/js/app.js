@@ -519,11 +519,17 @@ window.playJudgeGavelTripleStrike = playJudgeGavelTripleStrike;
 
 function playSound(audioEl, volume = 0.5) {
     if (!audioEl || isMuted || window.isMuted) return;
+    // Kaynağı olmayan veya yüklenemeyen ses dosyalarını sessizce atla
+    const hasSource = audioEl.currentSrc || audioEl.getAttribute('src') || audioEl.querySelector('source[src]');
+    if (!hasSource || (audioEl.error && audioEl.error.code === 4)) return;
     try {
         audioEl.volume = Math.min(1, Math.max(0, volume));
         audioEl.currentTime = 0;
-        audioEl.play().catch(e => console.log('Ses hatası:', e));
-    } catch (e) { console.log('Ses hatası:', e); }
+        const p = audioEl.play();
+        if (p !== undefined) p.catch(e => {
+            if (e && e.name !== 'NotSupportedError' && e.name !== 'AbortError') console.log('Ses hatası:', e);
+        });
+    } catch (e) { /* ses çalınamadı, oyunu etkilemez */ }
 }
 window.playSound = playSound;
 window.stopSound = stopSound;
@@ -1179,8 +1185,7 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
                     visitedBuildings.clear();
                     innocentNpcIds.clear();
                     if (window.GolgeSehirEngine) {
-                        window.GolgeSehirEngine.visitedGolgeBuildings.clear();
-                        window.GolgeSehirEngine.clearGolgeSehirMap();
+                        window.GolgeSehirEngine.resetGolgeState();
                     }
                     if (window.SisorenEngine) {
                         window.SisorenEngine.resetSisorenState();
@@ -1204,6 +1209,11 @@ document.getElementById('exit-game-btn').addEventListener('click', () => {
                     window.submittedForensicCountSisoren = 0;
                     window.isAutopsyReadySisoren = false;
                     window.isAutopsyTimerStartedSisoren = false;
+                    isAutopsyTimerStarted = false;
+                    isAutopsyReady = false;
+                    autopsyTimeLeft = 60;
+                    if (autopsyTimer) clearInterval(autopsyTimer);
+                    document.getElementById('autopsy-timer-container')?.classList.add('hidden');
                     if (window.sisorenTalkedExtraNpcs) window.sisorenTalkedExtraNpcs.clear();
                     dialogHistory = {};
                     npcTalkCompleted = {};
@@ -3292,20 +3302,19 @@ function loadContextualQuestions(npcId) {
 function ensureFourNpcQuestions(questions, npcId, askedCount) {
     const result = Array.isArray(questions) ? [...questions] : [];
     const npc = window.NPC_DATA && window.NPC_DATA[npcId];
-    while (result.length < 4) {
-        const source = result.length > 0
-            ? result[(result.length - 1) % result.length]
-            : {
-                q: 'O gece başka hangi ayrıntıyı hatırlıyorsun?',
-                a: 'Bu ayrıntıyı tam hatırlamıyorum amirim.',
-                difficulty: 2,
-                category: 'derinlesme'
-            };
-        result.push({
-            ...source,
-            q: `${source.q} (Ek ayrıntı ${askedCount + result.length + 1})`,
-            a: source.a || `${npc ? npc.name : 'Tanık'} bu konuda kesin konuşmaktan kaçınıyor.`
-        });
+    const name = npc ? npc.name : 'Tanık';
+    const genericPool = [
+        { q: 'O gece olağan dışı bir şey fark ettin mi?', a: 'Pek bir şey dikkatimi çekmedi amirim ama ortam gergindi.' },
+        { q: 'Kurbanı en son ne zaman gördün?', a: 'Birkaç gün önce görmüştüm, sıradan görünüyordu.' },
+        { q: 'Kurbanın düşmanı var mıydı?', a: 'Kimseyle açıkça kavga ettiğini bilmiyorum.' },
+        { q: 'Olay gecesi nerelerdeydin?', a: 'Kendi işimin başındaydım, isteyen sorabilir.' },
+        { q: 'Şüpheli birini gördün mü?', a: `${name} bu konuda kesin konuşmaktan kaçınıyor.` },
+        { q: 'Bana yardımcı olabilecek başka bir şey var mı?', a: 'Aklıma gelen her şeyi söyledim amirim.' }
+    ];
+    for (const g of genericPool) {
+        if (result.length >= 4) break;
+        if (result.some(r => r.q === g.q)) continue;
+        result.push({ ...g, difficulty: 2, category: 'derinlesme' });
     }
     return result.slice(0, 4);
 }
@@ -4030,7 +4039,7 @@ function renderFoundScreen() {
                 ? `<div class="found-npc-name sisoren-empty-name">---</div>`
                 : `<div class="found-npc-name">${npc.name}</div>`);
 
-        const roleHtml = `<div class="found-npc-role">${npc.building} (${isSisoren ? (npc.gender === 'female' ? 'Kadın' : 'Erkek') : npc.role})</div>`;
+        const roleHtml = `<div class="found-npc-role">${npc.building} (${npc.role || npc.building})</div>`;
 
         card.innerHTML = `
             ${isAlreadyInnocent ? '<div class="innocent-stamp">MASUM</div>' : ''}
@@ -4074,10 +4083,10 @@ function renderFoundScreen() {
             card.innerHTML = `
                 ${isAlreadyInnocent ? '<div class="innocent-stamp">MASUM</div>' : ''}
                 <div class="found-npc-photo-wrap" data-npc-id="${extraId}" title="${extraNpc.name}">
-                    <img src="${extraNpc.avatar || `images/towns/sisoren/npcler/${extraId}.png`}" class="found-npc-photo" alt="${extraNpc.name}" onerror="this.src='images/towns/sisoren/npcler/default_extra.png'; this.onerror=null;">
+                    <img src="${extraNpc.portrait || extraNpc.avatar || `images/towns/sisoren/npcler/npc_${extraId}.jpg`}" class="found-npc-photo" alt="${extraNpc.name}" onerror="this.onerror=null; this.src='images/dedektif.png';">
                 </div>
                 <div class="found-npc-name" style="color: #6ee7b7; font-size: 0.8rem;">${extraNpc.name}</div>
-                <div class="found-npc-role">${extraNpc.building || 'Sokak'} (${extraNpc.gender === 'female' ? 'Kadın' : 'Erkek'})</div>
+                <div class="found-npc-role">${extraNpc.building || 'Sokak'} (${extraNpc.role || 'Kasabalı'})</div>
                 ${hasHistory ? `<div style="font-size:0.75rem; color:#34d399; font-weight:bold; margin-bottom:6px;"><i class="fa-solid fa-comment-check"></i> ${askedCount} Soru</div>` : ''}
                 <div class="found-npc-actions" style="display:flex; gap:6px; width:100%;">
                     ${isAlreadyInnocent
@@ -4578,7 +4587,7 @@ function showCinematicHelper(message, isOneTime = true, contextKey = '', skipHis
         }
     } else {
         // Default to Çetin
-        box.classList.remove('rifat-speaking');
+        box.classList.remove('rifat-speaking', 'ilyas-speaking');
         box.classList.add('cetin-speaking');
         if (avatarImg) avatarImg.src = 'images/dedektif_helper.png';
         if (nameEl) nameEl.textContent = 'YARDIMCI DEDEKTİF ÇETİN';
@@ -4591,7 +4600,7 @@ function showCinematicHelper(message, isOneTime = true, contextKey = '', skipHis
                 speaker: 'cetin',
                 speakerName: nameEl ? nameEl.textContent : 'YARDIMCI DEDEKTİF ÇETİN',
                 avatar: avatarImg ? avatarImg.src : 'images/dedektif_helper.png',
-                theme: box.classList.contains('rifat-speaking') ? 'rifat-speaking' : 'cetin-speaking'
+                theme: box.classList.contains('rifat-speaking') ? 'rifat-speaking' : (box.classList.contains('ilyas-speaking') ? 'ilyas-speaking' : 'cetin-speaking')
             }
         };
         helperMessageHistory.push(historyItem);

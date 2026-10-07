@@ -189,7 +189,7 @@ window.SisorenEngine = {
 
         const mapStage = document.getElementById('town-map-stage');
         const interiorStage = document.getElementById('interior-stage');
-        
+
         document.body.appendChild(widget);
     },
 
@@ -206,7 +206,7 @@ window.SisorenEngine = {
             box.classList.add('ilyas-speaking');
             avatarImg.src = 'images/towns/sisoren/npcler/tuccar_ilyas_helper.png';
             nameEl.textContent = 'DAĞCI TÜCCAR İLYAS';
-            nameEl.style.color = '#4ade80'; // Green color for Ilyas
+            nameEl.style.color = '';
         }
 
         const tips = {
@@ -387,7 +387,7 @@ window.SisorenEngine = {
             if (index < 0 || index >= dialogs.length) return;
 
             const current = dialogs[index];
-            const isCetin = (current.speaker === 'Çetin');
+            const isCetin = (current.speaker === 'Çetin' || current.speaker.includes('etin'));
 
             const speakerInfo = {
                 speaker: isCetin ? 'cetin' : 'ilyas',
@@ -407,7 +407,7 @@ window.SisorenEngine = {
             if (avatarImg) avatarImg.src = speakerInfo.avatar;
             if (nameEl) {
                 nameEl.textContent = speakerInfo.speakerName;
-                nameEl.style.color = isCetin ? '' : '#4ade80';
+                nameEl.style.color = '';
             }
 
             if (typeof window.showCinematicHelper === 'function') {
@@ -943,7 +943,7 @@ window.SisorenEngine = {
         this.advanceBanter();
     },
 
-    advanceBanter: function() {
+    advanceBanter: function () {
         if (this.currentBanterStep >= this.currentBanterList.length) {
             return;
         }

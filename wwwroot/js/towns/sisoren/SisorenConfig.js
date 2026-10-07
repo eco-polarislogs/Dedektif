@@ -1030,18 +1030,23 @@ window.SISOREN_INTERIOR_LAYOUTS = {
     Object.keys(config.fallbackQuestions).forEach(npcId => {
         const pool = config.fallbackQuestions[npcId];
         const categories = ['tanisma', 'derinlesme', 'yuzlestirme', 'baski', 'son'];
+        const extras = [
+            { q: 'O gece olağan dışı bir şey fark ettin mi?', a: 'Pek bir şey dikkatimi çekmedi amirim ama ortam gergindi.' },
+            { q: 'Kurbanı en son ne zaman gördün?', a: 'Birkaç gün önce görmüştüm, sıradan görünüyordu.' },
+            { q: 'Kurbanın düşmanı var mıydı?', a: 'Kimseyle açıkça kavga ettiğini bilmiyorum.' },
+            { q: 'Olay gecesi nerelerdeydin?', a: 'Kendi işimin başındaydım, isteyen sorabilir.' },
+            { q: 'Şüpheli birini gördün mü?', a: 'Kesin bir şey söyleyemem amirim.' },
+            { q: 'Kasabada en tehlikeli kim sence?', a: 'Suçlamak kolay, ama kanıt olmadan konuşmam.' }
+        ];
         let index = 0;
-        while (pool.length < 20) {
-            const source = pool[index % pool.length];
-            const round = Math.floor(pool.length / 4) + 1;
+        while (pool.length < 20 && index < extras.length) {
+            const e = extras[index++];
+            if (pool.some(p => p.q === e.q)) continue;
             pool.push({
-                ...source,
-                q: `${source.q} Başka hangi ayrıntıyı hatırlıyorsun? (Soru ${pool.length + 1})`,
-                a: `${source.a} Bu konuda hatırladığım ek ayrıntı şu: olayın zamanı ve yeri konusunda dikkatli düşününce başka bir iz daha ortaya çıkıyor.`,
+                ...e,
                 category: categories[Math.floor(pool.length / 4) % categories.length],
-                difficulty: Math.min(5, Math.max(1, source.difficulty || round))
+                difficulty: Math.min(5, Math.floor(pool.length / 4) + 1)
             });
-            index++;
         }
     });
 })();
