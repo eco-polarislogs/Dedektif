@@ -1839,7 +1839,20 @@ function openBuilding(npcId) {
     activeNpcId = npcId;
 
     // Gölge Şehir Binaları
-    if (npcId >= 100 && window.GolgeSehirEngine && window.GOLGE_SEHIR_CONFIG) {
+    // Sisören Binaları
+    if (npcId >= 200 && window.SisorenEngine && window.SISOREN_CONFIG) {
+        const bld = window.SISOREN_CONFIG.buildings.find(b => b.npcId === npcId);
+        if (bld) {
+            window.SisorenEngine.onBuildingClick(bld);
+            const buildingName = bld.npc.building || bld.title;
+            setTimeout(() => triggerHelperMessage('building_enter', buildingName, false), 1500);
+            logAction('enter_building', npcId, buildingName);
+            return;
+        }
+    }
+
+    // Gölge Şehir Binaları
+    if (npcId >= 100 && npcId < 200 && window.GolgeSehirEngine && window.GOLGE_SEHIR_CONFIG) {
         const bld = window.GOLGE_SEHIR_CONFIG.buildings.find(b => b.npcId === npcId);
         if (bld) {
             window.GolgeSehirEngine.onBuildingClick(bld);
@@ -2676,12 +2689,7 @@ function setupForensicTools() {
         thumbsContainer.innerHTML = '';
 
         // Gölge Şehir ve Sisören delilleri 2D olduğu için 4 yönlü görselleri yüklemeye çalışma
-        if (currentPendingObject.id >= 1000 || window.currentActiveTown === 'golge_sehir' || window.currentActiveTown === 'sisoren') {
-            thumbsContainer.classList.add('hidden');
-            const rotateControls = document.getElementById('clue-rotate-controls');
-            if (rotateControls) rotateControls.classList.add('hidden');
-            return;
-        }
+        // 360 derece aci gorselleri tum kasabalar (Gizemli, Golge ve Sisoren) icin aktif
 
         thumbsContainer.classList.remove('hidden');
 
@@ -4305,7 +4313,25 @@ window.accuseNpc = function (accusedId) {
         210: 'images/towns/sisoren/npcler/jail_npc_210.png',
         211: 'images/towns/sisoren/npcler/jail_npc_211.png',
         212: 'images/towns/sisoren/npcler/jail_npc_212.png',
-        213: 'images/towns/sisoren/npcler/jail_npc_213.png'
+        213: 'images/towns/sisoren/npcler/jail_npc_213.png',
+        301: 'images/towns/sisoren/npcler/jail_npc_301.png',
+        302: 'images/towns/sisoren/npcler/jail_npc_302.png',
+        303: 'images/towns/sisoren/npcler/jail_npc_303.png',
+        304: 'images/towns/sisoren/npcler/jail_npc_304.png',
+        305: 'images/towns/sisoren/npcler/jail_npc_305.png',
+        306: 'images/towns/sisoren/npcler/jail_npc_306.png',
+        307: 'images/towns/sisoren/npcler/jail_npc_307.png',
+        308: 'images/towns/sisoren/npcler/jail_npc_308.png',
+        309: 'images/towns/sisoren/npcler/jail_npc_309.png',
+        310: 'images/towns/sisoren/npcler/jail_npc_310.png',
+        311: 'images/towns/sisoren/npcler/jail_npc_311.png',
+        312: 'images/towns/sisoren/npcler/jail_npc_312.png',
+        313: 'images/towns/sisoren/npcler/jail_npc_313.png',
+        314: 'images/towns/sisoren/npcler/jail_npc_314.png',
+        315: 'images/towns/sisoren/npcler/jail_npc_315.png',
+        316: 'images/towns/sisoren/npcler/jail_npc_316.png',
+        317: 'images/towns/sisoren/npcler/jail_npc_317.png',
+        318: 'images/towns/sisoren/npcler/jail_npc_318.png'
     };
 
     // Yeni hapis animasyonu — NPC tam boy parmaklıkların arkasında
