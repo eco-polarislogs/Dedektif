@@ -137,29 +137,25 @@ window.SisorenEngine = {
         if (sisorenTownBtn) {
             sisorenTownBtn.setAttribute('data-town-id', 'sisoren');
         }
-
-        const gizemliTownBtn = document.querySelector('.region-town[data-town-id="gizemli"]');
-        if (gizemliTownBtn) {
-            gizemliTownBtn.addEventListener('click', () => {
-                this.resetSisorenState();
-            });
-        }
     },
 
     // =============================
     // 3. DURUM SIFIRLAMA
     // =============================
     resetSisorenState: function () {
-        this.currentActiveTown = 'gizemli';
-        window.currentActiveTown = 'gizemli';
         this.hasShownSisorenIntro = false;
         this.introDialogCompleted = false;
         this.hasShownDualIntro = false;
         this.dualDialogStep = 0;
-        this.visitedSisorenBuildings.clear();
+        if (this.visitedSisorenBuildings) {
+            this.visitedSisorenBuildings.clear();
+        }
+        if (window.sisorenTalkedExtraNpcs) {
+            window.sisorenTalkedExtraNpcs.clear();
+        }
         document.body.classList.remove('sisoren-theme');
         const tuccar = document.getElementById('tuccar-quick-tip-btn');
-        if (tuccar) tuccar.remove();
+        if (tuccar) tuccar.style.display = 'none';
         this.clearSisorenMap();
 
         // Kasabaya özel otopsi ve lab durumunu tazele
@@ -168,6 +164,7 @@ window.SisorenEngine = {
         }
     },
 
+    // 5. TÜCCAR İLYAS AYAKTA DURAN YARDIMCI WIDGET'I (BEKÇİ RIFAT STİLİ - ZÜMRÜT YEŞİLİ TEMA)
     createTuccarHelperWidget: function () {
         let widget = document.getElementById('tuccar-quick-tip-btn');
         if (widget) widget.remove();
@@ -176,7 +173,6 @@ window.SisorenEngine = {
         widget.id = 'tuccar-quick-tip-btn';
         widget.className = 'helper-detective-widget sisoren-tuccar-widget';
         widget.title = 'Tüccar İlyas\'tan İpucu Al';
-        widget.style.cssText = 'position: fixed !important; left: auto !important; right: 20px !important; bottom: 15px !important; z-index: 120; display: none;';
         widget.innerHTML = `
             <img src="images/towns/sisoren/npcler/tuccar_ilyas_helper.png" class="helper-detective-img" alt="Tüccar İlyas">
             <div class="helper-detective-badge">TÜCCAR İLYAS</div>
@@ -186,9 +182,6 @@ window.SisorenEngine = {
             e.stopPropagation();
             this.triggerTuccarTip();
         });
-
-        const mapStage = document.getElementById('town-map-stage');
-        const interiorStage = document.getElementById('interior-stage');
 
         document.body.appendChild(widget);
     },
@@ -324,9 +317,10 @@ window.SisorenEngine = {
                         this.applySisorenState();
                     }
                     this.updateSisorenAutopsyUI();
-                } else if (window.currentActiveTown === 'gizemli') {
+                } else if (window.currentActiveTown !== 'sisoren') {
                     document.body.classList.remove('sisoren-theme');
-                    if (townMapScreen.classList.contains('sisoren-active')) {
+                    const townMapStage = document.getElementById('town-map-stage');
+                    if (townMapScreen.classList.contains('sisoren-active') || (townMapStage && townMapStage.classList.contains('sisoren-active'))) {
                         this.clearSisorenMap();
                     }
                 }
@@ -760,7 +754,7 @@ window.SisorenEngine = {
                     if (typeof guiltyNpcId !== 'undefined') {
                         guiltyNpcId = data.guiltyNpcId;
                     }
-                    console.log("ğŸ² Sisören Rastgele Yeni Katil Belirlendi:", data.guiltyNpcId);
+                    console.log("Sisören Rastgele Yeni Katil Belirlendi:", data.guiltyNpcId);
                 }
             })
             .catch(err => console.error("Sisören katil sıfırlama hatası:", err));
@@ -1061,34 +1055,21 @@ window.SisorenEngine = {
 
         bld.hotspots.forEach((clue) => {
             const spot = document.createElement('div');
-            spot.className = 'sisoren-clue-hotspot clue-hotspot';
+            spot.className = 'sisoren-clue-hotspot clue-hotspot hidden-clue';
             spot.title = clue.name;
             spot.style.top = clue.top;
             spot.style.left = clue.left;
             spot.style.width = '70px';
             spot.style.height = '70px';
-            spot.style.position = 'absolute';
-            spot.style.cursor = 'pointer';
-            spot.style.zIndex = '9999';
 
             const img = document.createElement('img');
             img.src = clue.img;
             img.alt = clue.name;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'contain';
+            img.className = 'sisoren-clue-img';
 
             const label = document.createElement('span');
             label.className = 'sisoren-clue-label';
             label.textContent = clue.name;
-            label.style.display = 'block';
-            label.style.background = 'rgba(0,0,0,0.8)';
-            label.style.color = '#fff';
-            label.style.padding = '2px 5px';
-            label.style.borderRadius = '4px';
-            label.style.fontSize = '12px';
-            label.style.textAlign = 'center';
-            label.style.marginTop = '5px';
 
             spot.appendChild(img);
             spot.appendChild(label);
@@ -1234,32 +1215,16 @@ window.SisorenEngine = {
             townMapStage.classList.remove('sisoren-active');
             townMapStage.querySelectorAll('[class*="building-sisoren-"]').forEach(el => el.remove());
 
-            // Gizemli kasaba binalarını geri göster
-            const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"]):not([class*="building-sisoren-"])');
-            gizemliBuildings.forEach(el => el.style.display = '');
+            if (window.currentActiveTown === 'gizemli') {
+                const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"]):not([class*="building-sisoren-"])');
+                gizemliBuildings.forEach(el => el.style.display = '');
+            }
         }
 
         const tuccarBtn = document.getElementById('tuccar-quick-tip-btn');
         if (tuccarBtn) {
             tuccarBtn.style.display = 'none';
         }
-    },
-
-    resetSisorenState: function () {
-        this.hasShownSisorenIntro = false;
-        this.introDialogCompleted = false;
-        this.hasShownDualIntro = false;
-        this.dualDialogStep = 0;
-        if (this.visitedSisorenBuildings) {
-            this.visitedSisorenBuildings.clear();
-        }
-        if (window.sisorenTalkedExtraNpcs) {
-            window.sisorenTalkedExtraNpcs.clear();
-        }
-        window.submittedForensicCountSisoren = 0;
-        window.isAutopsyReadySisoren = false;
-        window.isAutopsyTimerStartedSisoren = false;
-        this.clearSisorenMap();
     },
 
     // =============================

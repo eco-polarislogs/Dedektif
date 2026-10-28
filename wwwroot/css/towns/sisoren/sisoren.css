@@ -254,7 +254,9 @@ body.sisoren-theme .found-btn,
     animation: sisorenFoundPulse 2s infinite !important;
 }
 
-/* Tüccar İlyas Widget — Bekçi Rıfat Stili (Sağ Alt Köşe) */
+/* ==========================================================================
+   AYAKTA DURAN TÜCCAR İLYAS YARDIMCI WIDGET'I (BEKÇİ RIFAT STİLİ - ZÜMRÜT YEŞİLİ TEMA)
+   ========================================================================== */
 #tuccar-quick-tip-btn.sisoren-tuccar-widget {
     display: none;
     position: fixed !important;
@@ -262,7 +264,7 @@ body.sisoren-theme .found-btn,
     right: 25px !important;
     top: auto !important;
     left: auto !important;
-    z-index: 120;
+    z-index: 120 !important;
     width: 170px !important;
     height: 220px !important;
     background: transparent !important;
@@ -276,7 +278,11 @@ body.sisoren-theme .found-btn,
 }
 
 body.sisoren-theme #tuccar-quick-tip-btn.sisoren-tuccar-widget {
-    display: flex;
+    display: flex !important;
+}
+
+body:not(.sisoren-theme) #tuccar-quick-tip-btn {
+    display: none !important;
 }
 
 #tuccar-quick-tip-btn.sisoren-tuccar-widget:hover {
@@ -303,6 +309,36 @@ body.sisoren-theme #tuccar-quick-tip-btn.sisoren-tuccar-widget {
     margin-top: -15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.9), 0 0 15px rgba(16, 185, 129, 0.5);
     z-index: 2;
+}
+
+/* İç Mekan "NPC İle Konuş" Butonu — Sisören'de Tüccar İlyas'ın Üstünde Konumlanır */
+body.sisoren-theme #talk-npc-btn,
+body.sisoren-theme .talk-npc-btn {
+    position: fixed !important;
+    bottom: 210px !important;
+    right: 25px !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 130 !important;
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    border: 2px solid #10b981 !important;
+    color: #ffffff !important;
+    padding: 13px 26px !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-family: 'Cinzel', serif !important;
+    font-size: 1.05rem !important;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.75) !important;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+body.sisoren-theme #talk-npc-btn:hover,
+body.sisoren-theme .talk-npc-btn:hover {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    box-shadow: 0 0 35px rgba(16, 185, 129, 0.95) !important;
+    transform: scale(1.06) !important;
 }
 
 @keyframes sisorenFoundPulse {
@@ -759,3 +795,95 @@ body.sisoren-theme .found-npc-card .found-npc-actions .btn.btn-outline:hover {
 /* ========================================
    EKSTRA NPC KART STİLLERİ (Suçlama Ekranı)
    ======================================== */
+
+/* ==========================================================================
+   SİSÖREN BİNA İÇİ GİZLİ DELİL (HIDDEN CLUE) VE ZÜMRÜT NEON PARLAMA SİSTEMİ
+   ========================================================================== */
+.sisoren-clue-hotspot {
+    position: absolute !important;
+    cursor: pointer !important;
+    border-radius: 12px !important;
+    z-index: 50 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: 2px solid transparent !important;
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+}
+
+/* 1. Bina içinde deliller varsayılan olarak gizlidir (Gizemli Kasaba ve Gölge Şehir uyumu) */
+.sisoren-clue-hotspot img,
+.sisoren-clue-hotspot .sisoren-clue-img {
+    max-width: 90% !important;
+    max-height: 90% !important;
+    object-fit: contain !important;
+    opacity: 0 !important;
+    transform: scale(0.9) !important;
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.35s ease !important;
+    pointer-events: none !important;
+}
+
+/* 2. Mouse üzerine geldiğinde (Hover) Sisören'in zümrüt yeşili neon aurası ve parlama patlaması */
+.sisoren-clue-hotspot:hover {
+    z-index: 9999 !important;
+    transform: scale(1.18) translateY(-4px) !important;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.4) 0%, rgba(5, 150, 105, 0.1) 60%, transparent 80%) !important;
+    border: 2px solid #34d399 !important;
+    box-shadow: 0 0 32px #10b981, 0 0 16px rgba(52, 211, 153, 0.8), inset 0 0 16px rgba(16, 185, 129, 0.6) !important;
+    animation: sisorenClueNeonPulse 1.8s infinite ease-in-out !important;
+}
+
+.sisoren-clue-hotspot:hover img,
+.sisoren-clue-hotspot:hover .sisoren-clue-img {
+    opacity: 1 !important;
+    transform: scale(1.05) !important;
+    filter: drop-shadow(0 0 16px #10b981) drop-shadow(0 0 30px rgba(52, 211, 153, 0.9)) brightness(1.25) contrast(1.15) !important;
+}
+
+@keyframes sisorenClueNeonPulse {
+    0% {
+        box-shadow: 0 0 25px #10b981, 0 0 12px rgba(52, 211, 153, 0.6), inset 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 42px #10b981, 0 0 24px rgba(52, 211, 153, 0.95), inset 0 0 22px rgba(16, 185, 129, 0.7);
+    }
+    100% {
+        box-shadow: 0 0 25px #10b981, 0 0 12px rgba(52, 211, 153, 0.6), inset 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+}
+
+/* 3. Delil İsim Etiketi — Normalde gizli, Hover yapıldığında neon zümrüt tabelası belirir */
+.sisoren-clue-label {
+    position: absolute !important;
+    bottom: -34px !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(8px) !important;
+    background: rgba(3, 14, 10, 0.96) !important;
+    color: #34d399 !important;
+    border: 1px solid #10b981 !important;
+    padding: 4px 12px !important;
+    border-radius: 6px !important;
+    font-family: 'Cinzel', serif !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 0.6px !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.95), 0 0 14px rgba(16, 185, 129, 0.6) !important;
+    opacity: 0 !important;
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    z-index: 10000 !important;
+}
+
+.sisoren-clue-hotspot:hover .sisoren-clue-label {
+    opacity: 1 !important;
+    color: #ffffff !important;
+    background: #065f46 !important;
+    border-color: #34d399 !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.95), 0 0 20px #10b981, 0 0 35px rgba(52, 211, 153, 0.85) !important;
+    transform: translateX(-50%) translateY(0) !important;
+}

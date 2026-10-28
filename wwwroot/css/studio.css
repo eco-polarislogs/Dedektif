@@ -1,0 +1,375 @@
+/* ========================================================
+   BANANA STUDIO & NASHI - DEDEKTIF MEDYA ENTEGRASYONU CSS
+   ======================================================== */
+
+.studio-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 75px;
+    z-index: 9999;
+    background: linear-gradient(135deg, rgba(212, 160, 23, 0.9), rgba(120, 80, 10, 0.95));
+    color: #121212;
+    border: 1px solid #ffd700;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 215, 0, 0.4);
+    display: none; /* Oyuncudan gizlendi, sadece gelistirici/yonetim erisimi (Ctrl+Shift+S veya ?studio=1) */
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.studio-toggle-btn.visible-dev {
+    display: flex !important;
+}
+
+.studio-toggle-btn:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+    background: linear-gradient(135deg, #ffd700, #b8860b);
+}
+
+/* Modal Arka Plan & Çerçeve */
+.studio-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(8, 8, 12, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+.studio-modal.hidden {
+    display: none !important;
+}
+
+.studio-modal-card {
+    width: 90%;
+    max-width: 960px;
+    max-height: 90vh;
+    background: #141419;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 14px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(212, 175, 55, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #e5e5e5;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Modal Başlık */
+.studio-modal-header {
+    background: linear-gradient(90deg, #1c1c24, #121217);
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.studio-title-group h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.35rem;
+    color: #e6c66e;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.studio-title-group p {
+    margin: 4px 0 0 0;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.studio-close-btn {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.studio-close-btn:hover {
+    color: #ff6b6b;
+}
+
+/* Sekmeler */
+.studio-tabs {
+    display: flex;
+    background: #0d0d12;
+    border-bottom: 1px solid #252530;
+    padding: 0 16px;
+    gap: 8px;
+}
+
+.studio-tab-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 12px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.studio-tab-btn:hover {
+    color: #ddd;
+}
+
+.studio-tab-btn.active {
+    color: #e6c66e;
+    border-bottom: 2px solid #e6c66e;
+}
+
+/* Sekme İçerikleri */
+.studio-tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    background: #141419;
+}
+
+.studio-tab-pane {
+    display: none;
+}
+
+.studio-tab-pane.active {
+    display: block;
+}
+
+/* Hızlı Üretici Formu */
+.studio-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .studio-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.studio-field {
+    margin-bottom: 16px;
+}
+
+.studio-field label {
+    display: block;
+    font-size: 0.85rem;
+    color: #bbb;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.studio-select, .studio-textarea, .studio-input {
+    width: 100%;
+    background: #1c1c24;
+    border: 1px solid #333342;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #fff;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.studio-select:focus, .studio-textarea:focus, .studio-input:focus {
+    border-color: #e6c66e;
+    outline: none;
+}
+
+.studio-textarea {
+    resize: vertical;
+    min-height: 85px;
+}
+
+/* Aksiyon Butonları */
+.studio-btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-studio-enhance {
+    background: linear-gradient(135deg, #4a2c7a, #311b54);
+    color: #e0b0ff;
+    border: 1px solid #9d4edd;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-studio-enhance:hover {
+    background: linear-gradient(135deg, #6236a3, #432177);
+    box-shadow: 0 0 10px rgba(157, 78, 221, 0.4);
+}
+
+.btn-studio-generate {
+    background: linear-gradient(135deg, #b8860b, #d4af37);
+    color: #121212;
+    border: 1px solid #ffd700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.btn-studio-generate:hover {
+    background: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Önizleme Alanı */
+.studio-preview-box {
+    background: #0f0f14;
+    border: 1px dashed #333342;
+    border-radius: 10px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.studio-preview-box img {
+    max-width: 100%;
+    max-height: 320px;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.8);
+    object-fit: contain;
+}
+
+.studio-preview-placeholder {
+    color: #666;
+    text-align: center;
+}
+
+.studio-preview-placeholder i {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+/* Harici Uygulama Kartları */
+.studio-app-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.studio-app-card {
+    background: #1c1c24;
+    border: 1px solid #2d2d3a;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.studio-app-card:hover {
+    transform: translateY(-3px);
+    border-color: #e6c66e;
+}
+
+.studio-app-card h3 {
+    margin: 0 0 10px 0;
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.15rem;
+}
+
+.studio-app-card p {
+    color: #aaa;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.studio-app-card ul {
+    margin: 0 0 20px 0;
+    padding-left: 18px;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+.studio-app-card ul li {
+    margin-bottom: 4px;
+}
+
+/* Galeri Grid */
+.studio-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+    max-height: 480px;
+    overflow-y: auto;
+}
+
+.studio-gallery-item {
+    background: #1a1a22;
+    border: 1px solid #2d2d3a;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.studio-gallery-item:hover {
+    transform: scale(1.03);
+    border-color: #ffd700;
+}
+
+.studio-gallery-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+}
+
+.studio-gallery-info {
+    padding: 8px;
+    font-size: 0.75rem;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

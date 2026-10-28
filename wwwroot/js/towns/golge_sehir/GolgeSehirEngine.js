@@ -36,23 +36,16 @@ window.GolgeSehirEngine = {
         if (golgeTownBtn) {
             golgeTownBtn.setAttribute('data-town-id', 'golge_sehir');
         }
-
-        const gizemliTownBtn = document.querySelector('.region-town[data-town-id="gizemli"]');
-        if (gizemliTownBtn) {
-            gizemliTownBtn.addEventListener('click', () => {
-                this.resetGolgeState();
-            });
-        }
     },
 
     resetGolgeState: function () {
-        this.currentActiveTown = 'gizemli';
-        window.currentActiveTown = 'gizemli';
         window.hasEnteredGolgeSehir = false;
         this.hasShownDualIntro = false;
         this.introDialogCompleted = false;
         this.dualDialogStep = 0;
-        this.visitedGolgeBuildings.clear();
+        if (this.visitedGolgeBuildings) {
+            this.visitedGolgeBuildings.clear();
+        }
         document.body.classList.remove('golge-sehir-theme');
         this.clearGolgeSehirMap();
         const successModal = document.getElementById('golge-success-modal');
@@ -386,9 +379,9 @@ window.GolgeSehirEngine = {
                         this.applyGolgeSehirState();
                     }
                     this.updateGolgeSehirAutopsyUI();
-                } else if (window.currentActiveTown === 'gizemli') {
+                } else if (window.currentActiveTown !== 'golge_sehir') {
                     document.body.classList.remove('golge-sehir-theme');
-                    if (townMapScreen.classList.contains('golge-sehir-active')) {
+                    if (townMapScreen.classList.contains('golge-sehir-active') || townMapStage.classList.contains('golge-sehir-active')) {
                         this.clearGolgeSehirMap();
                     }
                 }
@@ -451,6 +444,12 @@ window.GolgeSehirEngine = {
         const townMapStage = document.getElementById('town-map-stage');
         if (!townMapScreen || !townMapStage) return;
 
+        // Diğer kasaba (Sisören) aktif sınıflarını ve kalıntılarını temizle
+        townMapScreen.classList.remove('sisoren-active');
+        townMapStage.classList.remove('sisoren-active');
+        townMapStage.querySelectorAll('[class*="building-sisoren-"]').forEach(el => el.remove());
+        document.querySelectorAll('.sisoren-street-npc').forEach(el => el.remove());
+
         if (!townMapScreen.classList.contains('golge-sehir-active')) {
             townMapScreen.classList.add('golge-sehir-active');
         }
@@ -468,7 +467,7 @@ window.GolgeSehirEngine = {
             tuccarBtn.style.display = 'none';
         }
 
-        const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"])');
+        const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"]):not([class*="building-sisoren-"])');
         gizemliBuildings.forEach(el => el.style.display = 'none');
 
         // Gölge Şehir 8 binası
@@ -791,8 +790,10 @@ window.GolgeSehirEngine = {
         }
 
         if (townMapStage) {
-            const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"])');
-            gizemliBuildings.forEach(el => el.style.display = '');
+            if (window.currentActiveTown === 'gizemli') {
+                const gizemliBuildings = townMapStage.querySelectorAll('.map-building:not([class*="building-golge-"]):not([class*="building-sisoren-"])');
+                gizemliBuildings.forEach(el => el.style.display = '');
+            }
 
             const golgeBuildings = townMapStage.querySelectorAll('[class*="building-golge-"]');
             golgeBuildings.forEach(el => el.remove());

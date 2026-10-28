@@ -5413,3 +5413,38 @@ body.helper-box-active #tuccar-quick-tip-btn,
 body.helper-box-active .helper-detective-widget {
     display: none !important;
 }
+
+/* ========================================================= */
+/* BÖLGE HARİTASI (ANA KASABALAR HARİTASI) - MAVİ TEMA & ÇETİN İZOLASYONU */
+/* ========================================================= */
+
+/* Kasabalar Haritası her zaman oyunun kendi mavi/turkuaz noir temasında kalır */
+#world-map-screen {
+    --primary-glow: #66fcf1 !important;
+    --accent: #45f3ff !important;
+    --accent-rgb: 69, 243, 255 !important;
+    --border-color: rgba(69, 243, 255, 0.15) !important;
+    --border-glow: rgba(69, 243, 255, 0.4) !important;
+}
+
+/* Bölge Haritası açıkken ek yardımcıların (Bekçi Rıfat, Tüccar İlyas vb.) görünmesi kesinlikle engellenir */
+body:has(#world-map-screen:not(.hidden)) #bekci-quick-tip-btn,
+body:has(#world-map-screen:not(.hidden)) #tuccar-quick-tip-btn,
+body:has(#world-map-screen:not(.hidden)) .golge-bekci-widget,
+body:has(#world-map-screen:not(.hidden)) .sisoren-tuccar-widget,
+#world-map-screen:not(.hidden) ~ #bekci-quick-tip-btn,
+#world-map-screen:not(.hidden) ~ #tuccar-quick-tip-btn,
+#world-map-screen:not(.hidden) ~ .golge-bekci-widget,
+#world-map-screen:not(.hidden) ~ .sisoren-tuccar-widget {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    opacity: 0 !important;
+}
+
+/* Bölge haritasında sadece ana yardımcı Çetin'in widget'ı görünür */
+#world-map-screen:not(.hidden) #world-helper-btn {
+    display: flex !important;
+    visibility: visible !important;
+    z-index: 120 !important;
+}

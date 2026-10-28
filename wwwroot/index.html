@@ -16,7 +16,9 @@
     <!-- Gölge Şehir İzole Stil Dosyası -->
     <link rel="stylesheet" href="css/towns/golge_sehir/golge_sehir.css?v=602">
     <!-- Sisören İzole Stil Dosyası -->
-    <link rel="stylesheet" href="css/towns/sisoren/sisoren.css?v=509">
+    <link rel="stylesheet" href="css/towns/sisoren/sisoren.css?v=831">
+    <!-- Banana Studio & Nashi Medya Atölyesi Stilleri -->
+    <link rel="stylesheet" href="css/studio.css?v=101">
     <link
         href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kalam:wght@400;700&family=Sedgwick+Ave&display=swap"
         rel="stylesheet">
@@ -53,19 +55,19 @@
                 </div>
             </div>
 
-            <div class="region-town town-locked" style="top: 18%; left: 10%; width: 20%; height: 20%;"
+            <div class="region-town town-active" style="top: 18%; left: 10%; width: 20%; height: 20%;"
                 data-town-id="golge_sehir" data-town-name="Gölgeşehir">
-                <div class="region-town-tag tag-locked tag-golge">
-                    <i class="fa-solid fa-lock"></i> GÖLGEŞEHİR
-                    <span class="status-badge status-locked">Kilitli Bölge</span>
+                <div class="region-town-tag tag-active tag-golge">
+                    <i class="fa-solid fa-magnifying-glass"></i> GÖLGEŞEHİR
+                    <span class="status-badge status-open status-open-golge">Soruşturmaya Açık</span>
                 </div>
             </div>
 
-            <div class="region-town town-locked town-sisoren-btn" style="top: 9%; left: 42%; width: 20%; height: 18%;"
+            <div class="region-town town-active town-sisoren-btn town-sisoren-active" style="top: 9%; left: 42%; width: 20%; height: 18%;"
                 data-town-id="sisoren" data-town-name="Sisören">
-                <div class="region-town-tag tag-locked tag-sisoren">
-                    <i class="fa-solid fa-lock"></i> SİSÖREN
-                    <span class="status-badge status-locked">Kilitli Bölge</span>
+                <div class="region-town-tag tag-active tag-sisoren">
+                    <i class="fa-solid fa-magnifying-glass"></i> SİSÖREN
+                    <span class="status-badge status-open status-open-sisoren">Soruşturmaya Açık</span>
                 </div>
             </div>
 
@@ -85,6 +87,12 @@
                 </div>
             </div>
         </div>
+
+            <!-- YARDIMCI DEDEKTİF AVATARI (BÖLGE HARİTASI) - SADECE ÇETİN -->
+            <div id="world-helper-btn" class="helper-detective-widget" title="Yardımcı Dedektif Çetin'den İpucu Al">
+                <img src="images/dedektif_helper.png" alt="Yardımcı Dedektif" class="helper-detective-img cetin-img">
+                <div class="helper-detective-badge cetin-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
+            </div>
 
         <button id="world-back-btn" class="global-exit-btn" style="top: 25px; left: 25px;"><i
                 class="fa-solid fa-arrow-left"></i> Ana Menü</button>
@@ -146,7 +154,8 @@
             <!-- YARDIMCI DEDEKTİF AVATARI (HARİTA) -->
             <div id="town-helper-btn" class="helper-detective-widget" title="Yardımcı Dedektif Çetin'den İpucu Al">
                 <img src="images/dedektif_helper.png" alt="Yardımcı Dedektif" class="helper-detective-img cetin-img">
-                <div class="helper-detective-badge cetin-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
+                <div class="helper-detective-badge cetin-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF
+                </div>
             </div>
         </div>
 
@@ -176,8 +185,10 @@
 
             <!-- YARDIMCI DEDEKTİF AVATARI (BİNA İÇİ) -->
             <div id="interior-helper-btn" class="helper-detective-widget" title="Yardımcı Dedektif Çetin'den İpucu Al">
-                <img src="images/dedektif_helper.png?v=10" alt="Yardımcı Dedektif" class="helper-detective-img cetin-img">
-                <div class="helper-detective-badge cetin-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF</div>
+                <img src="images/dedektif_helper.png?v=10" alt="Yardımcı Dedektif"
+                    class="helper-detective-img cetin-img">
+                <div class="helper-detective-badge cetin-badge"><i class="fa-solid fa-user-ninja"></i> YARDIMCI DEDEKTİF
+                </div>
             </div>
         </div>
 
@@ -671,13 +682,17 @@
     <!-- Core Managers -->
 
 
+    <!-- Oyuncu oturumu (diğer tüm betiklerden önce yüklenmeli) -->
+    <script src="js/session.js?v=829"></script>
     <!-- Gölge Şehir İzole Modül Dosyaları -->
-    <script src="js/towns/golge_sehir/GolgeSehirConfig.js?v=815"></script>
-    <script src="js/towns/golge_sehir/GolgeSehirEngine.js?v=815"></script>
+    <script src="js/towns/golge_sehir/GolgeSehirConfig.js?v=830"></script>
+    <script src="js/towns/golge_sehir/GolgeSehirEngine.js?v=830"></script>
     <!-- Sisören Modül Dosyaları -->
-    <script src="js/towns/sisoren/SisorenConfig.js?v=828"></script>
-    <script src="js/towns/sisoren/SisorenEngine.js?v=828"></script>
-    <script src="js/app.js?v=828"></script>
+    <script src="js/towns/sisoren/SisorenConfig.js?v=830"></script>
+    <script src="js/towns/sisoren/SisorenEngine.js?v=831"></script>
+    <script src="js/app.js?v=830"></script>
+    <!-- Banana Studio & Nashi Entegrasyonu -->
+    <script src="js/studio_modal.js?v=101"></script>
 </body>
 
 </html>

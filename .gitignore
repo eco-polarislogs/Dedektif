@@ -35,3 +35,12 @@ Thumbs.db
 # Rider
 .idea/
 *.sln.iml
+
+# Tools (Banana Studio & Nashi)
+tools/**/node_modules/
+tools/**/dist/
+tools/**/.env
+tools/**/bin/
+tools/**/obj/
+tools/**/packages/
+

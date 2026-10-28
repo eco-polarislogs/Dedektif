@@ -79,9 +79,22 @@ class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Dependency Injection Servis Kayıtları
-        builder.Services.AddSingleton<IGameRepository>(repository);
+        // Ortak (statik) veri kaynağı: tüm oyuncular tarafından yalnızca OKUNUR
+        builder.Services.AddSingleton(repository);
         builder.Services.AddSingleton<IAIService>(sp => new LocalAiEngine(repository, geminiApiKey, geminiModel));
-        builder.Services.AddSingleton<IForensicService, ForensicService>();
+
+        // Oyuncuya özel durum: her tarayıcı kendi oturum kimliğiyle (X-Session-Id) tamamen bağımsız oynar
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddSingleton<PlayerSessionStore>();
+        builder.Services.AddScoped<PlayerSession>(sp =>
+        {
+            var ctx = sp.GetRequiredService<Microsoft.AspNetCore.Http.IHttpContextAccessor>().HttpContext;
+            string? sid = ctx?.Request.Headers["X-Session-Id"].FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(sid)) sid = ctx?.Request.Query["sid"].FirstOrDefault();
+            return sp.GetRequiredService<PlayerSessionStore>().GetOrCreate(sid);
+        });
+        builder.Services.AddScoped<IGameRepository>(sp => new SessionGameRepository(sp.GetRequiredService<DatabaseRepository>(), sp.GetRequiredService<PlayerSession>()));
+        builder.Services.AddScoped<IForensicService>(sp => sp.GetRequiredService<PlayerSession>().Forensic);
 
         // CORS — Geliştirme ortamında yalnızca localhost'a izin ver
         builder.Services.AddCors(options =>
@@ -126,6 +139,7 @@ class Program
         app.MapUnifiedEndpoints();
         app.MapGameEndpoints();
         GameEndpoints.MapSisorenEndpoints(app);
+        app.MapStudioEndpoints();
 
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("\n  🌍 Akıllı Dedektiflik RPG Web Sunucusu Başlatıldı! (Katmanlı Mimari v4.0)");
