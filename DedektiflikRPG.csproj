@@ -1,5 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
+<ItemGroup>
+  <Compile Remove="Dedektif_3D\**" />
+  <Content Remove="Dedektif_3D\**" />
+  <None Remove="Dedektif_3D\**" />
+</ItemGroup>
+
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
