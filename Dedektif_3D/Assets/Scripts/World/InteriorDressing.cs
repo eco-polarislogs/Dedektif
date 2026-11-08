@@ -238,7 +238,7 @@ namespace Dedektif3D.World
 
         static void HayBale(Transform t, Vector3 pos, float yaw)
         {
-            Box("SamanBalyası", t, pos + Vector3.up * 0.25f, new Vector3(1.1f, 0.5f, 0.55f), M.Get("hay", new Color(0.62f, 0.52f, 0.28f), 0.05f, 0f, M.NoiseTexture), new Vector3(0, yaw, 0));
+            Box("SamanBalyası", t, pos + Vector3.up * 0.25f, new Vector3(1.1f, 0.5f, 0.55f), M.Get("hay", new Color(0.36f, 0.3f, 0.16f), 0.05f, 0f, M.NoiseTexture), new Vector3(0, yaw, 0));
         }
 
         public static void Telegraph(Transform t, Vector3 pos)
@@ -323,11 +323,14 @@ namespace Dedektif3D.World
                                 Box("Oturak", s, new Vector3(0, 0.42f, 0), new Vector3(0.5f, 0.14f, 0.5f), velvet);
                                 Box("Arkalık", s, new Vector3(0, 0.8f, -0.24f), new Vector3(0.5f, 0.7f, 0.1f), velvet, collider: false);
                             }
-                    var proj = Group("Projektör", t, new Vector3(-2.0f, 0, -3.3f)).transform;
+                    // 1887: gaz alevli hayal feneri (magic lantern): pirinç mercekli sandık, bacası ve cam levha kutusu
+                    var proj = Group("HayalFeneri", t, new Vector3(-2.0f, 0, -3.3f)).transform;
                     Box("Sehpa", proj, new Vector3(0, 0.55f, 0), new Vector3(0.6f, 1.1f, 0.6f), DarkWood);
-                    Box("Makine", proj, new Vector3(0, 1.3f, 0), new Vector3(0.45f, 0.4f, 0.6f), Iron, collider: false);
-                    foreach (var z in new[] { -0.25f, 0.25f }) Cyl("Makara", proj, new Vector3(0, 1.75f, z), new Vector3(0.45f, 0.03f, 0.45f), Iron, new Vector3(0, 0, 90), false);
-                    var beam = PointLight("ProjektörIşığı", proj, new Vector3(0, 1.3f, 0.5f), new Color(0.9f, 0.92f, 1f), 1.5f, 4f);
+                    Box("Sandık", proj, new Vector3(0, 1.3f, 0), new Vector3(0.45f, 0.42f, 0.5f), M.Wood(new Color(0.24f, 0.14f, 0.08f)), collider: false);
+                    Cyl("Mercek", proj, new Vector3(0, 1.3f, 0.34f), new Vector3(0.2f, 0.09f, 0.2f), Brass, new Vector3(90, 0, 0), false);
+                    Cyl("Baca", proj, new Vector3(0, 1.66f, -0.05f), new Vector3(0.11f, 0.16f, 0.11f), Iron, null, false);
+                    Box("CamLevhaKutusu", proj, new Vector3(0.48f, 1.13f, 0), new Vector3(0.28f, 0.12f, 0.2f), Brass, collider: false);
+                    var beam = PointLight("HayalFeneriIşığı", proj, new Vector3(0, 1.3f, 0.5f), new Color(1f, 0.82f, 0.56f), 1.5f, 4f);
                     beam.gameObject.AddComponent<LightFlicker>().Init(beam, 0.25f);
                     for (int i = 0; i < 2; i++)
                         Box("Afiş", t, new Vector3(-4.94f, 1.8f, 1.7f + i * 1.2f), new Vector3(0.02f, 1.1f, 0.75f), M.Get("poster_" + i, i == 0 ? new Color(0.55f, 0.35f, 0.2f) : new Color(0.2f, 0.25f, 0.35f), 0.1f), collider: false);
@@ -373,16 +376,18 @@ namespace Dedektif3D.World
                     foreach (var p in new[] { new Vector3(-4.0f, 0, 0.2f), new Vector3(-4.0f, 0.5f, 0.3f), new Vector3(4.0f, 0, 0.6f), new Vector3(3.9f, 0, 2.6f) }) HayBale(t, p, 90f);
                     for (int i = 0; i < 3; i++) Box("BölmeÇiti", t, new Vector3(-2.8f + i * 0.02f, 0.5f + i * 0.35f, 2.8f), new Vector3(0.08f, 0.08f, 1.8f), MidWood, collider: false);
                     Box("Yemlik", t, new Vector3(-4.4f, 0.35f, 2.6f), new Vector3(0.7f, 0.4f, 1.6f), DarkWood);
-                    Box("Saman", t, new Vector3(0, 0.01f, 0.4f), new Vector3(6f, 0.02f, 3f), M.Get("hay", new Color(0.62f, 0.52f, 0.28f), 0.05f, 0f, M.NoiseTexture), collider: false);
+                    Box("Saman", t, new Vector3(0, 0.01f, 0.4f), new Vector3(6f, 0.02f, 3f), M.Get("hay", new Color(0.36f, 0.3f, 0.16f), 0.05f, 0f, M.NoiseTexture), collider: false);
                     for (int i = 0; i < 3; i++) Box("Alet", t, new Vector3(4.94f, 1.6f, 1.6f + i * 0.4f), new Vector3(0.03f, 1.4f, 0.05f), M.Wood(new Color(0.45f, 0.33f, 0.2f)), new Vector3(8, 0, 0), false);
                     break;
                 case "tupcu":
+                    // Gazyağcı deposu: duvar diplerinde variller, rafta tenekeler
                     for (int i = 0; i < 9; i++)
                     {
-                        var c = i % 3 == 0 ? new Color(0.62f, 0.33f, 0.12f) : i % 3 == 1 ? new Color(0.25f, 0.35f, 0.42f) : new Color(0.3f, 0.38f, 0.26f);
-                        var x = i < 5 ? -4.5f + (i % 2) * 0.35f : 4.5f - (i % 2) * 0.35f;
-                        Cyl("Tüp", t, new Vector3(x, 0.45f, -0.4f + (i % 5) * 0.75f), new Vector3(0.3f, 0.45f, 0.3f), M.Get("cylinder_" + (i % 3), c, 0.5f, 0.6f));
+                        var x = i < 5 ? -4.45f : 4.45f;
+                        PropFactory.Barrel(t, new Vector3(x, 0, -0.4f + (i % 5) * 0.75f));
                     }
+                    for (int i = 0; i < 4; i++)
+                        Box("Teneke", t, new Vector3(-1.4f + i * 0.38f, 0.17f, -3.6f), new Vector3(0.3f, 0.34f, 0.3f), M.Get("tin_can", new Color(0.42f, 0.4f, 0.34f), 0.5f, 0.6f), new Vector3(0, i * 9f, 0), false);
                     Table(t, new Vector3(-1.8f, 0, -3.5f), new Vector2(1.2f, 0.6f));
                     Box("Defter", t, new Vector3(-1.8f, 0.82f, -3.5f), new Vector3(0.3f, 0.03f, 0.22f), M.Get("book_ox", new Color(0.35f, 0.08f, 0.06f)), collider: false);
                     break;

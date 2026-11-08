@@ -94,18 +94,10 @@ namespace Dedektif3D.World
         {
             var wood = new Color(0.4f, 0.27f, 0.16f);
             Counter(t, wood);
-            Shelf(t, new Vector3(-2.6f, 0, D / 2 - 0.3f), 0, 3.6f, 4, wood);
-            Shelf(t, new Vector3(2.6f, 0, D / 2 - 0.3f), 0, 3.6f, 4, wood);
-            for (int lvl = 1; lvl < 4; lvl++)
-                for (int i = 0; i < 6; i++)
-                {
-                    var c = Color.HSVToRGB((i * 0.13f + lvl * 0.27f + d.NpcId * 0.07f) % 1f, 0.35f, 0.4f);
-                    var mat = M.Get("rural_item_" + ColorUtility.ToHtmlStringRGB(c), c, 0.3f);
-                    float x = (i < 3 ? -3.9f : 1.3f) + (i % 3) * 1.1f;
-                    if (i % 2 == 0) Box("Kavanoz", t, new Vector3(x, 0.3f + lvl * 0.7f + 0.15f, D / 2 - 0.35f), new Vector3(0.3f, 0.3f, 0.25f), mat, collider: false);
-                    else Cyl("Çömlek", t, new Vector3(x, 0.3f + lvl * 0.7f + 0.15f, D / 2 - 0.35f), new Vector3(0.3f, 0.15f, 0.3f), mat, collider: false);
-                }
-            Text3D("Tabela", t, new Vector3(0, 3.4f, D / 2 - 0.12f), d.DisplayName, new Color(0.95f, 0.85f, 0.6f), 0.05f);
+            // Dükkân adı: duvara çakılı küçük boyalı levha (ışıklı dev yazı değil)
+            Box("TabelaLevha", t, new Vector3(0, 3.42f, D / 2 - 0.06f), new Vector3(2.1f, 0.5f, 0.04f), M.Get("detail_signboard", new Color(0.07f, 0.13f, 0.09f), 0.35f), collider: false);
+            Text3D("Tabela", t, new Vector3(0, 3.42f, D / 2 - 0.09f), d.DisplayName, new Color(0.72f, 0.62f, 0.4f), 0.022f);
+            RoomDetail.Rural(t, d);
             InteriorDressing.Furnish(t, d);
         }
 
@@ -120,7 +112,8 @@ namespace Dedektif3D.World
             Box("Sehpa", t, new Vector3(0, 0.38f, 0), new Vector3(0.62f, 0.76f, 0.5f), M.Wood(new Color(0.3f, 0.2f, 0.12f)));
             Box("Örtü", t, new Vector3(0, 0.77f, 0), new Vector3(0.66f, 0.02f, 0.54f), M.Get("felt_green", new Color(0.08f, 0.18f, 0.12f), 0.1f), collider: false);
             var prop = PropFactory.BuildClue(ShapeFor(clue.Name), t, new Vector3(0, 0.79f, 0));
-            prop.transform.localScale = Vector3.one * 0.9f;
+            // Kasa gibi iri delil sehpayı ve odayı kapatmasın
+            prop.transform.localScale = Vector3.one * (ShapeFor(clue.Name) == ClueShape.Safe ? 0.42f : 0.9f);
             return g;
         }
 
@@ -158,15 +151,19 @@ namespace Dedektif3D.World
             Material wall;
             switch (def.Style)
             {
-                case BuildingStyle.Kasap: wall = M.Brick(new Color(0.85f, 0.85f, 0.82f)); break;
-                case BuildingStyle.Eczane: wall = M.Plaster(new Color(0.75f, 0.85f, 0.8f)); break;
-                case BuildingStyle.Muhtarlik: wall = M.Plaster(new Color(0.78f, 0.7f, 0.55f)); break;
-                case BuildingStyle.Karakol: wall = M.Plaster(new Color(0.55f, 0.6f, 0.65f)); break;
+                // Koyu tonlar: web iç mekân görselleri loş, gaz lambasıyla aydınlanan odalar gösteriyor
+                case BuildingStyle.Kasap: wall = M.Brick(new Color(0.42f, 0.41f, 0.38f)); break;
+                case BuildingStyle.Eczane: wall = M.Plaster(new Color(0.3f, 0.32f, 0.28f)); break;
+                case BuildingStyle.Muhtarlik: wall = M.Plaster(new Color(0.34f, 0.28f, 0.2f)); break;
+                case BuildingStyle.Karakol: wall = M.Plaster(new Color(0.26f, 0.3f, 0.33f)); break;
                 case BuildingStyle.Rural: wall = M.Wood(new Color(0.32f, 0.23f, 0.15f)); break;
-                default: wall = M.Plaster(new Color(0.6f, 0.52f, 0.62f)); break;
+                default: wall = M.Plaster(new Color(0.34f, 0.29f, 0.24f)); break;
             }
-            var floor = Box("Floor", t, new Vector3(0, -0.1f, 0), new Vector3(W, 0.2f, D), M.Floorboards);
-            SetTiling(floor.GetComponent<Renderer>(), new Vector2(3, 2.5f));
+            // Kasap ve karakolun zemini fayans, diğerleri ahşap (web iç mekân görselleri)
+            bool tiled = def.Style == BuildingStyle.Kasap || def.Style == BuildingStyle.Karakol;
+            var floorMat = !tiled ? M.Floorboards : RoomDetail.TileFloor(def.Style == BuildingStyle.Kasap ? new Color(0.42f, 0.4f, 0.36f) : new Color(0.3f, 0.35f, 0.37f));
+            var floor = Box("Floor", t, new Vector3(0, -0.1f, 0), new Vector3(W, 0.2f, D), floorMat);
+            SetTiling(floor.GetComponent<Renderer>(), tiled ? new Vector2(5, 4) : new Vector2(3, 2.5f));
             Box("Ceiling", t, new Vector3(0, H + 0.1f, 0), new Vector3(W, 0.2f, D), M.Plaster(new Color(0.5f, 0.48f, 0.45f)));
             Box("WallBack", t, new Vector3(0, H / 2, D / 2 + 0.1f), new Vector3(W, H, 0.2f), wall, texTiling: 0.5f);
             Box("WallLeft", t, new Vector3(-W / 2 - 0.1f, H / 2, 0), new Vector3(0.2f, H, D), wall, texTiling: 0.5f);
@@ -177,7 +174,7 @@ namespace Dedektif3D.World
             Box("WallFrontTop", t, new Vector3(0, H - 0.8f, -D / 2 - 0.1f), new Vector3(1.6f, 1.6f, 0.2f), wall);
             Box("ExitDoor", t, new Vector3(0, 1.3f, -D / 2 - 0.05f), new Vector3(1.6f, 2.6f, 0.12f), M.Wood(new Color(0.3f, 0.18f, 0.1f)));
             Sphere("ExitKnob", t, new Vector3(0.55f, 1.2f, -D / 2 + 0.05f), Vector3.one * 0.09f, M.Get("brass", new Color(0.75f, 0.6f, 0.25f), 0.8f, 0.9f));
-            Text3D("ExitSign", t, new Vector3(0, 2.85f, -D / 2 + 0.02f), "ÇIKIŞ", new Color(0.3f, 1f, 0.5f), 0.035f, 180f);
+            Text3D("ExitSign", t, new Vector3(0, 2.85f, -D / 2 + 0.02f), "ÇIKIŞ", new Color(0.86f, 0.74f, 0.5f), 0.035f, 180f);
             // Süpürgelik
             var trim = M.Wood(new Color(0.25f, 0.15f, 0.09f));
             Box("TrimBack", t, new Vector3(0, 0.08f, D / 2 - 0.02f), new Vector3(W, 0.16f, 0.06f), trim, collider: false);
@@ -219,16 +216,10 @@ namespace Dedektif3D.World
             Counter(t, new Color(0.55f, 0.35f, 0.2f));
             // Cam vitrin (tezgahın önünde et sergisi)
             Box("DisplayGlass", t, new Vector3(0, 1.25f, 1.25f), new Vector3(3.6f, 0.45f, 0.03f), M.Glass, new Vector3(-20, 0, 0), false);
-            var meat = M.Get("meat", new Color(0.6f, 0.12f, 0.12f), 0.5f);
-            var fat = M.Get("fat", new Color(0.9f, 0.8f, 0.75f), 0.4f);
-            // Asılı etler (tavan rayı + çengeller)
-            Box("HookRail", t, new Vector3(0, H - 0.3f, 3.6f), new Vector3(9f, 0.08f, 0.08f), M.Metal, collider: false);
+            // Asılı karkaslar (tavan rayı + çengeller)
+            Box("HookRail", t, new Vector3(0, H - 0.42f, 3.6f), new Vector3(9f, 0.08f, 0.08f), M.Metal, collider: false);
             foreach (var x in new[] { -4f, -3f, -2f, 2f, 3f, 4f })
-            {
-                Box("Hook", t, new Vector3(x, H - 0.6f, 3.6f), new Vector3(0.02f, 0.5f, 0.02f), M.Metal, collider: false);
-                Capsule("Meat", t, new Vector3(x, H - 1.3f, 3.6f), new Vector3(0.45f, 0.5f, 0.35f), meat);
-                Sphere("Fat", t, new Vector3(x + 0.1f, H - 1.1f, 3.45f), new Vector3(0.2f, 0.25f, 0.1f), fat);
-            }
+                RoomDetail.Carcass(t, new Vector3(x, H - 0.42f, 3.6f), 1.05f);
             Cyl("ChopBlock", t, new Vector3(3.2f, 0.45f, -1f), new Vector3(0.9f, 0.45f, 0.9f), M.Wood(new Color(0.45f, 0.3f, 0.16f)));
             Box("BloodPuddle", t, new Vector3(3.2f, 0.005f, -0.2f), new Vector3(0.7f, 0.01f, 0.4f), M.Get("blood", new Color(0.45f, 0.02f, 0.03f), 0.8f), new Vector3(0, 25, 0), false);
             // Soğuk hava deposu kapısı
@@ -240,6 +231,7 @@ namespace Dedektif3D.World
                 Cyl("Peg" + i, t, new Vector3(-W / 2 + 0.15f, 1.95f, -2f + i * 0.5f), new Vector3(0.04f, 0.1f, 0.04f), M.Metal, new Vector3(0, 0, 90), false);
             Box("Scale", t, new Vector3(-0.2f, 1.1f, 1.7f), new Vector3(0.3f, 0.15f, 0.3f), M.Get("silver", new Color(0.8f, 0.8f, 0.85f), 0.9f, 1f), collider: false);
             PropFactory.Barrel(t, new Vector3(-4f, 0, 3f));
+            RoomDetail.Kasap(t);
         }
 
         // =================================================================
@@ -247,32 +239,18 @@ namespace Dedektif3D.World
         // =================================================================
         static void FurnishEczane(Transform t, BuildingDef d)
         {
-            Counter(t, new Color(0.85f, 0.88f, 0.85f));
-            var wood = new Color(0.45f, 0.32f, 0.2f);
-            Shelf(t, new Vector3(-2.6f, 0, D / 2 - 0.3f), 0, 4f, 5, wood);
-            Shelf(t, new Vector3(2.6f, 0, D / 2 - 0.3f), 0, 4f, 5, wood);
-            Shelf(t, new Vector3(W / 2 - 0.3f, 0, -1f), 90, 3.5f, 5, wood);
-            Color[] bottleColors = { new Color(0.35f, 0.18f, 0.06f), new Color(0.1f, 0.35f, 0.2f), new Color(0.2f, 0.3f, 0.6f), new Color(0.85f, 0.85f, 0.85f) };
-            int n = 0;
-            foreach (var sx in new[] { -2.6f, 2.6f })
-                for (int lvl = 1; lvl < 5; lvl++)
-                    for (int i = 0; i < 7; i++)
-                    {
-                        float x = sx - 1.6f + i * 0.53f;
-                        if (sx > 0 && lvl == 2 && i >= 5) continue; // Delil şişesi için boşluk
-                        var c = bottleColors[(n++ + lvl) % bottleColors.Length];
-                        Cyl("Bottle", t, new Vector3(x, 0.3f + lvl * 0.525f + 0.13f, D / 2 - 0.35f), new Vector3(0.14f, 0.12f, 0.14f),
-                            M.Get("bottle_" + ColorUtility.ToHtmlStringRGB(c), c, 0.9f, 0.1f), collider: false);
-                    }
-            // Duvardaki yeşil haç
-            var crossMat = M.Emissive("neon_cross", d.Neon, 3f);
+            var wood = new Color(0.2f, 0.125f, 0.07f);
+            Counter(t, wood);
+            // Duvardaki boyalı yeşil haç (ışıklı değil: 1887)
+            var crossMat = M.Get("apothecary_paint", new Color(0.1f, 0.42f, 0.24f), 0.2f);
             Box("CrossV", t, new Vector3(0, 3.3f, D / 2 - 0.05f), new Vector3(0.3f, 0.9f, 0.08f), crossMat, collider: false);
             Box("CrossH", t, new Vector3(0, 3.3f, D / 2 - 0.05f), new Vector3(0.9f, 0.3f, 0.08f), crossMat, collider: false);
             Box("Register", t, new Vector3(1.4f, 1.15f, 1.7f), new Vector3(0.45f, 0.3f, 0.4f), M.Get("register", new Color(0.2f, 0.2f, 0.22f), 0.6f, 0.5f), collider: false);
             Box("Mortar", t, new Vector3(0.4f, 1.08f, 1.8f), new Vector3(0.18f, 0.12f, 0.18f), M.Stone, collider: false);
             Cyl("PlantPot", t, new Vector3(-4.2f, 0.3f, -3f), new Vector3(0.6f, 0.3f, 0.6f), M.Get("terracotta", new Color(0.6f, 0.3f, 0.18f)));
             Sphere("Plant", t, new Vector3(-4.2f, 1f, -3f), new Vector3(0.9f, 1f, 0.9f), M.Get("leaves", new Color(0.08f, 0.17f, 0.09f)));
-            Box("ScaleBench", t, new Vector3(-4.4f, 0.25f, 0.5f), new Vector3(0.9f, 0.5f, 2f), M.Wood(wood));
+            Box("ScaleBench", t, new Vector3(-4.4f, 0.25f, 1.0f), new Vector3(0.9f, 0.5f, 1.5f), M.Wood(wood));
+            RoomDetail.Eczane(t);
         }
 
         // =================================================================
@@ -314,6 +292,7 @@ namespace Dedektif3D.World
             Box("FilingCabinet", t, new Vector3(4.4f, 0.75f, -1.5f), new Vector3(0.8f, 1.5f, 0.7f), M.Get("cabinet", new Color(0.3f, 0.35f, 0.3f), 0.4f, 0.6f));
             Box("Rug", t, new Vector3(0, 0.005f, -0.5f), new Vector3(4f, 0.01f, 2.6f), M.Get("rug", new Color(0.45f, 0.1f, 0.1f), 0.05f), collider: false);
             Box("RugBorder", t, new Vector3(0, 0.004f, -0.5f), new Vector3(4.3f, 0.01f, 2.9f), M.Get("rugborder", new Color(0.7f, 0.55f, 0.25f), 0.05f), collider: false);
+            RoomDetail.Muhtarlik(t);
         }
 
         // =================================================================
@@ -357,6 +336,7 @@ namespace Dedektif3D.World
             Box("TüfekAskısı", t, new Vector3(W / 2 - 0.06f, 2.2f, 2.4f), new Vector3(0.06f, 0.08f, 1.4f), M.Wood(new Color(0.3f, 0.18f, 0.1f)), collider: false);
             foreach (var z in new[] { 2.0f, 2.4f, 2.8f })
                 Cyl("Tüfek", t, new Vector3(W / 2 - 0.12f, 1.7f, z), new Vector3(0.04f, 0.6f, 0.04f), M.Get("rifle", new Color(0.22f, 0.13f, 0.07f), 0.5f), collider: false);
+            RoomDetail.Karakol(t);
         }
 
         // =================================================================
@@ -364,7 +344,7 @@ namespace Dedektif3D.World
         // =================================================================
         static void FurnishTerzi(Transform t, BuildingDef d)
         {
-            Counter(t, new Color(0.4f, 0.28f, 0.35f));
+            Counter(t, new Color(0.26f, 0.17f, 0.11f));
             // Dikiş makinesi
             var mach = Group("SewingMachine", t, new Vector3(-1.2f, 1.02f, 1.65f)).transform;
             var black = M.Get("machine", new Color(0.05f, 0.05f, 0.06f), 0.8f, 0.3f);
@@ -378,8 +358,7 @@ namespace Dedektif3D.World
                 var mq = Group("Mannequin", t, pos).transform;
                 Cyl("Stand", mq, new Vector3(0, 0.55f, 0), new Vector3(0.06f, 0.55f, 0.06f), M.Metal);
                 Cyl("Foot", mq, new Vector3(0, 0.02f, 0), new Vector3(0.5f, 0.02f, 0.5f), M.Metal, collider: false);
-                Capsule("Torso", mq, new Vector3(0, 1.45f, 0), new Vector3(0.5f, 0.45f, 0.32f), M.Get("suit_" + pos.x, Color.HSVToRGB(Mathf.Abs(pos.z * 0.1f) % 1f, 0.4f, 0.3f)));
-                Sphere("Knob", mq, new Vector3(0, 1.95f, 0), Vector3.one * 0.12f, M.Wood(new Color(0.6f, 0.45f, 0.3f)));
+                RoomDetail.DressForm(mq, Tailoring.Cloth(pos.z > 2f ? new Color(0.62f, 0.55f, 0.42f) : new Color(0.16f, 0.17f, 0.22f), 0.1f));
             }
             // Kumaş topları rafı
             var wood = new Color(0.4f, 0.28f, 0.2f);
@@ -387,14 +366,16 @@ namespace Dedektif3D.World
             for (int lvl = 1; lvl < 4; lvl++)
                 for (int i = 0; i < 6; i++)
                 {
-                    var c = Color.HSVToRGB((i * 0.17f + lvl * 0.23f) % 1f, 0.55f, 0.55f);
+                    // Görseldeki gibi koyu takım kumaşları: lacivert, bordo, füme, kahve
+                    Color[] rolls = { new Color(0.09f, 0.13f, 0.27f), new Color(0.32f, 0.06f, 0.08f), new Color(0.22f, 0.22f, 0.24f), new Color(0.3f, 0.25f, 0.17f), new Color(0.08f, 0.2f, 0.15f), new Color(0.12f, 0.1f, 0.1f) };
                     Cyl("FabricRoll", t, new Vector3(-0.6f + i * 0.8f, 0.3f + lvl * 0.7f + 0.2f, D / 2 - 0.35f), new Vector3(0.35f, 0.2f, 0.35f),
-                        M.Get("roll_" + ColorUtility.ToHtmlStringRGB(c), c, 0.2f), new Vector3(0, 0, 90), false);
+                        Tailoring.Cloth(rolls[(i * 2 + lvl) % rolls.Length], 0.12f), new Vector3(0, 0, 90), false);
                 }
             // Boy aynası
             Box("MirrorFrame", t, new Vector3(W / 2 - 0.05f, 1.3f, -1f), new Vector3(0.06f, 2.2f, 1f), M.Wood(new Color(0.5f, 0.35f, 0.15f)), collider: false);
             Box("Mirror", t, new Vector3(W / 2 - 0.09f, 1.3f, -1f), new Vector3(0.02f, 2f, 0.85f), M.Get("mirror", new Color(0.7f, 0.75f, 0.8f), 1f, 1f), collider: false);
             Cyl("Stool", t, new Vector3(2.4f, 0.3f, -1.5f), new Vector3(0.5f, 0.3f, 0.5f), M.Wood(new Color(0.35f, 0.22f, 0.12f)));
+            RoomDetail.Terzi(t);
         }
     }
 }

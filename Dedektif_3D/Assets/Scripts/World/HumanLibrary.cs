@@ -28,10 +28,10 @@ namespace Dedektif3D.World
         static Dictionary<string, List<AnimationClip>> _clips;
         static Dictionary<string, GameObject> _parts;
 
-        public static bool Available { get { Load(); return (_chars.Count > 0 || KitReady) && Clip("idle", 0) != null; } }
+        public static bool Available { get { Load(); return _chars.Count > 0 || KitReady; } }
         public static int CharacterCount { get { Load(); return _chars.Count + (KitReady ? 1 : 0); } }
         public static int ClipCount { get { Load(); return _clips.Values.Sum(l => l.Count); } }
-        static bool KitReady => _parts.ContainsKey("base_male") && _parts.ContainsKey("male_peasant_body");
+        static bool KitReady => _parts.ContainsKey("base_male") || _parts.ContainsKey("female_peasant_body") || _parts.ContainsKey("male_peasant_body");
 
         /// <summary>Mixamo tarzı tek klipli dosyalar için anahtar kelimeler (kütüphane klipleri "tür_" önekiyle gelir).</summary>
         static readonly Dictionary<string, string[]> Kinds = new Dictionary<string, string[]>
@@ -142,7 +142,6 @@ namespace Dedektif3D.World
         public static HumanAnimator Spawn(Transform parent, string key, bool female, bool child, string pose, Look look = null)
         {
             Load();
-            if (Clip("idle", 0) == null) return null;
             key = string.IsNullOrEmpty(key) ? "anon_" + Random.Range(0, 99999) : key;
             GameObject go = null;
             var e = Pick(key.Split('#')[0], female, child);
@@ -187,6 +186,9 @@ namespace Dedektif3D.World
             anim.applyRootMotion = false;
             anim.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
             anim.runtimeAnimatorController = null;
+            // Montaj özgün mesh'leri silip yenilerini ekledi. Animator mesh listesini yenilemezse hiçbir şeyi görünür saymaz,
+            // CullUpdateTransforms modunda kemikleri güncellemez ve figür T-pozunda kalır.
+            anim.Rebind();
             var ha = go.AddComponent<HumanAnimator>();
             ha.Init(anim, Hash(key), pose);
             ha.BuildAnchors(go.transform);
@@ -204,7 +206,7 @@ namespace Dedektif3D.World
         // =================================================================
         static GameObject Part(string n) => _parts.TryGetValue(n.ToLowerInvariant(), out var p) ? p : null;
 
-        static readonly HashSet<Headwear.Kind> Covering = new HashSet<Headwear.Kind> { Headwear.Kind.Fez, Headwear.Kind.FlatCap, Headwear.Kind.Bowler, Headwear.Kind.TopHat,
+        static readonly HashSet<Headwear.Kind> Covering = new HashSet<Headwear.Kind> { Headwear.Kind.FlatCap, Headwear.Kind.Bowler, Headwear.Kind.TopHat, Headwear.Kind.Cloche,
             Headwear.Kind.Fedora, Headwear.Kind.Beanie, Headwear.Kind.PostCap, Headwear.Kind.PoliceCap, Headwear.Kind.HeadWrap, Headwear.Kind.Headscarf };
 
         static GameObject Assemble(Transform parent, string key, bool female, bool child, Look look)
@@ -232,7 +234,14 @@ namespace Dedektif3D.World
             var go = Object.Instantiate(masterP, parent, false);
             go.name = "İnsan_" + key;
             var anim = go.GetComponentInChildren<Animator>();
-            if (masterP == baseP) foreach (var smr in go.GetComponentsInChildren<SkinnedMeshRenderer>(true)) { var hm = HeadOnly(smr.sharedMesh, smr.bones); if (hm != null) smr.sharedMesh = hm; }
+            // Dikilen kıyafet: iskelet parçadan alınır ama parçanın fantastik gövde mesh'leri atılır; yalnızca baş, eller ve ayakkabı kalır
+            if (masterP != baseP)
+                foreach (var smr in go.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    if (smr.transform.childCount == 0 && smr.gameObject != go) Object.DestroyImmediate(smr.gameObject);
+                    else Object.DestroyImmediate(smr);
+                }
+            else foreach (var smr in go.GetComponentsInChildren<SkinnedMeshRenderer>(true)) { var hm = HeadOnly(smr.sharedMesh, smr.bones); if (hm != null) smr.sharedMesh = hm; }
 
             var bones = new Dictionary<string, Transform>();
             foreach (var t in go.GetComponentsInChildren<Transform>(true)) if (!bones.ContainsKey(t.name)) bones[t.name] = t;
@@ -244,7 +253,7 @@ namespace Dedektif3D.World
             string hair = hairStyle == "short" ? "Hair_Buzzed" : hairStyle == "parted" ? (covered ? "Hair_Buzzed" : "Hair_SimpleParted") : hairStyle == "long" ? "Hair_Long" : hairStyle == "buns" ? "Hair_Buns" : null;
             bool beard = !female && !spec.Child && (spec.Beard == "full" || spec.Beard == "stubble");
 
-            foreach (var pn in new[] { body, arms, legs, feet }) if (Part(pn) != masterP) Attach(Part(pn), go.transform, bones);
+            Attach(Part(feet), go.transform, bones);
             if (masterP != baseP) Attach(baseP, go.transform, bones, headOnly: true);
             if (hair != null && spec.Hat != Headwear.Kind.Headscarf) Attach(Part(hair), go.transform, bones);
             if (beard) Attach(Part("Hair_Beard"), go.transform, bones);
@@ -295,7 +304,8 @@ namespace Dedektif3D.World
             for (int i = 0; i < bones.Length; i++)
             {
                 var n = bones[i] != null ? bones[i].name.ToLowerInvariant() : "";
-                keepBone[i] = n == "head" || n == "neck_01" || n.StartsWith("head");
+                keepBone[i] = n == "head" || n == "neck_01" || n.StartsWith("head") || n.Contains("neck")
+                    || n.Contains("hand") || n.Contains("thumb") || n.Contains("index") || n.Contains("middle") || n.Contains("ring") || n.Contains("pinky") || n.Contains("little");
             }
             var bw = src.boneWeights;
             int vc = src.vertexCount;

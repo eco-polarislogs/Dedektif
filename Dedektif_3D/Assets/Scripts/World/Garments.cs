@@ -57,6 +57,7 @@ namespace Dedektif3D.World
         public static void Dress(Animator a, Transform root, CharLook l)
         {
             if (a == null || l == null) return;
+            if (Tailoring.Dress(a, root, l)) return;   // baştan dikilen kara film kıyafetleri (hazır model ve eski parça yolu yedek)
             var f = Measure(a, root);
             if (f == null) return;
             float leg = Mathf.Max(0.3f, f.HipsY - f.AnkleY);
@@ -258,6 +259,7 @@ namespace Dedektif3D.World
                 Box("Kravat", ch, new Vector3(0, 0.0f, 0.13f), new Vector3(0.05f, 0.28f, 0.012f), tie, new Vector3(-6, 0, 0), false);
             }
             if (!string.IsNullOrEmpty(l.Prop) && h.HandAnchor != null) Prop(rig, l.Prop);
+            Tailoring.Accessorize(rig, l);
         }
 
         static void Prop(PropFactory.PersonRig rig, string prop)

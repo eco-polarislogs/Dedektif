@@ -62,6 +62,7 @@ namespace Dedektif3D.Core
             // 4) Kamera + görsel efektler
             var cam = SetupCamera();
             CameraFx.Attach(cam);
+            if (cam.GetComponent<AtmosphericLensFx>() == null) cam.gameObject.AddComponent<AtmosphericLensFx>();
             SetupPostProcessing(root.transform);
 
             // 5) Ses + şimşek
@@ -86,6 +87,7 @@ namespace Dedektif3D.Core
             // Olay yeri şeridi yalnızca NPC'lere kapalı: dedektif (katman 2) engelden geçer
             Physics.IgnoreLayerCollision(2, World.TownGenerator.NpcBarrierLayer, true);
             gm.Initialize(town, player, api, ui, lightning);
+            root.AddComponent<PerfGuard>();
 
             GameSettings.Apply();
             Physics.SyncTransforms();

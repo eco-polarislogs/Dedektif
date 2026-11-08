@@ -65,6 +65,7 @@ namespace Dedektif3D.Gameplay
         public void Stop()
         {
             Current = Mode.None;
+            // Fareyle aramadaysa oyuncunun baktığı yön korunur; yakın plandan dönünce oda gözünün önünden kaymaz.
             if (_tpc != null) { _tpc.CinematicOverride = false; _tpc.SnapBehind(); }
         }
 

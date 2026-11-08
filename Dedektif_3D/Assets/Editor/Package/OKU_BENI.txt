@@ -1,0 +1,44 @@
+DEDEKTİF — Karanlık Kasabanın Sırrı
+Anadolu, Sonbahar 1887. Üç kasaba, üç cinayet, herkesin sakladığı bir sır.
+
+KURULUM
+  Klasörü istediğiniz yere çıkarın ve Dedektif.exe'yi çalıştırın. Kurulum ve internet gerekmez.
+
+SİSTEM
+  En az: Windows 10 64 bit, 8 GB RAM, GTX 1050 / eşdeğeri, 1 GB boş alan.
+  Oyun yavaşlarsa grafik kalitesini kendisi düşürür; Ayarlar'dan değiştirebilirsiniz.
+
+KONTROLLER
+  W A S D         Yürü (Shift koşar)
+  Sağ tık / V     Fareyle arama: aç / kapat (bina içinde kendiliğinden açılır)
+  Fare            Odada gezdir: delilin üstüne gelince parlar. Kenara götürünce etrafa bakar.
+  Sol tık         Parlayan şeyi incele: delil, saklama yeri, şüpheli, kapı, ceset
+  E               Yakındaki kapı, delil, şüpheli
+  Q               Dedektif Gözü: saklanmış izleri sez
+  Tab             Çanta ve adli laboratuvar (kasabada, binaların dışında)
+  R               Otopsi raporu
+  B               Vaka panosu
+  H               Yardımcı Dedektif Çetin
+  F               BULDUM! Katili göster
+  Esc             Duraklat, ayarlar, ana menü
+  F1              Kontrol listesi    M  Ses    C  Sinema modu
+
+NASIL OYNANIR
+  1. Sarı şeridin içindeki cesedi inceleyin.
+  2. Dükkânlara girin, fareyle delil arayın, şüphelileri sorgulayın (kişi başına 5 soru).
+  3. Çantadaki delilleri laboratuvarda tarayın, bulguları Adli Tıp'a gönderin.
+  4. Gereken sayıda bina ve bulgudan sonra otopsi raporu gelir.
+  5. Otopsi bulgusunu delillerle ve ifadelerle karşılaştırıp katili gösterin.
+  Her yeni davada katil değişir. Doğru suçlama sıradaki kasabayı açar.
+
+KAYIT
+  Soruşturma kendiliğinden kaydedilir; ana menüden kaldığınız yerden devam edersiniz.
+
+SORUN GİDERME
+  Oyun açılmıyor ya da ekran donuyor: Ekran kartı sürücünüzü güncelleyin, gerekirse
+  oyunu şu ayarla başlatın:  Dedektif.exe -force-d3d11
+
+TELİF
+  İnsan modelleri ve animasyonları: Quaternius (CC0)
+  Yüzey dokuları: Poly Haven (CC0)
+  Unity ile yapılmıştır.

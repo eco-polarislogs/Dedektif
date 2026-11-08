@@ -1,5 +1,5 @@
 {
- "story": "Yağmurlu bir sonbahar gecesi... Kasabanın meydanında bir ceset bulundu. Kurban, herkesin tanıdığı tüccar Osman Bey'di. Parke taşların üzerinde yatan cansız beden, yağmurun altında solgun bir ışıkla aydınlanıyordu. Polis şeridinin arkasında toplanan kalabalık, birbirlerine şüpheyle bakıyordu. Kasabanın en deneyimli dedektifi olarak bu davayı çözmek için buraya çağrıldınız. Beş şüpheli, beş bina, sayısız sır... Gerçeği ortaya çıkarabilecek misiniz?",
+ "story": "Yağmurlu bir sonbahar gecesi... Kasabanın meydanında bir ceset bulundu. Kurban, herkesin tanıdığı tüccar Osman Bey'di. Parke taşların üzerinde yatan cansız beden, yağmurun altında solgun bir ışıkla aydınlanıyordu. Zaptiyelerin gerdiği kordonun arkasında toplanan kalabalık, birbirlerine şüpheyle bakıyordu. Kasabanın en deneyimli dedektifi olarak bu davayı çözmek için buraya çağrıldınız. Beş şüpheli, beş bina, sayısız sır... Gerçeği ortaya çıkarabilecek misiniz?",
  "npcs": [
   {
    "id": 1,
@@ -18,7 +18,7 @@
    "role": "Eczane sahibi",
    "female": true,
    "secret": "Kurbanın zehirlendiğini biliyordu ama gizledi.",
-   "murderStory": "Eczacı Selma, yıllardır kasabada sessiz sedasız çalışan, herkesin güvendiği bir kadındı. Ama bu sessizliğin ardında derin bir nefret gizliydi. Osman Bey, Selma'nın geçmişine dair bir sır keşfetmiş ve onu aylardır bununla tehdit ediyordu — sessiz kalmasının karşılığında düzenli para talep ediyordu. O gece Selma, planını uygulamaya koydu. Eczanesinin tezgahı altında yetiştirdiği ölümcül bir sarmaşık türünün özünü, son derece dikkatli bir şekilde Osman Bey'in her gün kullandığı kalp ilacına karıştırdı. Dozajı mükemmel hesaplamıştı — ne çok az, ne çok fazla. İlacı o gün Osman'ın eline bizzat verdi, gülümseyerek. \"Geçmiş olsun Osman Bey, bu ilacı düzenli alın\" dedi. Gece yarısı, Osman Bey yatmadan önce ilacını içti. Birkaç dakika içinde kalbinde keskin bir ağrı hissetti. Kalp krizi geçiriyormuş gibi kıvrandı, nefes almaya çalıştı ama zehir çoktan damarlarına yayılmıştı. Selma, o sırada eczanesinin karanlık köşesinde, yağmurun sesini dinleyerek bekledi. Boş ilaç şişesini masanın altına sakladı, parmak izlerini titizlikle sildi. Reçete defterinin son sayfalarını — Osman'ın gerçek teşhisini ve zehirlenme belirtilerini içeren notları — aceleyle yırtıp attı. Ama her ne kadar profesyonel davranmış olsa da, zehirli sarmaşık tezgahın altında kurumaya bırakılmış halde duruyordu.",
+   "murderStory": "Eczacı Selma, yıllardır kasabada sessiz sedasız çalışan, herkesin güvendiği bir kadındı. Ama bu sessizliğin ardında derin bir nefret gizliydi. Osman Bey, Selma'nın geçmişine dair bir sır keşfetmiş ve onu aylardır bununla tehdit ediyordu — sessiz kalmasının karşılığında düzenli para talep ediyordu. O gece Selma, planını uygulamaya koydu. Eczanesinin tezgahı altında yetiştirdiği ölümcül bir sarmaşık türünün özünü, son derece dikkatli bir şekilde Osman Bey'in her gün kullandığı kalp ilacına karıştırdı. Dozajı mükemmel hesaplamıştı — ne çok az, ne çok fazla. İlacı o gün Osman'ın eline bizzat verdi, gülümseyerek. \"Geçmiş olsun Osman Bey, bu ilacı düzenli alın\" dedi. Gece yarısı, Osman Bey yatmadan önce ilacını içti. Birkaç dakika içinde kalbinde keskin bir ağrı hissetti. Kalp krizi geçiriyormuş gibi kıvrandı, nefes almaya çalıştı ama zehir çoktan damarlarına yayılmıştı. Selma, o sırada eczanesinin karanlık köşesinde, yağmurun sesini dinleyerek bekledi. Boş ilaç şişesini masanın altına sakladı, parmak izlerini titizlikle sildi. Reçete defterinin son sayfalarını — Osman'ın gerçek teşhisini ve zehirlenme belirtilerini içeren notları — aceleyle yırtıp attı. Ama her ne kadar ustaca davranmış olsa da, zehirli sarmaşık tezgahın altında kurumaya bırakılmış halde duruyordu.",
    "portrait": "selma"
   },
   {
@@ -28,17 +28,17 @@
    "role": "Kasabanın muhtarı",
    "female": false,
    "secret": "Kurbanla arazi anlaşmazlığı vardı.",
-   "murderStory": "Muhtar Kemal, kasabanın en güçlü adamıydı — herkesin sırrını biliyor, her kapıyı açıyordu. Ama yaklaşan belediye seçimleri için büyük bir arazi projesine ihtiyacı vardı ve o arazinin sahibi Osman Bey'di. Haftalardır Osman'ı arazisini satması için ikna etmeye çalışmıştı ama Osman direndi. \"Bu arazi babamdan kalma, satmam\" dedi her seferinde. O gece Kemal, tüm diplomatik maskesini çıkardı. Gece yarısı Osman'ın evine sızdı — muhtarlık kasasındaki yedek anahtarlarla kapıyı açmak çocuk oyuncağıydı. İçeri girdiğinde Osman masasında oturmuş, belgelerini inceliyordu. \"Sen de mi Kemal?\" dedi Osman, şaşkınlıkla. Kemal sahte tapu belgelerini masaya fırlattı. \"Bunu imzalayacaksın, ya da...\" Osman belgeleri yırtmaya başladı. Kemal kontrolünü kaybetti. Masadaki ağır bronz mühürü kaptığı gibi Osman'ın yüzüne indirdi. Şiddetli bir boğuşma başladı — mobilyalar devrildi, Osman'ın gözlüğü yere düşüp kırıldı. Kemal, son darbeyi kurbanın şakağına indirdiğinde, Osman'ın gözleri kararıp yere yığıldı. Ölüm sebebi: ağır darbe sonucu beyin kanaması. Kemal panikle evi terk etti ama aceleyle çıkarken yırtılmış tapu belgelerini ve kırık gözlüğü olduğu yerde bıraktı. Ofisine döndüğünde, titreyerek gizli kasasını açıp sahte belgelerin kopyalarını içine kilitledi.",
+   "murderStory": "Muhtar Kemal, kasabanın en güçlü adamıydı — herkesin sırrını biliyor, her kapıyı açıyordu. Ama yaklaşan belediye seçimleri için büyük bir arazi projesine ihtiyacı vardı ve o arazinin sahibi Osman Bey'di. Haftalardır Osman'ı arazisini satması için ikna etmeye çalışmıştı ama Osman direndi. \"Bu arazi babamdan kalma, satmam\" dedi her seferinde. O gece Kemal, tüm diplomatik maskesini çıkardı. Gece yarısı Osman'ın evine sızdı — muhtarlık kasasındaki yedek anahtarlarla kapıyı açmak çocuk oyuncağıydı. İçeri girdiğinde Osman masasında oturmuş, belgelerini inceliyordu. \"Sen de mi Kemal?\" dedi Osman, şaşkınlıkla. Kemal sahte tapu belgelerini masaya fırlattı. \"Bunu imzalayacaksın, ya da...\" Osman belgeleri yırtmaya başladı. Kemal kontrolünü kaybetti. Masadaki ağır bronz mühürü kaptığı gibi Osman'ın yüzüne indirdi. Şiddetli bir boğuşma başladı — mobilyalar devrildi, Osman'ın gözlüğü yere düşüp kırıldı. Kemal, son darbeyi kurbanın şakağına indirdiğinde, Osman'ın gözleri kararıp yere yığıldı. Ölüm sebebi: ağır darbe sonucu beyin kanaması. Kemal panikle evi terk etti ama aceleyle çıkarken yırtılmış tapu belgelerini ve kırık gözlüğü olduğu yerde bıraktı. Odasına döndüğünde, titreyerek gizli kasasını açıp sahte belgelerin kopyalarını içine kilitledi.",
    "portrait": "kemal"
   },
   {
    "id": 4,
    "name": "Komiser Güneş",
    "building": "Karakol",
-   "role": "Kadın polis komiseri",
+   "role": "Zaptiye komiseri",
    "female": true,
    "secret": "Olay yerindeki delilleri sakladı.",
-   "murderStory": "Komiser Güneş, kasabanın adalet sembolüydü — ya da öyle görünüyordu. Gerçekte yıllardır Osman Bey'den düzenli rüşvet alıyordu. Osman, kasabadaki yasadışı arazi işlemlerini ve kaçak ticaret yollarını biliyordu; Güneş ise bu bilgilerin gün yüzüne çıkmaması için olayları kapatıyor, dosyaları kaybediyordu. Ama Osman artık bu düzenden bıkmıştı ve Güneş'i ihbar etmekle tehdit etti. \"Yarın sabah savcılığa gidiyorum\" dedi telefonda, sesi kararlıydı. Güneş o gece üniformasını giydi, polis copunu beline taktı ve Osman'ın evine gitti. Kapıyı açan Osman, komiserin yüzündeki soğuk ifadeyi gördüğünde anladı ama çok geçti. Güneş ilk darbeyi polis copuyla Osman'ın karnına indirdi. Osman ikiye katlanırken, Güneş onu yere devirdi. Boğuşma sırasında Osman savunma yaraları aldı — kollarında, ellerinde darbe izleri oluştu. Güneş yakın mesafeden copla art arda vurdu. Son darbe şakağına geldiğinde Osman hareketsiz kaldı. Havasız kalma ve travmatik darbeler — bir polisin eğitimli şiddetiyle uyumlu izler. Güneş, bir polis olarak olay yerini profesyonelce temizlemeye çalıştı — parmak izlerini sildi, kan lekelerini temizledi. Ama boğuşma sırasında paltosunun pirinç düğmesi kopmuş, rozeti yere düşmüştü. Karanlıkta bunları fark edemedi. Karakola döndüğünde, \"GİZLİ\" damgalı dosyaya Osman'ın ihbar dilekçesini kilitledi ve anahtarı çekmecesinin derinliklerine gömdü.",
+   "murderStory": "Komiser Güneş, kasabanın adalet sembolüydü — ya da öyle görünüyordu. Gerçekte yıllardır Osman Bey'den düzenli rüşvet alıyordu. Osman, kasabadaki yasadışı arazi işlemlerini ve kaçak ticaret yollarını biliyordu; Güneş ise bu bilgilerin gün yüzüne çıkmaması için olayları kapatıyor, dosyaları kaybediyordu. Ama Osman artık bu düzenden bıkmıştı ve Güneş'i ihbar etmekle tehdit etti. \"Yarın sabah müddeiumumîye gidiyorum\" diye yazdığı pusula kararlıydı. Güneş o gece üniformasını giydi, polis copunu beline taktı ve Osman'ın evine gitti. Kapıyı açan Osman, komiserin yüzündeki soğuk ifadeyi gördüğünde anladı ama çok geçti. Güneş ilk darbeyi polis copuyla Osman'ın karnına indirdi. Osman ikiye katlanırken, Güneş onu yere devirdi. Boğuşma sırasında Osman savunma yaraları aldı — kollarında, ellerinde darbe izleri oluştu. Güneş yakın mesafeden copla art arda vurdu. Son darbe şakağına geldiğinde Osman hareketsiz kaldı. Havasız kalma ve ağır darbeler — bir zaptiyenin eğitimli şiddetiyle uyumlu izler. Güneş, bir zaptiye komiseri olarak olay yerini ustalıkla temizlemeye çalıştı — parmak izlerini sildi, kan lekelerini temizledi. Ama boğuşma sırasında paltosunun pirinç düğmesi kopmuş, rozeti yere düşmüştü. Karanlıkta bunları fark edemedi. Karakola döndüğünde, \"GİZLİ\" damgalı dosyaya Osman'ın ihbar dilekçesini kilitledi ve anahtarı çekmecesinin derinliklerine gömdü.",
    "portrait": "gunes"
   },
   {
@@ -48,7 +48,7 @@
    "role": "Kasabanın terzisi",
    "female": false,
    "secret": "Kurbana gizli cepli ceket dikti, son gören kişi.",
-   "murderStory": "Terzi Yahya, kasabanın en yaşlı ve en saygın ustasıydı. Ama bu saygın cephenin arkasında karanlık bir ortaklık vardı — Yahya, yıllardır Osman Bey'in gizli işlerinin sessiz ortağıydı. Para aklama, belge saklama, hatta kaçak mal transferi... Osman'ın son diktirdiği ceketin astarına gizli bir cep dikmişti ve bu cepte, tüm yasadışı işlemlerin kaydını içeren bir USB bellek saklanıyordu. Ama Osman, ortaklığı bitirmeye ve Yahya'yı saf dışı bırakmaya karar vermişti. O gece Yahya, payını almak için Osman'ın evine gitti. \"Param nerede Osman?\" diye sordu titreyen bir sesle. Osman güldü. \"Senin paran mı? Bu işte sen artık yoksun yaşlı adam. O USB'yi de sana vermeyeceğim.\" Yılların birikimi bir anda patladı. Yahya, meslek hayatının en sadık aleti olan iplik makarasını cebinden çıkardı. Kalın, dayanıklı, kopması imkansız terzi ipliğini Osman'ın boynuna doladı ve tüm gücüyle sıktı. Osman çırpındı, direndi — bu sırada Yahya'nın diktiği ceketinden kumaş parçaları yırtıldı. Ama Yahya bırakmadı. İplik boyun bölgesinde derin izler bırakarak, Osman'ın son nefesini de aldı. Yahya titreyerek ayağa kalktı. Kanlı iplik makarasını cebine koydu, yırtılan kumaş parçalarını toplamaya çalıştı ama hepsini bulamadı. Dükkânına döndüğünde, o gece diktiği son ceketin gizli cebindeki not hâlâ duruyordu: \"Bu gece gel, konuşalım.\"",
+   "murderStory": "Terzi Yahya, kasabanın en yaşlı ve en saygın ustasıydı. Ama bu saygın cephenin arkasında karanlık bir ortaklık vardı — Yahya, yıllardır Osman Bey'in gizli işlerinin sessiz ortağıydı. Para aklama, belge saklama, hatta kaçak mal transferi... Osman'ın son diktirdiği ceketin astarına gizli bir cep dikmişti ve bu cepte, tüm yasadışı işlemlerin kaydını içeren ince bir kayıt defteri saklanıyordu. Ama Osman, ortaklığı bitirmeye ve Yahya'yı saf dışı bırakmaya karar vermişti. O gece Yahya, payını almak için Osman'ın evine gitti. \"Param nerede Osman?\" diye sordu titreyen bir sesle. Osman güldü. \"Senin paran mı? Bu işte sen artık yoksun yaşlı adam. O defteri de sana vermeyeceğim.\" Yılların birikimi bir anda patladı. Yahya, meslek hayatının en sadık aleti olan iplik makarasını cebinden çıkardı. Kalın, dayanıklı, kopması imkansız terzi ipliğini Osman'ın boynuna doladı ve tüm gücüyle sıktı. Osman çırpındı, direndi — bu sırada Yahya'nın diktiği ceketinden kumaş parçaları yırtıldı. Ama Yahya bırakmadı. İplik boyun bölgesinde derin izler bırakarak, Osman'ın son nefesini de aldı. Yahya titreyerek ayağa kalktı. Kanlı iplik makarasını cebine koydu, yırtılan kumaş parçalarını toplamaya çalıştı ama hepsini bulamadı. Dükkânına döndüğünde, o gece diktiği son ceketin gizli cebindeki not hâlâ duruyordu: \"Bu gece gel, konuşalım.\"",
    "portrait": "yahya"
   }
  ],
@@ -331,7 +331,7 @@
   {
    "npcId": 1,
    "q": "O gece duyduğun garip sesler neydi?",
-   "a": "Bağrışma gibiydi... Ama yağmurdan net duyamadım. Saat gece yarısı civarıydı. Sonra bir araba kapısı çarpma sesi... Sonra sessizlik.",
+   "a": "Bağrışma gibiydi... Ama yağmurdan net duyamadım. Saat gece yarısı civarıydı. Sonra bir fayton kapısının çarpma sesi... Sonra sessizlik.",
    "difficulty": 2,
    "category": "derinlesme",
    "relatedClues": [],
@@ -476,7 +476,7 @@
     "O belgeler Selma'nın zehir siparişlerini gösteriyor! Korktum, sakladım!",
     "Muhtar'ın sahte tapuları orada! Kurban bana emanet bıraktı!",
     "Komiser'in kapatmaya çalıştığı dosyanın kopyası orada... Delil karartıyor!",
-    "Yahya'nın diktiği ceketteki USB'nin kopyası orada..."
+    "Yahya'nın diktiği ceketteki defterin sureti orada..."
    ]
   },
   {
@@ -545,7 +545,7 @@
     "Selma'nın elindeki zehir şişesini sorun! Ben değilim!",
     "Muhtar'ın tapuları sahte! O öldürdü!",
     "Komiser delilleri saklıyor, gerçek katil o!",
-    "Yahya'daki USB'yi açın, her şey orada!"
+    "Yahya'daki gizli defteri açın, her şey orada!"
    ]
   },
   {
@@ -688,7 +688,7 @@
   {
    "npcId": 2,
    "q": "Gece yarısına kadar neden açıktınız?",
-   "a": "... Birini bekliyordum tamam mı? Muhtar Kemal aradı, \"Acil ilaç lazım, geç geleceğim\" dedi. Ama gelmedi.",
+   "a": "... Birini bekliyordum tamam mı? Muhtar Kemal adam yolladı, \"Acil ilaç lazım, geç geleceğim\" diye haber etti. Ama gelmedi.",
    "difficulty": 2,
    "category": "derinlesme",
    "relatedClues": [
@@ -697,7 +697,7 @@
    "guilty": [
     "Kasap Hasan o gece geldi, çok gergindi. Ellerinde kan lekesi vardı, \"Kesildim\" dedi ama inanmadım...",
     "*Titrer* Tamam... Muhtar'ı beklemiyordum. Ben... kurbanı bekliyordum. Son ilaç dozunu verecektim ama... dozajı yanlış hesaplamış olabilirim.",
-    "Muhtar aradı evet, ama sesinde panik vardı. \"Selma, beni örtbas et\" dedi. Ne demek istediğini anlayamadım...",
+    "Muhtar adam yolladı evet, ama pusulası telaşlıydı. \"Selma, beni örtbas et\" yazıyordu. Ne demek istediğini anlayamadım...",
     "Komiser o gece geldi dükkâna. Defterimi istedi, \"Bunu bana ver\" dedi. Sayfaları o yırttı!",
     "Yahya'nın o gece paketini gördüm... Kurbanın evine gidiyordu. İçinde ne vardı bilmiyorum ama ağırdı."
    ]
@@ -846,7 +846,7 @@
   },
   {
    "npcId": 2,
-   "q": "Muhtar neden seni arayıp ilaç istedi o gece?",
+   "q": "Muhtar neden o gece adam yollayıp senden ilaç istedi?",
    "a": "Stres ilacı istedi. \"Çok gerginim, uyuyamıyorum\" dedi. Ama sesinde korku vardı... Normal değildi.",
    "difficulty": 4,
    "category": "baski",
@@ -951,7 +951,7 @@
   {
    "npcId": 3,
    "q": "Muhtar bey, cinayet gecesi neredeydiniz?",
-   "a": "Evimdeydim tabii ki. Televizyon izledim, sonra uyudum. Muhtarın gece sokakta ne işi olur?",
+   "a": "Evimdeydim tabii ki. Gazetemi okudum, sonra uyudum. Muhtarın gece sokakta ne işi olur?",
    "difficulty": 1,
    "category": "tanisma",
    "relatedClues": [],
@@ -1044,7 +1044,7 @@
    ],
    "guilty": [
     "Hasan yalancı! O gece kasabın önünden bile geçmedim! ... Tamam, geçtim ama et almak için değil.",
-    "Selma'yı aradığımı itiraf ediyorum. Stres ilacı lazımdı. Ama gitmediğimi yemin ederim!",
+    "Selma'ya adam yolladığımı itiraf ediyorum. Stres ilacı lazımdı. Ama gitmediğimi yemin ederim!",
     "*Sinirlenir* Tamam! Et aldım! Ama cinayet saatinden ÇOK önce! Saat 10'da gidip geldim. Sonra eve döndüm. Sonra... yürüyüşe çıktım tekrar. Kurbanın evinin önünden geçtim. Ama ona dokunmadım! ...En azından öyle hatırlıyorum.",
     "Komiser beni uyardı, \"Evinde kal\" dedi. Ama dinlemedim, merak ettim ne oluyor diye...",
     "Yahya'yı o gece sokakta gördüm! O da dışarıdaydı!"
@@ -1052,8 +1052,8 @@
   },
   {
    "npcId": 3,
-   "q": "Eczacı Selma seni aradığını söylüyor o gece.",
-   "a": "Hayır! Ben kimseyi aramadım! Selma yanlış hatırlıyor... Ya da bilerek yalan söylüyor.",
+   "q": "Eczacı Selma o gece ona adam yolladığını söylüyor.",
+   "a": "Hayır! Ben kimseye adam yollamadım! Selma yanlış hatırlıyor... Ya da bilerek yalan söylüyor.",
    "difficulty": 2,
    "category": "derinlesme",
    "relatedClues": [
@@ -1122,7 +1122,7 @@
   {
    "npcId": 3,
    "q": "Kasadaki sahte belgeler neyin nesi?",
-   "a": "*Terler* Onlar... eski belediye evrakları. Bazen prosedürler hızlansın diye bazı belgeler... düzenler.",
+   "a": "*Terler* Onlar... eski belediye evrakları. Bazen muameleler hızlansın diye bazı belgeler... düzenler.",
    "difficulty": 3,
    "category": "yuzlestirme",
    "relatedClues": [
@@ -1167,7 +1167,7 @@
     "Kasap'ın söylediklerine inanmayın! O adam yalancının teki!",
     "Selma beni çerçevelemeye çalışıyor! O zehirci kadın!",
     "*Masayı yumruklar* TAMAM! Kurbanın evine gittim! Konuşmak istedim, barışmak... Ama o beni kovdu, aşağıladı. \"Sahte tapularını biliyorum\" dedi. Tartıştık... ve ben... kontrol... *susar*",
-    "Komiser Güneş her şeyi biliyor! O gece beni aradı, \"Muhtar sakin ol\" dedi. Neden böyle dedi?",
+    "Komiser Güneş her şeyi biliyor! O gece kapıma geldi, \"Muhtar sakin ol\" dedi. Neden böyle dedi?",
     "Yahya'nın elinde bir paket vardı o gece, onu araştırın!"
    ]
   },
@@ -1258,7 +1258,7 @@
   {
    "npcId": 3,
    "q": "Söylemediklerin var mı?",
-   "a": "*İç çeker* Komiser Güneş... O gece beni aradı. \"Muhtar, evinde kal\" dedi. Neden böyle dediğini hiç sormadım...",
+   "a": "*İç çeker* Komiser Güneş... O gece bana haber saldı. \"Muhtar, evinde kal\" dedi. Neden böyle dediğini hiç sormadım...",
    "difficulty": 5,
    "category": "son",
    "relatedClues": [
@@ -1360,7 +1360,7 @@
   {
    "npcId": 4,
    "q": "Olay yerinde hangi delilleri buldunuz?",
-   "a": "Bir düğme, bazı ayak izleri... Yağmur çoğunu sildi. Standart prosedür uyguladık.",
+   "a": "Bir düğme, bazı ayak izleri... Yağmur çoğunu sildi. Olağan usulü uyguladık.",
    "difficulty": 2,
    "category": "derinlesme",
    "relatedClues": [
@@ -1391,8 +1391,8 @@
   },
   {
    "npcId": 4,
-   "q": "Muhtar Kemal'le ilişkiniz profesyonel mi?",
-   "a": "Tabii ki profesyonel! Muhtar resmi makam, ben de polis. Başka bir ilişki yok!",
+   "q": "Muhtar Kemal'le ilişkiniz yalnızca resmî mi?",
+   "a": "Tabii ki resmî! Muhtar devlet makamı, ben de zaptiye. Başka bir ilişki yok!",
    "difficulty": 2,
    "category": "derinlesme",
    "relatedClues": [
@@ -1402,8 +1402,8 @@
    "guilty": [
     "Kasap Hasan'ın dükkânında şüpheli evraklar bulundu, onu soruşturuyorum!",
     "Eczacı Selma'nın zehir stoku var, bunu raporladım ama üst makam ilgilenmedi.",
-    "Muhtar Kemal... *duraksır* Evet, bazen dosyaları birlikte kapattık. Ama bu normal prosedür!",
-    "*Sertleşir* Ben 15 yıllık polisim! Muhtar'la profesyonel ilişkimiz var, ama cinayet gecesi... tamam, onu aradım. Uyardım. Çünkü bilgi aldım, ihbar vardı. Ama bu bilgiyi... resmi kanaldan almadım. Bir kaynak... söyleyemem.",
+    "Muhtar Kemal... *duraksır* Evet, bazen dosyaları birlikte kapattık. Ama bu olağan usuldür!",
+    "*Sertleşir* Ben 15 yıllık zaptiyeyim! Muhtar'la resmî ilişkimiz var, ama cinayet gecesi... tamam, ona haber saldım. Uyardım. Çünkü bilgi aldım, ihbar vardı. Ama bu bilgiyi... resmi kanaldan almadım. Bir kaynak... söyleyemem.",
     "Terzinin dosyasında adı geçiyor ama bu gizli bir soruşturma!"
    ]
   },
@@ -1445,7 +1445,7 @@
   {
    "npcId": 4,
    "q": "Gizli dosyadaki bilgiler neden rapor edilmedi?",
-   "a": "O dosya devam eden bir soruşturmanın parçası! Her şeyi kamuoyuyla paylaşamam. Prosedür gereği gizli!",
+   "a": "O dosya devam eden bir soruşturmanın parçası! Her şeyi kamuoyuyla paylaşamam. Usul gereği gizli!",
    "difficulty": 3,
    "category": "yuzlestirme",
    "relatedClues": [
@@ -1496,7 +1496,7 @@
   },
   {
    "npcId": 4,
-   "q": "O gece muhtarı neden arayıp evinde kalmasını söylediniz?",
+   "q": "O gece muhtara neden haber salıp evinde kalmasını söylediniz?",
    "a": "*Şaşırır* Muhtar bunu mu söyledi? Ben onu güvenlik için uyardım! İhbar gelmişti!",
    "difficulty": 4,
    "category": "baski",
@@ -1513,8 +1513,8 @@
   },
   {
    "npcId": 4,
-   "q": "İhbar gelmeden ÖNCE muhtarı aradığınız kanıtlandı.",
-   "a": "*Uzun sessizlik* ... Birisi beni aradı. Tanımadığım numara. \"Meydanda bir şey olacak\" dedi. Ciddiye aldım.",
+   "q": "İhbar gelmeden ÖNCE muhtara haber saldığınız kanıtlandı.",
+   "a": "*Uzun sessizlik* ... Kapımın altından bir pusula attılar. Tanımadığım bir el yazısı. \"Meydanda bir şey olacak\" yazıyordu. Ciddiye aldım.",
    "difficulty": 4,
    "category": "baski",
    "relatedClues": [
@@ -1522,17 +1522,17 @@
     11
    ],
    "guilty": [
-    "Kasap'ın soğuk hava deposunu araştırın!",
+    "Kasap'ın buzhanesini araştırın!",
     "Eczacının tezgah altındaki bitkileri inceleyin!",
     "Muhtar'ın kasasındaki sahte belgeleri bulun!",
-    "*Masaya yumruğunu vurur* TAMAM! Evet, muhtarı ihbardan önce aradım. Çünkü BEN o ihbarı aldım... kendi kendime. Anonim aramanın kaynağını biliyordum çünkü... o ses benim tanıdığımdı. Ve ben... olay yerine gittiğimde delilleri... düzenledim. Ama öldürmedim! Birisi bana talimat verdi!",
-    "Yahya'nın USB belleğinde her şey var!"
+    "*Masaya yumruğunu vurur* TAMAM! Evet, muhtara ihbardan önce haber saldım. Çünkü BEN o ihbarı aldım... kendi kendime. İmzasız pusulanın kaynağını biliyordum çünkü... o el yazısı benim tanıdığımdı. Ve ben... olay yerine gittiğimde delilleri... düzenledim. Ama öldürmedim! Birisi bana talimat verdi!",
+    "Yahya'nın gizli defterinde her şey var!"
    ]
   },
   {
    "npcId": 4,
    "q": "Delilleri karartma şüpheniz var.",
-   "a": "Karartma mı?! 15 yıllık polisim! Evet, bazı bilgileri gizli tuttum ama prosedür gereği!",
+   "a": "Karartma mı?! 15 yıllık zaptiyeyim! Evet, bazı bilgileri gizli tuttum ama usul gereği!",
    "difficulty": 4,
    "category": "baski",
    "relatedClues": [
@@ -1567,7 +1567,7 @@
   {
    "npcId": 4,
    "q": "Son sözünüz nedir Komiser?",
-   "a": "Ben görevimi yaptım! Prosedür hataları oldu ama tarafsız kalmak zor... Adaletin yanındayım.",
+   "a": "Ben görevimi yaptım! Usul hataları oldu ama tarafsız kalmak zor... Adaletin yanındayım.",
    "difficulty": 5,
    "category": "son",
    "relatedClues": [],
@@ -1743,7 +1743,7 @@
     "Kasap'ın dükkânında ışık yanıyordu ama girmedim oraya!",
     "Eczane'nin ışığı da açıktı. Selma pencereden baktı ama beni görmemiş olmalı... *yutkunur*",
     "Muhtar'ın sokakta olduğunu gördüm, ama yüzünü seçemedim.",
-    "Komiser'in devriye aracı geçti sokaktan... Beni görmüş olabilir.",
+    "Komiser'in atlı devriyesi geçti sokaktan... Beni görmüş olabilir.",
     "*Elleri titrer* Tamam... 10 dakikadan fazla dışarıdaydım. Kurbanın evine gittim. Notu ben yazmıştım, \"Bu gece gel konuşalım\" diye. Gittim. Kapı açıktı. İçeri girdim. Osman... Osman yerde yatıyordu. Ama ben varmadan ölmüştü! ...Yoksa ölmemiş miydi?"
    ]
   },
@@ -1825,7 +1825,7 @@
     "Selma'nın zehirleri var, onu araştırın! Ben sadece not yazdım!",
     "Muhtar'ın tehdit mektubu daha tehlikeli bir delil!",
     "Komiser bu notu biliyordu! Dosyasında yazıyor!",
-    "*Titrer* Evet, o notu ben yazdım. Kurbanla buluşacaktık. Ama gittiğimde... kapı açıktı. Girdim. Tartıştık. O belgeler yüzünden... USB'deki bilgiler... Ben sadece korumak istiyordum ama Osman vermek istemedi. Çekiştirdik ve..."
+    "*Titrer* Evet, o notu ben yazdım. Kurbanla buluşacaktık. Ama gittiğimde... kapı açıktı. Girdim. Tartıştık. O belgeler yüzünden... Defterdeki kayıtlar... Ben sadece korumak istiyordum ama Osman vermek istemedi. Çekiştirdik ve..."
    ]
   },
   {
@@ -1949,7 +1949,7 @@
   {
    "npcId": 5,
    "q": "Sakladığın son bir şey var mı?",
-   "a": "*Gözyaşları* Kurbanın ceketi... Bitmiş haliyle duvarda asılı. İçindeki gizli cepte bir USB bellek var. Kimseye vermedim.",
+   "a": "*Gözyaşları* Kurbanın ceketi... Bitmiş haliyle duvarda asılı. İçindeki gizli cepte ince bir kayıt defteri var. Kimseye vermedim.",
    "difficulty": 5,
    "category": "son",
    "relatedClues": [
@@ -1965,7 +1965,7 @@
   },
   {
    "npcId": 5,
-   "q": "USB bellekte ne var?",
+   "q": "Gizli defterde ne var?",
    "a": "Bilmiyorum! Açmadım! Kurban \"Başıma bir şey gelirse bunu doğru kişiye ver\" demişti. Doğru kişi kim?",
    "difficulty": 5,
    "category": "son",
@@ -1985,61 +1985,61 @@
  "helperFallback": [
   {
    "key": "splash",
-   "value": "Hoş geldin Amirims! Ben Yardımcı Dedektif Çetin. Bu karanlık davada sana yardımcı olacağım. Hazır olduğunda dosyayı aç ve soruşturmaya başlayalım!"
+   "value": "Hoş geldin Amirim! Ben Yardımcı Dedektif Çetin. Bu karanlık davada sana yardımcı olacağım. Hazır olduğunda dosyayı aç ve soruşturmaya başlayalım!"
   },
   {
    "key": "story_end",
-   "value": "Soruşturmaya başlamadan önce şunu bil Amirims: Kasabada binaları gezmeli, delilleri toplamalı ve şüphelileri sorgulamalısınız. Katili kesin olarak belirlediğinizde, ana haritanın sağ altında sabit duran kırmızı 'BULDUM!' butonuna basarak mahkemeye sevk edebilirsiniz!"
+   "value": "Soruşturmaya başlamadan önce şunu bil Amirim: Kasabada binaları gezmeli, delilleri toplamalı ve şüphelileri sorgulamalısınız. Katili kesin olarak belirlediğinizde, ekranın sağ üstündeki kırmızı 'BULDUM!' bağlantısına ya da [F] tuşuna basarak mahkemeye sevk edebilirsiniz!"
   },
   {
    "key": "map_enter",
-   "value": "İşte kasaba haritası Amirims! Binalara girip delilleri toplayın ve şüphelileri sorgulayın. Katili tespit ettiğinizde haritanın sağ alt köşesinde sabit yer alan kırmızı 'BULDUM!' butonuyla suçlamanızı yapabilirsiniz!"
+   "value": "İşte kasaba Amirim! Binalara girip delilleri toplayın ve şüphelileri sorgulayın. Katili tespit ettiğinizde sağ üstteki kırmızı 'BULDUM!' bağlantısıyla ya da [F] tuşuyla suçlamanızı yapabilirsiniz!"
   },
   {
    "key": "building_enter",
-   "value": "Olay yerindeki delilleri inceleyebilir, çantana atabilirsin. Karakterle konuşmak için sağ alttaki konuşma butonuna tıklayabilirsin!"
+   "value": "Fareyi odada gezdir Amirim; delilin üstüne gelince parlar, sol tıkla inceler ve çantana atarsın. Şüpheliyle konuşmak için de üstüne gelip tıkla!"
   },
   {
    "key": "bag_open",
-   "value": "Çantandaki delilleri İncele butonuyla detaylı inceleyebilirsin Amirims. Suçluyu bulmak için ipuçlarını birleştir!"
+   "value": "Çantandaki delilleri İncele butonuyla detaylı inceleyebilirsin Amirim. Suçluyu bulmak için ipuçlarını birleştir!"
   },
   {
    "key": "clue_inspect",
-   "value": "Bu delili dikkatle incele Amirims. Suçluya ait olabilecek izler görebilirsin!"
+   "value": "Bu delili dikkatle incele Amirim. Suçluya ait olabilecek izler görebilirsin!"
   },
   {
    "key": "npc_talk",
-   "value": "Dikkatli soru sor Amirims, şüphelinin tepkilerini iyi analiz et!"
+   "value": "Dikkatli soru sor Amirim, şüphelinin tepkilerini iyi analiz et!"
   },
   {
    "key": "autopsy_ready",
-   "value": "Amirims! Adli Tıp Merkezi'nden otopsi raporu geldi! Haritadaki otopsi butonuna basıp hemen inceleyin!"
+   "value": "Amirim! Adli Tıp Merkezi'nden otopsi raporu geldi! [R] tuşuna ya da üstteki otopsi yazısına basıp hemen inceleyin!"
   },
   {
    "key": "accuse",
-   "value": "Son kararını vermeden önce tüm delilleri gözden geçir Amirims. Yanlış suçlama kasaba için felaket olur!"
+   "value": "Son kararını vermeden önce tüm delilleri gözden geçir Amirim. Yanlış suçlama kasaba için felaket olur!"
   }
  ],
  "buildingHelper": [
   {
    "key": "Kasap",
-   "value": "Burası Kasap Hasan'ın dükkânı Amirims. Tezgahtaki satıra, deftere ve yırtık önlüğe dikkat et. Hasan sert bir adam, ama gözlerinde korku var..."
+   "value": "Burası Kasap Hasan'ın dükkânı Amirim. Tezgahtaki satıra, deftere ve yırtık önlüğe dikkat et. Hasan sert bir adam, ama gözlerinde korku var..."
   },
   {
    "key": "Eczane",
-   "value": "Eczacı Selma'nın dükkânındayız Amirims. Tezgah altına, reçete defterine ve ilaç şişelerine dikkat et. Bu kadın zehirler konusunda uzman..."
+   "value": "Eczacı Selma'nın dükkânındayız Amirim. Tezgah altına, reçete defterine ve ilaç şişelerine dikkat et. Bu kadın zehirler konusunda uzman..."
   },
   {
    "key": "Muhtarlık",
-   "value": "Muhtar Kemal'in ofisindeyiz Amirims. Çekmecesindeki mektuplara, kırık gözlüğe ve kasasına dikkat et. Bu adam her şeyi kontrol etmek istiyor..."
+   "value": "Muhtar Kemal'in odasındayız Amirim. Çekmecesindeki mektuplara, kırık gözlüğe ve kasasına dikkat et. Bu adam her şeyi kontrol etmek istiyor..."
   },
   {
    "key": "Karakol",
-   "value": "Komiser Güneş'in karakolundayız Amirims. Polis rozetine, gizli dosyaya ve kayıp düğmeye dikkat et. Bir polis neden delilleri saklasın ki?"
+   "value": "Komiser Güneş'in karakolundayız Amirim. Polis rozetine, gizli dosyaya ve kayıp düğmeye dikkat et. Bir polis neden delilleri saklasın ki?"
   },
   {
    "key": "Terzi",
-   "value": "Terzi Yahya'nın atölyesindeyiz Amirims. İplik makarasına, yırtık kumaşa ve gizli cebe dikkat et. Bu yaşlı adam bildiklerinden fazlasını saklıyor..."
+   "value": "Terzi Yahya'nın atölyesindeyiz Amirim. İplik makarasına, yırtık kumaşa ve gizli cebe dikkat et. Bu yaşlı adam bildiklerinden fazlasını saklıyor..."
   }
  ]
 }

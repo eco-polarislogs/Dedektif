@@ -316,7 +316,7 @@ namespace Dedektif3D.World
             var blade = BladeSign(t, new Vector3(s.x / 2, Plinth + 2.6f, fz - 0.3f), d.Neon);
             var red = M.Get("paint_steak", new Color(0.55f, 0.1f, 0.08f), 0.4f);
             Sphere("Biftek", blade, new Vector3(-0.05f, 0, -0.05f), new Vector3(0.42f, 0.32f, 0.05f), red);
-            Cyl("Kemik", blade, new Vector3(0.22f, -0.08f, -0.06f), new Vector3(0.08f, 0.14f, 0.04f), M.Emissive("neon_bone", Color.white, 1.5f), new Vector3(0, 0, 60), false);
+            Cyl("Kemik", blade, new Vector3(0.22f, -0.08f, -0.06f), new Vector3(0.08f, 0.14f, 0.04f), M.Get("sign_bone", new Color(0.86f, 0.82f, 0.72f), 0.25f), new Vector3(0, 0, 60), false);
 
             Cyl("Kütük", t, new Vector3(-3.3f, 0.45f, fz - 1.3f), new Vector3(0.8f, 0.45f, 0.8f), M.Wood(new Color(0.42f, 0.28f, 0.15f)));
             PropFactory.Barrel(t, new Vector3(3.6f, 0, fz - 1.2f));

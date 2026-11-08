@@ -1,8 +1,8 @@
 {
  "townId": "sisoren",
  "townName": "Sisören",
- "victim": "",
- "story": "Uçsuz bucaksız dağların zirvesinde, çam ormanlarıyla çevrili, dış dünyadan kopuk tekinsiz bir dağ kasabası: SİSÖREN...\n\nSarp yamaçların arasına sıkışmış bu kasabanın üzerine, göz gözü görmeyen ağır ve yoğun bir sis tabakası çökmüş durumda. Telgraf tellerinin rüzgardaki ürkütücü vızıltısı, bakkalın önünde çürümeye yüz tutmuş ahşap kasalar ve tüpçünün deposundan sızan hafif gaz kokusu... Burada sırlar, sadece fısıltılarla dağdan dağa yayılır.\n\nKasabanın ileri gelenlerinden biri, sisli bir gece yarısı esrarengiz bir şekilde vahşice öldürüldü. 13 farklı mekan, 13 farklı şüpheli. Kimin dost, kimin düşman olduğu belirsiz. Bu dağ kasabasında paranın, yalanların ve gizli ittifakların izini sürmen gerekecek. Şüpheliler listesini bu sefer sen oluşturuyorsun... Sis perdesini aralamaya ve katili bulmaya hazır mısın?",
+ "victim": "Tefeci Vahap Efendi",
+ "story": "Uçsuz bucaksız dağların zirvesinde, çam ormanlarıyla çevrili, dış dünyadan kopuk tekinsiz bir dağ kasabası: SİSÖREN...\n\nSarp yamaçların arasına sıkışmış bu kasabanın üzerine, göz gözü görmeyen ağır ve yoğun bir sis tabakası çökmüş durumda. Telgraf tellerinin rüzgardaki ürkütücü vızıltısı, bakkalın önünde çürümeye yüz tutmuş ahşap kasalar ve gazyağcının deposundan sızan keskin gazyağı kokusu... Burada sırlar, sadece fısıltılarla dağdan dağa yayılır.\n\nKasabanın ileri gelenlerinden tefeci Vahap Efendi, sisli bir gece yarısı esrarengiz bir şekilde vahşice öldürüldü. 13 farklı mekan, 13 farklı şüpheli. Kimin dost, kimin düşman olduğu belirsiz. Bu dağ kasabasında paranın, yalanların ve gizli ittifakların izini sürmen gerekecek. Şüpheliler listesini bu sefer sen oluşturuyorsun... Sis perdesini aralamaya ve katili bulmaya hazır mısın?",
  "map": "images/towns/sisoren/sisoren_map_v5.jpg",
  "reqBuildings": 5,
  "reqLabs": 5,
@@ -12,7 +12,7 @@
    "npcId": 201,
    "title": "Telgrafhane",
    "tag": "TELGRAFHANE",
-   "details": "Çatısında yüksek telgraf anteni, elektrik telleri ve pencereleri olan dağ zirve iletişim merkezi.",
+   "details": "Yanında yüksek telgraf direği ve telleri, önünde küçük pencereleri olan dağ zirve iletişim merkezi.",
    "left": 50,
    "top": 11,
    "width": 11,
@@ -34,9 +34,9 @@
   {
    "key": "sinema",
    "npcId": 203,
-   "title": "Sinema",
-   "tag": "SİNEMA",
-   "details": "Işıklı sarı SİNEMA tabelası ve duvarında nostaljik film afişleri bulunan sinema salonu.",
+   "title": "Hayal Feneri",
+   "tag": "HAYAL FENERİ",
+   "details": "Fenerlerle aydınlanan sarı HAYAL FENERİ tabelası ve duvarında el boyaması gösteri afişleri bulunan salon.",
    "left": 72,
    "top": 22,
    "width": 11,
@@ -106,9 +106,9 @@
   {
    "key": "tupcu",
    "npcId": 209,
-   "title": "Tüpçü",
-   "tag": "TÜPÇÜ",
-   "details": "Sundurması altında sıra sıra mavi ve gri çelik mutfak tüpleri dizilmiş tüp bayii.",
+   "title": "Gazyağcı",
+   "tag": "GAZYAĞCI",
+   "details": "Sundurması altında sıra sıra gazyağı varilleri ve tenekeleri dizilmiş dükkân.",
    "left": 60,
    "top": 67.5,
    "width": 12,
@@ -189,13 +189,13 @@
   },
   {
    "id": 203,
-   "name": "Sinemacı Nejat",
-   "building": "Sinema",
-   "role": "Sinemacı",
+   "name": "Hayalî Nejat",
+   "building": "Hayal Feneri",
+   "role": "Hayal feneri göstericisi",
    "female": false,
-   "greeting": "Film bitti ama perde henüz inmedi amirim...",
+   "greeting": "Gösteri bitti ama perde henüz inmedi amirim...",
    "secret": "",
-   "murderStory": "Sinemacı Nejat, hayatı hep perdelerdeki kurmaca hikayelerden ibaret sanırdı; ta ki kurban, onun yasadışı işlerini ve gizli kaçakçılık ağını eski bir film rulosuna saniye saniye kaydedene kadar. O gece son seansın ardından kurban, şantaj için makine dairesine geldiğinde Nejat'ın gözü dönmüştü. İkili arasındaki itiş kakış sırasında Nejat, sinema dünyasının o sahte büyüsünü gerçeğe çevirdi; kurbanı, devasa film projeksiyon makinesinin dönen keskin çarklarının arasına acımasızca itti. Çarklar kurbanın bedenini ezerken, Nejat kasten perdedeki filmin sesini sonuna kadar açıp çığlıkları bastırdı. Kan izlerini ve yırtılan giysi parçalarını ustalıkla temizledikten sonra, perdede dönen mutlu son sahnesini, elinde bir kadeh içkiyle, hayatının en karanlık başyapıtı gibi seyretti.",
+   "murderStory": "Hayalî Nejat, hayatı hep perdeye düşen kurmaca hikâyelerden ibaret sanırdı; ta ki kurban, onun yasadışı işlerini ve gizli kaçakçılık ağını tek tek deftere kaydedene kadar. O gece son gösterinin ardından kurban, şantaj için makine dairesine geldiğinde Nejat'ın gözü dönmüştü. İkili arasındaki itiş kakış sırasında Nejat, hayal perdesinin o sahte büyüsünü gerçeğe çevirdi; kurbanı, devasa panorama makinesinin dönen keskin çarklarının arasına acımasızca itti. Çarklar kurbanın bedenini ezerken, Nejat kasten laternayı sonuna kadar çevirip çığlıkları bastırdı. Kan izlerini ve yırtılan giysi parçalarını ustalıkla temizledikten sonra, perdede dönen mutlu son sahnesini, elinde bir kadeh içkiyle, hayatının en karanlık başyapıtı gibi seyretti.",
    "portrait": "images/towns/sisoren/npcler/npc_203.jpg"
   },
   {
@@ -217,7 +217,7 @@
    "female": false,
    "greeting": "Kitaplarda her şeyin cevabı vardır amirim... Cinayetin de.",
    "secret": "",
-   "murderStory": "Sahaf Hikmet, hayatını eski sayfaların tozuna ve unutulmuş sırların büyüsüne adamış bir adamdı. Ancak kurban, dükkânın en nadide el yazmasının içindeki şifreyi gizlice çözmüş ve kasabanın altındaki efsanevi altınların haritasını ele geçirmişti. Hikmet, nesillerdir koruduğu bu sırrın basit bir açgözlü tarafından yağmalanmasına izin veremezdi. Gece yarısı dükkânın kapıları kapandıktan sonra kurban haritayı çalmaya yeltendiğinde, Hikmet kütüphanenin en karanlık köşesinde onun karşısına dikildi. Gözünü kırpmadan, eline geçirdiği Osmanlı döneminden kalma, demir kaplamalı ve oldukça ağır bir ansiklopediyi kurbanın kafasına defalarca, hınçla indirdi. Kanlar eski kitapların sayfalarına sıçrarken, Hikmet haritayı alıp cesedi gölgelerin arasına sürükledi; bilgi uğruna işlediği bu cinayeti, tozlu rafların ardına sonsuza dek gömdü.",
+   "murderStory": "Sahaf Hikmet, hayatını eski sayfaların tozuna ve unutulmuş sırların büyüsüne adamış bir adamdı. Ancak kurban, dükkânın en nadide el yazmasının içindeki şifreyi gizlice çözmüş ve kasabanın altındaki efsanevi altınların haritasını ele geçirmişti. Hikmet, nesillerdir koruduğu bu sırrın basit bir açgözlü tarafından yağmalanmasına izin veremezdi. Gece yarısı dükkânın kapıları kapandıktan sonra kurban haritayı çalmaya yeltendiğinde, Hikmet kütüphanenin en karanlık köşesinde onun karşısına dikildi. Gözünü kırpmadan, eline geçirdiği asırlık, demir kaplamalı ve oldukça ağır bir ansiklopediyi kurbanın kafasına defalarca, hınçla indirdi. Kanlar eski kitapların sayfalarına sıçrarken, Hikmet haritayı alıp cesedi gölgelerin arasına sürükledi; bilgi uğruna işlediği bu cinayeti, tozlu rafların ardına sonsuza dek gömdü.",
    "portrait": "images/towns/sisoren/npcler/npc_205.jpg"
   },
   {
@@ -255,13 +255,13 @@
   },
   {
    "id": 209,
-   "name": "Tüpçü Şevket",
-   "building": "Tüpçü",
-   "role": "Tüpçü",
+   "name": "Gazyağcı Şevket",
+   "building": "Gazyağcı",
+   "role": "Gazyağı satıcısı",
    "female": false,
-   "greeting": "Gaz sızıntısı her zaman tehlikelidir amirim... Ama bazı patlamalar kasıtlıdır.",
+   "greeting": "Gazyağı buharı her zaman tehlikelidir amirim... Ama bazı patlamalar kasıtlıdır.",
    "secret": "",
-   "murderStory": "Tüpçü Şevket, her zaman kasabanın arka planında kalan, görünmez bir adamdı; ama kurbanın ona attığı iftiralar yüzünden ailesinin onuru lekelenmişti. İntikam ateşiyle yanan Şevket, o gece kurbanın evine sözde tüp teslimatı yapmak için gitti. Mahzenin karanlığında, ustalıkla ve büyük bir sessizlikle gaz vanasını bilerek gevşetti ve boruda ufak bir çatlak oluşturdu. Amacı belki sadece kurbanı korkutmak, hafif bir zehirlenmeyle hastanelik etmekti; ancak kurban karanlıkta sızan gazın kokusunu almayıp ışığı yakmak için o kibriti çaktığında, tüm ev devasa bir ateş topuna dönüşerek patladı. Şevket, uzaktan alevleri izlerken yüzünde korkunç bir tatmin duygusu vardı. Bu kusursuz cinayeti trajik bir \"kaza\" gibi gösterip sessizliğini yıllarca başarıyla korudu.",
+   "murderStory": "Gazyağcı Şevket, her zaman kasabanın arka planında kalan, görünmez bir adamdı; ama kurbanın ona attığı iftiralar yüzünden ailesinin onuru lekelenmişti. İntikam ateşiyle yanan Şevket, o gece kurbanın evine sözde gazyağı teslimatı yapmak için gitti. Mahzenin karanlığında, ustalıkla ve büyük bir sessizlikle gazyağı kazanının vanasını bilerek gevşetti ve boruda ufak bir çatlak oluşturdu. Amacı belki sadece kurbanı korkutmak, hafif bir zehirlenmeyle yatağa düşürmekti; ancak kurban karanlıkta sızan gazyağı buharının kokusunu almayıp ışığı yakmak için o kibriti çaktığında, tüm ev devasa bir ateş topuna dönüşerek patladı. Şevket, uzaktan alevleri izlerken yüzünde korkunç bir tatmin duygusu vardı. Bu kusursuz cinayeti trajik bir \"kaza\" gibi gösterip sessizliğini yıllarca başarıyla korudu.",
    "portrait": "images/towns/sisoren/npcler/npc_209.jpg"
   },
   {
@@ -272,7 +272,7 @@
    "female": true,
    "greeting": "Paslanmış demir bile bir hikâye anlatır amirim... Buraya gelen her hurdanın izi bendedir.",
    "secret": "",
-   "murderStory": "Hurdacı Zehra'nın o döküntü ve paslı dükkânı, aslında çevre kasabalardan çalınan malların iz bırakmadan eritildiği devasa bir kara para aklama merkeziydi. Kurban, bu kirli çarkı fark edip Zehra'dan her ay düzenli pay isteyerek onu ihbar etmekle tehdit edince, kendi ölüm fermanını imzalamış oldu. Zehra o gece kurbanı \"parayı vermek\" bahanesiyle dükkânın en izbe köşesindeki sanayi tipi pres makinesinin yanına çekti. Kurban parayı saymak için eğildiği an, Zehra hızla onu pres makinesinin çelik çeneleri arasına itip kapağı kilitledi ve makineyi tam güçte çalıştırdı. Kurbanın kulakları sağır eden çığlıkları ve kırılan kemik sesleri, hurdaların kesici gürültüsü ve metalin soğuk ezici gücü arasında tamamen kaybolup gitti.",
+   "murderStory": "Hurdacı Zehra'nın o döküntü ve paslı dükkânı, aslında çevre kasabalardan çalınan malların iz bırakmadan eritildiği devasa bir kara para aklama merkeziydi. Kurban, bu kirli çarkı fark edip Zehra'dan her ay düzenli pay isteyerek onu ihbar etmekle tehdit edince, kendi ölüm fermanını imzalamış oldu. Zehra o gece kurbanı \"parayı vermek\" bahanesiyle dükkânın en izbe köşesindeki buharlı pres makinesinin yanına çekti. Kurban parayı saymak için eğildiği an, Zehra hızla onu pres makinesinin çelik çeneleri arasına itip kapağı kilitledi ve makineyi tam güçte çalıştırdı. Kurbanın kulakları sağır eden çığlıkları ve kırılan kemik sesleri, hurdaların kesici gürültüsü ve metalin soğuk ezici gücü arasında tamamen kaybolup gitti.",
    "portrait": "images/towns/sisoren/npcler/npc_210.jpg"
   },
   {
@@ -294,7 +294,7 @@
    "female": true,
    "greeting": "Bu yaştan sonra ne sırlar gördüm amirim... Dağın sisi bile saklayamaz bazı günahları.",
    "secret": "",
-   "murderStory": "Hatice Nine, bu kasabanın yaşayan tarihi ve en kadim hafızasıydı. Kurban denen o açgözlü adam, kasabayı devasa bir şirkete tamamen satıp buradaki herkesi evlerinden sürmek için gizli imzalar atmaya başladığında, Hatice Nine kasabayı korumak için eski usullere başvurması gerektiğini anladı. Yılların verdiği otacı bilgeliğiyle, ormanın en derin, ışıksız köşelerinden topladığı ve hiçbir tıbbi testte iz bırakmayan o özel, ölümcül kara dağ mantarlarını saatlerce kaynattı. O gece barışmak bahanesiyle kurbanı evine davet etti ve zehri onun o sevdiği bitki çayına zerre zerre karıştırdı. Kurban, çayını yudumlarken felç edici bir kalp kriziyle yere yığıldı. Hatice Nine, onun gözlerindeki son ışığın sönüşünü sallanan sandalyesinden, yüzünde adaleti sağlamış bir kasaba koruyucusunun huzuruyla izledi.",
+   "murderStory": "Hatice Nine, bu kasabanın yaşayan tarihi ve en kadim hafızasıydı. Kurban denen o açgözlü adam, kasabayı devasa bir kumpanyaya tamamen satıp buradaki herkesi evlerinden sürmek için gizli imzalar atmaya başladığında, Hatice Nine kasabayı korumak için eski usullere başvurması gerektiğini anladı. Yılların verdiği otacı bilgeliğiyle, ormanın en derin, ışıksız köşelerinden topladığı ve hiçbir hekimin teşhis edemeyeceği o özel, ölümcül kara dağ mantarlarını saatlerce kaynattı. O gece barışmak bahanesiyle kurbanı evine davet etti ve zehri onun o sevdiği bitki çayına zerre zerre karıştırdı. Kurban, çayını yudumlarken felç edici bir kalp kriziyle yere yığıldı. Hatice Nine, onun gözlerindeki son ışığın sönüşünü sallanan sandalyesinden, yüzünde adaleti sağlamış bir kasaba koruyucusunun huzuruyla izledi.",
    "portrait": "images/towns/sisoren/npcler/npc_212.jpg"
   },
   {
@@ -361,7 +361,7 @@
   {
    "id": 2014,
    "npcId": 201,
-   "name": "Kesik Hat Kablosu",
+   "name": "Kesik Telgraf Teli",
    "desc": "Arka odada kasten kesilmiş ve iletişimi koparmak için saklanmış yedek telgraf telleri.",
    "img": "images/towns/sisoren/deliller/2014.jpg",
    "hidden": false,
@@ -473,8 +473,8 @@
   {
    "id": 2031,
    "npcId": 203,
-   "name": "Kesilmiş Film Bobini",
-   "desc": "Makine dairesinde yer alan bir filmin en kritik sahnesinin kasten kesilip saklanmış parçası.",
+   "name": "Kesilmiş Panorama Rulosu",
+   "desc": "Makine dairesinde duran panoramanın en kritik sahnesinin kasten kesilip saklanmış parçası.",
    "img": "images/towns/sisoren/deliller/2031.jpg",
    "hidden": false,
    "blood": false,
@@ -490,7 +490,7 @@
    "id": 2032,
    "npcId": 203,
    "name": "Şantajlı Afiş",
-   "desc": "Gişe memurunun çekmecesinde, arka yüzüne \"Ne yaptığını biliyorum\" yazılmış eski bir film afişi.",
+   "desc": "Gişe memurunun çekmecesinde, arka yüzüne \"Ne yaptığını biliyorum\" yazılmış eski bir gösteri afişi.",
    "img": "images/towns/sisoren/deliller/2032.jpg",
    "hidden": false,
    "blood": false,
@@ -954,7 +954,7 @@
    "id": 2091,
    "npcId": 209,
    "name": "Sabote Edilmiş Vana",
-   "desc": "Valfi kasten bozulmuş ve ufak bir kıvılcımla gaz sızdırıp patlamaya hazır hale getirilmiş piknik tüpü.",
+   "desc": "Vanası kasten bozulmuş ve ufak bir kıvılcımla patlayacak hale getirilmiş demir gazyağı kazanı.",
    "img": "images/towns/sisoren/deliller/2091.jpg",
    "hidden": false,
    "blood": false,
@@ -1002,7 +1002,7 @@
    "id": 2094,
    "npcId": 209,
    "name": "Zulalanmış Mücevher",
-   "desc": "Dükkanın arkasındaki kullanılamaz boş tüplerin birinin içine beze sarılarak saklanmış çalıntı kolye.",
+   "desc": "Dükkanın arkasındaki kullanılamaz boş varillerin birinin içine beze sarılarak saklanmış çalıntı kolye.",
    "img": "images/towns/sisoren/deliller/2094.jpg",
    "hidden": false,
    "blood": false,
@@ -1034,7 +1034,7 @@
    "id": 2101,
    "npcId": 210,
    "name": "Çalıntı Çelik Kasa",
-   "desc": "Preslenmek üzere olan bir hurda yığınının arasına sıkıştırılarak yok edilmeye çalışılan kilitli kasa.",
+   "desc": "Eritilmek üzere olan bir hurda yığınının arasına sıkıştırılarak yok edilmeye çalışılan kilitli kasa.",
    "img": "images/towns/sisoren/deliller/2101.jpg",
    "hidden": false,
    "blood": false,
@@ -1049,8 +1049,8 @@
   {
    "id": 2102,
    "npcId": 210,
-   "name": "Kazınmış Plaka",
-   "desc": "Parçalanmış eşyaların arasında yeni sayılabilecek, aidiyeti belli olmasın diye üzeri zımparalanmış araç/araba plakası.",
+   "name": "Eğelenmiş Fayton Levhası",
+   "desc": "Parçalanmış eşyaların arasında yeni sayılabilecek, aidiyeti belli olmasın diye üzeri eğelenmiş fayton numara levhası.",
    "img": "images/towns/sisoren/deliller/2102.jpg",
    "hidden": false,
    "blood": false,
@@ -1417,7 +1417,7 @@
   },
   {
    "npcId": 202,
-   "q": "Ekrem hakkında dedikodular neler?",
+   "q": "Vahap Efendi hakkında dedikodular neler?",
    "a": "",
    "difficulty": 2,
    "category": "",
@@ -1426,7 +1426,7 @@
   },
   {
    "npcId": 203,
-   "q": "O gece sinema salonunda kimler vardı?",
+   "q": "O gece gösteri salonunda kimler vardı?",
    "a": "",
    "difficulty": 1,
    "category": "",
@@ -1444,7 +1444,7 @@
   },
   {
    "npcId": 203,
-   "q": "Film makinesi odasında saklanan ne?",
+   "q": "Makine odasında saklanan ne?",
    "a": "",
    "difficulty": 2,
    "category": "",
@@ -1642,7 +1642,7 @@
   },
   {
    "npcId": 209,
-   "q": "Son tüp teslimatını kime yaptın?",
+   "q": "Son gazyağı teslimatını kime yaptın?",
    "a": "",
    "difficulty": 1,
    "category": "",
@@ -1651,7 +1651,7 @@
   },
   {
    "npcId": 209,
-   "q": "Depo kayıtlarında eksik tüp var mı?",
+   "q": "Depo kayıtlarında eksik varil var mı?",
    "a": "",
    "difficulty": 1,
    "category": "",
@@ -1669,7 +1669,7 @@
   },
   {
    "npcId": 209,
-   "q": "Gaz kokusu nereden geliyor?",
+   "q": "Gazyağı kokusu nereden geliyor?",
    "a": "",
    "difficulty": 2,
    "category": "",
@@ -1824,7 +1824,7 @@
  "intro": [
   {
    "key": "Çetin",
-   "value": "Sisören'e nihayet ulaştık amirim. Burası Gölge Şehir'den bile daha soğuk ve karanlık. Her yeri sis kaplamış."
+   "value": "Sisören'e nihayet ulaştık amirim. Burası Gölgeşehir'den bile daha soğuk ve karanlık. Her yeri sis kaplamış."
   },
   {
    "key": "İlyas",

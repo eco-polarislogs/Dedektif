@@ -26,6 +26,14 @@ public class PbrImport : AssetPostprocessor
             ti.textureType = TextureImporterType.NormalMap;
             ti.sRGBTexture = false;
         }
+        else if (file.EndsWith("_h"))
+        {
+            // Yükseklik haritası: renk değil veri (paralaks ve su birikintisi hesabı doğrudan okur)
+            ti.textureType = TextureImporterType.Default;
+            ti.sRGBTexture = false;
+            ti.alphaSource = TextureImporterAlphaSource.None;
+            ti.maxTextureSize = 512;
+        }
         else
         {
             ti.textureType = TextureImporterType.Default;

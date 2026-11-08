@@ -56,7 +56,7 @@ namespace Dedektif3D.Core
     /// <summary>
     /// Oyunun beyni — wwwroot/js/app.js akışının 3D karşılığı. Backend kapalıysa aynı kurallarla yerel modda oynanır.
     /// </summary>
-    public class GameManager : MonoBehaviour
+    public partial class GameManager : MonoBehaviour
     {
         public static GameManager Instance { get; private set; }
 
@@ -105,12 +105,15 @@ namespace Dedektif3D.Core
             PlayerPrefs.Save();
             var cur = GameData.Regions.Find(x => x.Id == townId);
             var next = cur != null ? GameData.Regions.Find(x => x.Level == cur.Level + 1) : null;
-            UnlockedMessage = first && next != null ? $"🔓 YENİ LEVEL AÇILDI: Level {next.Level} — {next.Name}" : null;
+            UnlockedMessage = !first ? null : next != null && next.Level > 0
+                ? $"YENİ KASABA AÇILDI: Level {next.Level} — {next.Name}"
+                : "Üç kasabanın da dosyası kapandı. Anadolu bu gece biraz daha rahat uyuyacak, Amirim.";
         }
         public void ResetProgress()
         {
             foreach (var r in GameData.Regions) PlayerPrefs.DeleteKey("dedektif_solved_" + r.Id);
             PlayerPrefs.Save();
+            SaveSystem.DeleteAll();
         }
 
         readonly Dictionary<int, ClueRuntime> _clues = new Dictionary<int, ClueRuntime>();
@@ -126,6 +129,7 @@ namespace Dedektif3D.Core
         LightningController _lightning;
         readonly List<HidingSpotInteractable> _spots = new List<HidingSpotInteractable>();
         public DetectiveVision Vision { get; private set; }
+        public SceneSearch Search { get; private set; }
         int _caseToken; // eski gecikmeli çağrıları iptal etmek için
 
         public IEnumerable<ClueRuntime> Clues => _clues.Values.OrderBy(c => c.Id);
@@ -162,6 +166,8 @@ namespace Dedektif3D.Core
             RebuildRuntime();
             WireInteractables();
             Vision = gameObject.AddComponent<DetectiveVision>();
+            Search = gameObject.AddComponent<SceneSearch>();
+            Search.Init(this);
             DayNightCycle.Instance?.Rescan(Town.transform);
 
             if (Player.Cam != null)
@@ -248,29 +254,71 @@ namespace Dedektif3D.Core
             var ci2 = corpse.AddComponent<CorpseInteractable>(); ci2.radius = 2.2f; ci2.offset = Vector3.up * 0.3f;
             Town.Track(corpse);
 
-            // Yardımcı Dedektif Çetin (olay yerinin yanında)
-            var helperRig = PropFactory.BuildPerson("Yardımcı Dedektif Çetin", Town.transform, Town.HelperPosition,
-                new Color(0.16f, 0.15f, 0.14f), new Color(0.7f, 0.66f, 0.58f), false, new Color(0.1f, 0.1f, 0.11f), "dedektif_helper");
-            // 1800'ler: yardımcı dedektif melon şapkalı (dedektif fötr)
-            if (!helperRig.HasModel)   // gerçek model: fötr, trençkot ve harita portre tarifinden
-            {
-                var cap = MaterialLibrary.Get("fedora", new Color(0.12f, 0.11f, 0.1f), 0.25f);
-                Shapes.Cyl("Şapka", helperRig.Head, new Vector3(0, 0.13f, 0), new Vector3(0.48f, 0.015f, 0.48f), cap, null, false);
-                Shapes.Cyl("ŞapkaTepe", helperRig.Head, new Vector3(0, 0.2f, 0), new Vector3(0.3f, 0.08f, 0.3f), cap, null, false);
-            }
-            if (!helperRig.HasModel) Shapes.Box("NotDefteri", helperRig.HandR, new Vector3(0, 0.01f, 0.06f), new Vector3(0.12f, 0.16f, 0.03f), MaterialLibrary.Get("paper", new Color(0.9f, 0.86f, 0.74f)), null, false);
-            var badge = Shapes.Text3D("İsim", helperRig.Root, new Vector3(0, 2.35f, 0), "YARDIMCI DEDEKTİF ÇETİN", new Color(0.95f, 0.8f, 0.5f), 0.018f);
-            badge.gameObject.AddComponent<Billboard>();
-            Town.Track(helperRig.Root.gameObject);
-            var hi = helperRig.Root.gameObject.AddComponent<HelperInteractable>();
-            hi.rig = helperRig; hi.radius = 2.8f; hi.offset = Vector3.up;
-            var look = Town.CrimeScene - Town.HelperPosition; look.y = 0;
-            helperRig.Root.rotation = Quaternion.LookRotation(look);
+            // Yol arkadaşları dedektifin iki yanında, omuz hizasının biraz önünde yürür: omuz üstü kamera (0.68 sağ, 2.7 geri) ile dedektifin arasına girmezler.
+            // Çetin her kasabada solda; Rıfat (Gölgeşehir) ve İlyas (Sisören) kendi kasabalarında sağda
+            SpawnCompanion("Yardımcı Dedektif Çetin", "dedektif_helper", false, new Vector2(-1.3f, 0.25f));
+            var guide = GameData.Current != null ? GameData.Current.LocalHelperName : null;
+            if (!string.IsNullOrEmpty(guide))
+                SpawnCompanion(guide, GameData.Current.Id == "golge_sehir" ? "bekci_hasan_helper" : "tuccar_ilyas_helper", true, new Vector2(2.1f, 0.35f));
         }
+
+        /// <summary>Dedektifin yanından ayrılmayan bir yol arkadaşı kurar; bir kasabanın parçasıdır, kasaba değişince silinir.</summary>
+        void SpawnCompanion(string displayName, string faceKey, bool localGuide, Vector2 slot)
+        {
+            var rig = PropFactory.BuildPerson(displayName, Town.transform, Town.HelperPosition,
+                new Color(0.16f, 0.15f, 0.14f), new Color(0.7f, 0.66f, 0.58f), false, new Color(0.1f, 0.1f, 0.11f), faceKey);
+            Town.Track(rig.Root.gameObject);
+            var go = rig.Root.gameObject;
+            go.layer = 2;   // kamera ve görüş testleri içinden geçer, dedektif gibi
+            InteriorGenerator.SetLayerRecursive(go, 2);
+            go.AddComponent<CharacterController>();
+            var hi = go.AddComponent<HelperInteractable>();
+            hi.rig = rig; hi.displayName = displayName; hi.localGuide = localGuide; hi.radius = 1.9f; hi.offset = Vector3.up;
+            var companion = go.AddComponent<HelperCompanion>();
+            companion.rig = rig; companion.slot = slot;
+        }
+
+        int _guideLine;
+
+        /// <summary>Yerel rehberle konuşma: kasabayı anlatır; bina içindeyse şüpheli hakkında bildiğini söyler.</summary>
+        public void TalkToLocalGuide(string guide)
+        {
+            string line;
+            if (InsideBuilding && CurrentBuilding != null)
+            {
+                var npc = GameData.Npc(CurrentBuilding.NpcId);
+                line = GameData.Current.Id == "golge_sehir"
+                    ? $"{npc.Name}'i yıllardır bilirim Amirim. Burada gözünüzü dört açın; bu taşlar çok şey gördü, insanlar ise pek az şey söyler."
+                    : $"{npc.Name} ile çok alışverişim oldu Amirim. Sisin içinde herkes birbirini tanır ama kimse kimseye tam güvenmez. Sorularınızı dikkatli seçin.";
+            }
+            else
+            {
+                var lines = GameData.Current.Id == "golge_sehir" ? GuideLinesRifat : GuideLinesIlyas;
+                line = lines[_guideLine++ % lines.Length];
+            }
+            ShowHelper(line, guide);
+        }
+
+        static readonly string[] GuideLinesRifat =
+        {
+            "Kırk yıldır bu taşlardayım Amirim. Gece fenerimi tutmadığım köşe kalmadı; yine de her köşede bir şey saklı.",
+            "Çam ormanının kenarındaki patikalara dikkat edin. Bu kasabada kimse o yoldan gündüz geçmez, geceleyin geçeni de kimse görmemiş olur.",
+            "Yağmur izleri siler ama çamur tutar. Kapı önlerine, eşiklere bakın; dükkân sahipleri bunu unutur.",
+            "Fenerim yanarken yanımdan ayrılmayın. Gölgeşehir'de sokak lambaları herkese yetmez.",
+        };
+
+        static readonly string[] GuideLinesIlyas =
+        {
+            "Bu yamaçta on yıldır ticaret yaparım Amirim. Kim kime borçlu, kim kimden kaçıyor, hepsi benim defterimde bir şekilde yazılı.",
+            "Sis kalkmaz buralarda. Teraslar arasındaki taş merdivenleri bilmeyen kaybolur; siz benim peşimden gelin.",
+            "Kasabanın iki yüzü var: gündüz selam verenler, gece kapısını sürgüler. Dükkânlara girince kimin neyi sakladığına bakın.",
+            "Telgraf hattı buraya haber taşır ama dedikodu ondan önce gelir. Kahvehanede duyduklarınızı hafife almayın.",
+        };
 
         void SetPhase(GamePhase p)
         {
             Phase = p;
+            if (p != GamePhase.Playing) Search?.ForceOff();
             UI.OnPhaseChanged(p);
             ApplyInputState();
         }
@@ -338,15 +386,29 @@ namespace Dedektif3D.Core
                 Delay(4.2f, () =>
                 {
                     if (Phase != GamePhase.WorldMap) return;
-                    if (IsSolved("golge_sehir")) ShowHelper("Harika bir iş çıkardık Amirims! Gizemli Kasaba'yı da Gölgeşehir'i de aydınlattık. Sırada Sisören'in sisli dağları var!");
-                    else if (IsSolved("gizemli")) ShowHelper("Tebrikler Amirims! Gizemli Kasaba davasını çözdük ve Gölgeşehir'in kilidini açtık. Hazır olduğunuzda Level 2'ye geçelim!");
+                    if (IsSolved("sisoren")) ShowHelper("Üç kasabanın da karanlığını aydınlattık Amirim. Dosyalar kapandı; yine de istersen birini yeniden açabiliriz, her soruşturmada katil değişiyor.");
+                    else if (IsSolved("golge_sehir")) ShowHelper("Harika bir iş çıkardık Amirim! Gizemli Kasaba'yı da Gölgeşehir'i de aydınlattık. Sırada Sisören'in sisli dağları var!");
+                    else if (IsSolved("gizemli")) ShowHelper("Tebrikler Amirim! Gizemli Kasaba davasını çözdük ve Gölgeşehir'in kilidini açtık. Hazır olduğunuzda Level 2'ye geçelim!");
                     else TriggerHelper("splash");
                 });
             });
         }
 
         /// <summary>Bölge haritasında "Ana Menü" (world-back-btn).</summary>
-        public void BackToSplash() => UI.FadeTransition(null, Color.black, GoToSplash);
+        public void BackToSplash() => UI.FadeTransition(null, Color.black, () =>
+        {
+            LeaveCase();
+            GoToSplash();
+        });
+
+        /// <summary>Kasabadan menüye dönüş: davayı kaydeder, bekleyen gecikmeli olayları iptal eder.</summary>
+        void LeaveCase()
+        {
+            SaveCaseNow();
+            _caseToken++;
+            Search?.ForceOff();
+            if (InsideBuilding) { CurrentBuilding = null; SetIndoor(false); }
+        }
 
         /// <summary>Bölge haritasında kasaba tıklaması.</summary>
         public void SelectRegion(RegionDef r)
@@ -362,6 +424,21 @@ namespace Dedektif3D.Core
                 UI.MessageBox($"LEVEL {r.Level} — {r.Name} KİLİTLİ", $"Bu soruşturmaya başlamak için önce Level {prev?.Level}: {prev?.Name} davasını çözmelisiniz, Amirim.", true);
                 return;
             }
+            if (SaveSystem.Exists(r.Id))
+            {
+                UI.Choose($"{r.Name} — YARIM KALAN SORUŞTURMA",
+                    "Bu kasabada süren bir soruşturmanız var. Kaldığınız yerden devam edebilir ya da dosyayı baştan açabilirsiniz.",
+                    "Kaldığım Yerden Devam", "Yeni Dava Aç",
+                    () => ResumeCase(r.Id),
+                    () => UI.Confirm("YENİ DAVA", "Mevcut soruşturmanın kaydı silinecek ve bu işlem geri alınamaz. Emin misiniz?", () => StartNewCase(r)));
+                return;
+            }
+            StartNewCase(r);
+        }
+
+        void StartNewCase(RegionDef r)
+        {
+            SaveSystem.Delete(r.Id);
             UI.FadeTransition(null, Color.black, () =>
             {
                 ExitMap();
@@ -477,14 +554,13 @@ namespace Dedektif3D.Core
         public void RequestExitToWorldMap()
         {
             UI.Confirm("BÖLGE HARİTASINA DÖNÜŞ",
-                "Bölge haritasına dönmek istediğinize emin misiniz? Gizemli Kasaba'yı tekrar seçtiğinizde dava dosyası yeniden açılır.",
+                $"Bölge haritasına dönmek istediğinize emin misiniz? Soruşturmanız kaydedilecek; {GameData.TownName} kasabasını tekrar seçtiğinizde kaldığınız yerden devam edebilirsiniz.",
                 () => UI.FadeTransition(null, Color.black, ReturnToWorldMap));
         }
 
         void ReturnToWorldMap()
         {
-            _caseToken++;
-            if (InsideBuilding) { CurrentBuilding = null; SetIndoor(false); }
+            LeaveCase();
             DayNightCycle.Instance?.MenuTime();
             Player.SetVisible(false);
             Director?.PlayIdle();
@@ -495,7 +571,25 @@ namespace Dedektif3D.Core
         /// <summary>initGame(): davayı sıfırla, sunucudan suçluyu al, oturum başlat.</summary>
         void InitCase()
         {
+            ResetCaseState();
+            var ids = GameData.Npcs.Select(x => x.Id).ToList();
+            GuiltyId = ids.Count > 0 ? ids[UnityEngine.Random.Range(0, ids.Count)] : 1;
+            Api.ResetTown(r =>
+            {
+                if (r != null && GetNpc(r.guiltyNpcId) != null) GuiltyId = r.guiltyNpcId;
+                Api.StartSession(GuiltyId);
+            }, _ => { });
+        }
+
+        /// <summary>Davanın bütün çalışma zamanı durumunu temizler (yeni dava ve kayıttan devam ortak kullanır).</summary>
+        void ResetCaseState()
+        {
             _caseToken++;
+            _caseClosed = false;
+            _resumed = false;
+            _saveDirty = false;
+            _corpseLook = 0;
+            CurrentBuilding = null;
             foreach (var c in _clues.Values)
             {
                 c.InBag = false; c.BloodFound = c.PrintFound = c.BloodChecked = c.PrintChecked = c.BloodSent = c.PrintSent = false;
@@ -511,14 +605,6 @@ namespace Dedektif3D.Core
             LabCount = 0; DetectiveNotes = "";
             AutopsyTimerStarted = false; AutopsyReady = false; AutopsyTimeLeft = GameData.AutopsyCountdown; AutopsyReport = null;
             foreach (var b in Town.Buildings.Values) if (b.StatusLabel != null) b.StatusLabel.text = "";
-
-            var ids = GameData.Npcs.Select(x => x.Id).ToList();
-            GuiltyId = ids.Count > 0 ? ids[UnityEngine.Random.Range(0, ids.Count)] : 1;
-            Api.ResetTown(r =>
-            {
-                if (r != null && GetNpc(r.guiltyNpcId) != null) GuiltyId = r.guiltyNpcId;
-                Api.StartSession(GuiltyId);
-            }, _ => { });
         }
 
         // =================================================================
@@ -540,6 +626,8 @@ namespace Dedektif3D.Core
                 CurrentBuilding = def;
                 Player.Teleport(inst.Spawn.position, inst.Spawn.rotation);
                 SetIndoor(true);
+                Search?.OnEnterRoom();
+                MarkDirty();
                 AudioManager.Instance?.DoorClose();
                 Api.LogAction("enter_building", def.NpcId, def.WebName);
                 // İnsan simülasyonu: gece yarısı kapı çalınırsa şüpheli uykudan uyandırılmıştır — daha gergin ve huysuz
@@ -591,9 +679,11 @@ namespace Dedektif3D.Core
             UI.FadeTransition(GameData.TownName, new Color(0.27f, 0.95f, 1f), () =>
             {
                 CurrentBuilding = null;
+                Search?.OnLeaveRoom();
                 Player.Teleport(b.DoorOutside.position, b.DoorOutside.rotation);
                 SetIndoor(false);
                 CheckAutopsyConditions();
+                MarkDirty();
             });
         }
 
@@ -623,6 +713,7 @@ namespace Dedektif3D.Core
             var c = GetClue(id);
             if (c?.View == null || c.View.revealed) return;
             c.View.SetRevealed(true, true);
+            MarkDirty();
             UI.Toast(string.IsNullOrEmpty(where) ? $"Gizli bir delil buldun: {c.Def.Name}!" : $"{where} — saklanmış bir delil: {c.Def.Name}!");
             AudioManager.Instance?.Ding();
             Api.LogAction("reveal_hidden_clue", id, c.Def.Name);
@@ -658,8 +749,25 @@ namespace Dedektif3D.Core
         {
             c.InBag = true;
             if (!_bagOrder.Contains(c.Id)) _bagOrder.Add(c.Id);
+            MarkDirty();
             Api.KeepClue(c.Id);
             CheckAutopsyConditions();
+        }
+
+        /// <summary>
+        /// Çantadan delil çıkarma: çanta dolunca oyuncu takılmasın. Laboratuvara gönderilen bulgular sayılmaya devam eder;
+        /// binası açıksa delil odadaki yerine döner, kilitliyse dosyadan çıkar.
+        /// </summary>
+        public void RemoveFromBag(int id)
+        {
+            var c = GetClue(id);
+            if (c == null || !c.InBag) return;
+            c.InBag = false;
+            _bagOrder.Remove(id);
+            MarkDirty();
+            bool locked = IsVisited(c.Def.BuildingNpcId);
+            UI.Toast(locked ? $"'{c.Def.Name}' dosyadan çıkarıldı." : $"'{c.Def.Name}' geri bırakıldı; bulunduğu odaya dönünce yine alabilirsin.");
+            Api.LogAction("drop_clue", id, c.Def.Name);
         }
 
         /// <summary>Çantadan delil incele (openClueInspect fromBag) — bina içindeyken laboratuvar incelemesi yapılamaz.</summary>
@@ -684,11 +792,12 @@ namespace Dedektif3D.Core
             if (c == null) return;
             if (blood) { c.BloodChecked = true; c.BloodFound = c.Def.HasBlood; }
             else { c.PrintChecked = true; c.PrintFound = c.Def.HasPrint; }
+            MarkDirty();
             AudioManager.Instance?.Ding();
         }
 
         public static string FindingText(bool blood, bool found) => blood
-            ? (found ? "KAN LEKESİ TESPİT EDİLDİ! (Biyolojik kan lekesi örneği izole edildi)" : "TEMİZ: Nesne üzerinde UV altında tespit edilen bir kan veya biyolojik leke bulunmamaktadır.")
+            ? (found ? "KAN LEKESİ TESPİT EDİLDİ! (Ayıraç koyu maviye döndü; kan örneği ayrıldı)" : "TEMİZ: Kan ayıracı tepki vermedi; nesnede kan lekesi bulunmamaktadır.")
             : (found ? "PARMAK İZİ BULUNDU! (Yüzey üstü daktilografik iz numunesi izole edildi)" : "TEMİZ: Nesne yüzeyinde adli incelemeye elverişli bir parmak izi bulunmamaktadır.");
 
         /// <summary>send-blood-btn / send-fingerprint-btn → /api/game/forensic/submit, lab sayacı.</summary>
@@ -699,6 +808,7 @@ namespace Dedektif3D.Core
             if (blood ? (c.BloodSent || !c.BloodFound) : (c.PrintSent || !c.PrintFound)) return;
             if (blood) c.BloodSent = true; else c.PrintSent = true;
             LabCount++;
+            MarkDirty();
             Api.SubmitForensic(id, c.Def.Name, FindingText(blood, true));
             ShowHelper($"Harika Amirim! '{c.Def.Name}' üzerindeki {(blood ? "KAN LEKESİ" : "PARMAK İZİ")} bulgusunu Adli Tıp Merkezi'ne ilettim. Otopsi raporuna yeni detaylar eklendi!");
             CheckAutopsyConditions();
@@ -715,7 +825,7 @@ namespace Dedektif3D.Core
                 AutopsyTimerStarted = true;
                 AutopsyTimeLeft = GameData.AutopsyCountdown;
                 UI.MessageBox("BİLGİ", $"OTOPSİ RAPORU HAZIRLANIYOR!\n\nEn az {GameData.ReqBuildings} bina incelendi ve {GameData.ReqLabs} delil adli tıbba gönderildi. Adli Tıp Kurumu otopsi raporunu hazırlamaya başladı. Rapor 60 saniye içinde hazır olacak.", false);
-                ShowHelper($"Amirims! {GameData.ReqBuildings} bina incelemesi ve {GameData.ReqLabs} lab gönderimi tamamlandı. Adli Tıp otopsi raporu hazırlanıyor, ekrandaki 60 saniyelik sayacı takip edebilirsiniz!");
+                ShowHelper($"Amirim! {GameData.ReqBuildings} bina incelemesi ve {GameData.ReqLabs} lab gönderimi tamamlandı. Adli Tıp otopsi raporu hazırlanıyor, ekrandaki 60 saniyelik sayacı takip edebilirsiniz!");
             }
         }
 
@@ -726,8 +836,9 @@ namespace Dedektif3D.Core
             if (AutopsyTimerStarted && !AutopsyReady)
             {
                 AutopsyTimeLeft -= Time.deltaTime;
-                if (AutopsyTimeLeft <= 0f) { AutopsyTimeLeft = 0f; FinishAutopsy(); }
+                if (AutopsyTimeLeft <= 0f) { AutopsyTimeLeft = 0f; FinishAutopsy(); MarkDirty(); }
             }
+            TickAutosave();
         }
 
         void FinishAutopsy()
@@ -754,12 +865,13 @@ namespace Dedektif3D.Core
                 case 4: cause = "Yakın mesafeden uygulanan şiddet. Elinde kopmuş pahalı palto düğmesi izi."; break;
                 default: cause = "Boğulma bulguları. Ceket astarında yırtılmış gizli cep, ince iplik lifleri."; break;
             }
-            if (GameData.TownId != "gizemli") cause = "Ağır darbe ve boğuşma izleri. Tırnak altında yabancı kumaş lifleri, giysilerde çamur ve çam iğneleri.";
-            return $"ADLİ TIP OTOPSİ VAKA DOSYASI — Kurban: {GameData.Current.Victim}\n\n" +
-                   "Ölüm saati: Gece 23:30 – 00:30 arası.\n" +
+            if (GameData.TownId != "gizemli") cause = GameData.AutopsyFinding(GuiltyId) ?? "Ağır darbe ve boğuşma izleri. Tırnak altında yabancı kumaş lifleri, giysilerde çamur ve çam iğneleri.";
+            string hour = GameData.TownId == "golge_sehir" ? "Gece 01:30 – 02:30 arası." : "Gece 23:30 – 00:30 arası.";
+            return $"ADLİ TIP OTOPSİ VAKA DOSYASI — Maktul: {GameData.Current.Victim}\n\n" +
+                   $"Ölüm saati: {hour}\n\n" +
                    $"Bulgular: {cause}\n\n" +
-                   $"Adli laboratuvara gönderilen bulgu sayısı: {LabCount}\n\n" +
-                   (Api.IsOnline ? "" : "Not: Sunucuya bağlanılamadığı için bu rapor yerel kayıttan derlenmiştir.");
+                   "Hekimin notu: Bulgular, topladığınız delillerle ve şüphelilerin anlattıklarıyla karşılaştırılmalıdır.\n\n" +
+                   $"Adli laboratuvara gönderilen bulgu sayısı: {LabCount}";
         }
 
         static string StripHtml(string html)
@@ -870,6 +982,7 @@ namespace Dedektif3D.Core
                     int stress = q.Category == "baski" || q.Difficulty >= 4 ? 25 : q.Category == "yuzlestirme" || q.Difficulty == 3 ? 15 : q.Category == "derinlesme" || q.Difficulty == 2 ? 8 : 3;
                     if (GuiltyId == n.Id) stress = Mathf.RoundToInt(stress * 1.4f);
                     n.Stress = Mathf.Min(100, n.Stress + stress);
+                    MarkDirty();
                     Api.LogAction("dialog", n.Id, q.Q);
                     LoadQuestions(n);
                 });
@@ -890,12 +1003,13 @@ namespace Dedektif3D.Core
 
             void Answer(string ans, int stressInc)
             {
-                if (string.IsNullOrWhiteSpace(ans)) ans = GameData.FreeQuestionFallbacks.TryGetValue(n.Id, out var fb) ? fb : "*Gözlerini kısarak sizi süzer* Cinayet soruşturması hakkında net bir soru sorarsanız size yardımcı olabilirim amirim.";
+                if (string.IsNullOrWhiteSpace(ans)) ans = GameData.AnswerFree(n.Def, text, GuiltyId);
                 n.Log.Add(new DialogueLine { Speaker = n.Def.Name, Text = ans, StartTime = Time.time });
                 n.Waiting = false;
                 Delay(ans.Length / DialogueLine.CharsPerSecond + 0.2f, () =>
                 {
                     n.Stress = Mathf.Clamp(n.Stress + stressInc, 0, 100);
+                    MarkDirty();
                     LoadQuestions(n);
                 });
             }
@@ -942,7 +1056,7 @@ namespace Dedektif3D.Core
             string key = building != null ? context + "_" + building : context;
             if (oneTime && _shownHelperContexts.Contains(key)) return;
             _shownHelperContexts.Add(key);
-            if (context == "clue_found") { ShowHelper("Amirims! Şüphelinin anlattıkları yeni bir delile işaret ediyor. Delili çantaya ekledim, lab'a göndermeyi unutmayın!"); return; }
+            if (context == "clue_found") { ShowHelper("Amirim! Şüphelinin anlattıkları yeni bir delile işaret ediyor. Delili çantaya ekledim, lab'a göndermeyi unutmayın!"); return; }
             if (!Api.IsOnline) { ShowHelper(GameData.HelperMessage(context, building)); return; }
             Api.GetHelperTip(context, building, r =>
             {
@@ -953,7 +1067,7 @@ namespace Dedektif3D.Core
         /// <summary>provideBuildingSpecificHint — "Başka İpucu Söyle".</summary>
         public void ProvideBuildingHint()
         {
-            if (CurrentBuilding == null) { ShowHelper("Amirims, mekan içerisindeki delilleri ve ipuçlarını öğrenmek için binalardan birine girmeliyiz!"); return; }
+            if (CurrentBuilding == null) { ShowHelper("Amirim, mekan içerisindeki delilleri ve ipuçlarını öğrenmek için binalardan birine girmeliyiz!"); return; }
             var npc = GameData.Npc(CurrentBuilding.NpcId);
             var names = string.Join(", ", GameData.Clues.Where(c => c.BuildingNpcId == npc.Id).Select(c => $"'{c.Name}'"));
             string extra;
@@ -966,7 +1080,8 @@ namespace Dedektif3D.Core
                 case 5: extra = "Kanlı İplik Makarası'na, Yırtık Kumaş parçasına ve ceketin astarındaki Gizli Cep'e dikkat et."; break;
                 default: extra = "Tezgahın çevresini, rafları ve karanlık köşeleri dikkatle tara; çekmeceler, sandıklar, tablolar ve gevşek tahtalar bir şey saklıyor olabilir — Dedektif Gözü [Q]!"; break;
             }
-            ShowHelper($"Amirims, {npc.Building} binasındayız! Odada incelenebilecek deliller: {names}. {extra} Şüpheli sırrı: \"{npc.Secret}\"");
+            string secret = string.IsNullOrEmpty(npc.Secret) ? "" : $" Şüpheli sırrı: \"{npc.Secret}\"";
+            ShowHelper($"Amirim, {npc.Building} binasındayız! Odada incelenebilecek deliller: {names}. {extra}{secret}");
         }
 
         /// <summary>handleHelperAnalyzeClick — "Delilleri İncele / Deliller Hakkında Ne Düşünüyorsun?".</summary>
@@ -1012,6 +1127,7 @@ namespace Dedektif3D.Core
             var n = GetNpc(npcId);
             if (n == null || IsInnocent(npcId)) return;
             _innocent.Add(npcId);
+            MarkDirty();
             if (Town.Buildings.TryGetValue(npcId, out var b) && b.StatusLabel != null) b.StatusLabel.text = $"{n.Def.Name.ToUpperInvariant()} MASUM";
             UI.MessageBox("MASUM İLAN EDİLDİ", $"{n.Def.Name} soruşturma dosyasında masum olarak arşivlendi. Yeni bir vaka açılana kadar bu şüpheli masum kalacaktır ve sorgulanamaz.", false);
             Api.LogAction("mark_innocent", npcId, n.Def.Name);
@@ -1022,6 +1138,7 @@ namespace Dedektif3D.Core
         {
             var accused = GetNpc(npcId);
             if (accused == null) return;
+            _caseClosed = true;
             AudioManager.Instance?.GavelTriple();
             UI.ShowJail(accused);
             int token = _caseToken;
@@ -1039,11 +1156,12 @@ namespace Dedektif3D.Core
                 ResultButton = correct ? "Haritaya Dön" : "Haritaya Dön ve Tekrar Dene";
                 UnlockedMessage = null;
                 if (correct) MarkSolved(GameData.TownId);
+                SaveSystem.Delete(GameData.TownId);
                 Api.EndSession(correct ? "Won" : "Lost", npcId, Npcs.Sum(x => x.Asked), BagCount);
                 Delay(GameData.JailSeconds, () => SetPhase(GamePhase.Result));
             }
 
-            if (Api.IsOnline)
+            if (Api.IsOnline && !_resumed)
                 Api.Accuse(npcId, r =>
                 {
                     if (r == null) { Finish(npcId == GuiltyId, GuiltyId); return; }
