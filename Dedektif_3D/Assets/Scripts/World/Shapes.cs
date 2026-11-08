@@ -41,7 +41,14 @@ namespace Dedektif3D.World
                 var c = go.GetComponent<Collider>();
                 if (c != null) Object.Destroy(c);
             }
-            if (texTiling > 0f) SetTiling(r, new Vector2(Mathf.Max(scale.x, scale.z) * texTiling, scale.y * texTiling));
+            if (texTiling > 0f)
+            {
+                // İnce zemin levhasında doku üst yüzeye göre tekrarlanır; yoksa yükseklik çok küçük olduğundan doku çizgi gibi uzar.
+                bool flat = scale.y < 0.15f * Mathf.Min(scale.x, scale.z);
+                SetTiling(r, flat
+                    ? new Vector2(scale.x * texTiling, scale.z * texTiling)
+                    : new Vector2(Mathf.Max(scale.x, scale.z) * texTiling, scale.y * texTiling));
+            }
             return go;
         }
 
@@ -70,16 +77,15 @@ namespace Dedektif3D.World
             return go;
         }
 
-        /// <summary>Dokuyu objenin ölçüsüne göre tekrar ettirir (gerilmiş tuğla görünmesin diye).</summary>
+        /// <summary>
+        /// Dokuyu objenin ölçüsüne göre tekrar ettirir (gerilmiş tuğla görünmesin diye). Aynı tekrar değerini paylaşan objeler
+        /// aynı malzeme kopyasını kullanır: MaterialPropertyBlock'lu çizim derlenmiş oyunda duvarları kaybettiği ve toplu çizimi
+        /// (SRP Batcher) bozduğu için kullanılmaz.
+        /// </summary>
         public static void SetTiling(Renderer r, Vector2 tiling)
         {
-            var block = new MaterialPropertyBlock();
-            r.GetPropertyBlock(block);
-            if (r.sharedMaterial != null && MaterialLibrary.TileScale.TryGetValue(r.sharedMaterial, out var k)) tiling *= k;
-            var st = new Vector4(tiling.x, tiling.y, 0, 0);
-            block.SetVector("_BaseMap_ST", st);
-            block.SetVector("_MainTex_ST", st);
-            r.SetPropertyBlock(block);
+            var mat = r.sharedMaterial;
+            if (mat != null) r.sharedMaterial = MaterialLibrary.Tiled(mat, tiling);
         }
 
         /// <summary>Üçgen prizma: beşik çatı (gable roof) için. Taban 1x1, yükseklik 1, merkez tabanın ortası.</summary>

@@ -51,7 +51,6 @@ public static class DedektifShots
                     gm.FinishStory(); yield return new WaitForSeconds(2f);
                     gm.SkipDescent(); yield return new WaitForSeconds(2.5f);
                     var town = gm.Town; var cs = town.CrimeScene;
-                    foreach (var an in FindObjectsByType<Animator>(FindObjectsSortMode.None)) an.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                     gm.Player.SetVisible(false);
                     foreach (var hour in new[] { 21.5f, 12.5f })
                     {

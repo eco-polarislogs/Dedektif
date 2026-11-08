@@ -348,8 +348,8 @@ namespace Dedektif3D.World
                 var mid = (c[i] + c[(i + 1) % 4]) / 2 + Vector3.up * 0.9f;
                 var d = c[(i + 1) % 4] - c[i];
                 float yaw = Mathf.Atan2(d.x, d.z) * Mathf.Rad2Deg - 90f;
-                Text3D("ŞeritYazı", cs, mid + Quaternion.Euler(0, yaw, 0) * new Vector3(0, 0, -0.02f), "POLİS GİRİLMEZ   POLİS GİRİLMEZ", new Color(0.05f, 0.05f, 0.05f), 0.007f, yaw);
-                Text3D("ŞeritYazıArka", cs, mid + Quaternion.Euler(0, yaw, 0) * new Vector3(0, 0, 0.02f), "POLİS GİRİLMEZ   POLİS GİRİLMEZ", new Color(0.05f, 0.05f, 0.05f), 0.007f, yaw + 180f);
+                Text3D("ŞeritYazı", cs, mid + Quaternion.Euler(0, yaw, 0) * new Vector3(0, 0, -0.02f), "ZAPTİYE - GİRİLMEZ   ZAPTİYE - GİRİLMEZ", new Color(0.05f, 0.05f, 0.05f), 0.007f, yaw);
+                Text3D("ŞeritYazıArka", cs, mid + Quaternion.Euler(0, yaw, 0) * new Vector3(0, 0, 0.02f), "ZAPTİYE - GİRİLMEZ   ZAPTİYE - GİRİLMEZ", new Color(0.05f, 0.05f, 0.05f), 0.007f, yaw + 180f);
             }
             // Görünmez engel: yalnızca kasabalılar ve NPC'ler olay yerine giremez — dedektif şeridin altından geçip inceleyebilir
             var block = new GameObject("OlayYeriEngeli"); block.transform.SetParent(cs, false); block.layer = NpcBarrierLayer;
@@ -380,11 +380,11 @@ namespace Dedektif3D.World
             TownProps.Taxi(t, new Vector3(11.5f, 0.05f, -13.5f), -20f);
             _occupied.Add(CrimeScene + new Vector3(-6.5f, 0, -2.5f));
 
-            // Şeridin arkasında şemsiyeli meraklı kalabalık
-            var crowd = new[] { new Vector3(9.5f, 0, -5f), new Vector3(10.4f, 0, -7.2f), new Vector3(9.8f, 0, -9.6f), new Vector3(1.5f, 0, -13.5f), new Vector3(5.5f, 0, -14f), new Vector3(8.6f, 0, -12.6f) };
+            // Şeridin arkasında şemsiyeli meraklı kalabalık (olay yerinin doğu tarafında, meydanı kapatmayacak mesafede)
+            var crowd = new[] { new Vector3(10.2f, 0.04f, -4.2f), new Vector3(11.0f, 0.04f, -6.5f), new Vector3(10.5f, 0.04f, -9.2f), new Vector3(11.4f, 0.04f, -11.2f) };
             foreach (var p in crowd)
             {
-                var person = Townsfolk.CreateStanding(t, p, Random.value > 0.35f);
+                var person = Townsfolk.CreateStanding(t, p, Random.value > 0.4f);
                 var look = CrimeScene - p; look.y = 0;
                 person.transform.rotation = Quaternion.LookRotation(look);
             }
@@ -393,9 +393,8 @@ namespace Dedektif3D.World
 
         static void PoliceCap(PropFactory.PersonRig rig)
         {
-            // 1800'ler zaptiyesi: kırmızı fes + püskül (gerçek modelde kafa çerçevesine oturur)
-            Cyl("Fes", rig.Head, new Vector3(0, 0.2f, 0), new Vector3(0.26f, 0.11f, 0.26f), M.Get("fez", new Color(0.55f, 0.06f, 0.06f), 0.3f), null, false);
-            Box("Püskül", rig.Head, new Vector3(0.1f, 0.22f, -0.08f), new Vector3(0.02f, 0.16f, 0.02f), M.Get("tassel", new Color(0.05f, 0.05f, 0.05f)), null, false);
+            // Memur zaptiye kepi (fes kaldırıldı)
+            Headwear.PoliceCap(rig.Head);
         }
 
         // =================================================================

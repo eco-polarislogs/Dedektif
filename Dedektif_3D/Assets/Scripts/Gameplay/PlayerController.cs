@@ -58,13 +58,22 @@ namespace Dedektif3D.Gameplay
             Cam.SnapBehind();
         }
 
+        /// <summary>Dedektif ışınlandı (bina kapısı, kasaba değişimi, kayıt yükleme): yol arkadaşları karartma altında onunla gelir.</summary>
+        public static event System.Action Teleported;
+
+        /// <summary>Dedektifin figürü (yol arkadaşları başına bakar).</summary>
+        public PropFactory.PersonRig Rig => _rig;
+
         public void Teleport(Vector3 pos, Quaternion rot)
         {
             _cc.enabled = false;
             transform.SetPositionAndRotation(pos, rot);
             _cc.enabled = true;
             _vy = 0;
-            if (Cam != null) Cam.SnapBehind();
+            if (Cam != null) Cam.SnapBehind(true);
+            // İç mekânda güneş girmez: görünen beden iç mekân katmanına geçer (çarpışma kapsülü katman 2'de kalır)
+            if (_rig != null && _rig.Root != null) InteriorGenerator.SetLayerRecursive(_rig.Root.gameObject, pos.y < -100f ? InteriorGenerator.InteriorLayer : 2);
+            Teleported?.Invoke();
         }
 
         void Update()
@@ -168,7 +177,9 @@ namespace Dedektif3D.Gameplay
                 float dist = flat.magnitude;
                 if (dist > it.radius || Mathf.Abs(d.y) > 2.2f) continue;
                 float facing = dist > 0.01f ? Vector3.Dot(transform.forward, flat / dist) : 1f;
-                float score = dist - facing * 0.8f;
+                // Yanımızda yürüyen yol arkadaşı [E]'yi kapıdan, delilden ve şüpheliden çalmasın: ancak yüzüne dönünce seçilir
+                if (it.FocusPenalty > 0f && facing < 0.72f) continue;
+                float score = dist - facing * 0.8f + it.FocusPenalty;
                 if (score < bestScore) { bestScore = score; best = it; }
             }
             Focus = best;

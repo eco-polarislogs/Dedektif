@@ -20,6 +20,8 @@ namespace Dedektif3D.Core
         public static bool Fullscreen = true, FilmGrain = true, DepthOfField = true, CameraShake = true;
         public static float MouseSensitivity = 1f;
         public static float TextSpeed = 1f;
+        /// <summary>Binaya girince fareyle arama kendiliğinden açılsın (web'deki gibi).</summary>
+        public static bool AutoSearch = true;
 
         public static readonly string[] QualityNames = { "DÜŞÜK", "ORTA", "YÜKSEK" };
 
@@ -45,6 +47,7 @@ namespace Dedektif3D.Core
             CameraShake = PlayerPrefs.GetInt("ayar_sarsinti", 1) == 1;
             MouseSensitivity = PlayerPrefs.GetFloat("ayar_fare", MouseSensitivity);
             TextSpeed = PlayerPrefs.GetFloat("ayar_metin", TextSpeed);
+            AutoSearch = PlayerPrefs.GetInt("ayar_farearama", 1) == 1;
         }
 
         public static void Save()
@@ -62,13 +65,14 @@ namespace Dedektif3D.Core
             PlayerPrefs.SetInt("ayar_sarsinti", CameraShake ? 1 : 0);
             PlayerPrefs.SetFloat("ayar_fare", MouseSensitivity);
             PlayerPrefs.SetFloat("ayar_metin", TextSpeed);
+            PlayerPrefs.SetInt("ayar_farearama", AutoSearch ? 1 : 0);
             PlayerPrefs.Save();
         }
 
         public static void ResetDefaults()
         {
             Brightness = DefaultBrightness; Master = 0.9f; Music = 0.55f; Effects = 0.85f; Ambience = 0.8f;
-            Quality = 2; FilmGrain = true; DepthOfField = true; CameraShake = true; MouseSensitivity = 1f; TextSpeed = 1f;
+            Quality = 2; FilmGrain = true; DepthOfField = true; CameraShake = true; MouseSensitivity = 1f; TextSpeed = 1f; AutoSearch = true;
         }
 
         /// <summary>Tüm ayarları uygular. screen=true ise pencere / tam ekran modu da ayarlanır.</summary>
@@ -80,7 +84,19 @@ namespace Dedektif3D.Core
             GameBootstrap.RefreshPost();
             Gameplay.CameraFx.Enabled = CameraShake;
             ApplyQuality();
+            ApplyFrameCap();
             if (screen) ApplyScreen();
+        }
+
+        /// <summary>
+        /// Kare hızı sınırı: ekran kartı gereksiz yere tam güçte çalışmaz (dizüstünde ısı ve güç sıçramalarını azaltır).
+        /// 60 Hz ekranda 60 kare; 100 Hz ve üstünde her iki yenilemede bir kare.
+        /// </summary>
+        public static void ApplyFrameCap()
+        {
+            double hz = Screen.currentResolution.refreshRateRatio.value;
+            QualitySettings.vSyncCount = hz >= 100.0 ? 2 : 1;
+            Application.targetFrameRate = 60;
         }
 
         public static void ApplyQuality()

@@ -1,0 +1,970 @@
+{
+ "npcs": [
+  {
+   "id": 101,
+   "autopsy": "Başın arkasında tek, geniş yüzlü ve çok ağır bir darbe; kafatası içe göçmüş. Yara kenarlarında taze çam reçinesi kalıntısı. Giysilerde derin çamur, sırtta ıslak çam iğneleri.",
+   "alibi": [
+    "Kulübemdeydim amirim. Fırtına çıkınca baltayı bırakıp ocağın başına geçtim, sabaha kadar damın akmasını dinledim.",
+    "*Eldivenini ovuşturur* Kulübedeydim... Yani akşamüstü ormandaydım, sonra kulübeye döndüm. Saatini ne bileyim, fenerim söndü!"
+   ],
+   "grudge": [
+    "Arazime göz dikmişti, kerestemi yok pahasına istiyordu. Ama böyle dertler mahkemede görülür, gece karanlığında değil.",
+    "Husumet mi? *Sesi sertleşir* O adam ömrümü verdiğim ormanı elimden alacaktı! ...Bu, benim bir şey yaptığım anlamına gelmez."
+   ],
+   "suspect": [
+    "Demirci Kazım'a bakın derim. Ekrem'e gizli bir kasa yapmıştı, o gece ocağı geç vakte kadar tütüyordu.",
+    "Bana sorarsanız Kunduracı Rasim. Göl yolundan çamurlu çizmelerle dönerken görmüşler. Beni bırakın, ona bakın!"
+   ],
+   "heard": [
+    "Rüzgârın dalları kırdığını duydum, bir de göl tarafından gelen çizme sesleri. Biri ormanı değil, göl yolunu seçmişti.",
+    "*Duraksar* Ses yoktu. Yani fırtına vardı, başka bir şey duyulmaz ki. Kimse bir şey duymadı, duyamaz."
+   ],
+   "secret": [
+    "Ormanda izinsiz ağaç kestim, doğrudur. Jandarma duyarsa başım ağrır, ama cinayetle ilgisi yok.",
+    "*Uzun süre susar* Kayıt defterimde eksik sayfalar var, evet. Ekrem'in elindeki evraklar yüzünden... Daha fazlasını sormayın."
+   ],
+   "qa": [
+    {
+     "q": "Cinayet gecesi ormanda kimi gördün?",
+     "a": "Orman girişinde dolaşan bir fener gördüm. Kim olduğunu seçemedim; göle doğru gitti.",
+     "g": "Kimseyi! Ormanda kimse yoktu, ben de... ben de yoktum zaten. Yani giriş tarafında değildim."
+    },
+    {
+     "q": "Baltanı en son nerede kullandın?",
+     "a": "Öğleden sonra kuzey yamaçta. Ağzı körelmişti, kulübenin önüne bıraktım. Gidip bakabilirsiniz.",
+     "g": "*Eli istemsizce kemerine gider* Balta mı? Tahtaların arasında olacak. Sapını neden sildim diye soracaksınız; reçine yapışıyor işte!"
+    },
+    {
+     "q": "Ekrem Bey ile arandaki borç meselesi nedir?",
+     "a": "Bana kereste borcu vardı, aylardır vermiyordu. Üstüne bir de arazimi ister oldu. Sinirliydim ama parasını bekliyordum.",
+     "g": "Elinde kaçak kesimin evrakları vardı. 'Arazini devret, yoksa jandarma kapında' dedi. *Dişlerini sıkar* Neyse. Bitti o iş."
+    },
+    {
+     "q": "Ormanda duyduğun sesler kime aitti?",
+     "a": "İki kişinin sesi geldi; biri alaycıydı, o Ekrem'di, herkes bilir o sesi. Öbürünü fırtına yuttu.",
+     "g": "Hayvan sesiydi. Çakal. Evet, çakal! Bu ormanda çakal çoktur amirim, insan sesi falan yoktu."
+    }
+   ]
+  },
+  {
+   "id": 102,
+   "autopsy": "Göğüste tek, derin ve dar bir kesici alet yarası; ince uzun bir bıçak ağzıyla uyumlu. Maktulün sağ avucunda sıkılı halde siyah pelerin kumaşından bir parça. Tırnak altında meyve kokulu nem.",
+   "alibi": [
+    "Dükkânı kapattım, kasaları içeri aldım, eve geçtim. Yağmurda kim gezer amirim? Komşum ışığımı görmüştür.",
+    "Evdeydim! Pelerinimi... yani sadece komşuya uğradım, o kadar. Gece yarısı olmamıştı daha, yemin ederim."
+   ],
+   "grudge": [
+    "Dükkânıma haciz getirecekti, borcum vardı, saklamam. Ama ben ağlar yalvarırım amirim, adam öldürmem.",
+    "*Önlüğünü sıkar* 'Ağlamaların borcunu ödemez, yarın o dükkân benim' dedi. O dükkân benim hayatım. Ama ben... ben hiçbir şey yapmadım."
+   ],
+   "suspect": [
+    "Bakkal Naciye'nin defterinde Ekrem'in adı karalanmış diyorlar. Dükkânında fare zehri de satar, malumunuz.",
+    "Muhtar Cevdet! Arazi işleri, sahte tapular... Asıl onu sorgulayın. Benim gibi bir manav ne yapabilir ki?"
+   ],
+   "heard": [
+    "Gece bir ara dükkânın arkasında ayak sesleri duydum. Ağır, nasırlı adımlar; kadın adımı değildi.",
+    "Hiçbir şey duymadım! Uyuyordum. Yani... Ekrem'in kapısı gıcırdar diye duymuştum, oradan biliyorum, başka yerden değil."
+   ],
+   "secret": [
+    "Kâğıtlarım karışık, vergi kaçırdım birkaç kuruş. Kızmayın amirim, kasaba zaten yoksul.",
+    "*Gözleri meyve kasalarına kayar* Kasaların dibini karıştırmanıza gerek yok. Orada çürük meyveden başka bir şey yok, gerçekten."
+   ],
+   "qa": [
+    {
+     "q": "Cinayet gecesi saat kaçta uyudun?",
+     "a": "Yatsıdan az sonra. Bütün gün kasa taşıdım, başımı yastığa koyduğum gibi uyumuşum.",
+     "g": "Geç uyudum, yani erken uyudum! Uyuyamadım işte, borç var başımda. Gece yarısını bulmuştu... ama evdeydim."
+    },
+    {
+     "q": "Ekrem Bey senden ne istiyordu?",
+     "a": "Borcunu istiyordu, dükkânı hacizle tehdit ediyordu. Bana zaman verir diye umuyordum.",
+     "g": "Dükkânımı. Hepsini! Gidip biraz zaman istedim, evet, gittim... *Yutkunur* Yani gitmeyi düşündüm. Gitmedim."
+    },
+    {
+     "q": "Dükkanın etrafında dolaşan yabancı kimdi?",
+     "a": "Şapkalı, iri yapılı bir adam. Çizmeleri çamurluydu, Rasim'in diktiği çizmelere benziyordu.",
+     "g": "Yabancı mı? Bilmiyorum, belki de yoktu. Siyah pelerinli biri miydi diye mi soruyorsunuz? Benim pelerinim dolapta duruyor!"
+    },
+    {
+     "q": "Çamur izleri hakkında ne biliyorsun?",
+     "a": "Göl yolundan geliyor o çamur, kırmızımsı olur. Bu kasabada o yolu bir tek çizmesini kendi diken adam kullanır.",
+     "g": "Çamur her yerde amirim, yağmurdan. Benim ayakkabılarımı neden soruyorsunuz? Temizledim onları. Sabah. Öyle işte."
+    }
+   ]
+  },
+  {
+   "id": 103,
+   "autopsy": "Sol şakakta tek bir ağır darbe; demir bir çubukla uyumlu, yuvarlak kenarlı çöküntü. Yara çevresinde ve ceket yakasında ince kükürtlü demir tozu. Maktul direnme fırsatı bulamamış.",
+   "alibi": [
+    "Ocağın başındaydım. Sabaha bir at nalı siparişi vardı, ateşi geceye kadar söndürmedim.",
+    "Ocak başında. Sadece... bir ara çıkıp hava aldım. Demirci dediğin bütün gece ateş başında durmaz, değil mi amirim?"
+   ],
+   "grudge": [
+    "Husumet yok, müşterimdi. Ödemesi geç, sözü sertti ama işini severdim doğrusu.",
+    "Kaçakçılığı bana yıkacağını söyledi. Benim yaptığım kilit için! *Çekici fazla sert bırakır* Beni tehdit eden pişman olur demiyorum, sadece söylüyorum."
+   ],
+   "suspect": [
+    "Muhtar Cevdet'in eli kirli. Çelik anahtarını yeniletmeye geldiğinde elleri titriyordu.",
+    "Oduncu Tahsin. Baltası ağırdır, öfkesi de. Ben ateşle demirle uğraşırım, kafa kırmakla değil."
+   ],
+   "heard": [
+    "Çekiç sesinden pek bir şey duyulmaz. Ama geç vakitte Ekrem'in yolundan koşan bir adım duydum.",
+    "Örsün başında kulak mı kalır amirim? Duymadım. Duymak da istemem. Siz de bu kadar kurcalamayın."
+   ],
+   "secret": [
+    "Ekrem'e gizli bir kasa yaptım, ağzımı sıkı tutmamı istemişti. Kimseye söylemedim, size söylüyorum.",
+    "*Sessizce demiri kızdırır* Köşedeki demir parçasına dokunmayın. Eritilecek hurdadır. Damgası mı var? O benim damgam, ne var bunda?"
+   ],
+   "qa": [
+    {
+     "q": "Bu özel çelik kilidi kimin için yaptın?",
+     "a": "Ekrem Bey'in kasası için. Parasını peşin verdi, sırrını da bana emanet etti.",
+     "g": "Kilit mi? Bir müşteri... İsim vermem. Ekrem miydi? Olabilir. Ama o işin cinayetle ne ilgisi var ki, kapatalım bu konuyu."
+    },
+    {
+     "q": "Gece ocağı ne zaman söndürdün?",
+     "a": "Söndürmedim ki, sabaha nal yetişecekti. Köz halinde bıraktım, dumanı herkes görmüştür.",
+     "g": "*Terini siler* Yatsıda söndürdüm. Hayır, geç vakit. Bir şey atacak değildim içine, neden öyle bakıyorsunuz?"
+    },
+    {
+     "q": "Bıçaktaki özel damga senin işin mi?",
+     "a": "Ay damgası benim, yaptığım her işe vururum. Ama bir bıçak üç el değiştirir amirim, damga katil demek değil.",
+     "g": "Damga benim, evet. Ay damgası. Kimse taklit edemez... *Fark eder* Yani edebilir! Herkes edebilir aslında."
+    },
+    {
+     "q": "Demir tozları neden her yerde?",
+     "a": "Demirci dükkânı bu, toz değil de misk mi kokacak? Ocağın kükürdü üstünüze bile siner.",
+     "g": "Toz uçar amirim. Rüzgârla. Birinin ceketine de konabilir, nereden bileyim... Ceketten kim bahsetti ki zaten?"
+    }
+   ]
+  },
+  {
+   "id": 104,
+   "autopsy": "Dışarıdan hiçbir yara yok. Boğaz ve akciğerde şişlik, dudaklarda morarma; ani nefes darlığı. Ağız içinde ve parmak uçlarında tütün kırıntıları, kırıntılarda fare zehrine özgü acı koku.",
+   "alibi": [
+    "Dükkânda hesap kesiyordum, sonra kapıyı kilitleyip yattım. Bu yaşta gece gezmesi mi kalır amirim?",
+    "Dükkândaydım. Bir ara borç hesabı için dışarı çıktım ama hemen döndüm, kimseyle konuşmadım bile."
+   ],
+   "grudge": [
+    "Yıllardır bakkal borcunu ödemezdi, koca tüccar! Dilimden düşmezdi, herkes bilir. Söylenirim ama zararım yoktur.",
+    "Dükkânımı elimden almakla tehdit etti! Bir kadına böyle yapılır mı? *Birden sakinleşir* Allah rahmet eylesin tabii."
+   ],
+   "suspect": [
+    "Manav Ayşe'nin siyah pelerinle gece sokaktan geçtiğini görenler var. Bana söylettirmeyin, üzülürüm.",
+    "Hekim Sevgi! Zehir deyince akla o gelmeli, otlarla uğraşan o. Benim dükkânımda yalnızca fare için bir şişe var."
+   ],
+   "heard": [
+    "Gölgeşehir havadisleri benden geçer amirim. Muhtar'ın kapısı gece iki sularında çarpmış, bakın derim.",
+    "Duymadım. Hem ne duyacağım? Soba çıtırdar, o kadar... Sobada kâğıt yaktığımı kim söyledi size?"
+   ],
+   "secret": [
+    "Herkesin borcunu bilirim, sırrını da. Ama söylersem kasabada müşteri kalmaz.",
+    "*Veresiye defterini göğsüne bastırır* Bir sayfa eksikse yırtılmıştır, eski defter. Eski defterler yırtılır amirim."
+   ],
+   "qa": [
+    {
+     "q": "Veresiye defterindeki isim neden karalandı?",
+     "a": "Karalamadım, borcunu ödeyenin üstünü çizerim. Ekrem'inki ise hiç çizilmedi, o sayfa da yerindedir sanırım.",
+     "g": "Hangi isim? *Sayfaları hızla çevirir* Kalem kaymıştır. Kimsenin adı karalanmadı. Sayfa eksik diyorsanız... sobanın yanına düşmüştür."
+    },
+    {
+     "q": "Zehri kime sattığını hatırlıyor musun?",
+     "a": "Hepsi defterde yazar: Hekim Sevgi iki şişe, Oduncu bir şişe. Fare çoktur bu kasabada.",
+     "g": "Satmadım. Yani sattım ama kime hatırlamıyorum. Bir şişe eksik olabilir, sayarken karışır insan."
+    },
+    {
+     "q": "Ekrem Bey dükkanda ne kadar kaldı?",
+     "a": "Beş dakika bile kalmadı. Tütün aldı, parasını yazdırdı, burnunu çekip gitti.",
+     "g": "Dükkâna gelmedi ki... Ben ona gittim. Borç hesabı için! Tütün kesesi mi? Masaya ben koymadım, o kendisi koymuştu."
+    },
+    {
+     "q": "Gece dükkanın arkasından gelen sesler neydi?",
+     "a": "Kedi sandım, sonra iri bir adam gördüm; arka sokaktan göl yoluna saptı.",
+     "g": "Sobanın borusu. Rüzgârda öter. Başka bir şey yok, arka tarafa bakmanıza da gerek yok."
+    }
+   ]
+  },
+  {
+   "id": 105,
+   "autopsy": "Kanda bitkisel kökenli ağır zehir: mideyi yakan, koyu mor renkli sıvı kalıntısı. Tırnak dipleri morarmış, vücutta şiddetli kasılma izleri. Sağ elin üstünde ince, cerrahi bir kesik.",
+   "alibi": [
+    "Muayenehanedeydim, kayıtlarımı yazıyordum. Komşu çocuğun ateşi vardı, gece yarısına kadar başındaydım.",
+    "Hastadaydım. Hangi hasta? Yemin ettim, söyleyemem. Hekimlik sırrıdır bu, üstelemeyin lütfen."
+   ],
+   "grudge": [
+    "İlaçlarını veresiye alır, teşekkür bile etmezdi. Kaba bir adamdı ama hastamdı, o kadar.",
+    "Beni tehdit ediyordu. Eski bir hatamı biliyordu ve aylardır... *Sesi kısılır* Hastamı kaybettim bir kez. Bunu ona nasıl söyletirdim?"
+   ],
+   "suspect": [
+    "Bakkal Naciye tütün kesesini getirdiğinde yüzü kireç gibiydi. Tütün bazen ilaçtan tehlikelidir amirim.",
+    "Bakkal Naciye. Fare zehrini o satar. Tıp bilen biri zehri böyle hoyratça kullanmaz... Yani demek istediğim, ben kullanmam."
+   ],
+   "heard": [
+    "Gece at arabası geçmedi, yağmur vardı. Ama göl yolundan çamurlu adımlarla dönen birini pencereden gördüm.",
+    "Hiç. Pencereyi açmadım. Ekrem'in evinden hiçbir ses gelmez zaten buraya, çok uzak... Evini biliyorum tabii, hastamdı."
+   ],
+   "secret": [
+    "Yıllar önce bir tedavide yanıldım, vicdanımdan silinmedi. Ama bunun Ekrem'le ilgisi yok, çok şükür.",
+    "*Kutudaki neşteri gözden kaçırmaya çalışır* Belgelerimi Ekrem'in masasında aramış olabilirim. Aramak suç değil ya amirim?"
+   ],
+   "qa": [
+    {
+     "q": "Bu mor sızıntı hangi bitkiden elde ediliyor?",
+     "a": "Banotuna benziyor. Serada yetiştirilir, ağrı kesmek için azıcık kullanılır. Doz şaşarsa zehirdir.",
+     "g": "Bunu bilmem gerekmez ki... Banotu. Kökü kaynatılır, mide şurubuna damla damla... *Durur* Yani kitaplarda öyle yazar."
+    },
+    {
+     "q": "Muayenehaneye son gelen hasta kimdi?",
+     "a": "Muallim Fehmi'ydi, göğsü sıkışıyordu. Ondan önce de Ekrem'in uşağı mide şurubu almaya gelmişti.",
+     "g": "Ekrem'in şurubunu ben hazırladım, her ay yaparım. O geceki şişede bir fark yoktu! Neden bir fark olsun ki?"
+    },
+    {
+     "q": "Ekrem Bey sağlık sorunları için mi geldi?",
+     "a": "Midesi yanardı, rakıyı azaltmıyordu. Şurup verdim, başka bir şey değil.",
+     "g": "Sağlık mı? *Acı acı güler* Bedava ilaç için geliyordu. Haraç gibi. Ama artık gelmeyecek... Allah rahmet eylesin."
+    },
+    {
+     "q": "Neşterin üzerindeki izler ne anlama geliyor?",
+     "a": "Her gün yara açıp dikiyorum amirim. Temizlerim, ama kan pirinçte iz bırakır.",
+     "g": "*Neşteri kutuya geri koyar* Bir hastadan kalmıştır. Kaynatmayı unutmuşum. Kim olduğunu soracaksanız... hatırlamıyorum."
+    }
+   ]
+  },
+  {
+   "id": 106,
+   "autopsy": "Kafatasında çok ağır, kenarları yuvarlak künt travma; pirinç bir şamdanın tabanıyla uyumlu. Yaradan sonra halıya düşmüş. Olay yerinde ince altın çerçeveli bir gözlükten kırılmış cam kırıntısı.",
+   "alibi": [
+    "Muhtarlıktaydım, sonra evime geçtim. Kaymakamlığa yazacağım raporla uğraştım, lamba geç saate kadar yandı.",
+    "Evimdeydim. Gece iki sularında mı? Uyuyordum tabii. Bir devlet adamı o saatte sokakta ne yapsın, soruya bakın."
+   ],
+   "grudge": [
+    "Arazi sınırları yüzünden tartışırdık. Kasabada kim tartışmadı ki onunla? Resmî bir meseleydi.",
+    "*Boğazını temizler* Bana iftira atıyordu. Sahte tapu falan... Kaymakama gidecekti güya. Gidemedi. Yani... gitmemiş işte."
+   ],
+   "suspect": [
+    "Hekim Sevgi'nin Ekrem'e borcu vardı, hem de para cinsinden değil. Ağzı sıkıdır ama yüzü her şeyi anlatır.",
+    "Fehmi Muallim! Gözlük takar, kitap okur, kimse şüphelenmez. Saat meselesini duymuşsunuzdur. Benim gözlüğümden size ne?"
+   ],
+   "heard": [
+    "Fırtınada muhtarlık penceresi çarpıyordu. Gece bir kadının pelerinle koştuğunu gördüm, kim olduğunu seçemedim.",
+    "Duymadım. Duymuş olsam kayda geçirirdim. Şamdan düşmüş olabilir mi diye mi soruyorsunuz? Şamdandan kim bahsetti?"
+   ],
+   "secret": [
+    "Kasaba defterlerinde hatalar vardır, kırk yıllık kayıtlar. Düzeltirim, siz de yazın isterseniz.",
+    "*Çekmecenin çelik anahtarını cebine sokar* O çekmece resmî evrak içindir, emirsiz açılmaz. Yeni gözlüğüm mü? Eskisi kırıldı, evde."
+   ],
+   "qa": [
+    {
+     "q": "Orman arazisiyle ilgili tapu kimde?",
+     "a": "Ekrem Bey'in üzerine kayıtlı, asıl defter muhtarlıkta durur. İsterseniz gösteririm.",
+     "g": "Tapu... kayıtlarda. Çekmecede değil! Yani devir işlemi yarım kalmıştı. Mühürlü olması gerçek olduğunu gösterir, değil mi?"
+    },
+    {
+     "q": "Olay gecesi köy meydanında kimler vardı?",
+     "a": "Bekçi Rıfat devriyedeydi. Bir de çizmeleri çamurlu biri göl tarafına geçti, Rıfat görmüştür.",
+     "g": "Meydanda mı? Ben meydanda değildim, oradan biliyorum ki kimse yoktu. Bekçiye sormanıza gerek yok, adam yaşlı, unutur."
+    },
+    {
+     "q": "Ekrem Bey ile tartıştığınız doğru mu?",
+     "a": "Doğru, sınır meselesinden. Kasaba önünde sesimiz yükseldi, sonra herkes evine döndü.",
+     "g": "Tartışma değil, görüş ayrılığı. 'Yarın kaymakamlığa gidiyorum' dedi, evet. Gözlerime baka baka! *Durur* Kim demiş tartıştığımızı?"
+    },
+    {
+     "q": "Masandaki mühürlü mektup kime gidecekti?",
+     "a": "Kaymakamlığa, kasabanın vergi hesabı. Mühürünü bozun isterseniz, utanacak bir şeyim yok.",
+     "g": "O mektup kimseye gitmeyecekti. Özel. *Mektubun üstüne elini koyar* Mühür benimdir, kullanmak da hakkımdır."
+    }
+   ]
+  },
+  {
+   "id": 107,
+   "autopsy": "Başın arkasında keskin kenarlı bir çarpma izi: sivri mermer köşeyle uyumlu, tek darbe; düşme sonucu olabilir. Göğüste iki avuç büyüklüğünde itilme morluğu. Maktulün cebinden köstekli saat zinciri kopmuş.",
+   "alibi": [
+    "Penceremin önünde kitap okuyordum evladım. Gaz lambası yanıyordu, sokaktan da görülür. Yaşlı adamın uykusu mu olur?",
+    "Pencerenin önündeydim. Saat iki on dörtte eve... yani saat iki on dörtte sesler geldi. Evdeydim evladım, hep evdeydim."
+   ],
+   "grudge": [
+    "Babamdan kalma köstekli saatimi tefecilikle almıştı. Yıllarca yalvardım, yüzüme güldü. Üzgündüm ama o kadar.",
+    "*Eli titrer* O saat ailemin onuruydu. Her defasında alay etti benimle. Ama ben ömrümce sınıfta kimseye el kaldırmadım, inanın."
+   ],
+   "suspect": [
+    "Pencereden Kazım'ı gördüm sandım, sonra Rasim'e benzettim; ikisi de iri adamdır. Gözlerim eskisi gibi değil evladım.",
+    "Bilmem, öğrencilerim arasında bile katil çıkabilir, insan kalbi derin kuyudur. Muhtar'a sorun, o herkesi bilir."
+   ],
+   "heard": [
+    "Gece 02:14'te bir bağırış ve ağır bir ses. Saate baktım çünkü alışkanlığım budur. Sonra göl yönünde koşan adımlar.",
+    "Sesler geldi, doğrudur. Ağır bir düşme gibi. Şömine köşesine çarpmış... yani çarpmış gibi bir ses. Nereden bileyim şömineyi, tahmin ediyorum."
+   ],
+   "secret": [
+    "Ekrem'den geri almak için mektuplar yazdım, kitabımın arasındadır. Pek gururlu değilim bu konuda.",
+    "*Çekmeceye bakmamaya çalışır* Çekmecemde babamın saati... hayır, saatin kutusu var. Saat Ekrem'deydi. Hâlâ onda olmalı tabii."
+   ],
+   "qa": [
+    {
+     "q": "Saatiniz neden tam cinayet saatinde durdu?",
+     "a": "Kurmayı unutmuşum evladım. Rastlantı işte, polisiye romanda olsa kimse inanmaz.",
+     "g": "Durmadı ki, ben... ben baktım saate. Eve varınca. Yani yerimden kalkınca. Saat iki on dörttü, üzerime gelmeyin."
+    },
+    {
+     "q": "Pencerenizin altından geçenler kimdi?",
+     "a": "Çamurlu çizmeli iri bir adam, göl tarafından geldi. Bir de pelerinli biri, kadın gibi yürüyordu.",
+     "g": "Kimse geçmedi. Gördüm diyemem, gözlerim... Ceket düğmem mi? Düğme her yerde düşer evladım, yaşlıyım."
+    },
+    {
+     "q": "Kitaptaki notun cinayetle ilgisi nedir?",
+     "a": "Not değil o, saatimi geri isteyen mektubumun müsveddesi. Ekrem'e yazmıştım, cevap bile vermedi.",
+     "g": "*Kitabı kapatır* 'Saatimi geri ver' yazıyor diye mi? O gece söylediğim... yazdığım şey. Yazdığım! Yıllar önce."
+    },
+    {
+     "q": "Gece dışarı çıkıp feneri neden kullandınız?",
+     "a": "Dışarı çıkmadım, fener kapıda durur. Bekçi Rıfat ödünç alır bazen, ona da sorun.",
+     "g": "Yağmurdu, fener lazımdı. Yani çıksaydım lazım olurdu. Çıkmadım. Yaşlı adamın dili sürçer evladım."
+    }
+   ]
+  },
+  {
+   "id": 108,
+   "autopsy": "Boyunda ince, düzgün ve derin boğma izi; izde mum kalıntısı ve sarmal iplik dokusu. Tırnak altında deri lifleri. Evde pencere altından halıya uzanan, çok çamurlu iri ayak izleri.",
+   "alibi": [
+    "Atölyede çizme tamir ediyordum, sabaha teslim var. İstediğiniz kadar sorun, herkes bilir ışığım geç söner.",
+    "Atölyedeydim. Çamur mu? Göle gitmedim. Yani gittim ama akşamüstü, gece değil. Bu kadar soru sorulur mu bir kunduracıya?"
+   ],
+   "grudge": [
+    "Pabucumu kaç kere çamurdan kurtardım, parasını vermedi. Cimri adamdı. Ama cimriye öfkelenmekle adam ölmez.",
+    "Haraç istiyordu. Her ay pay. Yoksa jandarma atölyemi basacaktı! Ömrümü yedirdim bu dükkâna. *Yumruğunu sıkar* Yetti artık demek suç mu?"
+   ],
+   "suspect": [
+    "Oduncu Tahsin'in gözü dönüktü o gün. Gece çizmelerini bana getirdi, çam reçinesi içindeydi.",
+    "Oduncu Tahsin! Göl yolundan onu gördüm, evet. Ben göl yolunda değildim, oradan geçerken... yani geçen birinden duydum."
+   ],
+   "heard": [
+    "Çizme sesini iyi bilirim amirim. O gece birkaç defa göl kenarından gelen, sol topuğu ağır basan bir adım duydum.",
+    "Duymadım. Duysam da ayakkabı sesinden kim olduğunu anlamam, öyle bir marifetim yok. *Az önce övündüğünü hatırlar*"
+   ],
+   "secret": [
+    "Kaçak deri işlerim, doğrudur. Vergi ağır amirim. Cezasını öderim, ama cinayete bulaştırmayın.",
+    "*Mumlu ip yumağını arkasına iter* O ipleri saymayın, kırk kangal vardı, eksilir tabii. Her iş için kullanılır."
+   ],
+   "qa": [
+    {
+     "q": "Çamurlu çizmelerin kime ait olduğunu biliyor musun?",
+     "a": "42 numara, benim diktiğim kalıp. Kasabada dört kişide var; defterimde yazılı, bakın.",
+     "g": "Benim değil. 42 numara herkes giyer. Halıdaki iz diye bir şey de bilmiyorum. Halıyı siz söylediniz... değil mi?"
+    },
+    {
+     "q": "Mumlu iplik genelde ne için kullanılır?",
+     "a": "Çizme tabanı dikerim, koptuğu görülmemiştir. Boyacı, semerci, herkes bir kangal alır benden.",
+     "g": "Dikiş için amirim, ne için olsun? Çok sağlamdır, koparmak için insanın eli... *Nasırlı ellerine bakar* Dikiş için işte."
+    },
+    {
+     "q": "Deri kesme bıçağını en son ne zaman biledin?",
+     "a": "Dün sabah. Eğri bıçaktır, deri için. Bakın ağzında kan değil, boya var.",
+     "g": "Bıçağa dokunmadım! Bıçakla kimse ölmedi ki... Nereden biliyorum? Herkes konuşuyor işte, bıçak değilmiş diye."
+    },
+    {
+     "q": "Göl kenarında işin neydi?",
+     "a": "Kuru deri yıkarım orada, kokusu yüzünden. Gündüz vakti, gece değil.",
+     "g": "Kestirme yol o. Görünmemek için değil, sadece kısa. O gece kullanmadım zaten. Yani her zamanki gibi kullanmadım."
+    }
+   ]
+  },
+  {
+   "id": 201,
+   "autopsy": "Boyunda geniş, kaygan bir boğma izi; izde kauçuk ve bakır oksit kalıntısı. Nefessiz kalarak ölüm. Çok ince telle kesilmiş iki parmakta taze çizikler. Giysilerde sis nemi ve çam iğnesi.",
+   "alibi": [
+    "Telgrafhanedeydim, gece nöbetim vardı. Makine kayıtlarında saat saat görünür.",
+    "Telgrafhanedeydim... Bir ara hat koptu, dışarı çıkıp baktım. Dağ yoluna kadar değil! Çok kısa sürdü, kayda geçmedi."
+   ],
+   "grudge": [
+    "Şifreli telgraflar çektirir, paçayı kurtarırdı. Sevmezdim, ama mesleğim dinlemek, karışmak değil.",
+    "*Parmakları masada mors vurur* Geçmişimden bir şeyi biliyordu. Telgrafını bizzat çözdüm. Ne yazdığını söyleyemem, meslek sırrı."
+   ],
+   "suspect": [
+    "Muhtar Meliha Hanım'a giden telgraflar kısa ve korkulu. Arazi işleri diyorlar, siz daha iyi bilirsiniz.",
+    "Hayalî Nejat'ın kaçak işleri var, telgraflar öyle diyor. Ben sadece iletirim, kimsenin boynuna bir şey dolayan da değilim... Kim dolamış ki?"
+   ],
+   "heard": [
+    "Teller sisli gecelerde vızıldar. O gece hat ortasında bir kesilme oldu, biri tellere dokundu.",
+    "Tellerin vızıltısı beynimi yiyordu. Başka ses duymadım. Ayak sesi mi? Dağ yolunda sis olur, kimse kimseyi duymaz."
+   ],
+   "secret": [
+    "Rüşvet aldığım oldu, öncelik için. Kesesi masada duruyor. Bunun için beni asmazlar herhalde.",
+    "*Elindeki çiziği saklar* Kesik telin kaydını tutmadım, unuttum. Elim mi? Hat tamirinde kesildi, her zaman olur."
+   ],
+   "qa": [
+    {
+     "q": "Cinayet gecesi telgrafhaneye mesaj geldi mi?",
+     "a": "İki tane. Biri erzak, öbürü şifreli, Vahap Efendi'ye. Kayıtta görünür, çözemediğim kısmı var.",
+     "g": "Bir mesaj geldi, ben çözdüm. Şantaj... yani sıradan bir mesaj. Kayıt defterinde o sayfa eksikse makine yutmuştur."
+    },
+    {
+     "q": "Hangi kasabalılar düzenli telgraf çekiyor?",
+     "a": "Vahap Efendi, Muhtar Meliha Hanım ve Tütüncü Nermin Hanım. Nermin'inkiler hep aynı limana gider.",
+     "g": "Herkes. Çoğu. Listeyi veremem, yasak. Bana sormayın kim kime ne yazdı. Benim de bilmediğim çok şey var!"
+    },
+    {
+     "q": "Şifreli mesajlar hakkında ne biliyorsun?",
+     "a": "Hepsini okumam, kısa kod bir tüccar defterinden çıkma. Sahaf Hikmet çözebilir sanırım, kitaplara merakı vardır.",
+     "g": "Şifre dediğin çocuk oyuncağı. Ben çözdüm. Beni anlatıyordu... *Durur* Yani birini anlatıyordu."
+    },
+    {
+     "q": "O gece tellerde garip bir sinyal fark ettin mi?",
+     "a": "Gece yarısına doğru hat bir kaç dakika kesildi. Biri dağ yolundaki direğin oralarda tellere asılmış olmalı.",
+     "g": "Hayır. Hat kesilmedi. Kesik tel eski, geçen haftadan. Benim makas... benim işim değil o."
+    }
+   ]
+  },
+  {
+   "id": 202,
+   "autopsy": "Göğüste, kalbin tam üzerinde tek kurşun yarası; altı patlar bir tabancanın kurşunu. Barut izi yok, birkaç adım öteden nişan alınmış. Ceket cebinde demli çay kokusu sinmiş bir kahvehane fişi.",
+   "alibi": [
+    "Kahvehaneyi kapattım, ocağı söndürüp yattım. Sabah ilk çayı ben demlerim, herkes görür.",
+    "Son müşteri çıkınca kepenkleri indirdim. Sonra... sabah oldu. Çay demledim. Gecenin ortasında kim dışarı çıkar bu sisle?"
+   ],
+   "grudge": [
+    "Kahvehaneme haciz koyduracaktı, çok çekiştik. Sinirlendim, bağırdım; herkes duydu, saklamam.",
+    "Yıllardır kumpas kuruyormuş! O gece öğrendim. *Demliği fazla sert bırakır* Dedemden kalan dükkân bu. Siz olsanız ne yapardınız?"
+   ],
+   "suspect": [
+    "Çoban Durmuş gece geç vakit öfkeyle geçti önümden. Hayvanları ölüyor, adalet istiyor o adam.",
+    "Çoban Durmuş! Ya da Tütüncü... Bana bakmayın. Tabanca bu kasabada kimde yok ki? Benim dedemden kalan da çalışmaz zaten."
+   ],
+   "heard": [
+    "Dağ yolundan tek bir patlama sesi geldi, av tüfeği değil. Sisin içinde nereden geldiğini kimse söyleyemez.",
+    "Rüzgâr ıslık çalıyordu. Başka bir şey duyulmazdı, duyulamaz. Mermi sesi falan... Kim mermiden bahsetti ki?"
+   ],
+   "secret": [
+    "Masada kumar döner, okey taşlarım işaretli olabilir. Kahvehane ayakta kalsın diye işte.",
+    "*Ocağın altına bakmamaya çalışır* Ocağın altı kömürlüktür, sıcak olur, bakmanıza gerek yok. Yanar elleriniz."
+   ],
+   "qa": [
+    {
+     "q": "Cinayet gecesi kahvehanede kimler vardı?",
+     "a": "Telgrafçı, Hikmet Efendi ve iki çoban. Gece yarısından önce dağıldılar. Vahap Efendi de uğradı, borç sordu.",
+     "g": "Birkaç kişi. Kimler hatırlamam. Vahap geldi, evet, tartıştık. Çıktı gitti. Ben peşinden gitmedim, kepenk indiriyordum."
+    },
+    {
+     "q": "En son kim geç saatte kaldı?",
+     "a": "Sahaf Hikmet. Eline eski bir kitap almış, sayfa çeviriyordu, kaç oldu diye sormadı bile.",
+     "g": "Vahap'tı en son. Yani hayır, başkasıydı. Ben saate bakmam amirim, çayım demlenir, o kadar."
+    },
+    {
+     "q": "Kasabalılar arasında kavga çıktı mı?",
+     "a": "Çıkmaz mı? Şevket'le Vahap yakasına yapıştı, iftira mesele oldu. Bakkal Cemile de borç için bağırıyordu.",
+     "g": "Benimle mi? Hayır. Yani biraz. Haciz kâğıdı önüme atılınca bağırdım, kim bağırmaz. Kavga ayrı, cinayet ayrı."
+    },
+    {
+     "q": "Vahap Efendi hakkında dedikodular neler?",
+     "a": "Tefeciydi, kasabanın yarısı ona borçlu. Sırları da toplar, para yerine onları kullanırdı derler.",
+     "g": "*Gözleri kısılır* Herkesi satın alır sanırdı. Beni de. Ölmüş, rahat etsin. Dedikodu yapmam ben."
+    }
+   ]
+  },
+  {
+   "id": 203,
+   "autopsy": "Göğüs ve kollarda çark dişleriyle uyumlu ezilme ve parçalanma; makine yağı ile yırtılmış giysi lifleri. Kumaş kalıntılarında boya ve gazyağı kokusu. Yaralar kaza süsü verilmiş gibi düzenli.",
+   "alibi": [
+    "Son gösteriden sonra makineleri kapattım, salonu süpürdüm, biletleri saydım. Koçan defterimde görünür.",
+    "Salondaydım. Makine dairesinde... hayır, salonda. Son gösteri geç bitti. Laternayı sonuna kadar çevirdim, seyirci sever, ne var bunda?"
+   ],
+   "grudge": [
+    "Bana para vermez, perde önünde bedava izlerdi. Küçük bir mesele, kim öldürür bunun için?",
+    "*Bir kadeh tutan elini titretmemeye çalışır* İşlerimi deftere yazmış. Her şeyi. Geldi, para istedi. Gerisi... perde kapanmıştır amirim."
+   ],
+   "suspect": [
+    "Tütüncü Nermin Hanım'ın adamları benim salonda buluşurdu. Kaçak işi onun, ben sadece bilet keserim.",
+    "Nermin Hanım! Kaçakçılığın başı o. Benim hayal perdem masum hikâyeler anlatır... yani çoğunlukla."
+   ],
+   "heard": [
+    "Makine dairesi kapısının gıcırtısı. Gösteri arasında biri girdi çıktı, kimi gördüm diye yemin edemem.",
+    "Hiç. Latern sesi her şeyi bastırır. Çığlık falan duyulmaz yani... Çığlıktan bahseden olmadı mı? Dedikodu işte."
+   ],
+   "secret": [
+    "Kaçak mal sandıkları salonda bekler bazen. Fazla sormam. Para lazım, salon soğuk.",
+    "*Elindeki eldiveni arkaya saklar* Çarklarda kan görürseniz yağdır o. Paslı yağ. Eldiven mi? Herkes eldiven kullanır makinede."
+   ],
+   "qa": [
+    {
+     "q": "O gece gösteri salonunda kimler vardı?",
+     "a": "Otuz kişi vardı, koçana bakın. Vahap Efendi ön sıradaydı, ikinci perdede kalktı, arkaya geçti.",
+     "g": "Vahap da vardı. Arkaya geçti mi, hayır, görmedim. Makine dairesine yolcu giremez zaten. Kimse girmedi!"
+    },
+    {
+     "q": "Arka kapıdan biri girip çıktı mı?",
+     "a": "Kapı gece kilitli olur ama biri zorlamış, sürgüsü çizik. Gündüz fark ettim.",
+     "g": "Arka kapı kilitlidir, anahtarı bende. Bende olması bir şey ifade etmez ki amirim."
+    },
+    {
+     "q": "Makine odasında saklanan ne?",
+     "a": "Cam levhalar, boya, gazyağı. Bir de birkaç kaçak sandık, sahibini sormayın lütfen.",
+     "g": "Hiç. Makine. Kesik bir rulo varsa eskimiştir, ben kesmedim, kendi kendine koptu."
+    },
+    {
+     "q": "Karanlık salonda şüpheli bir şey gördün mü?",
+     "a": "Son sırada iki kişi fısıldıyordu; biri kadın, tütün kokuyordu. Başka da bir şey yok.",
+     "g": "Karanlıkta ne görülür? Perdeden başka bakılacak yer yok ki. Ben de sonuna kadar seyrettim, mutlu son bitene dek."
+    }
+   ]
+  },
+  {
+   "id": 204,
+   "autopsy": "Dışarıdan hiçbir yara yok, görünüşte kalp durması. Ancak midede zehirli ağır bir madde; peynir kırıntılarıyla karışmış. Peynirde iğne deliği, ağız içinde acı metal tadı bırakan fare zehri kalıntısı.",
+   "alibi": [
+    "Dükkânımdaydım, kapıyı kapatınca kileri düzelttim. Cemile'nin işi bitmez amirim.",
+    "Kilerde... yani dükkânda. Akşam Vahap geldi, erzakını aldı, gitti. Sonra başka bir şey yapmadım, ne yapacağım ki?"
+   ],
+   "grudge": [
+    "Veresiyesi defterden taşardı, tek kuruş vermedi. Ağzımı açar, söylenirim ama dükkânım benim dünyamdır.",
+    "Dükkânıma el koyacaktı! Kuruş kuruş biriktirdim. O gece ona her zamankinden kibar davrandım... *Durur* Kibar davranmak suç mu?"
+   ],
+   "suspect": [
+    "Kahveci İrfan haciz yüzünden deliye dönmüştü. O gece kepenklerini hızlı indirdi, duyan duymuş.",
+    "Hekim... Yani bizim kasabada hekim yok ki. Hatice Nine! Ot toplar, zehir bilir. Benim bildiğim yalnızca fare."
+   ],
+   "heard": [
+    "Akşam dükkânın arkasında birinin öksürdüğünü duydum, tütün kokusu da geldi. Kimse çıkmadı önüme.",
+    "Sessizdi. Fareler bile sessizdi... Zehir mi? Fareler için tabii, her bakkalda bulunur, üstüme gelmeyin."
+   ],
+   "secret": [
+    "Tütün kaçak gelir, bir sandık hep kilerde. Herkesin ikram ettiği buradan. Cezasını öderim.",
+    "*Kilere doğru bakıp hemen önüne döner* Kilerde boş şişeler vardır. Boş, hepsi boş. Şırıngayı da fare için kullanırım, peynire değil."
+   ],
+   "qa": [
+    {
+     "q": "Son günlerde dükkâna gelen şüpheli biri oldu mu?",
+     "a": "Yabancı bir tüccar, gümüş sikke bıraktı, tütün aldı. Sikkesi kasabanın değil, hâlâ duruyor.",
+     "g": "Vahap geldi, başka kim olsun. Paketini ben hazırladım, her zamanki gibi. Şüpheli olan bir şey yoktu, ben de kibardım."
+    },
+    {
+     "q": "Veresiye defterinde silinen isim kimin?",
+     "a": "Silinmedi, kopmuş. O sayfa Vahap Efendi'nindi, senetle birlikte durmalıydı. Kim koparmış bilmem.",
+     "g": "*Sayfayı arar gibi yapar* Kopmuş, eski defter. Borç mu? Borç bitti, adam öldü, hesap kapandı. Yani öyle demek istemedim."
+    },
+    {
+     "q": "O gece dükkândan çalınan ne?",
+     "a": "Bir şişe fare zehri eksik sanki. Saymadığım için yemin edemem, yine de söyleyeyim.",
+     "g": "Hiçbir şey çalınmadı, sayarım her şeyi. Bir şişe eksikse ben kullanmışımdır. Farelere. Çok fare vardı."
+    },
+    {
+     "q": "Kasabalıların borç kavgaları hakkında ne biliyorsun?",
+     "a": "Zehra da, İrfan da, Şevket de ona borçlu. Herkes bir gün patlayacaktı, ben sadece defter tutarım.",
+     "g": "Herkesin borcu vardı, benim de alacağım. O ölünce kimin işine yaradı, bunu sorun. Benim değil! Senet ortada."
+    }
+   ]
+  },
+  {
+   "id": 205,
+   "autopsy": "Başta, aynı noktaya defalarca inmiş çok ağır bir darbe; demir kaplamalı köşesi olan büyük bir cisimle uyumlu. Yarada kâğıt lifleri ve eski kitap tozu. Ceset sürüklenmiş, topuklarda çizik.",
+   "alibi": [
+    "Dükkânımdaydım evladım, bir el yazmasını temize çekiyordum. Sabaha kadar sürer böyle işler.",
+    "Kütüphanedeydim, yani dükkânda, en karanlık köşede. Kapı kapalıydı. Biri girdiyse hırsızdır zaten, ben kimseyi görmedim."
+   ],
+   "grudge": [
+    "Değerli kitapları ucuza kapatmaya çalışırdı. Cahilin parası var diye kitap satın alması beni üzer, başka değil.",
+    "*Sayfayı çevirir, eli durur* Nesillerdir korunan bir şeyi bir açgözlü yağmalayamaz. Bu genel bir görüş amirim, kişisel değil."
+   ],
+   "suspect": [
+    "Zeynep Hanım'ın eline geçen mektuplar eski ve tehlikeli. Hatice Nine de çok şey bilir, ikisine dikkat edin.",
+    "Telgrafçı Rüstem şifre çözer, Vahap'ı da o tanırdı. Kitap gibi bir şeyle adam mı öldürülür? Bence bu yanlış iz."
+   ],
+   "heard": [
+    "Dükkânın üstünde tahta gıcırdadı. Fare diye düşündüm, sonra biri rafları yokladı galiba.",
+    "Hiç duymadım. Eski kitaplar da konuşmaz, kan sıçrasa da... Kim sıçradı dedi? Söz gelişi evladım, söz gelişi."
+   ],
+   "secret": [
+    "Rafta sahte bir vasiyetname var, ben yazmadım; Vahap getirip değerini sordu. Saklamakla iyi mi ettim bilmem.",
+    "*Ağır ansiklopediyi rafa iter* O cilt çok eskidir, satılık değil. İçine bakmayın. Sayfalarda leke varsa mürekkeptir."
+   ],
+   "qa": [
+    {
+     "q": "El yazmalarında şifreli notlar var mı?",
+     "a": "Var, kenarlara yazılmış. Kasabanın altında eski bir yer anlatıyor; bence masal ama birileri inanıyor.",
+     "g": "Şifreleri ben yazmadım. Çözmesi de kolay değildir... Vahap çözebildiğine göre o kadar da zor değilmiş. Çözmüş müydü? Bilmem!"
+    },
+    {
+     "q": "Son müşterin kim ve ne aldı?",
+     "a": "Vahap Efendi'ydi. Almadı, bir harita istedi, fiyat bile sormadı. Tuhaftı.",
+     "g": "Vahap. Bir kitaba baktı. Satmadım. Almaya çalıştı... gece gelip mi? Hayır, gündüz. Gündüz geldi."
+    },
+    {
+     "q": "Eski haritalar arasında saklanan belge ne?",
+     "a": "Eski bir kasa izi çizimi ve bir kısmı silinmiş kroki. Kime ait olduğunu ben de çözemedim.",
+     "g": "Harita değildi o. Hem artık yok. Yani hiç olmadı. *Boş çekmeceyi kapatır*"
+    },
+    {
+     "q": "O gece dükkânına gelen oldu mu?",
+     "a": "Gece yarısı kapım çalındı, açmadım. Sabah eşikte çamur vardı.",
+     "g": "Kimse gelmedi. Kapılar kapanmıştı, sürgülüydü. Girdiyse de haber veremez artık. Şaka yaptım evladım, sinirden."
+    }
+   ]
+  },
+  {
+   "id": 206,
+   "autopsy": "Parçalanmış yaralar hayvan saldırısını andırıyor, fakat yaralarda kanama yok: ölümden sonra açılmış. Asıl sebep felç edici bir zehir; midede acı dağ kahvesi ve zehir kalıntısı. Parmak uçlarında mühür mumu lekesi.",
+   "alibi": [
+    "Muhtarlıktaydım, kayıtları kapattım, sonra konağıma çıktım. Kasaba düzeni sabahtan geceye sürer amirim.",
+    "Muhtarlıktaydım, tek başıma. Kahve içtim. Bir fincan... iki fincan, misafir olursa diye. Misafir yoktu, öyle demek istedim."
+   ],
+   "grudge": [
+    "Arazi meselelerinde sık sık karşı karşıya geldik. Ama bir muhtarın işi tartışmaktır, yürütmektir.",
+    "*Soğukkanlılıkla gülümser* Elinde evrak var diye konuşurdu. Kasaba önünde beni küçültecekmiş. Hiçbir şey yapamadı, gördünüz."
+   ],
+   "suspect": [
+    "Hurdacı Zehra'nın dükkânına gece gelen arabalar var, nereden geldikleri belli değil. Bakılmaya değer.",
+    "Vahşi hayvan olabilir, biliyorsunuz. Yara izleri öyle diyor. Ama ısrar ediyorsanız... Hurdacı Zehra."
+   ],
+   "heard": [
+    "Orman girişinde kurt uluması olur, her gece duyarız. O gece de vardı ama garip bir şekilde erken kesildi.",
+    "Kurt ulumaları. Hayvan saldırısı, dedim ya. Bunda şüphelenecek bir şey yok, ben kaydı da öyle tuttum."
+   ],
+   "secret": [
+    "Bazı arazi kayıtları eksik, atalarımızdan kalma. Düzeltme yapıyorum, resmî görevim.",
+    "*Kırık mührü masanın altına süpürür* Kütüğe asit dökülmüş, kaza. Kırık mühür eskidir. Şömineyi evrak yakmak için yakmadım, soğuktu."
+   ],
+   "qa": [
+    {
+     "q": "Arazi kavgaları kimler arasında?",
+     "a": "Vahap Efendi ile yarı kasaba arasında. Hatice Nine de kimseye tek karış vermem diyor.",
+     "g": "Herkes kavga eder. Vahap'ın elindeki kâğıtlar yanlıştı. Yanmıştı da zaten. Yani yanlıştı, yanmış değildi."
+    },
+    {
+     "q": "Resmi mühürü en son kim kullandı?",
+     "a": "Ben, geçen ay kasaba vergi defteri için. Mühür kilitli çekmecede durur, bakabilirsiniz.",
+     "g": "Ben. Her gün kullanırım, en son ne zaman hatırlamam. Kırık olan başka mühür. Kırılmadı da, yıpranmıştır."
+    },
+    {
+     "q": "Cinayet gecesi köy meydanında kimler vardı?",
+     "a": "Meydan boştu, sis yoğundu. Bir at sesi duydum, Çoban Durmuş'un atı olabilir.",
+     "g": "Kimse yoktu. Ben çıktım, baktım... Çıkmadım, pencereden baktım. Orman girişine giden yolda kimse yoktu, emin olun."
+    },
+    {
+     "q": "Kasabanın karanlık geçmişi hakkında ne biliyorsun?",
+     "a": "Kırk yıl önce bir yangın, bir kayıp aile. Hatice Nine anlatır, ben kayıtlarda iz bulamadım.",
+     "g": "Geçmiş geçmişte kalsın amirim. Kayıtlarda ne yazıyorsa odur. Kayıtları da ben tutuyorum, biliyorsunuz."
+    }
+   ]
+  },
+  {
+   "id": 207,
+   "autopsy": "Sol şakakta çok küçük alana inmiş ağır darbe; dar, yuvarlak ve içi kurşun dolu bir cisimle uyumlu. Yarada meşe talaşı. Giysiler ve saçlar ağır tütün yaprağı ile baharatlı tütsü kokuyor.",
+   "alibi": [
+    "Dükkânımdaydım, yeni gelen balyaları ayırdım. Tütün gece daha iyi kokar derler amirim.",
+    "Depodaydım... dükkânda. Balya taşımadım, kadın başıma nasıl taşırım? Tütsü yakmayı severim, koku güzel olsun diye."
+   ],
+   "grudge": [
+    "Pipo tütününü benden alır, hep daha ucuza isterdi. Fiyat dışında bir meselemiz olmadı.",
+    "*Pipoyu silmeye devam eder* Sus payı istedi benden, kendini kim sanıyordu? Evet, kovaladım. Ama sözle. Sadece sözle."
+   ],
+   "suspect": [
+    "Hayalî Nejat salonunda kaçak mal saklar. Bana sorarsanız kaçakçılığın Vahap'la bozuşan tarafı odur.",
+    "Hayalî Nejat! Kaçak işleri ondan sorun. Tütün meselesinde benim adımın geçmesi tesadüf, Allah bilir."
+   ],
+   "heard": [
+    "Arka odada balyalar düştü sandım, sonra kediydi. Sisli gecelerde her ses daha yakın gelir.",
+    "Duymadım. Balya düşer, ağırdır, ses çıkarır, o kadar. Dibine bakmanıza gerek yok, kurt düşer tütüne."
+   ],
+   "secret": [
+    "Bazı balyalar izin kâğıtsız gelir, fazla sormayın. Kârım o kadar çok değil.",
+    "*Lekeli gümüş tabakayı çekmeceye atar* Bir şey yok amirim. Haftadır tütsü yakmam kokudan değil, keyiften. Çok mu ağır geldi size?"
+   ],
+   "qa": [
+    {
+     "q": "Özel karışım tütününü kimler satın alıyor?",
+     "a": "Vahap Efendi, Hikmet Efendi ve Muhtar Hanım. Kayıt tutmam ama hepsini tanırım.",
+     "g": "Vahap içerdi. İçerdi işte! Geçmiş zamanla konuşuyorum çünkü... hayır, öldüğü için herkes öyle konuşuyor."
+    },
+    {
+     "q": "O gece dükkânın arka odasında ne oldu?",
+     "a": "Balyaları düzenledim, başka bir şey olmadı. İsterseniz gidip bakın, kokudan bayılırsınız.",
+     "g": "Bir şey olmadı. Oraya girmeyin, zehirli koku var, balyalar da üstünüze devrilir. Ciddiyim amirim, girmeyin."
+    },
+    {
+     "q": "Tütün yaprakları arasında saklanan ne?",
+     "a": "Bazen bir iki kese para, bazen izinsiz mal. Şaşırmayın, dağda herkes böyle yaşar.",
+     "g": "Tütün. Sadece tütün! Kan mı? Kurumuş tütün kızıl olur, bilmezsiniz siz."
+    },
+    {
+     "q": "Kaçak tütün ticareti hakkında ne biliyorsun?",
+     "a": "Limandan katırlarla gelir, biri hep kasabada karşılar. Şebekenin başını merak ediyorsanız sırf ben değilim.",
+     "g": "Kaçak ha? Ben namuslu esnafım. Şebeke diye bir şey yok, olsa da başı ben değilim. Kim söyledi size?"
+    }
+   ]
+  },
+  {
+   "id": 208,
+   "autopsy": "Boynun yan tarafında paslı, kalın ve sivri bir demir çiviyle açılmış derin delici yara. Beden uçurumdan düşmüş gibi kırık ama yara ölümden önce. Giysilerde at kılı, eyer kayışı izi ve ahır samanı.",
+   "alibi": [
+    "Ahırdaydım amirim. Hayvanlar huzursuzdu, sabaha kadar başlarında durdum.",
+    "Ahırdaydım. Atımı alıp bir tur attım, hayvan yürümek ister. Dağın arkası mı? Dağın her yanı aynı sisli, bilemem ki."
+   ],
+   "grudge": [
+    "Dereye zehirli atık akıtıyordu, koyunlarım öldü. Şikâyet ettim, kimse dinlemedi. Kızgındım ama öfkeyle sürü doymaz.",
+    "*Sesi boğuklaşır* Ölen koyunlarımı görmediniz siz. Can çekişiyorlardı. Yasa onu korudu. Bir insan bir yerde adalet ister amirim."
+   ],
+   "suspect": [
+    "Gazyağcı Şevket'in evle ilgili laflarını duydum, iyi şeyler değil. Bir de Kahveci İrfan'ın gözü dönmüştü.",
+    "Gazyağcı Şevket! Yangın işi onun işi. Ben çobanım, çivilerle işim yok... Nal çivisi her ahırda bulunur, bu bir şey mi demek?"
+   ],
+   "heard": [
+    "Hayvanlar bağırdı, kurt mu dedim, yabancı mı dedim anlamadım. Oğlum da uyanmış, ahıra bakmış.",
+    "At kişnedi, ben de sakinleştirdim. Başka hiçbir ses yok. Uçurum tarafında taş kayması olur zaten, onu duymuş olabilirler."
+   ],
+   "secret": [
+    "Yaylada izinsiz otlatırım bazen. Muhtar Hanım ceza kesti, ödemedim. Cezasını çekerim.",
+    "*Kayışı elinden düşürür* Eyer kayışı kesikse eskidendir. Çizmelerimi yıkamadım diye de suçlu olmam ya?"
+   ],
+   "qa": [
+    {
+     "q": "Ahırda saklanan yabancı kim?",
+     "a": "Kimse saklanmadı. Geçen hafta bir seyyar satıcı bir gece kaldı, sabah gitti.",
+     "g": "Yabancı yok. Ahıra kimse gelmedi, Vahap hele hiç gelmedi. Vahap'ı sormadınız mı? Sormuş gibi oldunuz."
+    },
+    {
+     "q": "Çamurlu ayak izleri nereye gidiyor?",
+     "a": "Ahırdan göle, göle dereye. Sürü yürür, çamur olur. Çizme izi benimkidir, saklayacak değilim.",
+     "g": "Sürünün izleridir. Çizme mi? Benim çizmemin izi her yerde olur, çoban bu. Uçuruma giden yol mu? Oraya sürü gitmez."
+    },
+    {
+     "q": "Saman balyalarının altında ne var?",
+     "a": "Fare yuvası, bir de eski kürek. İsterseniz çatallayın, ama hayvanları ürkütmeyin.",
+     "g": "Saman. Altında toprak. Kaldırmayın, koyunlar ürker. Bir çivi varsa nalbanttan düşmüştür."
+    },
+    {
+     "q": "O gece hayvanlar neden rahatsız oldu?",
+     "a": "Kan kokusu gibi bir şey aldılar sanırım. Hayvan anlar amirim, insandan önce.",
+     "g": "Hava değişti. Yani fırtına. Hayvan fırtınayı sevmez. Kan kokusu falan yoktu, kim söyledi öyle?"
+    }
+   ]
+  },
+  {
+   "id": 209,
+   "autopsy": "Bedende patlama ve ağır yanık izleri; akciğerlerde gazyağı buharı. Yangın ateşten önce bir sızıntıyla başlamış. Olay yerinde bilerek gevşetilmiş bir kazan vanası, parmak izli bir ingiliz anahtarı lekesi.",
+   "alibi": [
+    "Depomdaydım, varilleri saydım, kayıtları tuttum. Akşam teslimatım vardı, gece çıkmadım.",
+    "Depodaydım. Teslimat mı? Bir teslimat vardı, Vahap'ın evine. Mahzene indim, kazana baktım, çıktım. Her şey yolundaydı."
+   ],
+   "grudge": [
+    "Bana hırsız dedi, kimse inanmadı ama adım çıktı. Kötü bir adamdı, ama iftirayla yaşanır, ölünmez.",
+    "*Yüzü kasılır* Ailemin adını lekeledi. Yıllarca sustum. Evet, alevleri uzaktan gördüm. Seyretmedim! Herkes baktı, ben de baktım."
+   ],
+   "suspect": [
+    "Hayalî Nejat salonunda gazyağı stoklar, makineleri için. Yangın kokusunu bilen biridir.",
+    "Kaza oldu kaza! Karanlıkta kibrit çakmış, kim suçlu? Sormak istiyorsanız Hayalî Nejat'a sorun, gazyağını en çok o alıyor."
+   ],
+   "heard": [
+    "Patlama sesini kasaba duydu, ben de duydum. Önce küçük bir tıslama oldu sanki, ama onu ben uzaktan nasıl duyayım?",
+    "Tıslama falan yok. Vana sıkıydı, gevşek değildi. Ben teslim ettiğimde sıkıydı, yemin ederim. Sonrasını bilmem."
+   ],
+   "secret": [
+    "Bazı varilleri eksik yazarım, vergi için. Depo sayımında anlaşılır, cezasını öderim.",
+    "*Teslim defterini kapatır* O kayıt yanlış yazılmış olabilir. Anahtardaki leke pastır. Düğmem mi? Her ceketin düğmesi kopar."
+   ],
+   "qa": [
+    {
+     "q": "Son gazyağı teslimatını kime yaptın?",
+     "a": "Akşamüstü Vahap Efendi'nin evine, bir varil. Mahzene kadar katırla indirdim, imzayı da aldım.",
+     "g": "Vahap'a. İmzası var... Yani atması gerekiyordu, kayıt sahte değil! Mahzene ben inmedim, indim ama hemen çıktım."
+    },
+    {
+     "q": "Depo kayıtlarında eksik varil var mı?",
+     "a": "Bir varil var, hesabı tutmadı. Gazyağı sızdırır, olur böyle. Sayın isterseniz.",
+     "g": "Yok. Sayılmış, yazılmış. Bir varil fazlaysa yanlış saymışlardır. Sayı karışır amirim, üstüme gelmeyin."
+    },
+    {
+     "q": "O gece dükkânına gelen oldu mu?",
+     "a": "Hurdacı Zehra uğradı, eski bir kazan gövdesi verdi. Başka gelen olmadı.",
+     "g": "Kimse. Ben de kimseye gitmedim. Dükkân kapalıydı, ben mahzenden çıkmıştım çoktan. Hangi mahzen mi? Sizin dediğiniz."
+    },
+    {
+     "q": "Gazyağı kokusu nereden geliyor?",
+     "a": "Benden. Üstümden çıkmaz amirim, kırk yıl yıkansam da. Kasabada herkes alışkındır.",
+     "g": "Her yer kokuyor işte, gazyağcı dükkânı burası. Ceketimi yıkadım, yine de kokuyorsa o gece değil, her gece kokuyor."
+    }
+   ]
+  },
+  {
+   "id": 210,
+   "autopsy": "Beden çelik çeneler arasında sıkışmış gibi: göğüs kafesi ve kollarda büyük pres ezikleri. Yaralarda pas, makine yağı ve demir talaşı. Parmakta iz kalan bir yüzük çıkarılmış, derisi hâlâ ezik.",
+   "alibi": [
+    "Dükkândaydım, hurda ayırıyordum. Buharlı pres çalışınca bütün mahalle duyar, kimseyi rahatsız etmedim diyemem.",
+    "Dükkânda. Presi çalıştırdım, sipariş vardı. Gece mi? Gündüz sipariş yetişmedi diye gece. Ne var bunda, ekmek kavgası."
+   ],
+   "grudge": [
+    "Hurdama ucuz fiyat biçerdi, her seferinde kavgaydı. Pazarlıktan öldüren olsa kasabada kimse kalmazdı.",
+    "*Paslı eliyle alnını siler* Her ay pay istiyordu, yoksa ihbar! Parayı verecektim, çağırdım işte... Vermeye çağırdım, gerisi yok."
+   ],
+   "suspect": [
+    "Kahveci İrfan'ın altı patları olduğunu herkes bilir. Benim dükkânıma getirip eritmek istedi, almadım.",
+    "Gazyağcı Şevket mahzenleri bilir. Kahveci İrfan da tabancalı. Bana niye bakıyorsunuz? Ben sadece demire bakarım."
+   ],
+   "heard": [
+    "Gece sadece kendi presimin sesi vardı. Bir de biri arka kapıyı yokladı sandım.",
+    "Pres çok gürültülüdür amirim, çığlık da olsa duyulmaz. Yani kim bağıracak ki? Boş makine, boş dükkân."
+   ],
+   "secret": [
+    "Nereden geldiği belli olmayan hurda alıyorum, doğrudur. Sorarsam ucuza gelmez.",
+    "*Pres kapağına yaslanır* Kasa çalıntıysa ben bilmem, tartımı yaptım. Kanlı fiş mi? Elimi kesmiştim. Yüzüğü kimin için sakladığımı sormayın."
+   ],
+   "qa": [
+    {
+     "q": "Son getirilen hurda parçalar nereden geldi?",
+     "a": "Şehirden gelen bir kervan, bir de köyden hurdacı. Kasa da onlardan çıktı; numarasına ben bakmam.",
+     "g": "Oradan buradan. Kasaların numarası silinmişse ben silmedim. Eritince zaten numara kalmaz, kalmazdı yani."
+    },
+    {
+     "q": "Paslı bıçak kime ait?",
+     "a": "Kime ait bilinmez amirim, burada her şey kimsesiz. Geçen hafta bir arabadan çıktı.",
+     "g": "Bıçak mı? Bıçakla ne ilgisi var, başka aletler var burada... Bıçak değilmiş yani, öyle duydum."
+    },
+    {
+     "q": "Hurda yığınları arasında saklanan ne?",
+     "a": "Seri numarası silinmiş bir tüfek, karşılığını sormadan aldım. Size teslim edebilirim.",
+     "g": "Hiçbir şey. Yığını kaldırmayın, üstünüze düşer. Pres tarafına hiç girmeyin, ayarı bozuk, tehlikeli."
+    },
+    {
+     "q": "O gece dükkânından garip sesler duyuldu mu?",
+     "a": "Pres çalışırken dükkânda her şey garip ses çıkarır. Kemik gibi çatırtı duydum sanıp baktım, sadece eski dökme demirdi.",
+     "g": "Duyulmadı! Duyulduysa pres sesidir. Kırılan... demir. Demir kırılır işte, kemik değil. Kemik kim dedi?"
+    }
+   ]
+  },
+  {
+   "id": 211,
+   "autopsy": "Göğüste ve karında birçok gelişigüzel bıçak yarası; kalın, ucu paslı eski bir av bıçağıyla uyumlu. Darbeler güçsüz ama öfkeli, kimi yüzeysel. Elinde sisli havada kurumuş yırtık bir mektup parçası.",
+   "alibi": [
+    "Evimdeydim oğlum, pencere önünde dua ediyordum. Bu yaşta nereye gideyim?",
+    "Evdeydim oğlum. Kapı çalındı, açmadım. Açtıysam da kapattım. Şöminenin karşısında kahvemi içtim, ellerimi yıkadım, hepsi bu."
+   ],
+   "grudge": [
+    "Her ay gelir, kira sorar gibi yüzüme bakardı. Sevmezdim evladım, ama yaşlı kadın ne yapabilir?",
+    "*Elleri titrer* Bütün birikimimi aldı, gecelerce. Bildiği bir şey vardı... Allah bilir, ben de bilirim. Son altınımı isteyince... Bırakın, geçti."
+   ],
+   "suspect": [
+    "Pencereden Emine Hanım'ın gece ormana indiğini gördüm. Kız sessizdir ama gözleri korkutur.",
+    "Emine Hanım! Hep ormanda dolaşır. Bana sormayın evladım, gözlerim seçmez... gerçi o gece her şeyi gördüm. Yani görmedim."
+   ],
+   "heard": [
+    "Pencereyi aralayınca rüzgâr bir bağırış getirdi, hemen kesildi. Sonra köprü tarafı sessizleşti.",
+    "Bağıran olmadı. Sisin içinde kimse görünmez, gölgeler bile yanılır insanı. Bir siluet varsa o da karanlıkta sırıtıyordu."
+   ],
+   "secret": [
+    "Gençliğimde bir günahım var evladım, onu da Allah'a anlatırım, size değil. Cinayetle ilgisi yok.",
+    "*Cübbesinin içini kavrar* Dedemden kalma bıçak duvardaydı, hâlâ duvarda. Gidip bakmayın, paslandı, kırıldı, attım."
+   ],
+   "qa": [
+    {
+     "q": "O gece pencereden kimi gördün?",
+     "a": "Bir fener, sonra bir kadın gibi ince bir gölge. Orman yoluna doğru. Daha ötesini sisten göremedim.",
+     "g": "Hiç kimse... Vahap'ı gördüm kapımda. Hayır, geçen hafta gördüm. O gece kapımı çalan olmadı, kesin."
+    },
+    {
+     "q": "Komşularla aranda husumet var mı?",
+     "a": "Yok evladım. Hatice Nine ile eski bir kırgınlığımız var, o da kırk yıllık.",
+     "g": "Komşularla yok. Vahap komşu değildi ki. Komşu olmayanla husumet olmaz, olmamalı. Sorunuz neydi evladım?"
+    },
+    {
+     "q": "Evinde sakladığın eski mektuplar neler?",
+     "a": "Rahmetli eşimden kalma. Kimseye okutmam, ama isterseniz size gösteririm.",
+     "g": "*Mektupları toplar* Kimse okumayacak onları! Onun için bunca para verdim, bunca... Bir şey demedim."
+    },
+    {
+     "q": "Kasabanın geçmişinde karanlık bir olay mı var?",
+     "a": "Kırk yıl önceki yangın. O gece bir çocuk kayboldu, herkes susuyor hâlâ.",
+     "g": "Geçmiş temizdir. Yani benim bildiğim temiz. Vahap ne dediyse iftiradır, kaldı ki artık kimseye bir şey diyemez."
+    }
+   ]
+  },
+  {
+   "id": 212,
+   "autopsy": "Dışarıdan yara yok, görünüşte kalp krizi. Fakat midede bitki çayı ve az bilinen kara dağ mantarı lifleri; kaslarda ani felç bulgusu. Yüzü sakin, zehir yavaş yavaş verilmiş.",
+   "alibi": [
+    "Sallanan sandalyemdeydim evladım. Doksan yıllık kemikler gece gezmez, sen de biliyorsun.",
+    "Evimdeydim, misafirim... yoktu. Çay içtim, bitki çayı. Bir fincan fazla demlediysem alışkanlıktan evladım."
+   ],
+   "grudge": [
+    "Kasabamızı satmak istiyordu. Üzüldüm, söylendim, dua ettim. İhtiyar kadının elinden başka ne gelir?",
+    "*Sakin bir sesle* Bu kasabayı atalarım kurdu. Herkesi evlerinden sürecekti. Bazı otlar, bazı insanlar kasabaya zarar verir evladım. Ayıklanır."
+   ],
+   "suspect": [
+    "Zeynep Teyze'ye sor. Vahap gecelerce kapısındaydı, içinde bir sır çürüyor o kadının.",
+    "Şüphe mi? İlaç yerine geçecek otları bilen biri olmadığı kesin, kimse bilmez artık onları. Zeynep'e sorun siz yine de."
+   ],
+   "heard": [
+    "Köpekler gece dağa baktı ama havlamadı. Bu, tanıdık biri geçti demektir.",
+    "Ayak sesi tanıdıktı. Evime gelen... Benim evime kim gelecek? Yaşlılık evladım, kulaklarım çınlar."
+   ],
+   "secret": [
+    "Bu kasabada kimin kimin çocuğu olduğunu bir ben bilirim. Mezara götüreceğim şeyler var.",
+    "*Sepetteki kara mantarların üstünü örter* Mantar dediğin kışlıktır. Hangisinin zehirli olduğunu bilirim tabii. Bilmesem bu yaşa gelir miydim?"
+   ],
+   "qa": [
+    {
+     "q": "O gece neden uyumadın?",
+     "a": "Yaşlı adam uyumaz evladım, bekler. Ben de bu kasabanın sabahını beklerim.",
+     "g": "Bekliyordum. Bir sonucu... sabahı bekliyordum. Vahap'ın gözündeki ışık sönene dek... Sabahı bekliyordum dedim."
+    },
+    {
+     "q": "Dışarıdan gelen ayak seslerini tanıdın mı?",
+     "a": "Telgrafçının adımı gibiydi, topuğunu sürür. Yemin edemem, sisin içinde ses yanıltır.",
+     "g": "Tanımadım. Ayak sesi yoktu ki zaten, misafirim... Tek başımaydım, unutmuşum."
+    },
+    {
+     "q": "Eski fotoğraf albümünde saklanan sır ne?",
+     "a": "Kasabanın kurucuları var, yarısı birbirinin akrabası. Sır değil evladım, utanç.",
+     "g": "*Albümü kapatır* Bir kez baktın mı bakarsın, ikinci kez isteme. Vahap da çok bakmıştı. Fazla baktı."
+    },
+    {
+     "q": "Kasabadaki herkesin geçmişini biliyorsun, anlat bakalım.",
+     "a": "Meliha'nın kayıtları eksik, Nermin'in malı kaçak, Zehra'nın demiri çalıntı. Ama katil başka şeydir evladım.",
+     "g": "Hepsini bilirim. Hepsini korurum da. Kasabayı satanı hariç. Satan kişi, kasabadan değildir. Hiç olmadı."
+    }
+   ]
+  },
+  {
+   "id": 213,
+   "autopsy": "Boyunda yünlü, kalın bir ipin sarmal izi; ağaca asılı bulunması intihar süsü, zira boğma izi ipin bağlandığı açıya uymuyor. Tırnak altında ham yün lifi. Çınar kabuğu giysilere sonradan bulaşmış.",
+   "alibi": [
+    "Yamaçtaki evimdeydim, dokuma tezgâhımın başındaydım. Gece sesinde çalışmak güzeldir amirim.",
+    "Tezgâhın başındaydım. Köprüye inmem ben, oralar karanlıktır... Köprü mü dedim? Dağ yolunu demek istemiştim."
+   ],
+   "grudge": [
+    "Evimi uzaktan seyreder, hakkımda kötü sözler ederdi. İğrenirdim ondan, o kadar. Kadın kısmı buna alışır, ne yazık ki.",
+    "*Sesi çok alçalır* Beni gözetlerdi. Aylarca. Dürbünle. Şimdi kimse beni izlemiyor. Bu iyi bir şey amirim, siz de öyle düşünürsünüz."
+   ],
+   "suspect": [
+    "Kasabada en çok Muhtar Meliha'dan korkarım. Bir gece ormana bir şey taşıyanı gördüm, kadın adımlarıydı.",
+    "Zeynep Teyze çok yaşlı, Meliha çok soğuk... Yünün ne önemi var ki? Herkes alır benden yün, bakın kim kaç kangal aldı."
+   ],
+   "heard": [
+    "Rüzgâr fısıltı taşır. O gece köprü tarafından kısa bir boğulma sesi... sonra kalın bir dal gıcırdadı.",
+    "Hiç bir şey. Köprü sessizdi. Dal da gıcırdamadı, çınar sağlam ağaçtır. Niye bu kadar emin miyim? Bilirim işte, oradan geçerim."
+   ],
+   "secret": [
+    "Gizli bir çekmecem var, dokuma paramı saklarım. Yalnız kadın başıma tedbir almam gerek.",
+    "*Yün ipi sepetin dibine iter* Dürbün onun, evet, yere düşürmüş. Ben aldım. Kopuk kolye de... Bunlar benim evimde ne arıyor diye sormayın."
+   ],
+   "qa": [
+    {
+     "q": "Yamaçtan kasaba meydanını görebiliyor musun?",
+     "a": "Berrak gün görebilirim. Sisli geceler sadece fenerler seçilir, ışık gibi süzülürler.",
+     "g": "Görünmez. Yani hiç bakmam. Dürbünüm yok, dürbün onun... Birinin dürbünü varsa benim ne suçum var?"
+    },
+    {
+     "q": "O gece fenerle dağa çıkan birini gördün mü?",
+     "a": "Evet, ağır yürüyen biri, omzunda bir şey vardı sanki. Ormanın girişine kadar gitti.",
+     "g": "Görmedim. Fener taşımam ben, karanlıkta yürümeyi bilirim. Köprüden öyle geçilir ki kimse fark etmez."
+    },
+    {
+     "q": "Dokuduğun yün atkılardan birini meydanda bulan oldu mu?",
+     "a": "Kaç tane sattım sayısı yok, biri de düşmüştür. Zaten ipim kasabada kilimle iki paraya gider.",
+     "g": "Atkı değil, ip! Kalın olanlar haftalarca ayrı örülür, çelik gibi sağlam. Bilgi veriyorum sadece, mesleğim bu."
+    },
+    {
+     "q": "Kasabada en çok kimden şüpheleniyorsun?",
+     "a": "Muhtar Meliha. Arazisi, mührü, hırsı var. Korkarım ondan, söylerken bile titriyorum.",
+     "g": "Vahap'ın kendisinden. İntihar etmiş işte, ağaca asmış kendini. Bunda şüpheli bir şey yok, herkes gördü."
+    }
+   ]
+  }
+ ]
+}

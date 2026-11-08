@@ -62,7 +62,7 @@ namespace Dedektif3D.World
             lamp.gameObject.AddComponent<LightFlicker>().Init(lamp, 0.15f);
             Box("Ok1", car, new Vector3(-0.35f, 0.8f, 2.0f), new Vector3(0.06f, 0.06f, 2.2f), wood, collider: false);
             Box("Ok2", car, new Vector3(0.35f, 0.8f, 2.0f), new Vector3(0.06f, 0.06f, 2.2f), wood, collider: false);
-            RuralBuildings.Animal(car, new Vector3(0, 0, 2.9f), 0f, new Color(0.12f, 0.09f, 0.07f), true);
+            RuralBuildings.Animal(car, new Vector3(0, 0, 2.9f), 0f, new Color(0.26f, 0.15f, 0.08f), true);
             var driver = PropFactory.BuildPerson("Arabacı", car, new Vector3(0, 0.62f, 0.75f), new Color(0.12f, 0.11f, 0.1f), new Color(0.3f, 0.2f, 0.15f), false, null, Core.FaceLibrary.NextTownsfolkFace(), "sit");
             if (driver.HasModel) driver.Root.localPosition = new Vector3(0, 0.17f, 0.75f);
             driver.LegL.localRotation = Quaternion.Euler(-80, 0, 0); driver.LegR.localRotation = Quaternion.Euler(-80, 0, 0);
@@ -194,8 +194,8 @@ namespace Dedektif3D.World
         // =================================================================
         public static void Puddle(Transform parent, Vector3 pos, float size)
         {
-            // Gökyüzünü ve lambaları yansıtan ince su tabakası (siyah delik gibi görünmesin)
-            var mat = M.Get("puddle", new Color(0.22f, 0.25f, 0.3f), 0.97f, 0.85f);
+            // Gökyüzünü ve lambaları yansıtan, kenarları zemine karışan ince su tabakası
+            var mat = M.PuddleWater;
             Cyl("SuBirikintisi", parent, pos + Vector3.up * 0.065f, new Vector3(size, 0.004f, size * Random.Range(0.55f, 0.9f)), mat, new Vector3(0, Random.Range(0, 180f), 0), false);
         }
 

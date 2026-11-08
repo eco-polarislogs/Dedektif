@@ -59,20 +59,27 @@ namespace Dedektif3D.API
     [Serializable] class ArrayWrapper<T> { public T[] items; }
 
     /// <summary>
-    /// DedektiflikRPG ASP.NET backend'i (http://localhost:5000) ile tüm iletişimi yöneten singleton.
+    /// DedektiflikRPG ASP.NET backend'i ile tüm iletişimi yöneten singleton.
     /// Web istemcisindeki session.js gibi her istekte X-Session-Id başlığı gönderir, böylece
     /// Unity oyuncusu da kendi bağımsız oturumunda (katil, çanta, adli bulgular) oynar.
+    ///
+    /// Sunucu isteğe bağlıdır: dağıtılan oyun varsayılan olarak çevrimdışı çalışır ve hiç ağ isteği yapmaz.
+    /// Adres sırayla şuradan okunur: "-server http://..." komut satırı argümanı, StreamingAssets/server.txt,
+    /// yalnızca editörde http://localhost:5000.
     /// </summary>
     public class GameAPIManager : MonoBehaviour
     {
         public static GameAPIManager Instance { get; private set; }
 
         [Header("Backend")]
-        [Tooltip("Backend adresi. Program.cs: app.RunAsync(\"http://localhost:5000\")")]
-        public string baseUrl = "http://localhost:5000";
+        [Tooltip("Backend adresi; boşsa oyun çevrimdışı çalışır. Açılışta ResolveServerUrl ile belirlenir.")]
+        public string baseUrl = "";
         public string townId = "gizemli";
         public int timeoutSeconds = 12;
         public bool verboseLogging = true;
+
+        /// <summary>Bir sunucu adresi ayarlanmış mı? Değilse hiçbir ağ isteği yapılmaz.</summary>
+        public bool HasServer => !string.IsNullOrEmpty(baseUrl);
 
         public string SessionId { get; private set; }
         public bool IsOnline { get; private set; }
@@ -87,6 +94,30 @@ namespace Dedektif3D.API
             Instance = this;
             DontDestroyOnLoad(gameObject);
             SessionId = Guid.NewGuid().ToString();
+            baseUrl = ResolveServerUrl();
+            verboseLogging = Application.isEditor;
+        }
+
+        static string ResolveServerUrl()
+        {
+            var args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length - 1; i++)
+                if (args[i] == "-server") return args[i + 1].Trim().TrimEnd('/');
+            try
+            {
+                string file = System.IO.Path.Combine(Application.streamingAssetsPath, "server.txt");
+                if (System.IO.File.Exists(file))
+                {
+                    string url = System.IO.File.ReadAllText(file).Trim().TrimEnd('/');
+                    if (url.Length > 0) return url;
+                }
+            }
+            catch (Exception e) { Debug.LogWarning("[GameAPI] server.txt okunamadı: " + e.Message); }
+#if UNITY_EDITOR
+            return "http://localhost:5000";
+#else
+            return "";
+#endif
         }
 
         /// <summary>Kod içinden hiçbir sahne objesi olmadan oluşturmak için.</summary>
@@ -192,13 +223,29 @@ namespace Dedektif3D.API
         // =================================================================
         //  HTTP katmanı
         // =================================================================
-        void Get(string path, Action<bool, string> done) => StartCoroutine(Send(UnityWebRequest.Get(baseUrl + path), done));
+        void Get(string path, Action<bool, string> done)
+        {
+            if (!HasServer) { StartCoroutine(Offline(done)); return; }
+            StartCoroutine(Send(UnityWebRequest.Get(baseUrl + path), done));
+        }
+
+        /// <summary>Sunucu yokken isteği ağa çıkmadan reddeder; çağıranlar yine bir kare sonra yanıt alır.</summary>
+        IEnumerator Offline(Action<bool, string> done)
+        {
+            yield return null;
+            done?.Invoke(false, "offline");
+        }
 
         void Post<TReq, TRes>(string path, TReq body, Action<TRes> onSuccess, Action<string> onError)
             => PostRaw(path, JsonUtility.ToJson(body), onSuccess, onError);
 
         void PostRaw<TRes>(string path, string json, Action<TRes> onSuccess, Action<string> onError)
         {
+            if (!HasServer)
+            {
+                StartCoroutine(Offline((_, body) => onError?.Invoke(body)));
+                return;
+            }
             var req = new UnityWebRequest(baseUrl + path, UnityWebRequest.kHttpVerbPOST)
             {
                 uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json)),

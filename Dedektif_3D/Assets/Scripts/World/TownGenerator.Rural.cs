@@ -17,11 +17,22 @@ namespace Dedektif3D.World
         // =================================================================
         //  ORTAK
         // =================================================================
+        /// <summary>Ev yanında istif odun: üç sıra kütük (çarpışma tek kutu, kütükler süs).</summary>
+        void Woodpile(Transform parent, Vector3 pos, float yaw)
+        {
+            var g = Group("OdunYığını", parent, pos, yaw).transform;
+            var log = M.Wood(new Color(0.34f, 0.25f, 0.16f));
+            Box("OdunÇarpışma", g, new Vector3(0, 0.45f, 0), new Vector3(1.9f, 0.9f, 0.7f), log).GetComponent<Renderer>().enabled = false;
+            for (int row = 0; row < 3; row++)
+                for (int i = 0; i < 6 - row; i++)
+                    Cyl("Kütük", g, new Vector3(-0.8f + row * 0.15f + i * 0.31f, 0.16f + row * 0.27f, 0), new Vector3(0.28f, 0.34f, 0.28f), log, new Vector3(90, 0, 0), false);
+        }
+
         void RuralGround(Transform t, Color grass, Color mud)
         {
             var g = Box("Zemin", t, new Vector3(0, -0.5f, 0), new Vector3(1400, 1, 1400), M.Get("grass_" + ColorUtility.ToHtmlStringRGB(grass), grass, 0.15f, 0f, M.NoiseTexture));
             SetTiling(g.GetComponent<Renderer>(), new Vector2(230, 230));
-            var m = Cyl("Çamur", t, new Vector3(0, 0.008f, 0), new Vector3(150, 0.008f, 120), M.Get("mud_" + ColorUtility.ToHtmlStringRGB(mud), mud, 0.6f, 0f, M.NoiseTexture), collider: false);
+            var m = Cyl("Çamur", t, new Vector3(0, 0.008f, 0), new Vector3(150, 0.008f, 120), M.Get("mud_" + ColorUtility.ToHtmlStringRGB(mud), mud, 0.26f, 0f, M.NoiseTexture), collider: false);
             SetTiling(m.GetComponent<Renderer>(), new Vector2(30, 24));
         }
 
@@ -67,21 +78,7 @@ namespace Dedektif3D.World
                 var l = PointLight("FenerIşığı", cs, p + Vector3.up * 0.5f, new Color(1f, 0.7f, 0.4f), 6f, 11f);
                 l.gameObject.AddComponent<LightFlicker>().Init(l, 0.08f);
             }
-            // Yerel yardımcı (Bekçi Rıfat / Tüccar İlyas) fenerle olay yerinin başında
-            string helperFace = Data != null && Data.Id == "golge_sehir" ? "bekci_hasan_helper" : "tuccar_ilyas_helper";
-            var rig = PropFactory.BuildPerson(localHelper, t, center + Quaternion.Euler(0, yaw, 0) * new Vector3(3.6f, -center.y + center.y, -1.2f), new Color(0.22f, 0.2f, 0.16f), new Color(0.6f, 0.45f, 0.2f), false, null, helperFace);
-            if (!rig.HasFace) Cyl("Kalpak", rig.Head, new Vector3(0, 0.16f, 0), new Vector3(0.34f, 0.12f, 0.34f), M.Get("kalpak", new Color(0.12f, 0.1f, 0.08f), 0.2f), null, false);
-            rig.ArmR.localRotation = Quaternion.Euler(-40, 0, 0);
-            if (!rig.HasModel)   // gerçek model: fener portre tarifinden (sağ kol fener pozunda)
-            {
-                Box("ElFeneri", rig.HandR, new Vector3(0, -0.06f, 0.05f), new Vector3(0.16f, 0.24f, 0.16f), M.Emissive("lantern_rural", new Color(1f, 0.7f, 0.35f), 3f), null, false);
-                PointLight("ElFeneriIşığı", rig.HandR, new Vector3(0, -0.1f, 0.2f), new Color(1f, 0.72f, 0.42f), 2.5f, 6f);
-            }
-            var look = center - rig.Root.position; look.y = 0;
-            if (look.sqrMagnitude > 0.01f) rig.Root.rotation = Quaternion.LookRotation(look);
-            var tag = Text3D("İsim", rig.Root, new Vector3(0, 2.3f, 0), localHelper.ToUpperInvariant(), new Color(1f, 0.8f, 0.45f), 0.016f);
-            tag.gameObject.AddComponent<Core.Billboard>();
-            if (!rig.HasModel) rig.Root.gameObject.AddComponent<IdleSway>().rig = rig;
+            // Yerel rehber (Bekçi Rıfat / Tüccar İlyas) olay yerinde beklemez: GameManager onu yol arkadaşı olarak kurar
             HelperPosition = center + Quaternion.Euler(0, yaw, 0) * new Vector3(-3.8f, 0, -2.6f);
         }
 
@@ -112,7 +109,7 @@ namespace Dedektif3D.World
             const float S = 1.1f;
             RuralGround(town, new Color(0.12f, 0.17f, 0.12f), new Color(0.17f, 0.15f, 0.12f));
             var cobble = M.Get("cobble_wet", new Color(0.42f, 0.42f, 0.45f), 0.72f, 0.05f, M.CobbleTexture);
-            var dirt = M.Get("dirtroad", new Color(0.24f, 0.2f, 0.16f), 0.6f, 0f, M.NoiseTexture);
+            var dirt = M.Get("dirtroad", new Color(0.24f, 0.2f, 0.16f), 0.26f, 0f, M.NoiseTexture);
 
             // Çapraz parke ana cadde (haritada sol-ortadan sağ-alta)
             Vector3 A = new Vector3(-62f, 0, 18f), B = new Vector3(62f, 0, -36f);
@@ -142,19 +139,44 @@ namespace Dedektif3D.World
                 var inst = RuralBuildings.Build(def, parent, pos, def.Yaw);
                 if (def.Enterable) Buildings[def.NpcId] = inst; else DecorBuildings.Add(inst);
                 _occupied.Add(pos);
+                Woodpile(town, pos + Quaternion.Euler(0, def.Yaw, 0) * new Vector3(def.Size.x / 2f + 1.1f, 0, 0.5f), def.Yaw + 90f);
             }
+            // Toprak yollar da boş kalsın: ikinci sıra evler üstlerine gelmez
+            foreach (var path in new[] { (new Vector3(-2f, 0, -8f), new Vector3(24f, 0, 40f)), (new Vector3(-30f, 0, 5f), new Vector3(-30f, 0, -30f)) })
+                for (float k = 0; k <= 1f; k += 0.08f) _occupied.Add(Vector3.Lerp(path.Item1, path.Item2, k));
+            var fieldCenters = new[] { new Vector3(-36, 0, -40), new Vector3(40, 0, 36) };
+            var crimeArea = new Vector3(-48f, 0, 4f);
+
+            void DecorHouse(Vector3 p, float extraYaw)
+            {
+                var def = new BuildingDef { Key = "kasabali_evi", NpcId = 0, DisplayName = "", Style = BuildingStyle.Rural, Neon = new Color(1f, 0.72f, 0.42f) };
+                def.Size = RuralBuildings.SizeFor(def.Key);
+                float yaw = YawToward(p, Nearest(p)) + extraYaw;
+                DecorBuildings.Add(RuralBuildings.Build(def, parent, p, yaw));
+                _occupied.Add(p);
+                Woodpile(town, p + Quaternion.Euler(0, yaw, 0) * new Vector3(def.Size.x / 2f + 1.1f, 0, 0.5f), yaw + 90f);
+            }
+
             // Haritadaki isimsiz kütük evler
             var extra = new[] { new Vector3(30, 0, 22), new Vector3(42, 0, 14), new Vector3(52, 0, 4), new Vector3(-52, 0, -4), new Vector3(-8, 0, -34), new Vector3(14, 0, -44), new Vector3(-24, 0, 32) };
             int e = 0;
             foreach (var p in extra)
-            {
-                if (!Free(p, 9f)) continue;
-                var def = new BuildingDef { Key = "kasabali_evi", NpcId = 0, DisplayName = "", Style = BuildingStyle.Rural, Neon = new Color(1f, 0.72f, 0.42f) };
-                def.Size = RuralBuildings.SizeFor(def.Key);
-                var inst = RuralBuildings.Build(def, parent, p, YawToward(p, Nearest(p)) + (e++ % 2 == 0 ? 0 : 15));
-                DecorBuildings.Add(inst);
-                _occupied.Add(p);
-            }
+                if (Free(p, 9f)) DecorHouse(p, e++ % 2 == 0 ? 0 : 15);
+
+            // Haritadaki sık doku: caddenin iki yanında iki sıra ev. Olay yeri, tarlalar ve kasaba sınırı boş kalır.
+            var roadSide = Vector3.Cross(Vector3.up, (B - A).normalized);
+            int added = 0;
+            for (int k = 0; k < 11 && added < 12; k++)
+                foreach (var side in new[] { -1f, 1f })
+                    foreach (var row in new[] { 14f, 27f })
+                    {
+                        var p = Vector3.Lerp(A, B, 0.06f + k * 0.085f) + roadSide * side * (row + (k % 3) * 1.5f);
+                        if (added >= 12 || Mathf.Abs(p.x) > 62f || p.z < -50f || p.z > 42f) continue;
+                        if (Vector3.Distance(p, crimeArea) < 20f || Vector3.Distance(p, fieldCenters[0]) < 17f || Vector3.Distance(p, fieldCenters[1]) < 17f) continue;
+                        if (!Free(p, 9.5f)) continue;
+                        DecorHouse(p, k % 2 == 0 ? 0 : -12);
+                        added++;
+                    }
 
             // Tarlalar (güneybatı + kuzeydoğu) ve çitler
             foreach (var f in new[] { (c: new Vector3(-36, 0, -40), yaw: 20f), (c: new Vector3(40, 0, 36), yaw: -15f) })
@@ -218,7 +240,7 @@ namespace Dedektif3D.World
             const float Mid = 4.5f, Up = 9f;
             RuralGround(town, new Color(0.13f, 0.18f, 0.15f), new Color(0.18f, 0.16f, 0.13f));
             var rock = M.Get("cliff_rock", new Color(0.24f, 0.27f, 0.25f), 0.15f, 0f, M.NoiseTexture);
-            var dirt = M.Get("dirtroad", new Color(0.24f, 0.2f, 0.16f), 0.6f, 0f, M.NoiseTexture);
+            var dirt = M.Get("dirtroad", new Color(0.24f, 0.2f, 0.16f), 0.26f, 0f, M.NoiseTexture);
 
             // Haritadaki üç sıra → üç teras seviyesi
             float LevelOf(Vector2 mc) => mc.y < 32f ? Up : mc.y < 60f ? Mid : 0f;
@@ -269,7 +291,7 @@ namespace Dedektif3D.World
                 float minX = Mathf.Min(bs.Count > 0 ? bs.Min(b => b.Position.x - b.Size.x / 2f) : -20f, extraX) - 8f;
                 float maxX = Mathf.Max(bs.Count > 0 ? bs.Max(b => b.Position.x + b.Size.x / 2f) : 20f, extraX) + 8f;
                 var p = Box(name, town, new Vector3((minX + maxX) / 2f, top / 2f, (zMin + zMax) / 2f), new Vector3(maxX - minX, top, zMax - zMin), rock, texTiling: 0.15f);
-                Box(name + "Toprak", town, new Vector3((minX + maxX) / 2f, top + 0.02f, (zMin + zMax) / 2f), new Vector3(maxX - minX - 0.4f, 0.04f, zMax - zMin - 0.4f), M.Get("terrace_grass", new Color(0.16f, 0.2f, 0.15f), 0.4f, 0f, M.NoiseTexture), collider: false, texTiling: 0.3f);
+                Box(name + "Toprak", town, new Vector3((minX + maxX) / 2f, top + 0.02f, (zMin + zMax) / 2f), new Vector3(maxX - minX - 0.4f, 0.04f, zMax - zMin - 0.4f), M.Get("terrace_grass", new Color(0.16f, 0.2f, 0.15f), 0.15f, 0f, M.NoiseTexture), collider: false, texTiling: 0.3f);
                 // Uçurum kenarı kayaları + korkuluk
                 for (float x = minX + 1f; x < maxX; x += Random.Range(2.5f, 4.5f))
                 {

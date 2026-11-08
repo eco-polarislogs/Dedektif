@@ -60,7 +60,7 @@ namespace Dedektif3D.Core
         int _lastHourInt = -1;
         float _crowdTimer;
 
-        static readonly string[] GlowMaterialKeys = { "gaslamp_glass", "warm_window", "lampglow_warm", "lantern_rural" };
+        static readonly string[] GlowMaterialKeys = { "gaslamp_glass", "warm_window", "warm_window_1", "warm_window_2", "lampglow_warm", "lantern_rural" };
 
         public static DayNightCycle Create(GameObject host, Light sun)
         {
@@ -74,6 +74,13 @@ namespace Dedektif3D.Core
         public void ResetDay(float hour = CaseStartHour)
         {
             Hour = hour; Day = 1; ElapsedMinutes = 0f; _lastHourInt = HourInt;
+            Apply();
+        }
+
+        /// <summary>Kayıttan devam: saati, günü ve geçen süreyi geri yükler.</summary>
+        public void RestoreTime(float hour, int day, float elapsedMinutes)
+        {
+            Hour = Mathf.Repeat(hour, 24f); Day = Mathf.Max(1, day); ElapsedMinutes = Mathf.Max(0f, elapsedMinutes); _lastHourInt = HourInt;
             Apply();
         }
 

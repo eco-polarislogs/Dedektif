@@ -45,7 +45,7 @@ namespace Dedektif3D.World
                 case "oduncu": case "kasabali_evi": case "ahir": wall = key == "kasabali_evi" && def.NpcId % 2 == 0 ? Wall.Plank : Wall.Log; break;
                 case "demirci": case "muhtar": case "muhtarlik": case "sinema": wall = Wall.Stone; break;
                 case "hekim": wall = Wall.Plaster; break;
-                case "tupcu": wall = Wall.Concrete; break;
+                case "tupcu": wall = Wall.Plank; break;   // gazyağcı: ahşap depo
                 default: wall = Wall.Plank; break;
             }
 
@@ -167,25 +167,25 @@ namespace Dedektif3D.World
             g.gameObject.AddComponent<LightFlicker>().Init(l, 0.1f);
         }
 
-        /// <summary>Sinema: ampul dizili ışıklı tabela (sisoren_map'teki parlayan SİNEMA).</summary>
+        /// <summary>Hayal feneri salonu: 1887 — elle boyanmış tahta tabela, gaz fenerleri, el boyaması gösteri afişleri.</summary>
         static void Marquee(Transform t, Vector3 s, BuildingDef def)
         {
             float fz = -s.z / 2f;
-            var g = Group("SinemaTabelası", t, new Vector3(0, 4.1f, fz - 0.35f)).transform;
-            Box("Pano", g, Vector3.zero, new Vector3(5f, 1.3f, 0.3f), M.Emissive("marquee", new Color(1f, 0.9f, 0.55f), 1.6f), collider: false);
-            Text3D("Yazı", g, new Vector3(0, 0, -0.17f), "SİNEMA", new Color(0.35f, 0.15f, 0.05f), 0.11f);
-            var bulb = M.Emissive("bulb_marquee", new Color(1f, 0.85f, 0.45f), 5f);
-            for (int i = 0; i < 18; i++)
+            var g = Group("HayalFeneriTabelası", t, new Vector3(0, 4.1f, fz - 0.35f)).transform;
+            Box("Pano", g, Vector3.zero, new Vector3(5f, 1.3f, 0.3f), M.Wood(new Color(0.34f, 0.2f, 0.11f)), collider: false);
+            Box("PanoÇerçeve", g, new Vector3(0, 0, 0.02f), new Vector3(5.2f, 1.5f, 0.24f), M.Get("gilt", new Color(0.72f, 0.55f, 0.22f), 0.75f, 0.85f), collider: false);
+            Text3D("Yazı", g, new Vector3(0, 0, -0.17f), def.DisplayName, new Color(0.96f, 0.84f, 0.5f), 0.075f);
+            var glass = M.Emissive("gaslamp_glass", new Color(1f, 0.62f, 0.26f), 2.6f);
+            foreach (var x in new[] { -2.8f, 2.8f })
             {
-                float x = -2.4f + i * 4.8f / 17f;
-                Sphere("Ampul", g, new Vector3(x, 0.72f, -0.16f), Vector3.one * 0.11f, bulb);
-                Sphere("Ampul", g, new Vector3(x, -0.72f, -0.16f), Vector3.one * 0.11f, bulb);
+                Box("FenerKolu", g, new Vector3(x, 0.55f, -0.22f), new Vector3(0.05f, 0.05f, 0.5f), M.Get("iron", new Color(0.08f, 0.08f, 0.09f), 0.5f, 0.7f), collider: false);
+                Box("Fener", g, new Vector3(x, 0.3f, -0.44f), new Vector3(0.2f, 0.34f, 0.2f), glass, collider: false);
             }
-            var l = PointLight("SinemaIşığı", g, new Vector3(0, -0.5f, -1.5f), new Color(1f, 0.85f, 0.5f), 6f, 12f);
-            g.gameObject.AddComponent<LightFlicker>().Init(l, 0.05f);
-            Box("Saçak", t, new Vector3(0, 3.3f, fz - 1.1f), new Vector3(6f, 0.2f, 2.2f), M.Get("concrete_dark", new Color(0.27f, 0.31f, 0.37f)), collider: false);
-            Box("AfişSol", t, new Vector3(-3.3f, 2.0f, fz - 0.06f), new Vector3(1.0f, 1.5f, 0.05f), M.Emissive("poster", new Color(0.7f, 0.2f, 0.15f), 0.6f), collider: false);
-            Box("AfişSağ", t, new Vector3(3.3f, 2.0f, fz - 0.06f), new Vector3(1.0f, 1.5f, 0.05f), M.Emissive("poster2", new Color(0.2f, 0.3f, 0.6f), 0.6f), collider: false);
+            var l = PointLight("TabelaFeneriIşığı", g, new Vector3(0, -0.5f, -1.5f), new Color(1f, 0.74f, 0.42f), 4.2f, 10f);
+            g.gameObject.AddComponent<LightFlicker>().Init(l, 0.12f);
+            Box("Saçak", t, new Vector3(0, 3.3f, fz - 1.1f), new Vector3(6f, 0.2f, 2.2f), M.Wood(new Color(0.24f, 0.15f, 0.09f)), collider: false);
+            Box("AfişSol", t, new Vector3(-3.3f, 2.0f, fz - 0.06f), new Vector3(1.0f, 1.5f, 0.05f), M.Get("poster", new Color(0.62f, 0.24f, 0.16f), 0.05f), collider: false);
+            Box("AfişSağ", t, new Vector3(3.3f, 2.0f, fz - 0.06f), new Vector3(1.0f, 1.5f, 0.05f), M.Get("poster2", new Color(0.22f, 0.3f, 0.48f), 0.05f), collider: false);
             Box("GişeCamı", t, new Vector3(0, 1.5f, fz - 0.06f), new Vector3(2.2f, 2.2f, 0.05f), M.WarmWindow, collider: false);
         }
 
@@ -309,15 +309,16 @@ namespace Dedektif3D.World
                     for (int i = 0; i < 3; i++) Cyl("Saman", t, new Vector3(s.x / 2 + 1.2f, 0.55f, fz + 1f + i * 1.3f), new Vector3(1.1f, 0.6f, 1.1f), M.Get("hay", new Color(0.62f, 0.5f, 0.25f)), new Vector3(0, 0, 90));
                     break;
                 case "tupcu":
-                    for (int i = 0; i < 14; i++)
-                    {
-                        var c = i % 3 == 0 ? new Color(0.25f, 0.4f, 0.65f) : new Color(0.6f, 0.62f, 0.64f);
-                        Cyl("Tüp", t, new Vector3(-s.x / 2 - 0.8f + (i % 5) * 0.45f, 0.45f, fz - 0.8f - (i / 5) * 0.45f), new Vector3(0.36f, 0.45f, 0.36f), M.Get("gas_" + (i % 3 == 0 ? "b" : "g"), c, 0.6f, 0.5f));
-                    }
+                    // Gazyağı varilleri ve teneke yığını
+                    for (int i = 0; i < 8; i++)
+                        PropFactory.Barrel(t, new Vector3(-s.x / 2 - 0.8f + (i % 4) * 0.72f, 0, fz - 0.9f - (i / 4) * 0.72f));
+                    for (int i = 0; i < 6; i++)
+                        Box("Teneke", t, new Vector3(s.x / 2 + 0.7f + (i % 3) * 0.34f, 0.17f + (i / 3) * 0.34f, fz - 0.9f), new Vector3(0.3f, 0.34f, 0.3f), M.Get("tin_can", new Color(0.42f, 0.4f, 0.34f), 0.5f, 0.6f), new Vector3(0, i * 13f, 0), false);
                     break;
                 case "hurdaci":
+                    // Eski araba tekerlekleri (lastik 1887'de yok): yığılmış ahşap tekerlek ve demir çember
                     for (int i = 0; i < 12; i++)
-                        Cyl("Lastik", t, new Vector3(s.x / 2 + 1f + Random.Range(-1f, 1.5f), 0.12f + (i % 4) * 0.22f, fz + Random.Range(-1f, 2f)), new Vector3(0.75f, 0.12f, 0.75f), M.Get("tire", new Color(0.04f, 0.04f, 0.04f), 0.3f), new Vector3(Random.Range(-20, 20), 0, Random.Range(-20, 20)), false);
+                        Cyl("EskiTekerlek", t, new Vector3(s.x / 2 + 1f + Random.Range(-1f, 1.5f), 0.1f + (i % 4) * 0.16f, fz + Random.Range(-1f, 2f)), new Vector3(0.95f, 0.05f, 0.95f), i % 2 == 0 ? M.Wood(new Color(0.3f, 0.2f, 0.12f)) : M.Get("rust", new Color(0.4f, 0.22f, 0.12f), 0.3f, 0.5f), new Vector3(Random.Range(-14, 14), 0, Random.Range(-14, 14)), false);
                     for (int i = 0; i < 6; i++)
                         Box("Hurda", t, new Vector3(-s.x / 2 - 1.2f + Random.Range(-0.8f, 0.8f), 0.3f + i * 0.15f, fz + Random.Range(-1f, 2f)), new Vector3(Random.Range(0.4f, 1.1f), 0.3f, Random.Range(0.4f, 0.9f)), M.Get("rust", new Color(0.4f, 0.22f, 0.12f), 0.3f, 0.5f), new Vector3(0, Random.Range(0, 90), Random.Range(-25, 25)));
                     Cart(t, new Vector3(-s.x / 2 - 2.5f, 0, fz - 1.5f), 30f);
@@ -368,6 +369,7 @@ namespace Dedektif3D.World
         {
             var g = Group(horse ? "At" : "İnek", parent, pos, yaw).transform;
             var mat = M.Get("animal_" + ColorUtility.ToHtmlStringRGB(color), color, 0.3f);
+            if (horse) { BuildHorse(g, mat); return; }
             Capsule("Gövde", g, new Vector3(0, 1.15f, 0), new Vector3(0.7f, horse ? 0.85f : 0.8f, 0.7f), mat).transform.localRotation = Quaternion.Euler(90, 0, 0);
             foreach (var x in new[] { -0.22f, 0.22f })
                 foreach (var z in new[] { -0.55f, 0.55f })
@@ -377,6 +379,43 @@ namespace Dedektif3D.World
             Box("Kafa", head, new Vector3(0, 0.05f, 0.15f), new Vector3(0.26f, 0.28f, horse ? 0.6f : 0.42f), mat, new Vector3(horse ? 25 : 10, 0, 0), false);
             if (!horse) { Box("Boynuz", head, new Vector3(0, 0.22f, 0.05f), new Vector3(0.5f, 0.05f, 0.05f), M.Get("horn", new Color(0.85f, 0.8f, 0.7f)), collider: false); }
             else Box("Yele", head, new Vector3(0, 0.1f, -0.25f), new Vector3(0.08f, 0.5f, 0.35f), M.Get("mane", new Color(0.08f, 0.06f, 0.05f)), new Vector3(-35, 0, 0), false);
+            g.gameObject.AddComponent<AnimalIdle>().head = head;
+        }
+
+        /// <summary>At: gövde, göğüs ve sağrı ayrı kütleler; eklemli bacaklar, toynak, yele, kuyruk ve koşum takımı (siluet at gibi okunsun).</summary>
+        static void BuildHorse(Transform g, Material coat)
+        {
+            var hair = M.Get("mane", new Color(0.05f, 0.04f, 0.03f), 0.25f);
+            var hoof = M.Get("hoof", new Color(0.04f, 0.04f, 0.04f), 0.5f);
+            var leather = M.Get("harness", new Color(0.08f, 0.05f, 0.03f), 0.55f);
+
+            Sphere("Gövde", g, new Vector3(0, 1.14f, 0), new Vector3(0.5f, 0.58f, 1.25f), coat);
+            Sphere("Göğüs", g, new Vector3(0, 1.17f, 0.5f), new Vector3(0.5f, 0.62f, 0.62f), coat);
+            Sphere("Sağrı", g, new Vector3(0, 1.2f, -0.52f), new Vector3(0.54f, 0.64f, 0.66f), coat);
+
+            foreach (var x in new[] { -0.17f, 0.17f })
+                foreach (var z in new[] { 0.52f, -0.55f })
+                {
+                    bool hind = z < 0f;
+                    Cyl("Uyluk", g, new Vector3(x, 0.72f, z - (hind ? 0.03f : 0f)), new Vector3(hind ? 0.17f : 0.14f, 0.22f, hind ? 0.2f : 0.15f), coat, collider: false);
+                    Cyl("Baldır", g, new Vector3(x, 0.3f, z + (hind ? -0.04f : 0.01f)), new Vector3(0.075f, 0.24f, 0.075f), coat, collider: false);
+                    Cyl("Toynak", g, new Vector3(x, 0.035f, z + (hind ? -0.03f : 0.02f)), new Vector3(0.11f, 0.035f, 0.12f), hoof, collider: false);
+                }
+
+            Capsule("Boyun", g, new Vector3(0, 1.56f, 0.76f), new Vector3(0.24f, 0.42f, 0.36f), coat).transform.localRotation = Quaternion.Euler(36, 0, 0);
+            Box("Yele", g, new Vector3(0, 1.66f, 0.62f), new Vector3(0.05f, 0.62f, 0.13f), hair, new Vector3(36, 0, 0), false);
+
+            var head = Group("Baş", g, new Vector3(0, 1.9f, 1.02f), 0).transform;
+            Sphere("Kafa", head, new Vector3(0, 0, 0), new Vector3(0.2f, 0.25f, 0.36f), coat);
+            Sphere("Burun", head, new Vector3(0, -0.11f, 0.24f), new Vector3(0.15f, 0.16f, 0.3f), coat);
+            foreach (var x in new[] { -0.07f, 0.07f })
+                Cyl("Kulak", head, new Vector3(x, 0.16f, -0.09f), new Vector3(0.03f, 0.065f, 0.03f), coat, collider: false);
+            Box("Yular", head, new Vector3(0, -0.08f, 0.17f), new Vector3(0.17f, 0.03f, 0.04f), leather, new Vector3(0, 0, 0), false);
+            Box("Perçem", head, new Vector3(0, 0.11f, 0.03f), new Vector3(0.05f, 0.08f, 0.12f), hair, collider: false);
+
+            Capsule("Kuyruk", g, new Vector3(0, 0.92f, -1.08f), new Vector3(0.1f, 0.42f, 0.1f), hair).transform.localRotation = Quaternion.Euler(-14, 0, 0);
+            Cyl("Koşum", g, new Vector3(0, 1.26f, 0.26f), new Vector3(0.55f, 0.04f, 0.68f), leather, new Vector3(90, 0, 0), false);
+
             g.gameObject.AddComponent<AnimalIdle>().head = head;
         }
 

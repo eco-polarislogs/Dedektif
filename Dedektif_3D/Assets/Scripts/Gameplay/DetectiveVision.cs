@@ -119,10 +119,39 @@ namespace Dedektif3D.Gameplay
         public override string Prompt => Sensed ? $"Ara: {def.Label}" : $"Kurcala: {def.Label}";
         public override bool CanInteract => !Opened && (Sensed || PlayerClose(1.6f));
 
+        // Fareyle arama: saklama yeri uzaktan da parlar ve açılır; delilin kendisi ancak açılınca görünür
+        public override bool Searchable => !Opened;
+        public override string HoverTitle => def.Label;
+        public override string HoverAction => "Sol tık: ara";
+        public override Bounds HoverBounds => RendererBounds(_furniture, new Bounds(Point, Vector3.one * 0.7f), 0.2f);
+        public override void CollectGlowRenderers(List<Renderer> into)
+        {
+            foreach (var r in _furniture)
+                if (r != null && r.enabled && def.Kind != HideKind.InPlace) into.Add(r);
+        }
+        public override void OnHoverChanged(bool hovered)
+        {
+            _hovered = hovered;
+            if (_spark != null && !Opened) _spark.SetActive(hovered || Sensed);
+        }
+
+        readonly List<Renderer> _furniture = new List<Renderer>();
+        bool _hovered;
+
         public void Setup(HidingSpotDef d)
         {
             def = d;
             radius = 2.0f;
+            if (def.Kind == HideKind.InPlace)
+            {
+                // Gizemli Kasaba: eşya kendi yerinde gizli durur; kutu olarak onun görselleri kullanılır, parlatılmaz
+                if (def.ClueObject != null) AddMeshRenderers(def.ClueObject.transform, _furniture);
+            }
+            else
+            {
+                var clueRoot = def.ClueObject != null ? def.ClueObject.transform : null;
+                AddMeshRenderers(transform, _furniture, r => clueRoot == null || !r.transform.IsChildOf(clueRoot));
+            }
             offset = def.Kind == HideKind.Painting ? Vector3.up * 1.4f : def.Kind == HideKind.Floorboard || def.Kind == HideKind.Rug ? Vector3.up * 0.3f : Vector3.up * 0.7f;
             if (def.Lid != null) { _lidClosedPos = def.Lid.localPosition; _lidClosedRot = def.Lid.localRotation; }
             _glint = Shapes.PointLight("SezgiPırıltısı", transform, offset + Vector3.forward * 0.3f, new UnityEngine.Color(1f, 0.78f, 0.38f), 0f, 2.2f);
@@ -158,6 +187,18 @@ namespace Dedektif3D.Gameplay
             if (def?.Lid != null) { def.Lid.localPosition = _lidClosedPos; def.Lid.localRotation = _lidClosedRot; }
             if (_spark != null) _spark.SetActive(false);
             if (_glint != null) _glint.intensity = 0f;
+        }
+
+        /// <summary>Kayıttan devam: sezilmiş / açılmış durumu animasyonsuz geri yükler.</summary>
+        public void RestoreState(bool sensed, bool opened)
+        {
+            ResetSpot();
+            if (opened)
+            {
+                Opened = true;
+                if (def?.Lid != null) { def.Lid.localPosition = def.LidOpenPos; def.Lid.localRotation = def.LidOpenRot; }
+            }
+            else if (sensed) Sense();
         }
 
         public override void Interact()
@@ -207,7 +248,7 @@ namespace Dedektif3D.Gameplay
 
             var vision = DetectiveVision.Instance;
             float v = vision != null ? vision.Strength : 0f;
-            if (_glint != null) _glint.intensity = Sensed ? 0.6f + v * 2.2f + Mathf.Sin(Time.time * 4f) * 0.25f : v * 0.4f;
+            if (_glint != null) _glint.intensity = Sensed || _hovered ? 0.6f + v * 2.2f + Mathf.Sin(Time.time * 4f) * 0.25f : v * 0.4f;
             if (_spark != null && _spark.activeSelf)
             {
                 float s = 0.05f + Mathf.Abs(Mathf.Sin(Time.time * 3f)) * 0.03f + v * 0.04f;

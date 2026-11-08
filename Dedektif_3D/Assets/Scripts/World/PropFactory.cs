@@ -39,8 +39,7 @@ namespace Dedektif3D.World
             rig.FaceKey = faceKey;
 
             // ---- GERÇEK İNSAN MODELİ (Resources/Humans) ----
-            bool poseOk = string.IsNullOrEmpty(pose) || HumanLibrary.Clip(pose, 0) != null;
-            if (poseOk && HumanLibrary.Available)
+            if (HumanLibrary.Available)
             {
                 var bodyG = Group("Body", root, Vector3.zero).transform;
                 // Kasabalı yüzleri tekrar edebilir: kıyafet/saç kombinasyonu kişiye özel olsun
@@ -146,10 +145,11 @@ namespace Dedektif3D.World
             if (!townsfolkPortrait || town == "sisoren") spec = CharacterLooks.For(faceKey)?.Clone();
             if (name.StartsWith("PolisMemuru"))
             {
-                // 1800'ler zaptiyesi: lacivert ceket ve pantolon, çizme (fesi TownGenerator takar)
+                // Polis memuru (town_bg.png): lacivert kuşaklı yağmurluk, koyu pantolon, kep (kepi TownGenerator takar)
                 spec = CharacterLooks.Generic(hash, town, false, false);
-                spec.Body = "ranger"; spec.Legs = "ranger"; spec.Feet = "ranger"; spec.Coat = false; spec.Scarf = false; spec.Prop = null;
-                spec.Top = spec.Shirt = spec.Pants = CharLook.Hex("#1d2438"); spec.Shoes = CharLook.Hex("#141414");
+                spec.Body = "ranger"; spec.Legs = "ranger"; spec.Feet = "ranger"; spec.Coat = true; spec.Trench = true; spec.Scarf = false; spec.Prop = null;
+                spec.CoatColor = CharLook.Hex("#141a2c"); spec.Top = CharLook.Hex("#1d2438"); spec.Shirt = CharLook.Hex("#c8c8c0"); spec.Pants = CharLook.Hex("#141826"); spec.Shoes = CharLook.Hex("#141414");
+                spec.Tie = true; spec.TieColor = CharLook.Hex("#0e1018");
                 spec.Hat = Headwear.Kind.None; spec.Beard = "mustache"; spec.Age = 30 + hash % 20; spec.HairColor = null;
                 return spec;
             }
@@ -382,12 +382,24 @@ namespace Dedektif3D.World
             var g = Group("Tree", parent, pos, Random.Range(0, 360f));
             var t = g.transform;
             t.localScale = Vector3.one * scale;
-            Cyl("Trunk", t, new Vector3(0, 1.5f, 0), new Vector3(0.45f, 1.5f, 0.45f), M.Wood(new Color(0.25f, 0.17f, 0.1f)));
-            var leaf = M.Get("leaves", new Color(0.08f, 0.17f, 0.09f), 0.1f);
-            var leaf2 = M.Get("leaves2", new Color(0.1f, 0.2f, 0.08f), 0.1f);
-            Sphere("Canopy0", t, new Vector3(0, 3.8f, 0), new Vector3(3.2f, 2.8f, 3.2f), leaf);
-            Sphere("Canopy1", t, new Vector3(0.8f, 3.3f, 0.5f), new Vector3(2.2f, 2f, 2.2f), leaf2);
-            Sphere("Canopy2", t, new Vector3(-0.7f, 4.5f, -0.4f), new Vector3(2f, 1.8f, 2f), leaf2);
+            var bark = M.Bark(new Color(0.27f, 0.22f, 0.16f));
+            Cyl("Trunk", t, new Vector3(0, 1.5f, 0), new Vector3(0.42f, 1.5f, 0.42f), bark);
+            Cyl("Dal0", t, new Vector3(0.45f, 2.9f, 0.1f), new Vector3(0.14f, 0.75f, 0.14f), bark, new Vector3(0, 0, -38f), false);
+            Cyl("Dal1", t, new Vector3(-0.42f, 3.1f, -0.15f), new Vector3(0.12f, 0.7f, 0.12f), bark, new Vector3(12f, 0, 34f), false);
+            // Anadolu sonbaharı: yeşil ve hardal yapraklar
+            var inner = M.Foliage(new Color(0.17f, 0.21f, 0.09f));
+            var cards = M.FoliageCards(new Color(0.34f, 0.39f, 0.16f));
+            var cards2 = M.FoliageCards(new Color(0.5f, 0.41f, 0.14f));
+            int v = NatureMeshes.VariantOf(pos);
+            void Lobe(string name, Vector3 at, Vector3 size, int variant, Material outer, float yaw)
+            {
+                // İçteki koyu kütle boşlukları kapatır, dıştaki kartlar yaprak silueti verir
+                NatureMeshes.Place(name + "Ic", t, at, size * 0.8f, NatureMeshes.LeafCanopy(variant), inner, yaw);
+                NatureMeshes.Place(name, t, at, size, NatureMeshes.LeafCards(variant), outer, yaw);
+            }
+            Lobe("Canopy0", new Vector3(0, 4.1f, 0), new Vector3(3.8f, 3.2f, 3.8f), v, cards, 0f);
+            Lobe("Canopy1", new Vector3(1f, 3.5f, 0.6f), new Vector3(2.7f, 2.3f, 2.7f), v + 1, cards2, 70f);
+            Lobe("Canopy2", new Vector3(-0.9f, 4.7f, -0.5f), new Vector3(2.5f, 2.2f, 2.5f), v + 2, cards, 140f);
             return g;
         }
 
@@ -396,14 +408,8 @@ namespace Dedektif3D.World
             var g = Group("Pine", parent, pos, Random.Range(0, 360f));
             var t = g.transform;
             t.localScale = Vector3.one * scale;
-            Cyl("Trunk", t, new Vector3(0, 1f, 0), new Vector3(0.35f, 1f, 0.35f), M.Wood(new Color(0.22f, 0.15f, 0.09f)));
-            var leaf = M.Get("pine", new Color(0.05f, 0.14f, 0.09f), 0.1f);
-            for (int i = 0; i < 3; i++)
-            {
-                float s = 2.8f - i * 0.75f;
-                Prism("Layer" + i, t, new Vector3(0, 1.6f + i * 1.2f, 0), new Vector3(s, 2f, s), leaf, 0);
-                Prism("LayerX" + i, t, new Vector3(0, 1.6f + i * 1.2f, 0), new Vector3(s, 2f, s), leaf, 90);
-            }
+            Cyl("Trunk", t, new Vector3(0, 1.2f, 0), new Vector3(0.3f, 1.2f, 0.3f), M.Bark(new Color(0.24f, 0.18f, 0.13f)));
+            NatureMeshes.Place("Tac", t, new Vector3(0, 0.75f, 0), new Vector3(3.3f, 5.6f, 3.3f), NatureMeshes.PineCanopy(NatureMeshes.VariantOf(pos)), M.PineNeedles(new Color(0.17f, 0.3f, 0.2f)));
             return g;
         }
 

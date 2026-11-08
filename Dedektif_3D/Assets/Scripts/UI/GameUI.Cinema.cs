@@ -109,7 +109,7 @@ namespace Dedektif3D.UI
             if (MenuLink(new Rect(x, yy, 560, 46), "VAKA PANOSU", false)) Do(() => { ClosePause(); _boardOpen = true; }); yy += 52;
             if (MenuLink(new Rect(x, yy, 560, 46), "AYARLAR", false)) Do(OpenSettings); yy += 52;
             if (MenuLink(new Rect(x, yy, 560, 46), "VAKA HARİTASINA DÖN", false)) Do(() => { ClosePause(); GM.RequestExitToWorldMap(); }); yy += 52;
-            if (MenuLink(new Rect(x, yy, 560, 46), "ANA MENÜ", false)) Do(() => { ClosePause(); Confirm("ANA MENÜ", "Soruşturmayı bırakıp ana menüye dönmek istiyor musunuz? Bu vakadaki ilerleme kaybolur.", GM.BackToSplash); }); yy += 52;
+            if (MenuLink(new Rect(x, yy, 560, 46), "ANA MENÜ", false)) Do(() => { ClosePause(); Confirm("ANA MENÜ", "Ana menüye dönmek istiyor musunuz? Soruşturmanız kaydedilecek, kaldığınız yerden devam edebilirsiniz.", GM.BackToSplash); }); yy += 52;
             if (MenuLink(new Rect(x, yy, 560, 46), "OYUNDAN ÇIK", false)) Do(AskQuit);
             GUI.Label(new Rect(x, VH - 80, 900, 26), "[Esc] devam   •   [B] vaka panosu   •   [C] sinema modu   •   [F1] kontroller", _splashFoot);
         }
@@ -207,6 +207,7 @@ namespace Dedektif3D.UI
             GUI.Label(new Rect(x, y, cw, 24), "OYNANIŞ", _setSection); y += 30;
             GameSettings.MouseSensitivity = SettingSlider(new Rect(x, y, cw, rh), "Fare hassasiyeti", GameSettings.MouseSensitivity, 0.3f, 2.5f, GameSettings.MouseSensitivity.ToString("0.0") + "x"); y += rh;
             GameSettings.TextSpeed = SettingSlider(new Rect(x, y, cw, rh), "Anlatı / altyazı hızı", GameSettings.TextSpeed, 0.5f, 2f, GameSettings.TextSpeed.ToString("0.0") + "x"); y += rh;
+            GameSettings.AutoSearch = SettingToggle(new Rect(x, y, cw, rh), "Binada fareyle arama", GameSettings.AutoSearch); y += rh;
 
             if (GUI.changed || screenChanged) GameSettings.Apply(screenChanged);
 
@@ -266,7 +267,7 @@ namespace Dedektif3D.UI
             step = 1;
             if (GM.VisitedCount < GameData.ReqBuildings) { detail = $"{GM.VisitedCount}/{GameData.ReqBuildings} bina incelendi — kapılara yaklaş, [E]."; return "Dükkânları gez, şüphelileri sorgula"; }
             step = 2;
-            if (GM.LabCount < GameData.ReqLabs) { detail = $"{GM.LabCount}/{GameData.ReqLabs} bulgu gönderildi — [Tab] çanta → UV ışığı / iz tozu."; return "Delilleri adli laboratuvara gönder"; }
+            if (GM.LabCount < GameData.ReqLabs) { detail = $"{GM.LabCount}/{GameData.ReqLabs} bulgu gönderildi — dışarıda [Tab] çanta → kan ayıracı / iz tozu."; return "Delilleri adli laboratuvara gönder"; }
             step = 3;
             if (!GM.AutopsyReady) { int s = Mathf.CeilToInt(GM.AutopsyTimeLeft); detail = GM.AutopsyTimerStarted ? $"Adli Tıp raporu hazırlıyor — {s / 60:00}:{s % 60:00}" : "Rapor hazırlanıyor."; return "Otopsi raporunu bekle"; }
             step = 4;

@@ -71,8 +71,9 @@ namespace Dedektif3D.World
             drops.transform.rotation = Quaternion.Euler(90, 0, 0);
             var ps = drops.AddComponent<ParticleSystem>();
             var main = ps.main;
-            main.startLifetime = 1.2f; main.startSpeed = new ParticleSystem.MinMaxCurve(15f, 19f); main.startSize = 0.03f;
-            main.startColor = new Color(0.75f, 0.82f, 0.95f, 0.45f); main.maxParticles = 5000;
+            // İnce ve yarı saydam: kameranın önünde kalın çubuk gibi görünmesin
+            main.startLifetime = 1.2f; main.startSpeed = new ParticleSystem.MinMaxCurve(15f, 19f); main.startSize = 0.014f;
+            main.startColor = new Color(0.75f, 0.82f, 0.95f, 0.28f); main.maxParticles = 5000;
             main.simulationSpace = ParticleSystemSimulationSpace.World;
             var em = ps.emission; em.rateOverTime = 2600 * intensity;
             var sh = ps.shape; sh.shapeType = ParticleSystemShapeType.Box; sh.scale = new Vector3(36, 36, 0.1f);
@@ -81,8 +82,8 @@ namespace Dedektif3D.World
             var col = ps.collision; col.enabled = true; col.type = ParticleSystemCollisionType.World; col.mode = ParticleSystemCollisionMode.Collision3D;
             col.lifetimeLoss = 1f; col.quality = ParticleSystemCollisionQuality.Low; col.collidesWith = ~(1 << 2);
             var r = drops.GetComponent<ParticleSystemRenderer>();
-            r.renderMode = ParticleSystemRenderMode.Stretch; r.lengthScale = 5f; r.velocityScale = 0.05f;
-            r.sharedMaterial = TransparentMaterial(new Color(0.75f, 0.82f, 0.95f, 0.45f));
+            r.renderMode = ParticleSystemRenderMode.Stretch; r.lengthScale = 4f; r.velocityScale = 0.05f;
+            r.sharedMaterial = TransparentMaterial(new Color(0.75f, 0.82f, 0.95f, 0.28f));
 
             // Sıçrama: zemine yakın küçük halkalar
             var splash = new GameObject("Sıçrama");

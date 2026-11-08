@@ -27,6 +27,8 @@ namespace Dedektif3D.World
         public Color? Skin;
         // Kodla dikilen katmanlar
         public bool Coat, LabCoat, Skirt, Apron, Shawl, Scarf, Tie, Glasses, BibApron;
+        /// <summary>Palto yerine kuşaklı, kalkık yakalı, parlak kumaşlı trençkot.</summary>
+        public bool Trench;
         public Color CoatColor = Hex("#2a2622"), SkirtColor = Hex("#3a2e2a"), ApronColor = Hex("#5a4632"), ShawlColor = Hex("#3c3a34"), ScarfColor = Hex("#5a3a2a"), TieColor = Hex("#141212");
         /// <summary>Elindeki eşya: cane, lantern, cleaver, scissors, book, axe, hammer, bottle, paper, pipe, crook, bag, tray, glass.</summary>
         public string Prop;
@@ -67,10 +69,10 @@ namespace Dedektif3D.World
             _t = new Dictionary<string, CharLook>();
             // ---------------- DEDEKTİF & YARDIMCILAR ----------------
             // dedektif.png: 35 yaşında, koyu deri trençkot, beyaz gömlek, siyah kravat, ıslak fötr, hafif sakal
-            Add("dedektif", new CharLook { Age = 35, Body = "ranger", Legs = "ranger", Feet = "ranger", Coat = true, CoatColor = H("#2b241f"), Top = H("#24201c"), Shirt = H("#dcd8cf"),
-                Pants = H("#26262a"), Shoes = Black, Hair = "parted", HairColor = H("#1e1611"), Beard = "stubble", Hat = Headwear.Kind.Fedora, Tie = true, TieColor = H("#101012"), Height = 1.8f });
+            Add("dedektif", new CharLook { Age = 35, Body = "ranger", Legs = "ranger", Feet = "peasant", Coat = true, Trench = true, CoatColor = H("#2f2c24"), Top = H("#1c1d22"), Shirt = H("#dcd8cf"),
+                Pants = H("#1b1c20"), Shoes = Black, Hair = "parted", HairColor = H("#1e1611"), Beard = "stubble", Hat = Headwear.Kind.Fedora, HatColor = H("#1b1a18"), Tie = true, TieColor = H("#101012"), Height = 1.8f });
             // dedektif_helper.png (Yardımcı Çetin): siyah trençkot, beyaz gömlek, çizgili kravat, fötr, kirli sakal, elde harita
-            Add("dedektif_helper", new CharLook { Age = 42, Body = "ranger", Legs = "ranger", Feet = "ranger", Coat = true, CoatColor = H("#1d1c1c"), Top = H("#1d1c1c"), Shirt = H("#e2e0dc"),
+            Add("dedektif_helper", new CharLook { Age = 42, Body = "ranger", Legs = "ranger", Feet = "peasant", Coat = true, Trench = true, CoatColor = H("#17171a"), Top = H("#26262a"), Shirt = H("#e2e0dc"),
                 Pants = H("#202022"), Shoes = Black, Hair = "short", HairColor = H("#2a2420"), Beard = "stubble", Hat = Headwear.Kind.Fedora, HatColor = H("#2a2a2c"), Tie = true, TieColor = H("#2c2c30"), Prop = "paper", Height = 1.78f });
             // bekci_hasan_helper.png (Bekçi Rıfat): yaşlı, bembeyaz sakal, bere, uzun kahve palto, fener, baston
             Add("bekci_hasan_helper", new CharLook { Age = 72, Body = "ranger", Feet = "ranger", Coat = true, CoatColor = H("#3b2c20"), Top = H("#3b2c20"), Shirt = H("#8a7a62"), Pants = H("#2a2420"),
@@ -227,10 +229,17 @@ namespace Dedektif3D.World
             var l = new CharLook { Female = fem, Age = age };
             if (fem)
             {
-                l.Body = "ranger"; l.Top = Theme(Pick(WomenTops)); l.Shirt = l.Top; l.Skirt = true; l.SkirtColor = Theme(Pick(Skirts));
+                l.Body = "ranger"; l.Top = Theme(Pick(WomenTops)); l.Shirt = Pick(Shirts); l.Skirt = true; l.SkirtColor = Theme(Pick(Skirts));
                 l.Hair = R(2) == 0 ? "buns" : "long";
-                if (age >= 16 && R(100) < 60) { l.Hat = Headwear.Kind.Headscarf; l.HatColor = Pick(Scarves); l.Hair = "buns"; }
-                if (age >= 50 && R(100) < 45) { l.Shawl = true; l.ShawlColor = Theme(Pick(MenTops)); }
+                if (age >= 16)
+                {
+                    // Kara film sokağı: küçük şapkalı, uzun paltolu kadınlar; yaşlılarda başörtüsü
+                    int hat = R(100);
+                    if (hat < (age >= 50 ? 55 : 22)) { l.Hat = Headwear.Kind.Headscarf; l.HatColor = Pick(Scarves); l.Hair = "buns"; }
+                    else if (hat < (age >= 50 ? 75 : 62)) { l.Hat = Headwear.Kind.Cloche; l.HatColor = Theme(Pick(MenTops)); l.Hair = "buns"; }
+                    if (R(100) < 48) { l.Coat = true; l.CoatColor = Theme(Pick(MenTops)); }
+                }
+                if (age >= 50 && !l.Coat && R(100) < 45) { l.Shawl = true; l.ShawlColor = Theme(Pick(MenTops)); }
                 if (R(100) < 18) { l.Apron = true; l.ApronColor = H("#9a8e78"); }
                 if (age >= 70 && R(100) < 50) l.Prop = "cane";
             }
@@ -245,11 +254,22 @@ namespace Dedektif3D.World
                 if (age >= 25) { int b = R(100); l.Beard = b < 30 ? "full" : b < 55 ? "mustache" : b < 70 ? "stubble" : null; }
                 if (age >= 14)
                 {
+                    // Kara film sokağı: fötr ağırlıklı; kasket ve melon da var
                     int h = R(100);
-                    l.Hat = h < 34 ? Headwear.Kind.Fez : h < 54 ? Headwear.Kind.FlatCap : h < 62 ? Headwear.Kind.Bowler : h < 66 ? Headwear.Kind.TopHat : h < 72 ? Headwear.Kind.Beanie : Headwear.Kind.None;
+                    l.Hat = h < 48 ? Headwear.Kind.Fedora : h < 68 ? Headwear.Kind.FlatCap : h < 82 ? Headwear.Kind.Bowler : Headwear.Kind.None;
+                    if (l.Hat == Headwear.Kind.Fedora) l.HatColor = Theme(H(new[] { "#15140f", "#1e1c18", "#2a2620", "#1a1c22" }[R(4)]));
                 }
                 else if (R(100) < 35) l.Hat = Headwear.Kind.FlatCap;
-                if (age >= 40 && R(100) < 22) { l.Coat = true; l.CoatColor = Theme(Pick(MenTops)); }
+                if (age >= 16)
+                {
+                    // Trençkot / palto, takım ceketi ya da yelek
+                    int outfit = R(100);
+                    if (outfit < 30) { l.Coat = true; l.Trench = R(100) < 60; l.CoatColor = Theme(H(new[] { "#3a352a", "#2b2c30", "#1c1d20", "#403a2e", "#26282e" }[R(5)])); }
+                    else if (outfit < 70) { l.Body = "ranger"; l.Sleeves = null; }
+                    l.Tie = R(100) < 55;
+                    l.TieColor = H(new[] { "#141212", "#2a1416", "#14202a", "#1e1e16" }[R(4)]);
+                    l.Shirt = H(new[] { "#d8d4ca", "#c8c2b4", "#b8b4a8" }[R(3)]);
+                }
                 if (age >= 18 && R(100) < 12) l.Scarf = true;
                 if (age >= 68 && R(100) < 55) l.Prop = "cane";
             }

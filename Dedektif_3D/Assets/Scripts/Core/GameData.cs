@@ -53,10 +53,13 @@ namespace Dedektif3D.Core
         public int Difficulty;
         public int[] RelatedClues = new int[0];
         public string[] Guilty;
+        /// <summary>Gölgeşehir / Sisören: bu şüpheli katilse verdiği cevap (Resources/Web/dialogue.json).</summary>
+        public string G;
         public bool HasLocalAnswer => !string.IsNullOrEmpty(A);
-        /// <summary>guiltyResponse: suçluya göre değişen cevap (yalnızca Gizemli Kasaba'da hazır yazılı).</summary>
+        /// <summary>guiltyResponse: suçluya göre değişen cevap.</summary>
         public string AnswerFor(int guiltyId)
         {
+            if (!string.IsNullOrEmpty(G) && guiltyId == NpcId) return G;
             if (Guilty != null && guiltyId >= 1 && guiltyId <= Guilty.Length && !string.IsNullOrEmpty(Guilty[guiltyId - 1])) return Guilty[guiltyId - 1];
             return A;
         }
@@ -108,8 +111,8 @@ namespace Dedektif3D.Core
         /// <summary>Hikâye girişinin kısa atmosfer tarifi (iniş sahnesi alt yazısı).</summary>
         public string Mood = "gece yarısı, sağanak yağmur";
 
-        static readonly System.Globalization.CultureInfo Tr = new System.Globalization.CultureInfo("tr-TR");
-        public string DisplayName => Name.ToUpper(Tr); // "Gölgeşehir" → "GÖLGEŞEHİR" (Türkçe büyük İ)
+        static readonly System.Globalization.CultureInfo TrUpper = new System.Globalization.CultureInfo("tr-TR");
+        public string DisplayName => Name.ToUpper(TrUpper); // "Gölgeşehir" → "GÖLGEŞEHİR" (Türkçe büyük İ)
     }
 
     /// <summary>
@@ -122,6 +125,7 @@ namespace Dedektif3D.Core
         public const float AutopsyCountdown = 60f;
         public const float JailSeconds = 3f;
         public const int MaxQuestions = 5;
+        static readonly System.Globalization.CultureInfo Tr = new System.Globalization.CultureInfo("tr-TR");
         public static readonly string[] Categories = { "tanisma", "derinlesme", "yuzlestirme", "baski", "son" };
 
         public static readonly List<TownData> Towns = new List<TownData>();
@@ -152,7 +156,7 @@ namespace Dedektif3D.Core
         {
             if (!string.IsNullOrEmpty(building) && Current.BuildingHelper.TryGetValue(building, out var b)) return b;
             if (Current.HelperFallback.TryGetValue(context, out var m)) return m;
-            return Town("gizemli").HelperFallback.TryGetValue(context, out var g) ? g.Replace("Gizemli Kasaba", Current.Name) : "Amirims, soruşturmaya devam edin!";
+            return Town("gizemli").HelperFallback.TryGetValue(context, out var g) ? g.Replace("Gizemli Kasaba", Current.Name) : "Amirim, soruşturmaya devam edin!";
         }
 
         // ------------------------------------------------------------------
@@ -167,16 +171,29 @@ namespace Dedektif3D.Core
             new RegionDef { Id = "karaorman",   Name = "KARAORMAN",      MapRect = new Rect(70, 68, 22, 23), Level = 0 },
         };
 
-        /// <summary>"İçeriği Oku / İncele" — app.js document-reader içerikleri (Gizemli Kasaba).</summary>
-        public static readonly Dictionary<int, string> Documents = new Dictionary<int, string>
+        [Serializable] class DocItem { public int id; public string text = null; }
+        [Serializable] class DocFile { public DocItem[] docs = null; }
+        static Dictionary<int, string> _documents;
+
+        /// <summary>"İçeriği Oku / İncele" metinleri: üç kasabanın okunabilir delilleri (Resources/Web/documents.json).</summary>
+        public static Dictionary<int, string> Documents
         {
-            { 2, "VERESİYE & HESAPLAR — 1994 Güz Tahsilatları\n\nBakkal Rıza: 15.000 TL\nManav Hasan: 4.200 TL\nTerzi Yahya: -20.000 TL (Borçlu)\nOsman Bey: 150.000 TL\nEczacı Selma: 8.500 TL\n\nSÖZLÜ ANLAŞMALAR\n• Osman Bey borcunu her soruşumda erteleyip alay ediyor. Sabrım kalmadı.\n• Bu borç tahsil edilmezse dükkânı batıracağım. O gece son kez hesaba kapatmaya gideceğim.\n\n[ TAHSİLAT BEKLİYOR ]" },
-            { 5, "SAĞLIK OCAĞI REÇETE VE İLAÇ KAYDI\nTarih: 12 Kasım 1994 | Protokol No: #904\n\nHasta Adı: Osman Bey (Yaş: 54)\nTeşhis: Şiddetli Uykusuzluk & Göğüs Darlığı\n\nVerilen İlaçlar:\n1. Diazepam 5mg — Günde 1 Adet (Gece)\n2. Bitkisel ... [Yırtılmış / Silinmiş]" },
-            { 7, "T.C. KASABA MUHTARLIĞI RESMİ NOTU\n\nOsman Bey,\n\nKaranlık sırlar sonsuza dek gizli kalmaz. Kasaba arazilerini devretmeyi reddetmenin ağır bir bedeli olacak.\n\nZamanın doldu. Bu gece yaptıklarının hesabını vereceksin.\n\n— Ecelin..." },
-            { 9, "T.C. TAPU VE KADASTRO GENEL MÜDÜRLÜĞÜ\nARAZİ DEVİR SENEDİ\n\nAda/Parsel: #404 - Kasaba Meydan Çarşısı\nMülk Sahibi: Osman Bey\nDevredilen Taraf: Kasaba Muhtarlığı\n\n[ SAHTE İMZA — HÜKÜMSÜZDÜR ]" },
-            { 11, "EMNİYET AMİRLİĞİ SORGULAMA DOSYASI #88\n\nŞÜPHELİ: Osman Bey\nSUÇLAMA: Yasa Dışı İhbar & İrtikap\nDURUM: Tahkikat komiser emriyle GİZLİ kategorisine alınmış ve durdurulmuştur.\n\nİmza: Komiser Güneş" },
-            { 15, "Osman, bugün hava kararınca dükkânıma gel konuşalım. Kimseye görünme, eski defterleri kapatacağız.\n\n— Y." },
-        };
+            get
+            {
+                if (_documents != null) return _documents;
+                _documents = new Dictionary<int, string>();
+                var asset = Resources.Load<TextAsset>("Web/documents");
+                if (asset == null)
+                {
+                    Debug.LogError("[Dedektif3D] Resources/Web/documents.json bulunamadı: okunabilir deliller açılamaz.");
+                    return _documents;
+                }
+                var file = JsonUtility.FromJson<DocFile>(asset.text);
+                if (file?.docs != null)
+                    foreach (var d in file.docs) _documents[d.id] = d.text;
+                return _documents;
+            }
+        }
 
         /// <summary>Serbest soruya sunucu cevap veremezse (app.js npcFallbacks).</summary>
         public static readonly Dictionary<int, string> FreeQuestionFallbacks = new Dictionary<int, string>
@@ -278,7 +295,7 @@ namespace Dedektif3D.Core
             var pos = new[] { new Vector3(0.6f, 1.05f, 1.6f), new Vector3(-1.2f, 1.05f, 1.6f), new Vector3(-4.82f, 1.5f, -1.5f), new Vector3(3.7f, 1.38f, 3.6f), new Vector3(-0.8f, 1.05f, 1.6f), new Vector3(1.4f, 0.08f, 2.4f), new Vector3(-0.6f, 1.05f, 1.6f), new Vector3(0.8f, 1.05f, 1.6f), new Vector3(4f, 0.5f, 3.5f), new Vector3(-0.7f, 1.05f, 1.6f), new Vector3(4.2f, 1.35f, 0.5f), new Vector3(1.2f, 0.03f, -1.8f), new Vector3(0.7f, 1.05f, 1.6f), new Vector3(-1.5f, 0.03f, -1.2f), new Vector3(-3.5f, 1.35f, 2.32f) };
             int[] owner = { 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5 };
             for (int i = 0; i < 15; i++) t.Clues.Add(new ClueDef { Id = i + 1, BuildingNpcId = owner[i], Name = "Delil " + (i + 1), Shape = shapes[i], RoomPos = pos[i] });
-            t.HelperFallback["splash"] = "Hoş geldin Amirims! Ben Yardımcı Dedektif Çetin. Bu karanlık davada sana yardımcı olacağım. Hazır olduğunda dosyayı aç ve soruşturmaya başlayalım!";
+            t.HelperFallback["splash"] = "Hoş geldin Amirim! Ben Yardımcı Dedektif Çetin. Bu karanlık davada sana yardımcı olacağım. Hazır olduğunda dosyayı aç ve soruşturmaya başlayalım!";
 
             var d = Load("gizemli_data");
             if (d != null)
@@ -341,7 +358,7 @@ namespace Dedektif3D.Core
                 GradeFilter = golge ? new Color(1f, 0.92f, 0.76f) : new Color(0.93f, 1.02f, 0.94f),
                 GradeSaturation = golge ? -6f : -24f, GradeExposure = golge ? 0.74f : 1.18f, GradeContrast = golge ? 18f : 5f,
                 Mood = golge ? "soğuk, sağanak bir gece; gaz lambalarının sarısı karanlığa direniyor" : "dağ yamacında sis; gün ışığı var ama hiçbir şey net değil",
-                LocalHelperPortrait = golge ? "images/towns/golge_sehir/npcler/bekci_hasan_helper.png" : null,
+                LocalHelperPortrait = golge ? "images/towns/golge_sehir/npcler/bekci_hasan_helper.png" : "images/towns/sisoren/npcler/tuccar_ilyas_helper.png",
             };
             var d = Load(id + "_data");
             if (d == null) { t.Name += " (veri yok)"; return t; }
@@ -392,10 +409,11 @@ namespace Dedektif3D.Core
             foreach (var n in t.Npcs)
                 for (int i = 0; i < GenericQuestions.Length; i++)
                     t.Questions.Add(new WebQuestion { NpcId = n.Id, Q = GenericQuestions[i], A = "", Category = "", Difficulty = 2 + i / 3 });
+            ApplyDialogue(t);
             foreach (var kv in d.intro ?? new JKV[0]) t.Intro.Add(new KeyValuePair<string, string>(kv.key, kv.value));
-            t.HelperFallback["map_enter"] = $"İşte {t.Name} Amirims! {t.Buildings.Count} binayı gezip delilleri toplayın; en az {t.ReqBuildings} bina ve {t.ReqLabs} lab gönderimi otopsi raporunu başlatır.";
-            t.HelperFallback["story_end"] = $"{t.Name}'de {t.Npcs.Count} şüpheli var Amirims. Katili bulduğunuzda 'BULDUM!' [F] ile suçlamanızı yapın!";
-            t.HelperFallback["building_enter"] = "Bu binadaki delilleri dikkatle inceleyin Amirims. Saklanmış olanlar için Dedektif Gözü [Q] — çekmece, sandık, tablo arkası ve döşeme altlarına bakın!";
+            t.HelperFallback["map_enter"] = $"İşte {t.Name} Amirim! {t.Buildings.Count} binayı gezip delilleri toplayın; en az {t.ReqBuildings} bina ve {t.ReqLabs} laboratuvar gönderimi otopsi raporunu başlatır.";
+            t.HelperFallback["story_end"] = $"{t.Name}'de {t.Npcs.Count} şüpheli var Amirim. Katili bulduğunuzda 'BULDUM!' [F] ile suçlamanızı yapın!";
+            t.HelperFallback["building_enter"] = "Fareyi odada gezdirin Amirim; delilin üstüne gelince parlar. Saklanmış olanlar için çekmece, sandık, tablo arkası ve döşeme altlarının üstüne gelin ya da Dedektif Gözü'nü [Q] açın!";
             return t;
         }
 
@@ -419,16 +437,163 @@ namespace Dedektif3D.Core
             }
         }
 
-        /// <summary>Sunucu kapalıyken Gölgeşehir / Sisören şüphelilerinin yedek cevabı.</summary>
+        // ------------------------------------------------------------------
+        //  ÇEVRİMDIŞI KONUŞMALAR (Resources/Web/dialogue.json)
+        // ------------------------------------------------------------------
+        [Serializable] class JDialogueQA { public string q = null, a = null, g = null; }
+        [Serializable] class JDialogueNpc { public int id = 0; public string autopsy = null; public string[] alibi = null, grudge = null, suspect = null, heard = null, secret = null; public JDialogueQA[] qa = null; }
+        [Serializable] class JDialogueFile { public JDialogueNpc[] npcs = null; }
+        static Dictionary<int, JDialogueNpc> _dialogue;
+
+        static Dictionary<int, JDialogueNpc> Dialogue
+        {
+            get
+            {
+                if (_dialogue != null) return _dialogue;
+                _dialogue = new Dictionary<int, JDialogueNpc>();
+                var asset = Resources.Load<TextAsset>("Web/dialogue");
+                if (asset == null)
+                {
+                    Debug.LogError("[Dedektif3D] Resources/Web/dialogue.json bulunamadı: şüpheliler genel cevaplar verecek.");
+                    return _dialogue;
+                }
+                var file = JsonUtility.FromJson<JDialogueFile>(asset.text);
+                if (file?.npcs != null)
+                    foreach (var n in file.npcs) _dialogue[n.id] = n;
+                return _dialogue;
+            }
+        }
+
+        /// <summary>Hazır soruların cevaplarını kişiye özel metinle doldurur (masum ve katil hâli).</summary>
+        static void ApplyDialogue(TownData t)
+        {
+            foreach (var q in t.Questions)
+            {
+                if (!Dialogue.TryGetValue(q.NpcId, out var d)) continue;
+                int generic = Array.IndexOf(GenericQuestions, q.Q);
+                string[] pair = generic < 0 ? null : LinesFor(d, generic);
+                if (pair != null) { q.A = pair[0]; q.G = pair[1]; continue; }
+                if (generic >= 0) { q.A = CommonLine(generic, q.NpcId, false, t); q.G = CommonLine(generic, q.NpcId, true, t); continue; }
+                var qa = d.qa != null ? Array.Find(d.qa, x => x.q == q.Q) : null;
+                if (qa != null) { q.A = qa.a; q.G = qa.g; }
+            }
+        }
+
+        static string[] LinesFor(JDialogueNpc d, int genericIndex)
+        {
+            switch (genericIndex)
+            {
+                case 0: return d.alibi;
+                case 1: return d.grudge;
+                case 2: return d.suspect;
+                case 3: return d.heard;
+                case 5: return d.secret;
+                default: return null;
+            }
+        }
+
+        /// <summary>Herkesin kendi diliyle söyleyebileceği kısa cevaplar: "en son ne zaman", "deliller", "son sözün".</summary>
+        static string CommonLine(int genericIndex, int npcId, bool guilty, TownData t)
+        {
+            string v = t.Victim;
+            string[] list;
+            switch (genericIndex)
+            {
+                case 4:
+                    list = guilty
+                        ? new[] { $"*Yutkunur* {v}'i en son... birkaç gün önce miydi? Hatırlamıyorum. Neden bu kadar üstüme geliyorsunuz?",
+                                  "O gece değil! Yani o geceden önce. Kimse sizinle aksini iddia edemez, bakın kimseye sormayın.",
+                                  $"{v}... Hatırlamaya çalışıyorum amirim. Hafızam böyle sıkışınca çalışmıyor." }
+                        : new[] { $"Cinayetten önceki gün gördüm amirim. Her zamanki gibi burnu havadaydı, selam bile vermedi.",
+                                  $"{v}'i önceki akşam meydanda gördüm, birine bağırıyordu. Kime, seçemedim.",
+                                  "Birkaç gün önceydi. Yanından geçerken göz bile değdirmezdi, alışkındık." };
+                    break;
+                case 6:
+                    list = guilty
+                        ? new[] { "*Gözleri deliller ile kapı arasında gidip gelir* Onları kim oraya koydu bilmem. Birisi beni tuzağa düşürüyor!",
+                                  "Dükkânımda buldunuz diye benim mi oldu? Herkes girip çıkıyor buraya. Bunları götürmenize de gerek yok, sadece eşya işte.",
+                                  "O eşyaların hiçbiriyle ilgim yok. Yani ilgim var ama... İşimle ilgili! Sadece işimle." }
+                        : new[] { "Dükkânımda bulduklarınız mesleğimin sıradan eşyaları amirim. Laboratuvarınız ne buluyorsa bulsun, korkmuyorum.",
+                                  "Burada her gün yüzlerce el değer eşyalara. Birini bağlayacaksa da beni değil, buraya gireni bağlar.",
+                                  "Alın, bakın, inceleyin. Saklayacak bir şeyim olsa bunları ortada bırakmazdım." };
+                    break;
+                default:
+                    list = guilty
+                        ? new[] { "*Uzun bir sessizlik* Söyleyecek başka bir şeyim yok. Vekilimle konuşun.",
+                                  "Son söz mü? Son söz sizde değil amirim. Kasaba yarın unutacak zaten. *Sesi titrer*",
+                                  "Beni rahat bırakın. Ne yaptıysam... ne yapmadıysam, Allah bilir." }
+                        : new[] { "Son sözüm şu: Katil hâlâ dışarıda, siz burada vakit kaybediyorsunuz.",
+                                  "Vicdanım rahat amirim. Dilerim siz de doğru kişiyi bulunca rahat edersiniz.",
+                                  "Size yardım etmek isterim. Ama yanlış adamın peşindesiniz, bunu da bilin." };
+                    break;
+            }
+            return list[Mathf.Abs(npcId) % list.Length];
+        }
+
+        /// <summary>Katile göre değişen otopsi bulgusu: ölüm şekli delillerle eşleştirilebilsin diye (Gölgeşehir / Sisören).</summary>
+        public static string AutopsyFinding(int guiltyId) => Dialogue.TryGetValue(guiltyId, out var d) ? d.autopsy : null;
+
+        static readonly string[] AskStopwords = { "bana", "benim", "senin", "neden", "nasıl", "için", "hakkında", "biliyor", "musun", "misin", "kadar", "peki", "ama", "şey", "acaba", "söyle", "anlat", "bunu", "şunu", "olan", "gibi" };
+
+        /// <summary>
+        /// Serbest yazılan soru (sunucu yok ya da cevap veremedi): şüphelinin hazır sorularından en yakınına, o da yoksa konusuna göre cevap verir.
+        /// Türkçe ekler yüzünden sözcükler ilk 4 harfle karşılaştırılır.
+        /// </summary>
+        public static string AnswerFree(NpcDef n, string text, int guiltyId)
+        {
+            var words = Words(text);
+            WebQuestion best = null;
+            float bestScore = 0f;
+            foreach (var q in QuestionsOf(n.Id))
+            {
+                if (!q.HasLocalAnswer) continue;
+                var qw = Words(q.Q);
+                int common = words.Count(w => qw.Any(x => x.StartsWith(Stem(w))));
+                float score = words.Count == 0 ? 0f : common / (float)words.Count;
+                if (score > bestScore) { bestScore = score; best = q; }
+            }
+            if (best != null && bestScore >= 0.4f) return best.AnswerFor(guiltyId);
+
+            int topic = -1;
+            string all = text.ToLower(Tr);
+            bool Has(params string[] keys) { foreach (var k in keys) if (all.Contains(k)) return true; return false; }
+            if (Has("nerede", "neredeydi", "gece ne", "saat", "uyu", "evde")) topic = 0;
+            else if (Has("kavga", "husumet", "borç", "düşman", "sevmez", "tartış")) topic = 1;
+            else if (Has("kim", "şüphelen", "katil", "suçlu")) topic = 2;
+            else if (Has("ses", "duy", "gör", "gürültü", "çığlık")) topic = 3;
+            else if (Has("en son", "son kez", "ne zaman")) topic = 4;
+            else if (Has("sakla", "gizli", "yalan", "sır", "itiraf")) topic = 5;
+            else if (Has("delil", "dükkân", "dükkan", "buldu", "çanta")) topic = 6;
+            if (topic >= 0)
+            {
+                var generic = QuestionsOf(n.Id).FirstOrDefault(q => q.Q == GenericQuestions[topic] && q.HasLocalAnswer);
+                if (generic != null) return generic.AnswerFor(guiltyId);
+            }
+            return FreeQuestionFallbacks.TryGetValue(n.Id, out var fb) ? fb
+                : guiltyId == n.Id ? "*Gözlerini kaçırır* Bunun cinayetle ne ilgisi var amirim? Beni başka şeylerle meşgul etmeyin."
+                : "Soruyu tam anlamadım amirim. Cinayet gecesini, şüphelileri ya da delilleri sorun, bildiğimi anlatırım.";
+        }
+
+        static string Stem(string w) => w.Length <= 4 ? w : w.Substring(0, 4);
+
+        static List<string> Words(string text)
+        {
+            var list = new List<string>();
+            foreach (var w in System.Text.RegularExpressions.Regex.Split((text ?? "").ToLower(Tr), @"[^\p{L}\p{N}]+"))
+                if (w.Length >= 3 && Array.IndexOf(AskStopwords, w) < 0) list.Add(w);
+            return list;
+        }
+
+        /// <summary>Son çare cevabı (hazır metni olmayan soru ve kapalı sunucu).</summary>
         public static string OfflineAnswer(NpcDef n, string question, bool guilty, int askedIndex)
         {
             if (FreeQuestionFallbacks.TryGetValue(n.Id, out var fb) && askedIndex == 0) return fb;
             string[] innocent =
             {
                 $"{n.Greeting} Ama inanın, o gece olanlarla benim bir ilgim yok amirim.",
-                "O gece erkenden kapattım, sis o kadar yoğundu ki elimi göremiyordum.",
+                "O gece erkenden kapattım, hava o kadar kötüydü ki elimi göremiyordum.",
                 $"{Current.Victim} herkesle kavgalıydı amirim. Benden başka birini sorgulamanız lazım.",
-                "Bildiklerimi anlattım. Gerisini kasabanın sisine sorun."
+                "Bildiklerimi anlattım. Gerisini kasabaya sorun."
             };
             string[] guiltyLines =
             {

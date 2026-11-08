@@ -19,17 +19,48 @@ namespace Dedektif3D.UI
         enum Modal { None, DoorEntry, BuildingClue, Bag, Lab, Interrogation, Found, History, Jail, ExitWarning, Autopsy }
         enum Tool { None, UV, Dust, Magnifier }
 
-        static readonly Color BgNoir = Hex("#0e0b08", 0.95f);
-        static readonly Color BgCard = Hex("#17120d", 0.96f);
-        static readonly Color BgGlass = Hex("#120e0a", 0.84f);
-        static readonly Color Accent = Hex("#d4a65a");
-        static readonly Color TextPrimary = Hex("#efe6d2");
-        static readonly Color TextMuted = Hex("#9c8f7a");
-        static readonly Color Danger = Hex("#a3222a");
-        static readonly Color Success = Hex("#6f9a5a");
-        static readonly Color Warning = Hex("#d89a2b");
+        static readonly Color BgNoir = Hex("#0b0c10", 0.96f);
+        static readonly Color BgCard = Hex("#1a1c20", 0.90f);
+        static readonly Color BgGlass = Hex("#0f1115", 0.88f);
+        static readonly Color DefaultAccent = Hex("#45f3ff");
+        static readonly Color TextPrimary = Hex("#f5f5f7");
+        static readonly Color TextSecondary = Hex("#c5c6c7");
+        static readonly Color TextMuted = Hex("#8b949e");
+        static readonly Color Danger = Hex("#cf222e");
+        static readonly Color Success = Hex("#2ea44f");
+        static readonly Color Warning = Hex("#dbab09");
         static readonly Color Paper = Hex("#e9dfc8");
         static readonly Color Ink = Hex("#2a1a0e");
+
+        public static Color Accent
+        {
+            get
+            {
+                var cur = GameData.Current;
+                if (cur != null)
+                {
+                    if (cur.Id == "golge_sehir") return Hex("#ffb300");
+                    if (cur.Id == "sisoren") return Hex("#2ea44f");
+                    return Hex("#45f3ff");
+                }
+                return DefaultAccent;
+            }
+        }
+
+        public static Color Glow
+        {
+            get
+            {
+                var cur = GameData.Current;
+                if (cur != null)
+                {
+                    if (cur.Id == "golge_sehir") return Hex("#ffcc00");
+                    if (cur.Id == "sisoren") return Hex("#38c260");
+                    return Hex("#66fcf1");
+                }
+                return Hex("#66fcf1");
+            }
+        }
 
         GameManager GM => GameManager.Instance;
 
@@ -54,7 +85,7 @@ namespace Dedektif3D.UI
         // Bildirimler
         class ToastMsg { public string Text; public float Until; }
         readonly List<ToastMsg> _toasts = new List<ToastMsg>();
-        class Box { public string Title, Text; public bool Warning, Confirm; public Action OnYes; }
+        class Box { public string Title, Text, YesLabel, NoLabel; public bool Warning, Confirm; public Action OnYes, OnNo; }
         readonly List<Box> _boxes = new List<Box>();
 
         // Çetin sinematik kutusu
@@ -116,6 +147,10 @@ namespace Dedektif3D.UI
         public void MessageBox(string title, string text, bool warning) { _boxes.Add(new Box { Title = title, Text = text, Warning = warning }); AudioManager.Instance?.Ding(); }
         public void Confirm(string title, string text, Action onYes) => _boxes.Add(new Box { Title = title, Text = text, Confirm = true, OnYes = onYes });
 
+        /// <summary>İki eylemli pencere. Esc ile kapanırsa onNo çalışır; bu yüzden onNo yıkıcı bir iş yapacaksa ayrıca onay istemelidir.</summary>
+        public void Choose(string title, string text, string yesLabel, string noLabel, Action onYes, Action onNo) =>
+            _boxes.Add(new Box { Title = title, Text = text, Confirm = true, YesLabel = yesLabel, NoLabel = noLabel, OnYes = onYes, OnNo = onNo });
+
         public void FadeTransition(string title, Color color, Action atMidpoint)
         {
             _fadeStart = Time.time; _fadeTitle = title; _fadeColor = color; _fadeMid = atMidpoint; _fadeMidDone = false;
@@ -123,7 +158,7 @@ namespace Dedektif3D.UI
         }
 
         public void ShowDoorEntry(BuildingDef def) { _door = def; _modal = Modal.DoorEntry; }
-        public void ShowBuildingClue(ClueRuntime c) { _clue = c; _modal = Modal.BuildingClue; }
+        public void ShowBuildingClue(ClueRuntime c) { _clue = c; _showDoc = false; _modal = Modal.BuildingClue; }
         public void ShowLab(ClueRuntime c) { _clue = c; _tool = Tool.None; _scanTime = _spotTime = 0f; _showDoc = false; _modal = Modal.Lab; }
         public void ShowExitWarning(string text) { _exitText = text; _modal = Modal.ExitWarning; }
         public void OpenInterrogation(NpcRuntime n) { _npc = n; _question = ""; _lastChatCount = -1; _modal = Modal.Interrogation; AudioManager.Instance?.DoorClose(); }
@@ -160,8 +195,17 @@ namespace Dedektif3D.UI
 
             bool playing = GM.Phase == GamePhase.Playing;
             bool wantCursor = !playing || IsModalOpen;
-            Cursor.lockState = wantCursor ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = wantCursor;
+            // Fareyle aramada imleç pencerede kalır; işletim sistemi imleci yerine büyüteç çizilir.
+            if (playing && !IsModalOpen && Searching)
+            {
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = false;
+            }
+            else
+            {
+                Cursor.lockState = wantCursor ? CursorLockMode.None : CursorLockMode.Locked;
+                Cursor.visible = wantCursor;
+            }
 
             // Hikaye daktilo sesi
             if (GM.Phase == GamePhase.Story && !_storySkipped)
@@ -205,7 +249,7 @@ namespace Dedektif3D.UI
                 if (_settingsOpen) { CloseSettings(); return; }
                 if (_boardOpen) { _boardOpen = false; return; }
                 if (_paused) { ClosePause(); return; }
-                if (_modal == Modal.Lab && _showDoc) { _showDoc = false; return; }
+                if ((_modal == Modal.Lab || _modal == Modal.BuildingClue) && _showDoc) { _showDoc = false; return; }
                 if (_modal != Modal.None && _modal != Modal.Jail) { CloseModal(); return; }
                 if (_helperOpen) { _helperOpen = false; return; }
                 if (GM.Phase == GamePhase.Playing && !FadeActive && _modal == Modal.None) { OpenPause(); return; }
@@ -240,6 +284,7 @@ namespace Dedektif3D.UI
             if (_boxes.Count == 0) return;
             var b = _boxes[0]; _boxes.RemoveAt(0);
             if (yes) b.OnYes?.Invoke();
+            else b.OnNo?.Invoke();
         }
 
         int StoryChars => _storySkipped ? GameData.StoryText.Length : Mathf.Clamp((int)((Time.time - _storyStart) * 28.5f * GameSettings.TextSpeed), 0, GameData.StoryText.Length);
@@ -270,8 +315,107 @@ namespace Dedektif3D.UI
             if (_paused && !_settingsOpen) DrawPause();
             if (_settingsOpen) DrawSettings();
             DrawBoxes();
+            DrawSearchCursor();
             DrawFade();
         }
+
+        // ---------- FAREYLE ARAMA: büyüteç imleci, etiket, tıklama ----------
+        bool _hudHot;
+        Rect _helperRect;
+        Texture2D _lens;
+
+        Gameplay.SceneSearch Search => Gameplay.SceneSearch.Instance;
+        bool Searching => Search != null && Search.Active;
+
+        Texture2D LensTexture()
+        {
+            if (_lens != null) return _lens;
+            const int S = 96;
+            var tex = new Texture2D(S, S, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            var px = new Color[S * S];
+            var c0 = new Vector2(38f, S - 38f);
+            for (int y = 0; y < S; y++)
+                for (int x = 0; x < S; x++)
+                {
+                    var p = new Vector2(x + 0.5f, y + 0.5f);
+                    float d = Vector2.Distance(p, c0);
+                    Color c = Color.clear;
+                    // Cam: içi hafif aydınlık, kenarı pirinç halka
+                    if (d < 27f) c = new Color(1f, 0.94f, 0.78f, 0.08f + 0.1f * (d / 27f));
+                    float ring = Mathf.Abs(d - 28f);
+                    if (ring < 3.4f) c = Color.Lerp(new Color(0.95f, 0.78f, 0.42f), new Color(0.45f, 0.3f, 0.12f), ring / 3.4f);
+                    if (ring < 4.4f && ring >= 3.4f) c = Color.Lerp(new Color(0.1f, 0.07f, 0.04f, 0.8f), Color.clear, ring - 3.4f);
+                    // Sap: camdan sağ alta
+                    var a = c0 + new Vector2(21f, -21f); var b = c0 + new Vector2(46f, -46f);
+                    var ab = b - a;
+                    float t = Mathf.Clamp01(Vector2.Dot(p - a, ab) / ab.sqrMagnitude);
+                    float h = Vector2.Distance(p, a + ab * t);
+                    if (h < 4.6f) c = Color.Lerp(new Color(0.42f, 0.25f, 0.12f), new Color(0.16f, 0.09f, 0.05f), h / 4.6f);
+                    px[y * S + x] = c;
+                }
+            tex.SetPixels(px);
+            tex.Apply();
+            _lens = tex;
+            return tex;
+        }
+
+        void DrawSearchCursor()
+        {
+            var s = Search;
+            if (s == null || GM.Phase != GamePhase.Playing) { _hudHot = false; return; }
+            var e = Event.current;
+            bool open = s.Active && !IsModalOpen && !(GM.Director != null && GM.Director.Current == Gameplay.CinematicDirector.Mode.Focus);
+            if (open)
+            {
+                // Hiçbir arayüz öğesinin almadığı sol tık sahnedeki nesneye gider
+                if (e.type == EventType.MouseDown && e.button == 0 && !(_helperOpen && _helperRect.Contains(e.mousePosition)))
+                {
+                    Do(() => s.ClickHovered());
+                    e.Use();
+                }
+                var mp = DebugPointerPx.HasValue ? new Vector2(DebugPointerPx.Value.x / _scale, (Screen.height - DebugPointerPx.Value.y) / _scale) : e.mousePosition;
+                var hovered = s.Hovered;
+                if (e.type == EventType.Repaint)
+                {
+                    float size = hovered != null ? 76f + Mathf.Sin(Time.time * 6f) * 3f : 64f;
+                    // Camın ortası tam imleç noktasında
+                    var r = new Rect(mp.x - size * 0.396f, mp.y - size * 0.396f, size, size);
+                    var prev = GUI.color;
+                    GUI.color = hovered != null ? new Color(1f, 0.92f, 0.7f, 1f) : new Color(1f, 1f, 1f, 0.92f);
+                    GUI.DrawTexture(r, LensTexture());
+                    GUI.color = prev;
+                }
+                if (hovered != null)
+                {
+                    string title = hovered.HoverTitle, action = hovered.HoverAction;
+                    float tw = Mathf.Max(_searchTitle.CalcSize(new GUIContent(title)).x, _searchAction.CalcSize(new GUIContent(action)).x) + 36f;
+                    tw = Mathf.Min(tw, 640f);
+                    var box = new Rect(mp.x + 42f, mp.y - 18f, tw, 62f);
+                    if (box.xMax > VW - 12f) box.x = mp.x - tw - 42f;
+                    if (box.yMax > VH - 12f) box.y = VH - 74f;
+                    if (box.y < 12f) box.y = 12f;
+                    Fill(new Rect(box.x + 3, box.y + 4, box.width, box.height), new Color(0, 0, 0, 0.4f));
+                    Fill(box, new Color(0.05f, 0.04f, 0.03f, 0.92f));
+                    Fill(new Rect(box.x, box.y, 4f, box.height), Accent);
+                    GUI.Label(new Rect(box.x + 16f, box.y + 6f, box.width - 20f, 30f), title, _searchTitle);
+                    GUI.Label(new Rect(box.x + 16f, box.y + 34f, box.width - 20f, 24f), action, _searchAction);
+                }
+            }
+            if (e.type == EventType.Repaint) { s.PanPaused = _hudHot; _hudHot = false; }
+        }
+
+        /// <summary>Otomatik ekran görüntüsü: büyüteç bu ekran noktasında çizilir (gerçek imleç oynatılmaz). Sol alt köşe başlangıçlı piksel.</summary>
+        public Vector2? DebugPointerPx { get; set; }
+
+        /// <summary>Otomatik test: en son çizilen arayüz durumu (delil kartı açık mı).</summary>
+        public bool ShowingClueCard => _modal == Modal.BuildingClue;
+        public bool ShowingInterrogation => _modal == Modal.Interrogation;
+
+        /// <summary>Otomatik test / ekran görüntüsü: delil kartını ve açık pencereleri kapatır.</summary>
+        public void DebugCloseModal() => CloseModal();
+        public void DebugOpenBag() => _modal = Modal.Bag;
+        public void DebugOpenLab(ClueRuntime c) => ShowLab(c);
+        public void DebugOpenAutopsy() => _modal = Modal.Autopsy;
 
         float _lb;
         bool Cinematic => GM.Director != null && GM.Director.Letterbox || _modal == Modal.Interrogation || _modal == Modal.BuildingClue || _cinemaMode;
@@ -349,11 +493,28 @@ namespace Dedektif3D.UI
                 "Yağmur üç gündür dinmedi. Telgraf gece yarısı geldi: bir ceset, korkmuş bir kasaba ve herkesin sakladığı bir sır. " +
                 "Otuz beş yaşında, yorgun ama keskin gözlü bir dedektifsiniz — ve bu gece yine yola çıkıyorsunuz.", _splashBody);
             GUI.color = new Color(1, 1, 1, a3);
-            if (MenuLink(new Rect(x, y + 400, 520, 56), "SORUŞTURMAYA BAŞLA", true)) Do(GM.StartFromSplash);
-            if (MenuLink(new Rect(x, y + 464, 520, 44), "AYARLAR", false)) Do(OpenSettings);
-            if (MenuLink(new Rect(x, y + 514, 520, 44), "OYUNDAN ÇIK", false)) Do(AskQuit);
-            GUI.Label(new Rect(x, y + 576, 900, 28), "WASD yürü   •   E incele / konuş   •   Q Dedektif Gözü   •   B vaka panosu   •   Esc duraklat", _splashFoot);
-            GUI.Label(new Rect(x, VH * 0.925f - 40, 900, 26), (GM.Api.IsOnline ? "● Sorgu sunucusu bağlı" : "○ Sunucu kapalı — şüpheliler hazır cevaplarla konuşur") + $"   ({GM.Api.baseUrl})", _splashFoot);
+            float my = y + 400;
+            string savedTown = SaveSystem.LatestTown();
+            if (savedTown != null)
+            {
+                if (MenuLink(new Rect(x, my, 520, 56), "KALDIĞIN YERDEN DEVAM ET", true)) Do(() => GM.ResumeCase(savedTown));
+                my += 64;
+                if (MenuLink(new Rect(x, my, 520, 44), "BÖLGE HARİTASI", false)) Do(GM.StartFromSplash);
+                my += 50;
+            }
+            else
+            {
+                if (MenuLink(new Rect(x, my, 520, 56), "SORUŞTURMAYA BAŞLA", true)) Do(GM.StartFromSplash);
+                my += 64;
+            }
+            if (MenuLink(new Rect(x, my, 520, 44), "AYARLAR", false)) Do(OpenSettings);
+            my += 50;
+            if (MenuLink(new Rect(x, my, 520, 44), "OYUNDAN ÇIK", false)) Do(AskQuit);
+            my += 62;
+            GUI.Label(new Rect(x, my, 1000, 28), "WASD yürü   •   Sağ tık fareyle ara   •   E incele / konuş   •   Q Dedektif Gözü   •   B vaka panosu   •   Esc duraklat", _splashFoot);
+            // Sunucu durumu yalnızca sunucu ayarlanmışsa görünür; normal oyuncu bu satırı hiç görmez.
+            if (GM.Api.HasServer)
+                GUI.Label(new Rect(x, VH * 0.925f - 40, 900, 26), (GM.Api.IsOnline ? "● Sorgu sunucusu bağlı" : "○ Sunucu kapalı — şüpheliler hazır cevaplarla konuşur") + $"   ({GM.Api.baseUrl})", _splashFoot);
             GUI.color = prev;
         }
 
@@ -446,8 +607,10 @@ namespace Dedektif3D.UI
                 GUI.Label(new Rect(0, VH - 58, VW, 28), "Kasabanın üstüne gelin ya da tıklayın   •   [← →] kasabalar arasında gezin   •   [Enter] dosyayı aç", _centerMuted);
             if (ColoredButton(new Rect(40, VH - 84, 190, 46), "← Ana Menü", new Color(0.13f, 0.12f, 0.12f))) Do(GM.BackToSplash);
             if (ColoredButton(new Rect(244, VH - 84, 160, 46), "Ayarlar", new Color(0.13f, 0.12f, 0.12f))) Do(OpenSettings);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (ColoredButton(new Rect(418, VH - 84, 290, 46), GM.UnlockAllForTesting ? "Test: Tüm Leveller Açık ✓" : "Test: Tüm Levelleri Aç", new Color(0.16f, 0.14f, 0.11f)))
                 Do(() => GM.UnlockAllForTesting = !GM.UnlockAllForTesting);
+#endif
             if (map.Selected == null) HelperWidget(new Rect(VW - 150, VH - 175, 130, 155));
             GUI.color = prev;
 
@@ -475,7 +638,8 @@ namespace Dedektif3D.UI
         void StartCase(World.WorldMapDiorama map, World.WorldMapDiorama.Site s)
         {
             if (s == null || map.Diving) return;
-            if (!GM.IsTownUnlocked(s.Region)) { GM.SelectRegion(s.Region); return; }   // kilit mesajı
+            // Kilit mesajı ve "devam / yeni dava" seçimi haritadan ayrılmadan sorulur; oyuncu vazgeçerse kamera dalmış kalmaz.
+            if (!GM.IsTownUnlocked(s.Region) || SaveSystem.Exists(s.Region.Id)) { GM.SelectRegion(s.Region); return; }
             map.Dive(s, () => GM.SelectRegion(s.Region));
         }
 
@@ -575,8 +739,10 @@ namespace Dedektif3D.UI
                 if (GUI.Button(rr, GUIContent.none, GUIStyle.none)) { var copy = reg; Do(() => GM.SelectRegion(copy)); }
             }
             if (ColoredButton(new Rect(25, 25, 170, 50), "← Ana Menü", new Color(0.15f, 0.17f, 0.2f))) Do(GM.BackToSplash);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (ColoredButton(new Rect(25, VH - 75, 290, 46), GM.UnlockAllForTesting ? "Test: Tüm Leveller Açık ✓" : "Test: Tüm Levelleri Aç", new Color(0.18f, 0.16f, 0.12f)))
                 Do(() => GM.UnlockAllForTesting = !GM.UnlockAllForTesting);
+#endif
             HelperWidget(new Rect(VW - 150, VH - 175, 130, 155));
         }
 
@@ -648,6 +814,7 @@ namespace Dedektif3D.UI
         bool HudLink(Rect r, string key, string label, Color col)
         {
             bool hover = r.Contains(Event.current.mousePosition);
+            if (hover) _hudHot = true;
             float kw = key == null ? 0f : Mathf.Max(30f, _hudKey.CalcSize(new GUIContent(key)).x + 14f);
             if (key != null) KeyBadge(new Rect(r.x, r.y + (r.height - 30f) / 2f, kw, 30f), key);
             var lr = new Rect(r.x + kw + (key != null ? 10f : 0f), r.y, r.width - kw - 10f, r.height);
@@ -692,6 +859,11 @@ namespace Dedektif3D.UI
             ShadowLabel(au, GM.AutopsyStatus, Styled(_hudCenter, aCol));
             Fill(new Rect(VW / 2 - 90, 60, 180, 1), new Color(aCol.r, aCol.g, aCol.b, 0.6f));
             if (GM.AutopsyReady && GUI.Button(au, GUIContent.none, GUIStyle.none)) Do(() => _modal = Modal.Autopsy);
+            if (GM.InsideBuilding)
+            {
+                Gameplay.SceneSearch.RoomCounts(GM, out int roomTaken, out int roomTotal);
+                ShadowLabel(new Rect(VW / 2 - 300, 64, 600, 26), $"Bu oda: {roomTaken}/{roomTotal} delil çantada", Styled(_hudCenter, new Color(0.85f, 0.8f, 0.7f)));
+            }
 
             // Sağ üst: defter bağlantıları
             float rx = VW - 40;
@@ -701,11 +873,20 @@ namespace Dedektif3D.UI
             if (HudLink(bagR, "Tab", $"Çanta {GM.BagCount}/{GameData.MaxBagSize}", TextPrimary)) Do(OpenBag);
             var labCol = GM.LabCount >= GameData.ReqLabs ? Success : Warning;
             HudLink(new Rect(rx - 210, 26, 210, 36), null, GM.LabStatus, labCol);
-            ShadowLabel(new Rect(VW - 420, 70, 380, 24), GM.Api.IsOnline ? "● sorgu sunucusu bağlı" : "○ yerel mod — sunucu kapalı", Styled(_rightMuted, GM.Api.IsOnline ? Success : TextMuted));
+            if (GM.Api.HasServer)
+                ShadowLabel(new Rect(VW - 420, 70, 380, 24), GM.Api.IsOnline ? "● sorgu sunucusu bağlı" : "○ yerel mod — sunucu kapalı", Styled(_rightMuted, GM.Api.IsOnline ? Success : TextMuted));
+
+            // Fareyle arama açıkken: ne yapılacağı alt ortada, imleç etiketiyle çakışmaz
+            if (Searching && _modal == Modal.None && !_helperOpen)
+            {
+                var hint = new Rect(VW / 2 - 560, VH - 62, 1120, 30);
+                for (int i = 0; i < 6; i++) Fill(new Rect(hint.x + i * 30, hint.y - 4, hint.width - i * 60, hint.height + 8), new Color(0, 0, 0, 0.09f));
+                ShadowLabel(hint, "Fareyi gezdir: delilin üstüne gelince parlar   •   Sol tık incele   •   Ekran kenarı etrafına bak   •   Sağ tık serbest kamera", Styled(_hudSmall, new Color(0.9f, 0.85f, 0.72f)));
+            }
 
             // Alt orta: etkileşim ipucu
             var focus = GM.Player.Focus;
-            if (_modal == Modal.None && focus != null)
+            if (_modal == Modal.None && focus != null && !(Searching && Search.Hovered != null))
             {
                 float w = Mathf.Min(820f, _hudPrompt.CalcSize(new GUIContent(focus.Prompt)).x + 110f);
                 var pr = new Rect(VW / 2 - w / 2, VH - 138, w, 50);
@@ -717,12 +898,13 @@ namespace Dedektif3D.UI
             // Sol alt: kontroller (vakanın ilk 40 saniyesi; F1 ile aç/kapa)
             if (ControlsVisible && _modal == Modal.None)
             {
-                var hr = new Rect(30, VH - 294, 470, 268);
+                var hr = new Rect(30, VH - 326, 470, 300);
                 for (int i = 0; i < 8; i++) Fill(new Rect(hr.x - 30, hr.y + i * 4, hr.width * (1f - i * 0.06f), hr.height - i * 8), new Color(0, 0, 0, 0.05f));
                 ShadowLabel(new Rect(hr.x, hr.y + 8, hr.width, 26), "KONTROLLER", Styled(_accentSmall, Accent));
                 string[] rows =
                 {
                     "W A S D|Yürü  •  Shift koş  •  Fare kamera",
+                    "Sağ Tık|Fareyle ara: delil parlar  •  Sol tık incele",
                     "E|Kapı, delil, konuşma, çekmece / sandık ara",
                     "Q|Dedektif Gözü — saklanmış izleri sez",
                     "Tab|Çanta ve adli laboratuvar   •   R otopsi",
@@ -772,109 +954,156 @@ namespace Dedektif3D.UI
             if (_clue == null) { CloseModal(); return; }
             GUI.Label(new Rect(60, Bar * 0.5f - 16, VW, 32), "OLAY YERİ İNCELEME  •  " + (GM.CurrentBuilding?.DisplayName ?? ""), Styled(_badge, new Color(0.86f, 0.7f, 0.4f)));
             Subtitle(_clue.Def.Name, _clue.Def.Description ?? "", new Color(0.86f, 0.7f, 0.4f));
+
+            // Delilin yakın plan fotoğrafı: 3D eşyanın yanında dosyaya iliştirilmiş kart
+            var photo = T(_clue.Def.Image);
+            if (photo != null)
+            {
+                float s = Mathf.Min(470f, VH - Bar * 2f - 210f);
+                var card = new Rect(VW - s - 96f, Bar + 34f, s + 28f, s + 62f);
+                var m = GUI.matrix;
+                GUIUtility.RotateAroundPivot(1.6f, card.center * _scale);
+                Fill(new Rect(card.x + 7, card.y + 9, card.width, card.height), new Color(0, 0, 0, 0.42f));
+                Fill(card, new Color(0.9f, 0.86f, 0.74f));
+                var pic = new Rect(card.x + 14, card.y + 14, s, s);
+                Fill(pic, new Color(0.05f, 0.05f, 0.05f));
+                GUI.DrawTexture(pic, photo, ScaleMode.ScaleToFit);
+                GUI.Label(new Rect(card.x + 14, pic.yMax + 6, s, 30), "Delil No. " + _clue.Def.Id, Styled(_centerSmallBold, Ink));
+                GUI.matrix = m;
+            }
+
             float by = VH - Bar + (Bar - 54) / 2f;
-            var b1 = new Rect(VW / 2 - 290, by, 280, 54);
-            var b2 = new Rect(VW / 2 + 10, by, 280, 54);
+            bool readable = _clue.Def.Document != null;
+            float total = readable ? 870f : 570f;
+            var b1 = new Rect(VW / 2 - total / 2f, by, 280, 54);
+            var b2 = new Rect(b1.xMax + 10, by, 280, 54);
+            var b3 = new Rect(b2.xMax + 10, by, 280, 54);
             if (_clue.InBag) { Panel(b1, new Color(0, 0, 0, 0.6f), Success); GUI.Label(b1, "✓ Çantada Mevcut", Styled(_centerBold, Success)); }
             else if (ColoredButton(b1, "Çantaya Al", new Color(0.4f, 0.28f, 0.12f))) { var id = _clue.Id; Do(() => { GM.TakeClue(id); if (GM.GetClue(id).InBag) CloseModal(); }); }
             if (ColoredButton(b2, "Kapat  [Esc]", new Color(0.15f, 0.14f, 0.12f))) Do(CloseModal);
+            if (readable && ColoredButton(b3, "İçeriğini Oku", new Color(0.28f, 0.2f, 0.1f))) Do(() => { _showDoc = true; _docScroll = Vector2.zero; });
+            if (_showDoc && readable) DrawDocument(new Rect(120, Bar + 20, VW - 240, VH - Bar * 2f - 40), _clue);
         }
 
         // ---------- ÇANTA (bag-modal) + Dedektif Notları ----------
         void DrawBag()
         {
             Dim();
-            var r = Center(1240, 780);
-            Panel(r, BgCard, Accent);
-            GUI.Label(new Rect(r.x + 30, r.y + 22, 700, 44), $"DEDEKTİF ÇANTASI   <color=#9c8f7a>{GM.BagCount}/{GameData.MaxBagSize}</color>", _h2);
-            if (ColoredButton(new Rect(r.xMax - 70, r.y + 20, 50, 46), "X", new Color(0.2f, 0.22f, 0.26f))) Do(CloseModal);
-            var left = new Rect(r.x + 30, r.y + 80, r.width * 0.6f - 40, r.height - 170);
-            var right = new Rect(left.xMax + 24, left.y, r.xMax - left.xMax - 54, left.height);
-            GUI.Label(new Rect(left.x, left.y - 4, left.width, 28), "Toplanan İpuçları", _accentSmall);
+            var r = Center(1260, 800);
+            var themeAcc = Accent;
+            Panel(r, BgGlass, themeAcc);
+
+            bool bagFull = GM.BagCount >= GameData.MaxBagSize;
+            string capColor = bagFull ? "#cf222e" : "#c5c6c7";
+            GUI.Label(new Rect(r.x + 32, r.y + 22, 700, 44), $"DEDEKTİF ÇANTASI   <color={capColor}>({GM.BagCount}/{GameData.MaxBagSize} Delil Kapasitesi)</color>", _h2);
+            if (ColoredButton(new Rect(r.xMax - 64, r.y + 20, 44, 44), "X", new Color(0.2f, 0.22f, 0.26f))) Do(CloseModal);
+
+            var left = new Rect(r.x + 32, r.y + 80, r.width * 0.58f - 30, r.height - 170);
+            var right = new Rect(left.xMax + 24, left.y, r.xMax - left.xMax - 56, left.height);
+
+            GUI.Label(new Rect(left.x, left.y - 4, left.width, 28), "Vaka Dosyasına Eklenen Deliller", Styled(_smallBold, themeAcc));
             GUILayout.BeginArea(new Rect(left.x, left.y + 28, left.width, left.height - 28));
             _bagScroll = GUILayout.BeginScrollView(_bagScroll);
             var bag = GM.Bag.ToList();
-            if (bag.Count == 0) GUILayout.Label("Çantan boş. Binalara gir, delilleri [E] ile incele ve çantaya al. Saklanmış deliller için [Q] Dedektif Gözü!", _bodyLarge);
+            if (bag.Count == 0) GUILayout.Label("Çanta henüz boş. Binalara girip odaları araştırın; saklı ipuçları için [Q] Dedektif Gözü kullanın. Topladığınız delilleri laboratuvarda analiz edebilirsiniz.", _bodyLarge);
             foreach (var c in bag)
             {
                 GUILayout.BeginHorizontal(_card, GUILayout.Height(104));
                 var thumb = GUILayoutUtility.GetRect(84, 84, GUILayout.Width(84), GUILayout.Height(84));
-                Fill(thumb, new Color(0, 0, 0, 0.35f));
+                Fill(thumb, new Color(0.04f, 0.05f, 0.08f, 0.9f));
+                Border(thumb, new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.3f), 1);
                 var tx = T(c.Def.Image); if (tx != null) GUI.DrawTexture(Pad(thumb, 4), tx, ScaleMode.ScaleToFit);
                 GUILayout.Space(12);
                 GUILayout.BeginVertical();
-                GUILayout.Label($"<b>{c.Def.Name}</b>  <color=#9c8f7a>— {GameData.BuildingOf(c.Def.BuildingNpcId)?.DisplayName}</color>", _body);
+                GUILayout.Label($"<b>{c.Def.Name}</b>  <color=#8b949e>— {GameData.BuildingOf(c.Def.BuildingNpcId)?.DisplayName}</color>", _body);
                 GUILayout.Label(c.Def.Description ?? "", _small);
-                string marks = (c.BloodSent ? "<color=#c0504d>● Kan lab'da</color>  " : c.BloodFound ? "<color=#c0504d>○ Kan bulundu</color>  " : "") +
-                               (c.PrintSent ? "<color=#d4a65a>● İz lab'da</color>" : c.PrintFound ? "<color=#d4a65a>○ İz bulundu</color>" : "");
+                string marks = (c.BloodSent ? "<color=#2ea44f>● Kan Adli Tıpta</color>  " : c.BloodFound ? "<color=#cf222e>○ Kan Tespit Edildi</color>  " : "") +
+                               (c.PrintSent ? "<color=#2ea44f>● İz Adli Tıpta</color>" : c.PrintFound ? "<color=#45f3ff>○ Parmak İzi Bulundu</color>" : "");
                 if (marks.Length > 0) GUILayout.Label(marks, _small);
                 GUILayout.EndVertical();
                 GUILayout.FlexibleSpace();
                 GUILayout.BeginVertical(); GUILayout.FlexibleSpace();
-                if (GlowButton("İncele / Lab", Warning, 170, 46)) { var id = c.Id; Do(() => GM.OpenLabInspect(id)); }
+                if (GlowButton("İncele / Lab", Warning, 160, 38)) { var id = c.Id; Do(() => GM.OpenLabInspect(id)); }
+                GUILayout.Space(4);
+                if (GlowButton("Geri Bırak", TextMuted, 160, 30, 13))
+                {
+                    var did = c.Id; var dname = c.Def.Name; bool locked = GM.IsVisited(c.Def.BuildingNpcId);
+                    Do(() => Confirm("ÇANTADAN ÇIKAR", locked
+                        ? $"'{dname}' çantadan çıkarılsın mı? Binası kapandığı için geri alamazsınız; laboratuvara gönderdiğiniz bulgular yine sayılır."
+                        : $"'{dname}' çantadan çıkarılsın mı? Bulunduğu odaya dönüp yeniden alabilirsiniz.", () => GM.RemoveFromBag(did)));
+                }
                 GUILayout.FlexibleSpace(); GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
                 GUILayout.Space(6);
             }
             GUILayout.EndScrollView();
             GUILayout.EndArea();
-            GUI.Label(new Rect(right.x, right.y - 4, right.width, 28), "Dedektif Notları", _accentSmall);
-            GM.DetectiveNotes = GUI.TextArea(new Rect(right.x, right.y + 28, right.width, right.height - 28), GM.DetectiveNotes, 2000, _notes);
-            if (ColoredButton(new Rect(r.x + 30, r.yMax - 74, 300, 50), "Çetin'e Analiz Ettir", new Color(0.08f, 0.4f, 0.45f))) Do(() => { CloseModal(); GM.AnalyzeBag(); });
-            if (ColoredButton(new Rect(r.xMax - 250, r.yMax - 74, 220, 50), "Çantayı Kapat [Tab]", new Color(0.2f, 0.22f, 0.26f))) Do(CloseModal);
+
+            // Sağ: Dedektif Günlüğü & Not Defteri
+            GUI.Label(new Rect(right.x, right.y - 4, right.width, 28), "Dedektif Günlüğü & Notlar", Styled(_smallBold, themeAcc));
+            Fill(new Rect(right.x, right.y + 28, right.width, right.height - 28), new Color(0.05f, 0.06f, 0.08f, 0.85f));
+            Border(new Rect(right.x, right.y + 28, right.width, right.height - 28), new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.25f), 1);
+            GM.DetectiveNotes = GUI.TextArea(new Rect(right.x + 8, right.y + 36, right.width - 16, right.height - 44), GM.DetectiveNotes, 2000, _notes);
+
+            // Alt Butonlar
+            if (ColoredButton(new Rect(r.x + 32, r.yMax - 68, 320, 48), "Yardımcı Çetin'den Analiz İste", themeAcc)) Do(() => { CloseModal(); GM.AnalyzeBag(); });
+            if (ColoredButton(new Rect(r.xMax - 250, r.yMax - 68, 218, 48), "Kapat  [Tab]", new Color(0.18f, 0.20f, 0.24f))) Do(CloseModal);
         }
 
         // ---------- ADLİ LABORATUVAR (clue-inspect-modal: UV / toz / büyüteç) ----------
         void DrawLab()
         {
             if (_clue == null) { CloseModal(); return; }
-            Fill(new Rect(0, 0, VW, VH), new Color(0, 0, 0, 0.85f));
-            var r = Center(1500, 860);
-            Panel(r, BgCard, Accent);
-            var info = new Rect(r.x + 36, r.y + 30, 480, r.height - 60);
+            Fill(new Rect(0, 0, VW, VH), new Color(0, 0, 0, 0.88f));
+            var r = Center(1520, 880);
+            var themeAcc = Accent;
+            Panel(r, BgGlass, themeAcc);
+
+            var info = new Rect(r.x + 36, r.y + 30, 490, r.height - 60);
             var vis = new Rect(info.xMax + 30, r.y + 30, r.xMax - info.xMax - 66, r.height - 60);
             var c = _clue;
 
             GUILayout.BeginArea(info);
-            GUILayout.Label("ADLİ LABORATUVAR İNCELEME", _badge);
+            GUILayout.Label("ADLİ LABORATUVAR İNCELEME MASASI", _badge);
             GUILayout.Space(6);
             GUILayout.Label(c.Def.Name, _h2);
-            Fill(GUILayoutUtility.GetRect(info.width, 2), Accent * 0.5f);
+            Fill(GUILayoutUtility.GetRect(info.width, 2), new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.6f));
             GUILayout.Space(8);
             GUILayout.Label(c.Def.Description ?? "", _bodyLarge);
             GUILayout.Space(14);
-            GUILayout.Label("Sağdaki araçlardan birini seçip fareyi delilin üzerinde basılı tutarak tarayın.", _small);
+            GUILayout.Label("<color=#c5c6c7>Sağdaki araçlardan birini seçip fareyi basılı tutarak delil yüzeyini tarayın.</color>", _small);
             GUILayout.Space(12);
             if (c.BloodChecked) FindingRow(c, true);
             if (c.PrintChecked) FindingRow(c, false);
             GUILayout.FlexibleSpace();
-            if (c.Def.Document != null && GlowButton("İçeriği Oku / İncele", Accent, 480, 50)) Do(() => { _showDoc = true; _docScroll = Vector2.zero; });
+            if (c.Def.Document != null && GlowButton("Belge İçeriğini Oku / İncele", themeAcc, 490, 50)) Do(() => { _showDoc = true; _docScroll = Vector2.zero; });
             GUILayout.Space(8);
-            if (GlowButton("Kapat", TextMuted, 480, 50)) Do(CloseModal);
+            if (GlowButton("Laboratuvardan Ayrıl", TextMuted, 490, 50)) Do(CloseModal);
             GUILayout.EndArea();
 
             // Görsel alanı
             var bg = T(GameData.Npc(c.Def.BuildingNpcId)?.Portrait);
-            Fill(vis, new Color(0.02f, 0.02f, 0.03f, 1f));
-            if (bg != null) { var p = GUI.color; GUI.color = new Color(1, 1, 1, 0.12f); GUI.DrawTexture(vis, bg, ScaleMode.ScaleAndCrop); GUI.color = p; }
+            Fill(vis, new Color(0.03f, 0.04f, 0.06f, 1f));
+            Border(vis, new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.25f), 1);
+            if (bg != null) { var p = GUI.color; GUI.color = new Color(1, 1, 1, 0.10f); GUI.DrawTexture(vis, bg, ScaleMode.ScaleAndCrop); GUI.color = p; }
             float s = Mathf.Min(vis.width - 160, vis.height - 60);
             var img = new Rect(vis.x + (vis.width - 120 - s) / 2, vis.y + (vis.height - s) / 2, s, s);
             var tex = T(c.Def.Image);
             if (tex != null) GUI.DrawTexture(img, tex, ScaleMode.ScaleToFit);
-            if (_tool == Tool.UV) Fill(img, new Color(0.35f, 0.1f, 0.85f, 0.35f));
+            if (_tool == Tool.UV) Fill(img, new Color(0.2f, 0.05f, 0.7f, 0.38f));
             // Bulunan izleri delilin üstüne çiz
-            if (c.BloodFound && (_tool == Tool.UV || c.BloodSent)) Stamp(img, c.Def.BloodSpot, T("real_blood_stain"), new Color(1f, 0.25f, 0.3f, 0.9f));
-            if (c.PrintFound && (_tool == Tool.Dust || c.PrintSent)) Stamp(img, c.Def.PrintSpot, T("real_fingerprint"), new Color(0.8f, 0.95f, 1f, 0.9f));
+            if (c.BloodFound && (_tool == Tool.UV || c.BloodSent)) Stamp(img, c.Def.BloodSpot, T("real_blood_stain"), new Color(1f, 0.2f, 0.25f, 0.95f));
+            if (c.PrintFound && (_tool == Tool.Dust || c.PrintSent)) Stamp(img, c.Def.PrintSpot, T("real_fingerprint"), new Color(0.7f, 0.92f, 1f, 0.95f));
 
-            // Araç butonları (forensic-tools)
-            var tools = new[] { (Tool.UV, "UV\nIşığı", new Color(0.55f, 0.3f, 1f)), (Tool.Dust, "Tozlama\nFırçası", new Color(0.8f, 0.8f, 0.85f)), (Tool.Magnifier, "Büyüteç", Accent) };
+            // Araç butonları (forensic-tools: UV, Toz, Büyüteç)
+            var tools = new[] { (Tool.UV, "UV Kan\nAyıracı", new Color(0.45f, 0.35f, 1f)), (Tool.Dust, "Tozlama\nFırçası", new Color(0.85f, 0.85f, 0.9f)), (Tool.Magnifier, "Büyüteç", themeAcc) };
             for (int i = 0; i < tools.Length; i++)
             {
-                var tr = new Rect(vis.xMax - 110, vis.y + 30 + i * 120, 90, 100);
+                var tr = new Rect(vis.xMax - 110, vis.y + 30 + i * 125, 95, 105);
                 bool on = _tool == tools[i].Item1;
-                Panel(tr, on ? new Color(tools[i].Item3.r, tools[i].Item3.g, tools[i].Item3.b, 0.3f) : BgGlass, tools[i].Item3);
+                Panel(tr, on ? new Color(tools[i].Item3.r * 0.25f, tools[i].Item3.g * 0.25f, tools[i].Item3.b * 0.25f, 0.85f) : BgGlass, on ? tools[i].Item3 : new Color(tools[i].Item3.r, tools[i].Item3.g, tools[i].Item3.b, 0.4f));
                 var t = tools[i].Item1;
-                if (GUI.Button(tr, tools[i].Item2, Styled(_centerSmallBold, tools[i].Item3))) Do(() => { _tool = _tool == t ? Tool.None : t; _scanTime = _spotTime = 0f; });
+                if (GUI.Button(tr, tools[i].Item2, Styled(_centerSmallBold, on ? Color.white : tools[i].Item3))) Do(() => { _tool = _tool == t ? Tool.None : t; _scanTime = _spotTime = 0f; });
             }
 
             // Tarama etkileşimi
@@ -887,8 +1116,8 @@ namespace Dedektif3D.UI
                     float u = (mp.x - img.x) / img.width, v = 1f - (mp.y - img.y) / img.height;
                     GUI.DrawTextureWithTexCoords(lens, tex, new Rect(u - 0.12f, v - 0.12f, 0.24f, 0.24f));
                 }
-                else Fill(lens, _tool == Tool.UV ? new Color(0.5f, 0.2f, 1f, 0.25f) : new Color(1f, 1f, 1f, 0.12f));
-                Border(lens, _tool == Tool.UV ? new Color(0.6f, 0.3f, 1f) : Accent, 2);
+                else Fill(lens, _tool == Tool.UV ? new Color(0.4f, 0.15f, 0.9f, 0.30f) : new Color(1f, 1f, 1f, 0.15f));
+                Border(lens, _tool == Tool.UV ? new Color(0.5f, 0.3f, 1f) : themeAcc, 2);
                 if (Event.current.type == EventType.Repaint && Mouse.current != null && Mouse.current.leftButton.isPressed && _tool != Tool.Magnifier)
                     Scan(c, img, mp);
             }
@@ -896,8 +1125,9 @@ namespace Dedektif3D.UI
             {
                 bool blood = _tool == Tool.UV;
                 bool checkedAlready = blood ? c.BloodChecked : c.PrintChecked;
-                string hint = checkedAlready ? (blood ? (c.BloodFound ? "Kan lekesi tespit edildi." : "UV taraması tamamlandı — temiz.") : (c.PrintFound ? "Parmak izi tespit edildi." : "Tozlama tamamlandı — temiz."))
-                                             : $"Taranıyor... {Mathf.RoundToInt(Mathf.Clamp01(_scanTime / 2.5f) * 100)}%  (fareyi delilin üzerinde basılı tutun)";
+                string hint = checkedAlready ? (blood ? (c.BloodFound ? "✓ Kan lekesi tespit edildi!" : "○ Kan ayıracı tepki vermedi — temiz.") : (c.PrintFound ? "✓ Parmak izi tespit edildi!" : "○ Tozlama tamamlandı — iz bulunamadı."))
+                                             : _scanTime >= 2.5f ? "Bir reaksiyon var... Basılı tutarak delilin farklı yerlerini tarayın."
+                                             : $"Taranıyor... {Mathf.RoundToInt(Mathf.Clamp01(_scanTime / 2.5f) * 100)}%  (sol tık basılı tutarak gezdirin)";
                 GUI.Label(new Rect(vis.x, vis.yMax - 44, vis.width - 120, 30), hint, _centerMuted);
             }
             if (_showDoc && c.Def.Document != null) DrawDocument(vis, c);
@@ -922,13 +1152,13 @@ namespace Dedektif3D.UI
         {
             bool found = blood ? c.BloodFound : c.PrintFound;
             bool sent = blood ? c.BloodSent : c.PrintSent;
-            var col = found ? (blood ? new Color(1f, 0.35f, 0.4f) : Accent) : Success;
+            var col = found ? (blood ? new Color(1f, 0.3f, 0.35f) : Accent) : Success;
             GUILayout.BeginVertical(_card);
             GUILayout.Label(GameManager.FindingText(blood, found), Styled(_bodyBold, col));
             if (found)
             {
-                if (sent) GUILayout.Label($"✓ {(blood ? "KAN LEKESİ" : "PARMAK İZİ")} ADLİ TIBBA GÖNDERİLDİ", Styled(_small, Success));
-                else if (GlowButton(blood ? "KAN LEKESİNİ ADLİ TIBBA GÖNDER" : "PARMAK İZİNİ ADLİ TIBBA GÖNDER", col, 440, 46, 16)) { int id = c.Id; Do(() => GM.SendToForensics(id, blood)); }
+                if (sent) GUILayout.Label($"✓ {(blood ? "KAN ÖRNEĞİ" : "PARMAK İZİ")} ADLİ TIBBA İLETİLDİ", Styled(_small, Success));
+                else if (GlowButton(blood ? "KAN BULGUSUNU ADLİ TIBBA GÖNDER" : "PARMAK İZİNİ ADLİ TIBBA GÖNDER", col, 450, 46, 15)) { int id = c.Id; Do(() => GM.SendToForensics(id, blood)); }
             }
             GUILayout.EndVertical();
             GUILayout.Space(8);
@@ -962,30 +1192,45 @@ namespace Dedektif3D.UI
         {
             var n = _npc;
             if (n == null) { CloseModal(); return; }
-            // Üst şerit: geri, başlık, kalan soru, nabız monitörü
-            if (ColoredButton(new Rect(30, (Bar - 46) / 2f, 170, 46), "← Geri Dön", new Color(0.15f, 0.14f, 0.12f))) Do(CloseModal);
-            int remaining = Mathf.Max(0, GameData.MaxQuestions - n.Asked);
-            GUI.Label(new Rect(220, (Bar - 30) / 2f, 700, 30), $"SORGU  •  {n.Def.Name.ToUpperInvariant()}   <color=#9c8f7a>{n.Def.Role}</color>", Styled(_badge, new Color(0.86f, 0.7f, 0.4f)));
-            var sc = n.Stress >= 75 ? Danger : n.Stress >= 40 ? Warning : Success;
-            var mon = new Rect(VW - 560, (Bar - 64) / 2f, 530, 64);
-            float beat = Mathf.Pow(Mathf.Abs(Mathf.Sin(Time.time * Mathf.PI * n.Bpm / 60f)), 8f);
-            GUI.Label(new Rect(mon.x, mon.y, 170, 34), $"<size={24 + (int)(beat * 5)}>♥</size> <b>{n.Bpm}</b> BPM", Styled(_body, sc));
-            GUI.Label(new Rect(mon.x + 170, mon.y + 2, 200, 30), n.Symptom, Styled(_smallBold, sc));
-            GUI.Label(new Rect(mon.x + 380, mon.y + 2, 150, 30), $"Hak: {remaining}/{GameData.MaxQuestions}", Styled(_rightSmall, remaining > 0 ? Accent : Danger));
-            var track = new Rect(mon.x, mon.y + 44, mon.width, 8);
-            Fill(track, new Color(1, 1, 1, 0.1f));
-            Fill(new Rect(track.x, track.y, track.width * n.Stress / 100f, track.height), sc);
+            var themeAcc = Accent;
+            var themeGlow = Glow;
 
-            // Sol: konuşma geçmişi (yarı saydam, film karesini kapatmaz)
-            var log = new Rect(30, Bar + 20, 470, VH - Bar * 2 - 220);
-            Fill(log, new Color(0, 0, 0, 0.35f));
+            // Üst şerit: geri, başlık, kalan soru, nabız monitörü
+            if (ColoredButton(new Rect(30, (Bar - 46) / 2f, 170, 46), "← Geri Dön", new Color(0.12f, 0.14f, 0.18f))) Do(CloseModal);
+            int remaining = Mathf.Max(0, GameData.MaxQuestions - n.Asked);
+            GUI.Label(new Rect(220, (Bar - 30) / 2f, 700, 30), $"SORGU  •  {n.Def.Name.ToUpperInvariant()}   <color=#c5c6c7>({n.Def.Role})</color>", Styled(_badge, themeAcc));
+
+            // Nabız & Stres Monitörü (Web kardiyak EKG simülasyonu)
+            var sc = n.Stress >= 75 ? Danger : n.Stress >= 40 ? Warning : Success;
+            var mon = new Rect(VW - 580, (Bar - 70) / 2f, 550, 70);
+            Panel(mon, BgGlass, new Color(sc.r, sc.g, sc.b, 0.45f));
+
+            float beat = Mathf.Pow(Mathf.Abs(Mathf.Sin(Time.time * Mathf.PI * n.Bpm / 60f)), 8f);
+            GUI.Label(new Rect(mon.x + 14, mon.y + 8, 170, 34), $"<size={24 + (int)(beat * 6)}>♥</size> <b>{n.Bpm}</b> BPM", Styled(_body, sc));
+            GUI.Label(new Rect(mon.x + 170, mon.y + 10, 220, 30), n.Symptom, Styled(_smallBold, sc));
+            GUI.Label(new Rect(mon.x + 400, mon.y + 10, 136, 30), $"Kalan Soru: {remaining}/{GameData.MaxQuestions}", Styled(_rightSmall, remaining > 0 ? themeAcc : Danger));
+
+            // Stres gösterge çubuğu
+            var track = new Rect(mon.x + 14, mon.y + 46, mon.width - 28, 10);
+            Fill(track, new Color(0, 0, 0, 0.6f));
+            Border(track, new Color(sc.r, sc.g, sc.b, 0.3f), 1);
+            float fillW = (track.width) * Mathf.Clamp01(n.Stress / 100f);
+            Fill(new Rect(track.x, track.y, fillW, track.height), sc);
+
+            // Sol: konuşma geçmişi (Web cam kart tasarımı)
+            var log = new Rect(30, Bar + 20, 480, VH - Bar * 2 - 220);
+            Panel(log, BgGlass, new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.35f));
+            GUI.Label(new Rect(log.x + 18, log.y + 12, log.width - 36, 26), "İFADE TUTANAĞI", Styled(_smallBold, themeAcc));
+            Fill(new Rect(log.x + 18, log.y + 40, log.width - 36, 1), new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.2f));
+
+            var logContent = new Rect(log.x + 8, log.y + 46, log.width - 16, log.height - 54);
             if (n.Log.Count != _lastChatCount || !n.Log.All(l => l.Typed)) { _chatScroll.y = float.MaxValue; _lastChatCount = n.Log.Count; }
-            GUILayout.BeginArea(Pad(log, 14));
+            GUILayout.BeginArea(Pad(logContent, 10));
             _chatScroll = GUILayout.BeginScrollView(_chatScroll);
             foreach (var line in n.Log)
             {
-                GUILayout.Label(line.FromPlayer ? $"<color=#d9b26a><b>Dedektif:</b></color> {line.Text}" : $"<color=#e6dcc6><b>{line.Speaker}:</b></color> {line.Visible}", _small);
-                GUILayout.Space(6);
+                GUILayout.Label(line.FromPlayer ? $"<color=#{ColorUtility.ToHtmlStringRGB(themeAcc)}><b>Dedektif:</b></color> {line.Text}" : $"<color=#ffffff><b>{line.Speaker}:</b></color> {line.Visible}", _small);
+                GUILayout.Space(8);
             }
             GUILayout.EndScrollView();
             GUILayout.EndArea();
@@ -993,35 +1238,44 @@ namespace Dedektif3D.UI
             // Alt: son cevap altyazı olarak (şüphelinin portresiyle)
             var last = n.Log.LastOrDefault(l => !l.FromPlayer);
             var lastQ = n.Log.LastOrDefault(l => l.FromPlayer);
-            if (n.Waiting) Subtitle(n.Def.Name, $"*{n.Def.Name} bir süre susar*" + new string('.', 1 + (int)(Time.time * 3) % 3), new Color(0.75f, 0.8f, 0.85f), 0f, T(n.Def.Portrait));
-            else if (last != null && (lastQ == null || n.Log.IndexOf(last) > n.Log.IndexOf(lastQ))) Subtitle(n.Def.Name, last.Visible, new Color(0.75f, 0.8f, 0.85f), 0f, T(n.Def.Portrait));
-            else if (n.Log.Count == 0) Subtitle(n.Def.Name, string.IsNullOrEmpty(n.Def.Greeting) ? $"*{n.Def.Name} size şüpheyle bakıyor...*" : n.Def.Greeting, new Color(0.75f, 0.8f, 0.85f), 0f, T(n.Def.Portrait));
+            if (n.Waiting) Subtitle(n.Def.Name, $"*{n.Def.Name} bir süre susar*" + new string('.', 1 + (int)(Time.time * 3) % 3), new Color(0.85f, 0.9f, 0.95f), 0f, T(n.Def.Portrait));
+            else if (last != null && (lastQ == null || n.Log.IndexOf(last) > n.Log.IndexOf(lastQ))) Subtitle(n.Def.Name, last.Visible, new Color(0.85f, 0.9f, 0.95f), 0f, T(n.Def.Portrait));
+            else if (n.Log.Count == 0) Subtitle(n.Def.Name, string.IsNullOrEmpty(n.Def.Greeting) ? $"*{n.Def.Name} size şüpheyle bakıyor...*" : n.Def.Greeting, new Color(0.85f, 0.9f, 0.95f), 0f, T(n.Def.Portrait));
 
             // Sağ: soru seçenekleri + serbest soru
-            var qa = new Rect(VW - 600, Bar + 20, 570, VH - Bar * 2 - 230);
+            var qa = new Rect(VW - 620, Bar + 20, 590, VH - Bar * 2 - 230);
+            Panel(qa, BgGlass, new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.35f));
+            GUI.Label(new Rect(qa.x + 20, qa.y + 12, qa.width - 40, 26), "SORUŞTURMA SORULARI", Styled(_smallBold, themeAcc));
+            Fill(new Rect(qa.x + 20, qa.y + 40, qa.width - 40, 1), new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.2f));
+
             bool typing = n.Waiting || !n.Log.All(l => l.Typed);
-            if (n.LeftInterrogation) GUI.Label(new Rect(qa.x, qa.y, qa.width, 80), "(!) Şüpheli aşırı stres ve panikle sorguyu terk etti!", Styled(_bodyBold, Danger));
-            else if (n.Finished) GUI.Label(new Rect(qa.x, qa.y, qa.width, 80), $"✓ Sorgu tamamlandı ({GameData.MaxQuestions}/{GameData.MaxQuestions}).", Styled(_bodyBold, Success));
+            if (n.LeftInterrogation) GUI.Label(new Rect(qa.x + 20, qa.y + 60, qa.width - 40, 80), "(!) Şüpheli aşırı stres ve panikle sorguyu terk etti!", Styled(_bodyBold, Danger));
+            else if (n.Finished) GUI.Label(new Rect(qa.x + 20, qa.y + 60, qa.width - 40, 80), $"✓ Sorgu tamamlandı ({GameData.MaxQuestions}/{GameData.MaxQuestions}).", Styled(_bodyBold, Success));
             else if (!typing)
             {
                 var list = n.Suggestions.Take(4).ToList();
                 for (int i = 0; i < list.Count; i++)
                 {
-                    var br = new Rect(qa.x, qa.y + i * 70, qa.width, 62);
+                    var br = new Rect(qa.x + 18, qa.y + 54 + i * 68, qa.width - 36, 60);
                     var q = list[i];
-                    if (GUI.Button(br, $"<color=#d9b26a>{i + 1}.</color>  {q.Q}", _questionStyle)) { int id = n.Id; Do(() => GM.AskQuestion(id, q)); }
+                    bool hov = br.Contains(Event.current.mousePosition);
+                    Fill(br, hov ? new Color(themeAcc.r * 0.18f, themeAcc.g * 0.18f, themeAcc.b * 0.18f, 0.95f) : new Color(0.06f, 0.08f, 0.12f, 0.85f));
+                    Border(br, hov ? themeAcc : new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.35f), hov ? 2 : 1);
+                    if (GUI.Button(br, $"<color=#{ColorUtility.ToHtmlStringRGB(themeAcc)}><b>{i + 1}.</b></color>  {q.Q}", _questionStyle)) { int id = n.Id; Do(() => GM.AskQuestion(id, q)); }
                 }
-                var input = new Rect(qa.x, qa.y + 4 * 70 + 10, qa.width - 120, 54);
+                var input = new Rect(qa.x + 18, qa.y + 54 + 4 * 68 + 10, qa.width - 156, 52);
                 GUI.SetNextControlName("free_q");
                 if (Event.current.type == EventType.KeyDown && (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter) && GUI.GetNameOfFocusedControl() == "free_q")
                 {
                     var txt = _question; int id = n.Id; _question = ""; Event.current.Use();
                     Do(() => GM.AskFree(id, txt));
                 }
+                Fill(input, new Color(0.04f, 0.06f, 0.08f, 0.9f));
+                Border(input, new Color(themeAcc.r, themeAcc.g, themeAcc.b, 0.4f), 1);
                 _question = GUI.TextField(input, _question, 150, _input);
                 if (string.IsNullOrEmpty(_question) && GUI.GetNameOfFocusedControl() != "free_q")
-                    GUI.Label(new Rect(input.x + 16, input.y, input.width, input.height), "Kendi sorunu yaz...", _placeholder);
-                if (ColoredButton(new Rect(input.xMax + 10, input.y, 110, 54), "SOR", new Color(0.45f, 0.3f, 0.12f))) { var txt = _question; int id = n.Id; _question = ""; Do(() => GM.AskFree(id, txt)); }
+                    GUI.Label(new Rect(input.x + 16, input.y + 12, input.width - 32, 28), "Kendi sorunu yaz...", _placeholder);
+                if (ColoredButton(new Rect(input.xMax + 10, input.y, 110, 52), "SOR", themeAcc)) { var txt = _question; int id = n.Id; _question = ""; Do(() => GM.AskFree(id, txt)); }
             }
         }
 
@@ -1030,7 +1284,7 @@ namespace Dedektif3D.UI
         {
             DrawCover(T("town_bg"), new Rect(0, 0, VW, VH));
             Fill(new Rect(0, 0, VW, VH), new Color(0, 0, 0, 0.88f));
-            GUI.Label(new Rect(0, 40, VW, 56), "KİMİ SUÇLAYACAKSIN AMİRİMS?", _foundTitle);
+            GUI.Label(new Rect(0, 40, VW, 56), "KİMİ SUÇLAYACAKSIN AMİRİM?", _foundTitle);
             GUI.Label(new Rect(0, 100, VW, 30), "Dosyayı kapatma vakti geldi. Hangi fotoğrafa çarpı atalım?", _centerMuted);
             if (!GM.AutopsyReady || GM.LabCount < GameData.ReqLabs)
                 GUI.Label(new Rect(0, 134, VW, 30), "(!) Otopsi raporu ve adli lab sonuçları olmadan suçlama yapmak risklidir.", Styled(_centerSmallBold, Warning));
@@ -1202,6 +1456,15 @@ namespace Dedektif3D.UI
             var msg = GM.HelperHistory[_helperIndex];
             float w = Mathf.Min(1250, VW - 60), h = 230;
             var r = new Rect((VW - w) / 2, VH - h - 24, w, h);
+            // Kontrol listesi açıkken kutu sağa kayar, yazıların üstüne binmez
+            if (ControlsVisible && GM.Phase == GamePhase.Playing && _modal == Modal.None)
+            {
+                float left = 530f;
+                w = Mathf.Min(1250f, VW - left - 30f);
+                r = new Rect(left + (VW - left - 30f - w) / 2f, VH - h - 24, w, h);
+            }
+            _helperRect = r;
+            if (r.Contains(Event.current.mousePosition)) _hudHot = true;
             Fill(r, new Color(0.02f, 0.03f, 0.04f, 0.93f));
             for (int i = 0; i < w / 26; i++) { Fill(new Rect(r.x + i * 26 + 6, r.y + 4, 14, 8), new Color(1, 1, 1, 0.08f)); Fill(new Rect(r.x + i * 26 + 6, r.yMax - 12, 14, 8), new Color(1, 1, 1, 0.08f)); }
             Border(r, Accent * 0.8f, 2);
@@ -1214,7 +1477,14 @@ namespace Dedektif3D.UI
             var tx = new Rect(av.xMax + 24, r.y + 22, r.width - av.width - 100, r.height - 40);
             GUI.Label(new Rect(tx.x, tx.y, tx.width, 28), local ? msg.Speaker.ToUpperInvariant() : "YARDIMCI DEDEKTİF ÇETİN", Styled(_accentSmall, local ? Warning : Accent));
             int chars = Mathf.Min(msg.Text.Length, (int)((Time.time - msg.StartTime) * HelperMessage.CharsPerSecond));
-            GUI.Label(new Rect(tx.x, tx.y + 32, tx.width, 110), msg.Text.Substring(0, chars), _helperText);
+            // Uzun mesaj kutuya sığana kadar yazı küçülür, butonların üstüne taşmaz
+            var bodyStyle = _helperText;
+            if (bodyStyle.CalcHeight(new GUIContent(msg.Text), tx.width) > 108f)
+            {
+                bodyStyle = new GUIStyle(_helperText);
+                while (bodyStyle.fontSize > 14 && bodyStyle.CalcHeight(new GUIContent(msg.Text), tx.width) > 108f) bodyStyle.fontSize -= 1;
+            }
+            GUI.Label(new Rect(tx.x, tx.y + 32, tx.width, 110), msg.Text.Substring(0, chars), bodyStyle);
             float bx = tx.x, by = r.yMax - 66;
             if (_helperIndex > 0 && SmallBtn(ref bx, by, "◀ Önceki")) Do(() => { _helperIndex--; _helperShownAt = Time.time; GM.HelperHistory[_helperIndex].StartTime = Time.time - 999; });
             if (GM.Phase == GamePhase.Playing)
@@ -1275,8 +1545,8 @@ namespace Dedektif3D.UI
             GUI.Label(new Rect(r.x + 50, r.y + 126, r.width - 100, h - 210), b.Text, _centerBody);
             if (b.Confirm)
             {
-                if (ColoredButton(new Rect(r.x + 50, r.yMax - 84, 280, 56), "Hayır / İptal", new Color(0.2f, 0.22f, 0.26f))) Do(() => CloseBox(false));
-                if (ColoredButton(new Rect(r.xMax - 330, r.yMax - 84, 280, 56), "Evet", new Color(0.08f, 0.45f, 0.5f))) Do(() => CloseBox(true));
+                if (ColoredButton(new Rect(r.x + 50, r.yMax - 84, 280, 56), b.NoLabel ?? "Hayır / İptal", new Color(0.2f, 0.22f, 0.26f))) Do(() => CloseBox(false));
+                if (ColoredButton(new Rect(r.xMax - 330, r.yMax - 84, 280, 56), b.YesLabel ?? "Evet", new Color(0.08f, 0.45f, 0.5f))) Do(() => CloseBox(true));
             }
             else if (ColoredButton(new Rect(r.center.x - 150, r.yMax - 84, 300, 56), "Anladım", new Color(0.08f, 0.45f, 0.5f))) Do(() => CloseBox(true));
         }
@@ -1331,12 +1601,22 @@ namespace Dedektif3D.UI
 
         void Panel(Rect r, Color bg, Color border)
         {
+            // Web box-shadow efekti (dış yumuşak derinlik)
+            for (int s = 1; s <= 4; s++)
+            {
+                Fill(new Rect(r.x - s, r.y - s, r.width + s * 2, r.height + s * 2), new Color(0, 0, 0, 0.08f));
+            }
             Fill(r, bg);
+            // Neon kenarlık
             Border(r, border, 2);
-            // İç ince yaldız çizgi + köşe süsleri (Viktorya dönemi çerçeve)
+            // Web tarzı hafif parlama çerçevesi
+            var glowCol = new Color(border.r, border.g, border.b, border.a * 0.35f);
+            Border(new Rect(r.x - 1, r.y - 1, r.width + 2, r.height + 2), glowCol, 1);
+
+            // İç ince yaldız çizgi + köşe süsleri
             var inner = new Rect(r.x + 5, r.y + 5, r.width - 10, r.height - 10);
-            Border(inner, new Color(Accent.r, Accent.g, Accent.b, 0.28f * border.a), 1);
-            var orn = new Color(Accent.r, Accent.g, Accent.b, Mathf.Min(1f, border.a + 0.2f));
+            Border(inner, new Color(border.r, border.g, border.b, 0.22f * border.a), 1);
+            var orn = new Color(border.r, border.g, border.b, Mathf.Min(1f, border.a + 0.3f));
             foreach (var p in new[] { new Vector2(r.x, r.y), new Vector2(r.xMax - 7, r.y), new Vector2(r.x, r.yMax - 7), new Vector2(r.xMax - 7, r.yMax - 7) })
                 Fill(new Rect(p.x, p.y, 7, 7), orn);
         }
@@ -1408,16 +1688,28 @@ namespace Dedektif3D.UI
                 GUI.Label(lbl, "◈  D E D E K T İ F   G Ö Z Ü  ◈", Styled(_centerBold, new Color(Accent.r, Accent.g, Accent.b, k)));
                 var cam = Camera.main;
                 if (cam != null)
+                {
+                    float pulse = 0.6f + Mathf.Sin(Time.time * 5f) * 0.4f;
                     foreach (var spot in Dedektif3D.Gameplay.HidingSpotInteractable.All)
                     {
                         if (spot == null || spot.Opened || !spot.Sensed) continue;
                         var sp = cam.WorldToScreenPoint(spot.Point);
                         if (sp.z <= 0.1f) continue;
                         var g = new Vector2(sp.x / _scale, (Screen.height - sp.y) / _scale);
-                        float pulse = 0.6f + Mathf.Sin(Time.time * 5f) * 0.4f;
                         GUI.Label(new Rect(g.x - 30, g.y - 30, 60, 60), "◆", Styled(_bigIconSmall, new Color(1f, 0.8f, 0.4f, k * pulse)));
                         GUI.Label(new Rect(g.x - 160, g.y + 22, 320, 26), spot.def.Label, Styled(_centerSmallBold, new Color(1f, 0.86f, 0.6f, k)));
                     }
+                    // Görünen deliller de işaretlenir (yakında olup henüz alınmamış olanlar)
+                    if (GM.InsideBuilding)
+                        foreach (var c in GM.Clues)
+                        {
+                            if (c.InBag || c.View == null || !c.View.revealed || c.Def.BuildingNpcId != GM.CurrentBuilding.NpcId) continue;
+                            var sp = cam.WorldToScreenPoint(c.View.HoverBounds.center);
+                            if (sp.z <= 0.1f) continue;
+                            var g = new Vector2(sp.x / _scale, (Screen.height - sp.y) / _scale);
+                            GUI.Label(new Rect(g.x - 30, g.y - 30, 60, 60), "◇", Styled(_bigIconSmall, new Color(1f, 0.88f, 0.55f, k * pulse)));
+                        }
+                }
             }
             if (v != null && !v.Active && v.CooldownLeft > 0f && GM.InsideBuilding)
                 GUI.Label(new Rect(VW / 2 - 200, VH - 92, 400, 26), $"Dedektif Gözü dinleniyor… {v.CooldownLeft:0} sn", Styled(_centerSmall, TextMuted));
@@ -1454,6 +1746,7 @@ namespace Dedektif3D.UI
         bool ColoredButton(Rect r, string text, Color color)
         {
             bool hover = r.Contains(Event.current.mousePosition);
+            if (hover) _hudHot = true;
             Fill(r, new Color(color.r * (hover ? 1.25f : 1f), color.g * (hover ? 1.25f : 1f), color.b * (hover ? 1.25f : 1f), 0.92f));
             Border(r, new Color(1, 1, 1, hover ? 0.35f : 0.12f), 1);
             return GUI.Button(r, text, _hudButton);
@@ -1476,7 +1769,7 @@ namespace Dedektif3D.UI
             _helperText, _helperBtn, _subtitle2, _subtitleShadow,
             _mapTitle, _mapSiteName, _mapSiteStatus, _splashKicker, _splashTitle, _splashSub, _splashBody, _splashFoot, _menuLink, _menuLinkBig,
             _fileTab, _fileKicker, _fileTitle, _fileKey, _fileVal, _fileWeather, _fileBody, _fileStamp, _fileButton, _fileLocked, _fileHint,
-            _hudTown, _hudPlace, _hudLink, _hudKey, _hudCenter, _hudPrompt, _hudSmall;
+            _hudTown, _hudPlace, _hudLink, _hudKey, _hudCenter, _hudPrompt, _hudSmall, _searchTitle, _searchAction;
         bool _stylesReady;
         Font _serif, _mono;
 
@@ -1580,6 +1873,8 @@ namespace Dedektif3D.UI
             _hudKey = L(14, Accent, FontStyle.Bold, TextAnchor.MiddleCenter, false);
             _hudCenter = L(17, TextPrimary, FontStyle.Bold, TextAnchor.MiddleCenter, false);
             _hudPrompt = L(22, new Color(0.96f, 0.93f, 0.85f), FontStyle.Normal, TextAnchor.MiddleLeft, false);
+            _searchTitle = L(22, new Color(1f, 0.93f, 0.74f), FontStyle.Bold, TextAnchor.MiddleLeft, false);
+            _searchAction = L(16, new Color(0.8f, 0.72f, 0.56f), FontStyle.Italic, TextAnchor.MiddleLeft, false);
             _hudSmall = L(17, new Color(0.88f, 0.85f, 0.78f), FontStyle.Normal, TextAnchor.MiddleLeft, false);
 
             _card = new GUIStyle(GUI.skin.box) { padding = new RectOffset(14, 14, 10, 10) };

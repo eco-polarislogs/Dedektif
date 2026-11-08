@@ -1,8 +1,8 @@
 {
  "townId": "golge_sehir",
- "townName": "Gölge Şehir",
+ "townName": "Gölgeşehir",
  "victim": "Tüccar Ekrem Bey",
- "story": "Sisli ve fırtınalı bir gece... Gölge Şehir'in çam ormanı girişinde bir ceset bulundu. Kurban, kasabanın en zengin ve tekinsiz tüccarı Ekrem Bey'di. Islak çam iğnelerinin üzerinde yatan cansız beden, gaz lambalarının altında solgun bir ışıkla aydınlanıyordu.\n\nOrman sınırında toplanan kasabalılar, birbirlerine derin bir şüpheyle bakıyordu. Başarılı dedektif olarak bu karmaşık davayı çözmek için Gölge Şehir'e çağrıldınız. Sekiz şüpheli, sekiz bina, sayısız karanlık sır... Gerçeği ortaya çıkarabilecek misiniz?",
+ "story": "Sisli ve fırtınalı bir gece... Gölgeşehir'in çam ormanı girişinde bir ceset bulundu. Kurban, kasabanın en zengin ve tekinsiz tüccarı Ekrem Bey'di. Islak çam iğnelerinin üzerinde yatan cansız beden, gaz lambalarının altında solgun bir ışıkla aydınlanıyordu.\n\nOrman sınırında toplanan kasabalılar, birbirlerine derin bir şüpheyle bakıyordu. Başarılı dedektif olarak bu karmaşık davayı çözmek için Gölgeşehir'e çağrıldınız. Sekiz şüpheli, sekiz bina, sayısız karanlık sır... Gerçeği ortaya çıkarabilecek misiniz?",
  "map": "images/towns/golge_sehir/golge_sehir_map.png",
  "reqBuildings": 4,
  "reqLabs": 4,
@@ -144,9 +144,9 @@
    "building": "Bakkal",
    "role": "Bakkal",
    "female": true,
-   "greeting": "Aaa amirim hoş geldiniz sefalar getirdiniz! Gölge Şehir havadisleri bakkaldan geçer.",
+   "greeting": "Aaa amirim hoş geldiniz sefalar getirdiniz! Gölgeşehir havadisleri bakkaldan geçer.",
    "secret": "",
-   "murderStory": "Gölge Şehir'de herkesin sırrını bilen Bakkal Naciye, kendi sırrının altında eziliyordu. Ekrem Bey, kasabanın en zengini olmasına rağmen yıllardır bakkal borcunu ödemiyor, üstelik Naciye'yi \"Dükkânını elinden alırım\" diyerek sindiriyordu. Artık tahammülü kalmayan Naciye, o gece ince ve kusursuz bir plan yaptı. Ekrem Bey'in her akşam içtiği özel tütün kesesinin içine dükkânında sattığı güçlü bir fare zehrini zerk etti. Gece yarısı \"Borç hesabı için\" diyerek Ekrem Bey'in evine gitti ve tütün kesesini sinsice masasına bıraktı. Ekrem, Naciye gittikten sonra zehirli tütünden derin bir nefes çekti. Saniyeler içinde boğazı düğümlendi, nefessiz kalarak yere yığıldı ve acı içinde can verdi. Naciye ise o sırada dükkânına dönmüş, elleri titreyerek veresiye defterini açmıştı. Ekrem'in adının olduğu sayfayı hışımla yırtıp sobaya attı. Borç bitmişti, tehdit ortadan kalkmıştı. Ancak masanın üzerinde unutulan tütün kesesindeki zehir partikülleri ve sobanın kenarında kalan yanık kâğıt parçaları, intikamın kokusunu taşıyordu.",
+   "murderStory": "Gölgeşehir'de herkesin sırrını bilen Bakkal Naciye, kendi sırrının altında eziliyordu. Ekrem Bey, kasabanın en zengini olmasına rağmen yıllardır bakkal borcunu ödemiyor, üstelik Naciye'yi \"Dükkânını elinden alırım\" diyerek sindiriyordu. Artık tahammülü kalmayan Naciye, o gece ince ve kusursuz bir plan yaptı. Ekrem Bey'in her akşam içtiği özel tütün kesesinin içine dükkânında sattığı güçlü bir fare zehrini zerk etti. Gece yarısı \"Borç hesabı için\" diyerek Ekrem Bey'in evine gitti ve tütün kesesini sinsice masasına bıraktı. Ekrem, Naciye gittikten sonra zehirli tütünden derin bir nefes çekti. Saniyeler içinde boğazı düğümlendi, nefessiz kalarak yere yığıldı ve acı içinde can verdi. Naciye ise o sırada dükkânına dönmüş, elleri titreyerek veresiye defterini açmıştı. Ekrem'in adının olduğu sayfayı hışımla yırtıp sobaya attı. Borç bitmişti, tehdit ortadan kalkmıştı. Ancak masanın üzerinde unutulan tütün kesesindeki zehir partikülleri ve sobanın kenarında kalan yanık kâğıt parçaları, intikamın kokusunu taşıyordu.",
    "portrait": "images/towns/golge_sehir/npcler/npc_104_talk.jpg"
   },
   {
@@ -166,9 +166,9 @@
    "building": "Muhtarlık",
    "role": "Muhtar",
    "female": false,
-   "greeting": "Gölge Şehir sakin bir yerdir dedektif bey. Bu olayı lekelemeden çözmeliyiz.",
+   "greeting": "Gölgeşehir sakin bir yerdir dedektif bey. Bu olayı lekelemeden çözmeliyiz.",
    "secret": "",
-   "murderStory": "Kasabanın sözü geçen adamı Muhtar Cevdet, hırsının kurbanı olmuştu. Ekrem Bey'in çam ormanındaki arazisine gizlice sahte bir devir tapusu hazırlatmış ve satmaya kalkmıştı. Ancak Ekrem bu sahtekârlığı öğrenmiş, \"Yarın sabah kaymakamlığa gidip senin bu rezilliğini, o mühürlü sahte belgelerle birlikte ortaya dökeceğim!\" diyerek muhtarı köşeye sıkıştırmıştı. İtibarını ve makamını kaybetme korkusuyla dehşete düşen Cevdet, gece 02:00 sularında Ekrem'in evine gizlice girdi. Masasında oturan Ekrem, karşısında Cevdet'i görünce bağırmaya yeltendi. Cevdet masanın üzerindeki ağır pirinç şamdana uzandı ve var gücüyle Ekrem'in başına geçirdi. Arbede sırasında Cevdet'in yüzünden düşen altın çerçeveli gözlüğünün camı kırıldı. Ekrem yere yığılıp son nefesini verirken Cevdet panikledi. Sahte tapuyu ve resmi mührünü toplayıp koşarak evden çıktı. Ancak kırık altın gözlüğünü halının kenarında unutmuştu. Muhtarlık ofisine gidip çekmecesini çelik anahtarıyla kilitledi ama olay yerinde unuttuğu o tek parça cam, bütün itibarını yerle bir etmeye yetecekti.",
+   "murderStory": "Kasabanın sözü geçen adamı Muhtar Cevdet, hırsının kurbanı olmuştu. Ekrem Bey'in çam ormanındaki arazisine gizlice sahte bir devir tapusu hazırlatmış ve satmaya kalkmıştı. Ancak Ekrem bu sahtekârlığı öğrenmiş, \"Yarın sabah kaymakamlığa gidip senin bu rezilliğini, o mühürlü sahte belgelerle birlikte ortaya dökeceğim!\" diyerek muhtarı köşeye sıkıştırmıştı. İtibarını ve makamını kaybetme korkusuyla dehşete düşen Cevdet, gece 02:00 sularında Ekrem'in evine gizlice girdi. Masasında oturan Ekrem, karşısında Cevdet'i görünce bağırmaya yeltendi. Cevdet masanın üzerindeki ağır pirinç şamdana uzandı ve var gücüyle Ekrem'in başına geçirdi. Arbede sırasında Cevdet'in yüzünden düşen altın çerçeveli gözlüğünün camı kırıldı. Ekrem yere yığılıp son nefesini verirken Cevdet panikledi. Sahte tapuyu ve resmi mührünü toplayıp koşarak evden çıktı. Ancak kırık altın gözlüğünü halının kenarında unutmuştu. Muhtarlık odasına gidip çekmecesini çelik anahtarıyla kilitledi ama olay yerinde unuttuğu o tek parça cam, bütün itibarını yerle bir etmeye yetecekti.",
    "portrait": "images/towns/golge_sehir/npcler/npc_106_talk.jpg"
   },
   {
@@ -190,7 +190,7 @@
    "female": false,
    "greeting": "Ayakkabı çamurundan insanın nereye gittiğini anlarım amirim... Gece gelen çizmeler göl kenarındandı!",
    "secret": "",
-   "murderStory": "Gölge Şehir'in huysuz kunduracısı Rasim, atölyesinde kaçak ve yasadışı deri işleyerek para kazanıyordu. Ekrem Bey bu sırrı öğrenmiş ve \"Bana her ay düzenli pay vermezsen jandarmaya kaçak atölyeni basmasını söylerim\" diyerek Rasim'i haraca bağlamıştı. Yılların emeğini bu açgözlü tüccara yedirmek istemeyen Rasim'in gözü dönmüştü. Cinayet gecesi dükkânından aldığı kalın, dayanıklı mumlu ayakkabı ipini cebine koydu. Kimseye görünmemek için göl kenarındaki çamurlu kestirme yoldan Ekrem Bey'in evine ulaştı. Açık pencereden sessizce içeri süzüldü. Ekrem koltuğunda uyuklarken, Rasim arkasından yaklaşıp mumlu ipi boynuna doladı ve kollarındaki bütün güçle sıktı. Ekrem çırpınarak nefes almaya çalıştı ama deri yüzmekten nasırlaşmış o güçlü eller ipi bırakmadı. Saniyeler sonra Ekrem cansız yere yığıldı. Rasim kurbanının öldüğünden emin olunca aynı çamurlu yoldan atölyesine geri döndü. Mumlu ipi diğer iplerin arasına fırlattı, çizmelerini de köşeye attı. Kendi kafasında mükemmel bir cinayet işlemişti. Ancak evin halısında bıraktığı 42 numara çamurlu ayak izleri ve kurbanın boynundaki o karakteristik mumlu ipin dokusu, kunduracının sonunu çoktan hazırlamıştı.",
+   "murderStory": "Gölgeşehir'in huysuz kunduracısı Rasim, atölyesinde kaçak ve yasadışı deri işleyerek para kazanıyordu. Ekrem Bey bu sırrı öğrenmiş ve \"Bana her ay düzenli pay vermezsen jandarmaya kaçak atölyeni basmasını söylerim\" diyerek Rasim'i haraca bağlamıştı. Yılların emeğini bu açgözlü tüccara yedirmek istemeyen Rasim'in gözü dönmüştü. Cinayet gecesi dükkânından aldığı kalın, dayanıklı mumlu ayakkabı ipini cebine koydu. Kimseye görünmemek için göl kenarındaki çamurlu kestirme yoldan Ekrem Bey'in evine ulaştı. Açık pencereden sessizce içeri süzüldü. Ekrem koltuğunda uyuklarken, Rasim arkasından yaklaşıp mumlu ipi boynuna doladı ve kollarındaki bütün güçle sıktı. Ekrem çırpınarak nefes almaya çalıştı ama deri yüzmekten nasırlaşmış o güçlü eller ipi bırakmadı. Saniyeler sonra Ekrem cansız yere yığıldı. Rasim kurbanının öldüğünden emin olunca aynı çamurlu yoldan atölyesine geri döndü. Mumlu ipi diğer iplerin arasına fırlattı, çizmelerini de köşeye attı. Kendi kafasında mükemmel bir cinayet işlemişti. Ancak evin halısında bıraktığı 42 numara çamurlu ayak izleri ve kurbanın boynundaki o karakteristik mumlu ipin dokusu, kunduracının sonunu çoktan hazırlamıştı.",
    "portrait": "images/towns/golge_sehir/npcler/npc_108_talk.jpg"
   }
  ],
@@ -1005,7 +1005,7 @@
   },
   {
    "key": "Çetin",
-   "value": "Aşk olsun Rıfat amca! Biz amirimle birlikte Gizemli Kasaba davasını tereyağından kıl çeker gibi aydınlattık! Şimdi de Gölge Şehir'in sırlarını çözmeye geldik. Feneri biraz indirirseniz önümüzü göreceğiz."
+   "value": "Aşk olsun Rıfat amca! Biz amirimle birlikte Gizemli Kasaba davasını tereyağından kıl çeker gibi aydınlattık! Şimdi de Gölgeşehir'in sırlarını çözmeye geldik. Feneri biraz indirirseniz önümüzü göreceğiz."
   },
   {
    "key": "Bekçi Rıfat",

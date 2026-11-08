@@ -100,11 +100,11 @@ namespace Dedektif3D.World
             if (rig.Human == null || rig.Human.HandAnchor == null || !rig.Human.HoldWithRightArm("lantern")) return;
             var u = Group("Şemsiye", rig.Human.HandAnchor, Vector3.zero).transform;
             u.gameObject.AddComponent<KeepUpright>().facing = rig.Root;
-            var cloth = M.Get("umbrella_" + Random.Range(0, Umbrellas.Length), Umbrellas[Random.Range(0, Umbrellas.Length)], 0.85f);
+            var cloth = M.Get("umbrella_" + Random.Range(0, Umbrellas.Length), Umbrellas[Random.Range(0, Umbrellas.Length)], 0.5f);
             Cyl("Sap", u, new Vector3(0, 0.55f, 0), new Vector3(0.022f, 0.55f, 0.022f), M.Metal, null, false);
             Box("Kulp", u, new Vector3(0, -0.02f, 0.03f), new Vector3(0.03f, 0.06f, 0.08f), M.Wood(new Color(0.3f, 0.18f, 0.1f)), null, false);
-            Sphere("Kubbe", u, new Vector3(0, 1.08f, -0.08f), new Vector3(1.15f, 0.32f, 1.15f), cloth);
-            Cyl("Uç", u, new Vector3(0, 1.28f, -0.08f), new Vector3(0.02f, 0.07f, 0.02f), M.Metal, null, false);
+            NatureMeshes.Place("Kubbe", u, new Vector3(0, 0.98f, -0.08f), Vector3.one, NatureMeshes.UmbrellaCanopy, cloth);
+            Cyl("Uç", u, new Vector3(0, 1.3f, -0.08f), new Vector3(0.02f, 0.05f, 0.02f), M.Metal, null, false);
         }
 
         static int _lanternLights;
